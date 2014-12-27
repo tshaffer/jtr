@@ -1,8 +1,9 @@
-Function newEventHandler(msgPort As Object) As Object
+Function newEventHandler(jtr As Object) As Object
 
 	EventHandler = {}
 
-	EventHandler.msgPort = msgPort
+	EventHandler.jtr = jtr
+	EventHandler.msgPort = jtr.msgPort
 
 	EventHandler.hsms = []
 
@@ -45,6 +46,26 @@ Sub eventHandler_EventLoop()
 					 print "roSqliteEvent.GetSqlResult() = " + stri(roSqliteEvent.GetSqlResult())
 				endif
 			endif
+		endif
+
+		if type(msg) = "roIRRemotePress" then
+			if msg = 2 then
+				m.jtr.LaunchWebkit()
+			endif
+		endif
+
+		if type(msg) = "roHtmlWidgetEvent" then		    
+			payload = msg.GetData()
+			print payload
+
+			print "Reason: "; payload.reason
+
+			if payload.reason = "message" then
+				print "Message: "; payload.message
+				aa = {}
+				aa.AddReplace("bsMessage", "received message: " + payload.message.message)
+				m.jtr.htmlWidget.PostJSMessage(aa)
+			end if
 		endif
 
 		if type(msg) = "roHttpEvent" then

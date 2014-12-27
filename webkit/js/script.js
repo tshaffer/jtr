@@ -1,6 +1,8 @@
 var currentActiveElementId = "#homePage";
 var baseURL = "http://192.168.2.11:8080/";
 
+var bsMessage;
+
 function setNav() {
 
 }
@@ -72,6 +74,7 @@ function setDefaultDateTimeFields () {
 }
 
 function createManualRecording() {
+
     var date = $("#manualRecordDate").val();
     var time = $("#manualRecordTime").val();
     var dateObj = new Date(date + " " + time);
@@ -162,7 +165,9 @@ function getShowDescription (showId) {
 }
 
 function switchToPage(newPage) {
-	var newPageId = "#" + newPage;
+    bsMessage.PostBSMessage({ message: "switch to " + newPage });
+
+    var newPageId = "#" + newPage;
 	$(currentActiveElementId).css("display" ,"none");
 	currentActiveElementId = newPageId;
 	$(currentActiveElementId).removeAttr("style");
@@ -171,32 +176,59 @@ function switchToPage(newPage) {
 	} else {
 		$("#footerArea").append("<button class=\"btn btn-primary\" onclick=\"selectHomePage()\">Home</button><br><br>");
 	}
-
 }
 
 
 //keyboard event listener
-$(document).ready(function(){
-	$("body").keydown(function(e){
-		console.log(e.which);
-		
-		// if(e.which == 9) {
-		// 	$("#channelGuide").removeClass("btn-primary");
-		// 	$("#recordedShows").addClass("btn-primary");
-		// }
+$(document).ready(function () {
 
-        if(e.which === 80) { //'p'
-            if(!$("#playIcon").length) {
+    console.log("JTR javascript .ready invoked");
+
+    // message port
+    bsMessage = new BSMessagePort();
+    console.log("typeof bsMessage is " + typeof bsMessage);
+    bsMessage.PostBSMessage({ message: "javascript ready" });
+
+    bsMessage.onbsmessage = function (msg) {
+        console.log("onbsmessage invoked");
+        for (name in msg.data) {
+            console.log('### ' + name + ': ' + msg.data[name]);
+        }
+    }
+
+    // ir receiver
+    var ir_receiver = new BSIRReceiver();
+
+    ir_receiver.onremotedown = function (e) {
+        switchToPage("manualRecordPage");
+        console.log('############ onremotedown: ' + e.irType + " - " + e.code);
+    }
+
+    ir_receiver.onremoteup = function (e) {
+        switchToPage("recordedShowsPage");
+        console.log('############ onremoteup: ' + e.irType + " - " + e.code);
+    }
+
+    $("body").keydown(function (e) {
+        console.log(e.which);
+
+        // if(e.which == 9) {
+        // 	$("#channelGuide").removeClass("btn-primary");
+        // 	$("#recordedShows").addClass("btn-primary");
+        // }
+
+        if (e.which === 80) { //'p'
+            if (!$("#playIcon").length) {
                 var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
                 $("#videoControlRegion").append(toAppend);
             } else {
                 $("#playIcon").remove();
             }
-        } else if(e.which === 72) { //'h'
+        } else if (e.which === 72) { //'h'
             switchToPage("homePage");
             $("#videoZone").remove();
-        } else if(e.which === 32) { //' '
-            if(!$("#progressBar").length) {
+        } else if (e.which === 32) { //' '
+            if (!$("#progressBar").length) {
                 var percentComplete = 25;
                 var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
                 $("#videoControlRegion").append(toAppend);
@@ -206,5 +238,5 @@ $(document).ready(function(){
 
         }
 
-	});
+    });
 });
