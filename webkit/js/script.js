@@ -58,20 +58,43 @@ function playVideo () {
 
 function pauseVideo() {
     console.log("entering pauseVideo");
-    $('#videoZone')[0].pause();
+
+    var paused = $('#videoZone')[0].paused;
+    console.log("video paused is " + paused.toString());
+    if (paused.toString() == "true") {
+        $('#videoZone')[0].play();
+    }
+    else {
+        $('#videoZone')[0].pause();
+    }
     var currentTime = $('#videoZone')[0].currentTime;
     console.log("current time is " + currentTime);
 }
 
 function quickSkipVideo() {
     console.log("entering quickSkipVideo");
-    var currentTime = $('#videoZone')[0].currentTime;
-    console.log("current time is " + currentTime);
-    currentTime += 10;
-    console.log("set current time to " + currentTime);
-    $('#videoZone')[0].currentTime = currentTime;
-    currentTime = $('#videoZone')[0].currentTime;
-    console.log("now, current time is " + currentTime);
+//    var currentTime = $('#videoZone')[0].currentTime;
+//    console.log("current time is " + currentTime);
+//    currentTime += 10;
+//    console.log("set current time to " + currentTime);
+//    $('#videoZone')[0].currentTime = currentTime;
+//    currentTime = $('#videoZone')[0].currentTime;
+//    console.log("now, current time is " + currentTime);
+
+    var duration = $('#videoZone')[0].duration;
+    console.log("video duration is " + duration.toString());
+
+    var paused = $('#videoZone')[0].paused;
+    console.log("video paused is " + paused.toString());
+
+    console.log("Video Start: " + $('#videoZone')[0].seekable.start(0) + " End: " + $('#videoZone')[0].seekable.end(0));
+
+    var startDate = $('#videoZone')[0].startDate;
+    console.log("video startDate is " + startDate.toString());
+
+    var startDate = $('#videoZone')[0].volume;
+    console.log("video volume is " + volume.toString());
+
 }
 
 function togglePlayIcon() {
