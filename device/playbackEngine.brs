@@ -133,6 +133,7 @@ Function STPlaybackIdleEventHandler(event As Object, stateData As Object) As Obj
 	else if type(event) = "roIRRemotePress" then
 	
 		if GetRemoteCommand(event) = "PLAY" then
+			return "HANDLED"
 
 stop
 ' need a recording object

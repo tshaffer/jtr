@@ -1,7 +1,21 @@
+p {
+    color: orange;
+}
+
+.btn-secondary 
+{
+     color: white;
+     background-color: #777;
+     border-color: #555;
+}
+
+
 /* Space out content a bit */
 body {
   padding-top: 20px;
   padding-bottom: 20px;
+  background-color: rgba(0,0,0,0);
+/*  opacity: 0.0; */
 }
 
 /* Custom page footer */
@@ -42,8 +56,10 @@ body {
 #videoZone {
   position: absolute;
   top: 0px;
-  width: auto;
-  height: auto;
+/*  top: 32px; */
+/*  width: auto; */
+/*  height: auto; */
+  width: 100%;
   z-index: 1;
 }
 
@@ -54,8 +70,10 @@ span.glyphicon {
 
 .controlIcon {
   position: fixed;
-  top: 50px;
-  left: 2%;
+/*  top: 50px; */
+/*  left: 2%;  */
+  top: 1000px;
+  left: 50%;
   z-index: 2;
 }
 
@@ -63,9 +81,14 @@ span.glyphicon {
   height: 30px;
   position: absolute;
   z-index: 3;
-  top: 65%;
+/*  top: 65%;
+  width: 75%; */
+  top: 95%;
+  width: 90%;
+  left: 5%;
+/*  top: 67%;
   left: 2%;
-  width: 75%;
+  width: 62%; */
   background: #555;
   -webkit-border-radius: 25px;
   padding: 10px;

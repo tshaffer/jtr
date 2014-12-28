@@ -45,9 +45,55 @@ function selectPlayVideo() {
 }
 
 function playVideo () {
-    var toAppend = '<div><video id="videoZone" hwz="on" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+//    var toAppend = '<div><video id="videoZone" hwz="on" hwz="z-index:-1" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+//    var toAppend = '<div><video id="videoZone" hwz="z-index:-1" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+//    var toAppend = '<div><video id="videoZone" hwz="on" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+//    var toAppend = '<div><video id="videoZone" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+//    var toAppend = '<div><video id="videoZone" hwz="on" hwz="z-index:-1" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+//    var toAppend = '<div><p>hello ted</p><br><video id="videoZone" hwz="on" hwz="z-index:-1" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
+    var toAppend = '<div><p>hello ted</p><br><video id="videoZone" hwz="z-index:-1" autoplay><source src="20141221T093400.mp4" type="video/mp4"></source></video></div>';
     $("#playVideoPage").append(toAppend);
     $("#footerArea").remove();
+}
+
+function pauseVideo() {
+    console.log("entering pauseVideo");
+    $('#videoZone')[0].pause();
+    var currentTime = $('#videoZone')[0].currentTime;
+    console.log("current time is " + currentTime);
+}
+
+function quickSkipVideo() {
+    console.log("entering quickSkipVideo");
+    var currentTime = $('#videoZone')[0].currentTime;
+    console.log("current time is " + currentTime);
+    currentTime += 10;
+    console.log("set current time to " + currentTime);
+    $('#videoZone')[0].currentTime = currentTime;
+    currentTime = $('#videoZone')[0].currentTime;
+    console.log("now, current time is " + currentTime);
+}
+
+function togglePlayIcon() {
+    console.log("script.js:: togglePlayIcon invoked");
+    if (!$("#playIcon").length) {
+        console.log("script.js:: display play icon");
+        var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
+        $("#videoControlRegion").append(toAppend);
+    } else {
+        console.log("script.js:: remove play icon");
+        $("#playIcon").remove();
+    }
+}
+
+function toggleProgressBar() {
+    if (!$("#progressBar").length) {
+        var percentComplete = 25;
+        var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+        $("#videoControlRegion").append(toAppend);
+    } else {
+        $("#progressBar").remove();
+    }
 }
 
 function twoDigitFormat(val) {
@@ -193,6 +239,25 @@ $(document).ready(function () {
         console.log("onbsmessage invoked");
         for (name in msg.data) {
             console.log('### ' + name + ': ' + msg.data[name]);
+
+            if (name == "bsMessage") {
+                if (msg.data[name] == "play") {
+                    switchToPage("playVideoPage");
+                    playVideo();
+                }
+                else if (msg.data[name] == "pause") {
+                    pauseVideo();
+                }
+                else if (msg.data[name] == "quickSkip") {
+                    quickSkipVideo();
+                }
+                else if (msg.data[name] == "togglePlayIcon") {
+                    togglePlayIcon();
+                }
+                else if (msg.data[name] == "toggleProgressBar") {
+                    toggleProgressBar();
+                }
+            }
         }
     }
 
