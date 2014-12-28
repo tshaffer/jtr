@@ -49,8 +49,33 @@ Sub eventHandler_EventLoop()
 		endif
 
 		if type(msg) = "roIRRemotePress" then
-			if msg = 2 then
+			remoteCommand$ = GetRemoteCommand(msg)
+			if remoteCommand$ = "NORTH" then
 				m.jtr.LaunchWebkit()
+			else if remoteCommand$ = "PLAY" then
+				aa = {}
+				aa.AddReplace("bsMessage", "play")
+				m.jtr.htmlWidget.PostJSMessage(aa)
+			else if remoteCommand$ = "PAUSE" then
+				aa = {}
+				aa.AddReplace("bsMessage", "pause")
+				m.jtr.htmlWidget.PostJSMessage(aa)
+			else if remoteCommand$ = "VOLUP" then
+				aa = {}
+				aa.AddReplace("bsMessage", "togglePlayIcon")
+				m.jtr.htmlWidget.PostJSMessage(aa)
+			else if remoteCommand$ = "VOLDWN" then
+				aa = {}
+				aa.AddReplace("bsMessage", "toggleProgressBar")
+				m.jtr.htmlWidget.PostJSMessage(aa)			
+			else if remoteCommand$ = "REPEAT" then
+				aa = {}
+				aa.AddReplace("bsMessage", "quickSkip")
+				m.jtr.htmlWidget.PostJSMessage(aa)
+			else if remoteCommand$ = "ADD" then
+				aa = {}
+				aa.AddReplace("bsMessage", "instantReplay")
+				m.jtr.htmlWidget.PostJSMessage(aa)
 			endif
 		endif
 
