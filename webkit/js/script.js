@@ -304,7 +304,6 @@ $(document).ready(function () {
             }
         } else if (e.which === 72) { //'h'
             switchToPage("homePage");
-            $("#videoZone").remove();
         } else if (e.which === 32) { //' '
             if (!$("#progressBar").length) {
                 var percentComplete = 25;
