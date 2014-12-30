@@ -275,7 +275,8 @@ $(document).ready(function () {
                 if (msg.data[name] == "showMenu") {
                     console.log("selectHomePage");
                     selectHomePage();
-                    $("#footerArea").css("display", "block");
+                    $("#footerArea").removeAttr("style");
+//                    $("#footerArea").css("display", "block");
                 }
                 else if (msg.data[name] == "togglePlayIcon") {
                     togglePlayIcon();
