@@ -177,8 +177,10 @@ Function STShowingVideoEventHandler(event As Object, stateData As Object) As Obj
 
 			' TODO - undisplay overlay graphics
 
-			' TODO - send message to js
-			' m.stateMachine.jtr.LaunchWebkit()
+			' send message to js to display the menu
+			aa = {}
+			aa.AddReplace("bsMessage", "showMenu")
+			m.stateMachine.htmlWidget.PostJSMessage(aa)
 			
 			stateData.nextState = m.stateMachine.stShowingUI
 			return "TRANSITION"            
