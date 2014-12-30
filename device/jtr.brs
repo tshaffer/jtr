@@ -4,7 +4,7 @@ Library "server.brs"
 Library "hsm.brs"
 Library "eventHandler.brs"
 Library "recordingEngine.brs"
-Library "playbackEngine.brs"
+Library "displayEngine.brs"
 
 Sub Main()
 
@@ -26,7 +26,7 @@ Sub RunJtr()
 
 	JTR.eventHandler = newEventHandler(JTR)
 	JTR.recordingEngine = newRecordingEngine(JTR)
-	JTR.playbackEngine = newPlaybackEngine(JTR)
+	JTR.displayEngine = newDisplayEngine(JTR)
 
 	JTR.InitializeServer()
 	JTR.OpenDatabase()
@@ -43,10 +43,10 @@ Sub RunJtr()
 '	JTR.irReceiver.SetPort(msgPort)
 
 	JTR.recordingEngine.Initialize()
-	JTR.playbackEngine.Initialize()
+	JTR.displayEngine.Initialize()
 
 	JTR.eventHandler.AddHSM(JTR.recordingEngine)
-	JTR.eventHandler.AddHSM(JTR.playbackEngine)
+	JTR.eventHandler.AddHSM(JTR.displayEngine)
 
 	JTR.eventHandler.EventLoop()
 

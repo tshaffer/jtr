@@ -1,48 +1,48 @@
-Function newPlaybackEngine(jtr As Object) As Object
+Function newDisplayEngine(jtr As Object) As Object
 
-    PlaybackEngine = newHSM()
-    PlaybackEngine.InitialPseudostateHandler = InitializePlaybackEngine
+    DisplayEngine = newHSM()
+    DisplayEngine.InitialPseudostateHandler = InitializeDisplayEngine
 
-	PlaybackEngine.jtr = jtr
-	PlaybackEngine.msgPort = jtr.msgPort
+	DisplayEngine.jtr = jtr
+	DisplayEngine.msgPort = jtr.msgPort
 
-	PlaybackEngine.LaunchVideo					= LaunchVideo
-	PlaybackEngine.PauseVideo					= PauseVideo
-	PlaybackEngine.ResumeVideo					= ResumeVideo
-	PlaybackEngine.QuickSkipVideo				= QuickSkipVideo
-	PlaybackEngine.InstantReplayVideo			= InstantReplayVideo
-	PlaybackEngine.FastForwardVideo				= FastForwardVideo
-	PlaybackEngine.RewindVideo					= RewindVideo
-	PlaybackEngine.Jump							= Jump
-	PlaybackEngine.SeekToCurrentVideoPosition	= SeekToCurrentVideoPosition
+	DisplayEngine.LaunchVideo					= LaunchVideo
+	DisplayEngine.PauseVideo					= PauseVideo
+	DisplayEngine.ResumeVideo					= ResumeVideo
+	DisplayEngine.QuickSkipVideo				= QuickSkipVideo
+	DisplayEngine.InstantReplayVideo			= InstantReplayVideo
+	DisplayEngine.FastForwardVideo				= FastForwardVideo
+	DisplayEngine.RewindVideo					= RewindVideo
+	DisplayEngine.Jump							= Jump
+	DisplayEngine.SeekToCurrentVideoPosition	= SeekToCurrentVideoPosition
 
-    PlaybackEngine.stTop = PlaybackEngine.newHState(PlaybackEngine, "Top")
-    PlaybackEngine.stTop.HStateEventHandler = STTopEventHandler
+    DisplayEngine.stTop = DisplayEngine.newHState(DisplayEngine, "Top")
+    DisplayEngine.stTop.HStateEventHandler = STTopEventHandler
 
-    PlaybackEngine.stPlaybackController = PlaybackEngine.newHState(PlaybackEngine, "PlaybackController")
-    PlaybackEngine.stPlaybackController.HStateEventHandler = STPlaybackControllerEventHandler
-	PlaybackEngine.stPlaybackController.superState = PlaybackEngine.stTop
+    DisplayEngine.stPlaybackController = DisplayEngine.newHState(DisplayEngine, "PlaybackController")
+    DisplayEngine.stPlaybackController.HStateEventHandler = STPlaybackControllerEventHandler
+	DisplayEngine.stPlaybackController.superState = DisplayEngine.stTop
 
-    PlaybackEngine.stIdle = PlaybackEngine.newHState(PlaybackEngine, "PlaybackIdle")
-    PlaybackEngine.stIdle.HStateEventHandler = STPlaybackIdleEventHandler
-	PlaybackEngine.stIdle.superState = PlaybackEngine.stPlaybackController
+    DisplayEngine.stIdle = DisplayEngine.newHState(DisplayEngine, "PlaybackIdle")
+    DisplayEngine.stIdle.HStateEventHandler = STPlaybackIdleEventHandler
+	DisplayEngine.stIdle.superState = DisplayEngine.stPlaybackController
 
-    PlaybackEngine.stPlaying = PlaybackEngine.newHState(PlaybackEngine, "Playing")
-    PlaybackEngine.stPlaying.HStateEventHandler = STPlayingEventHandler
-	PlaybackEngine.stPlaying.superState = PlaybackEngine.stPlaybackController
+    DisplayEngine.stPlaying = DisplayEngine.newHState(DisplayEngine, "Playing")
+    DisplayEngine.stPlaying.HStateEventHandler = STPlayingEventHandler
+	DisplayEngine.stPlaying.superState = DisplayEngine.stPlaybackController
 
-    PlaybackEngine.stPaused = PlaybackEngine.newHState(PlaybackEngine, "Paused")
-    PlaybackEngine.stPaused.HStateEventHandler = STPausedEventHandler
-	PlaybackEngine.stPaused.superState = PlaybackEngine.stPlaybackController
+    DisplayEngine.stPaused = DisplayEngine.newHState(DisplayEngine, "Paused")
+    DisplayEngine.stPaused.HStateEventHandler = STPausedEventHandler
+	DisplayEngine.stPaused.superState = DisplayEngine.stPlaybackController
 
-	PlaybackEngine.topState = PlaybackEngine.stTop
+	DisplayEngine.topState = DisplayEngine.stTop
 
-	return PlaybackEngine
+	return DisplayEngine
 
 End Function
 
 
-Function InitializePlaybackEngine() As Object
+Function InitializeDisplayEngine() As Object
 
 	m.videoPlayer = CreateObject("roVideoPlayer")
 	m.videoPlayer.SetPort(m.msgPort)
@@ -279,7 +279,7 @@ Function STPausedEventHandler(event As Object, stateData As Object) As Object
 End Function
 
 
-Function STPlaybackEngineFillInNameEventHandler(event As Object, stateData As Object) As Object
+Function STDisplayEngineFillInNameEventHandler(event As Object, stateData As Object) As Object
 
     stateData.nextState = invalid
     
