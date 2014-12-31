@@ -1,6 +1,6 @@
 var currentActiveElementId = "#homePage";
-//var baseURL = "http://192.168.2.11:8080/";
-var baseURL = "http://10.1.0.134:8080/";
+var baseURL = "http://192.168.2.11:8080/";
+//var baseURL = "http://10.1.0.134:8080/";
 var bsMessage;
 var converter;  //xml to JSON singleton object
 
@@ -238,6 +238,7 @@ function getShowDescription (showId) {
 function eraseUI() {
     $(currentActiveElementId).css("display", "none");
     $("#footerArea").css("display", "none");
+//    $("#footerArea").removeAttr("style");
 }
 
 
@@ -276,7 +277,10 @@ $(document).ready(function () {
                     console.log("selectHomePage");
                     selectHomePage();
                     $("#footerArea").removeAttr("style");
-//                    $("#footerArea").css("display", "block");
+                    // $("#footerArea").css("display", "block");
+                }
+                else if (msg.data[name] == "exitUI") {
+                    eraseUI();
                 }
                 else if (msg.data[name] == "togglePlayIcon") {
                     togglePlayIcon();
