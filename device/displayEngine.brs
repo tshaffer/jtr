@@ -124,15 +124,6 @@ Function STShowingUIEventHandler(event As Object, stateData As Object) As Object
 			stateData.nextState = m.stateMachine.stPaused
 			return "TRANSITION"            
 
-		else if remoteCommand$ = "EAST" then
-
-			' send TAB to js 
-			aa = {}
-			aa.AddReplace("bsMessage", "tab")
-			m.stateMachine.htmlWidget.PostJSMessage(aa)
-			
-			return "HANDLED"            
-
 		else
 
 			' TODO - send all other keys to js (MENU might fall into this category)
