@@ -256,6 +256,12 @@ function switchToPage(newPage) {
 	}
 }
 
+function simulateTab() {
+    console.log("simulateTab");
+    //    jQuery.event.trigger({ type: 'keypress', which: 9 });
+    var character = "T";
+    jQuery.event.trigger({ type: 'keypress', which: character.charCodeAt(0) });
+}
 
 //keyboard event listener
 $(document).ready(function () {
@@ -281,6 +287,9 @@ $(document).ready(function () {
                 }
                 else if (msg.data[name] == "exitUI") {
                     eraseUI();
+                }
+                else if (msg.data[name] == "tab") {
+                    simulateTab();
                 }
                 else if (msg.data[name] == "togglePlayIcon") {
                     togglePlayIcon();
