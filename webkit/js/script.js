@@ -1,6 +1,6 @@
 var currentActiveElementId = "#homePage";
-var baseURL = "http://192.168.2.11:8080/";
-//var baseURL = "http://10.1.0.134:8080/";
+//var baseURL = "http://192.168.2.11:8080/";
+var baseURL = "http://10.1.0.134:8080/";
 var bsMessage;
 var converter;  //xml to JSON singleton object
 
@@ -259,8 +259,27 @@ function switchToPage(newPage) {
 function simulateTab() {
     console.log("simulateTab");
     //    jQuery.event.trigger({ type: 'keypress', which: 9 });
-    var character = "T";
-    jQuery.event.trigger({ type: 'keypress', which: character.charCodeAt(0) });
+//    var character = "T";
+//    jQuery.event.trigger({ type: 'keypress', which: character.charCodeAt(0) });
+//    Podium.keydown(65);
+
+    var keyboardEvent = document.createEvent("KeyboardEvent");
+    var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+
+
+    keyboardEvent[initMethod](
+                   "keydown", // event type : keydown, keyup, keypress
+                    true, // bubbles
+                    true, // cancelable
+                    window, // viewArg: should be window
+                    false, // ctrlKeyArg
+                    false, // altKeyArg
+                    false, // shiftKeyArg
+                    false, // metaKeyArg
+                    65, // keyCodeArg : unsigned long the virtual key code, else 0
+                    0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
+    );
+    document.dispatchEvent(keyboardEvent);
 }
 
 //keyboard event listener
@@ -343,4 +362,39 @@ $(document).ready(function () {
         }
 
     });
+
+
+    Podium = {};
+    Podium.keydown = function (k) {
+        var oEvent = document.createEvent('KeyboardEvent');
+
+        // Chromium Hack
+        Object.defineProperty(oEvent, 'keyCode', {
+            get: function () {
+                return this.keyCodeVal;
+            }
+        });
+//        Object.defineProperty(oEvent, 'which', {
+//            get: function () {
+//                return this.keyCodeVal;
+//            }
+//        });
+
+        if (oEvent.initKeyboardEvent) {
+            oEvent.initKeyboardEvent("keydown", true, true, document.defaultView, false, false, false, false, k, k);
+        } else {
+            oEvent.initKeyEvent("keydown", true, true, document.defaultView, false, false, false, false, k, 0);
+        }
+
+        oEvent.keyCodeVal = k;
+
+        if (oEvent.keyCode !== k) {
+            alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
+        }
+
+        document.dispatchEvent(oEvent);
+    }
+
+
+
 });
