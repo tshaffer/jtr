@@ -293,15 +293,15 @@ $(document).ready(function () {
     }
 
     // ir receiver
-    var ir_receiver = new BSIRReceiver();
+//    var ir_receiver = new BSIRReceiver();
+    var ir_receiver = new BSIRReceiver("Iguana", "NEC");
+    console.log("typeof ir_receiver is " + typeof ir_receiver);
 
     ir_receiver.onremotedown = function (e) {
-        switchToPage("manualRecordPage");
         console.log('############ onremotedown: ' + e.irType + " - " + e.code);
     }
 
     ir_receiver.onremoteup = function (e) {
-        switchToPage("recordedShowsPage");
         console.log('############ onremoteup: ' + e.irType + " - " + e.code);
     }
 
