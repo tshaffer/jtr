@@ -24,7 +24,62 @@ function selectChannelGuide() {
 function selectRecordedShows() {
 	switchToPage("recordedShowsPage");
 	getRecordedShows();
-//	$("#recording24").focus();
+
+    // unable to give focus to the first element here - page not rendered?
+}
+
+var recordedPageIds = [];
+
+function navigateRecordedShowsPage(navigationCommand$) {
+
+    console.log("navigateRecordedShowsPage entry");
+
+    var rowIndex = -1;
+    var colIndex = -1;
+
+    var currentElement = document.activeElement;
+    var currentElementId = currentElement.id;
+
+    if (currentElementId == "") {
+        rowIndex = 0;
+        colIndex = 0;
+    }
+    else {
+        currentElementId = "#" + currentElementId;
+        for (i = 0; i < recordedPageIds.length; i++) {
+
+            var recordingId = recordedPageIds[i][0];
+            var deleteId = recordedPageIds[i][1];
+
+            if (recordingId == currentElementId) {
+                rowIndex = i;
+                colIndex = 0;
+                break;
+            }
+            else if (deleteId == currentElementId) {
+                rowIndex = i;
+                colIndex = 1;
+                break;
+            }
+        }
+
+        switch (navigationCommand$) {
+            case "Up":
+                if (rowIndex > 0) rowIndex--;
+                break;
+            case "Down":
+                if (rowIndex < recordedPageIds.length) rowIndex++;
+                break;
+            case "Left":
+                if (colIndex > 0) colIndex--;
+                break;
+            case "Right":
+                if (colIndex < 1) colIndex++;
+                break;
+        }
+    }
+
+    $(recordedPageIds[rowIndex][colIndex]).focus();
 }
 
 function selectToDoList() {
@@ -268,16 +323,23 @@ function getRecordedShows() {
             // is there a reason do this all at the end instead of once for each row?
             $("#recordedShowsTableBody").append(toAppend);
 
+            recordedPageIds.length = 0;
+
             // add button handlers for each recording - note, the handlers need to be added after the html has been added!!
             $.each(recordingIds, function (index, recordingId) {
 
                 // play a recording
-                var btnId = "#recording" + recordingId;
-                $(btnId).click({ recordingId: recordingId }, playSelectedShow);
+                var btnIdRecording = "#recording" + recordingId;
+                $(btnIdRecording).click({ recordingId: recordingId }, playSelectedShow);
 
                 // delete a recording
-                btnId = "#delete" + recordingId;
-                $(btnId).click({ recordingId: recordingId }, deleteSelectedShow);
+                var btnIdDelete = "#delete" + recordingId;
+                $(btnIdDelete).click({ recordingId: recordingId }, deleteSelectedShow);
+
+                var recordedPageRow = [];
+                recordedPageRow.push(btnIdRecording);
+                recordedPageRow.push(btnIdDelete);
+                recordedPageIds.push(recordedPageRow);
             });
         }
     });
@@ -378,10 +440,15 @@ $(document).ready(function () {
                     toggleProgressBar();
                 }
                 else if (command$ == "Up" || command$ == "Down" || command$ == "Left" || command$ == "Right") {
+                    console.log("currentActiveElementId is " + currentActiveElementId);
                     switch (currentActiveElementId) {
                         case "#homePage":
                             console.log("navigation entered while homePage visible");
                             navigateHomePage(command$)
+                            break;
+                        case "#recordedShowsPage":
+                            console.log("navigation entered while recordedShowsPage visible");
+                            navigateRecordedShowsPage(command$)
                             break;
                     }
                 }
@@ -391,16 +458,16 @@ $(document).ready(function () {
 
     // ir receiver
     //    var ir_receiver = new BSIRReceiver();
-    var ir_receiver = new BSIRReceiver("Iguana", "NEC");
-    console.log("typeof ir_receiver is " + typeof ir_receiver);
+    //    var ir_receiver = new BSIRReceiver("Iguana", "NEC");
+    //    console.log("typeof ir_receiver is " + typeof ir_receiver);
 
-    ir_receiver.onremotedown = function (e) {
-        console.log('############ onremotedown: ' + e.irType + " - " + e.code);
-    }
+    //    ir_receiver.onremotedown = function (e) {
+    //        console.log('############ onremotedown: ' + e.irType + " - " + e.code);
+    //    }
 
-    ir_receiver.onremoteup = function (e) {
-        console.log('############ onremoteup: ' + e.irType + " - " + e.code);
-    }
+    //    ir_receiver.onremoteup = function (e) {
+    //        console.log('############ onremoteup: ' + e.irType + " - " + e.code);
+    //    }
 
     $("body").keydown(function (e) {
         console.log(e.which);

@@ -33,6 +33,7 @@ function selectToDoList() {
 function selectSetManualRecord() {
 	switchToPage("manualRecordPage");
 	setDefaultDateTimeFields();
+	$("#manualRecordTitle").focus();
 }
  
 function selectUserSelection() {
@@ -264,7 +265,7 @@ $(document).ready(function(){
 		// 	$("#recordedShows").addClass("btn-primary");
 		// }
 
-        if(e.which === 80) { //'p'
+		if(e.which === 80) { //'p'
             if(!$("#playIcon").length) {
                 var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
                 $("#videoControlRegion").append(toAppend);
