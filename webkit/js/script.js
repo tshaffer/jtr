@@ -24,6 +24,7 @@ function selectChannelGuide() {
 function selectRecordedShows() {
 	switchToPage("recordedShowsPage");
 	getRecordedShows();
+//	$("#recording24").focus();
 }
 
 function selectToDoList() {
@@ -34,6 +35,7 @@ function selectToDoList() {
 function selectSetManualRecord() {
 	switchToPage("manualRecordPage");
 	setDefaultDateTimeFields();
+	$("#manualRecordTitle").focus();
 }
  
 function selectUserSelection() {
@@ -43,6 +45,52 @@ function selectUserSelection() {
 function selectHomePage() {
 	switchToPage("homePage");
 }
+
+var mainMenuIds = [
+    ['channelGuide', 'setManualRecord'],
+    ['recordedShows', 'userSelection'],
+    ['toDoList', 'myPlayVideo']
+];
+
+function navigateHomePage(navigationCommand$) {
+
+    var rowIndex = -1;
+    var colIndex = -1;
+
+    var currentElement = document.activeElement;
+    var currentElementId = currentElement.id;
+
+    for (i = 0; i < mainMenuIds.length; i++) {
+        for (j = 0; j < mainMenuIds[i].length; j++) {
+            if (mainMenuIds[i][j] == currentElementId) {
+                rowIndex = i;
+                colIndex = j;
+                break;
+            }
+            // break again if necessary?
+        }
+    }
+
+    switch (navigationCommand$) {
+        case "Up":
+            if (rowIndex > 0) rowIndex--;
+            break;
+        case "Down":
+            if (rowIndex < mainMenuIds.length) rowIndex++;
+            break;
+        case "Left":
+            if (colIndex > 0) colIndex--;
+            break;
+        case "Right":
+            if (colIndex < mainMenuIds[0].length) colIndex++;
+            break;
+    }
+
+    var newElementId = "#" + mainMenuIds[rowIndex][colIndex];
+    console.log("newElementId is " + newElementId);
+     $(newElementId).focus();
+}
+
 
 function here (argument) {
 	console.log(argument);
@@ -188,10 +236,19 @@ function getRecordedShows() {
             var toAppend = "";
             var recordingIds = [];
 
-            $.each(jtrRecordings, function (index, jtrRecording) {
-                toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true'></span></button></td>" +
+            $("#recordedShowsTableBody").empty();
 
-	            "<td><button type='button' class='btn btn-default' id='delete" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+            var firstLine = true;
+
+            $.each(jtrRecordings, function (index, jtrRecording) {
+                if (firstLine) {
+                    toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true' autofocus></span></button></td>";
+                }
+                else {
+                    toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true'></span></button></td>";
+                }
+
+                toAppend += "<td><button type='button' class='btn btn-default' id='delete" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
                 //                "<td>" + result[i].series + "</td>" +
                 //                "<td>" + result[i].episode + "</td>" +
                 "<td>" + jtrRecording.title + "</td>" +
@@ -204,6 +261,8 @@ function getRecordedShows() {
 	            "<td>" + "" + "</td></tr>";
 
                 recordingIds.push(jtrRecording.recordingId);
+
+                firstLine = false;
             });
 
             // is there a reason do this all at the end instead of once for each row?
@@ -302,27 +361,36 @@ $(document).ready(function () {
             console.log('### ' + name + ': ' + msg.data[name]);
 
             if (name == "bsMessage") {
-                if (msg.data[name] == "showMenu") {
+                var command$ = msg.data[name];
+                if (command$ == "showMenu") {
                     console.log("selectHomePage");
                     selectHomePage();
                     $("#footerArea").removeAttr("style");
                     // $("#footerArea").css("display", "block");
                 }
-                else if (msg.data[name] == "exitUI") {
+                else if (command$ == "exitUI") {
                     eraseUI();
                 }
-                else if (msg.data[name] == "togglePlayIcon") {
+                else if (command$ == "togglePlayIcon") {
                     togglePlayIcon();
                 }
-                else if (msg.data[name] == "toggleProgressBar") {
+                else if (command$ == "toggleProgressBar") {
                     toggleProgressBar();
+                }
+                else if (command$ == "Up" || command$ == "Down" || command$ == "Left" || command$ == "Right") {
+                    switch (currentActiveElementId) {
+                        case "#homePage":
+                            console.log("navigation entered while homePage visible");
+                            navigateHomePage(command$)
+                            break;
+                    }
                 }
             }
         }
     }
 
     // ir receiver
-//    var ir_receiver = new BSIRReceiver();
+    //    var ir_receiver = new BSIRReceiver();
     var ir_receiver = new BSIRReceiver("Iguana", "NEC");
     console.log("typeof ir_receiver is " + typeof ir_receiver);
 
