@@ -27,8 +27,6 @@ function selectChannelGuide() {
 function selectRecordedShows() {
 	switchToPage("recordedShowsPage");
 	getRecordedShows();
-
-    // unable to give focus to the first element here - page not rendered?
 }
 
 function navigateRecordedShowsPage(navigationCommand$) {
@@ -373,6 +371,8 @@ function getRecordedShows() {
                 recordedPageRow.push(btnIdDelete);
                 recordedPageIds.push(recordedPageRow);
             });
+
+            $(recordedPageIds[0][0]).focus();
         }
     });
 }
@@ -461,6 +461,11 @@ $(document).ready(function () {
                     selectHomePage();
                     $("#footerArea").removeAttr("style");
                     // $("#footerArea").css("display", "block");
+
+                    // give focus to first element
+                    var elementId = "#" + mainMenuIds[0][0];
+                    $(elementId).focus();
+
                 }
                 else if (command$ == "exitUI") {
                     eraseUI();
