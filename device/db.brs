@@ -149,7 +149,7 @@ End Function
 
 Sub AddDBRecording(scheduledRecording As Object)
 
-	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, Path) VALUES(?,?,?,?,?);"
+	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, Path, LastViewedPosition) VALUES(?,?,?,?,?);"
 
 	params = CreateObject("roArray", 4, false)
 	params[ 0 ] = scheduledRecording.title$
