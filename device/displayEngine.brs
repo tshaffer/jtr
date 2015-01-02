@@ -280,7 +280,7 @@ Function STPlayingEventHandler(event As Object, stateData As Object) As Object
             
             else if event["EventType"] = "RESUME_PLAYBACK" then
 
-				' Replay Guide On PC - Play show selected while show was playing
+				' Replay Guide from browser on PC - Play show selected while show was playing
 
 				' pause video
 				m.stateMachine.PauseVideo()

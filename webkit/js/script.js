@@ -1,7 +1,10 @@
 var currentActiveElementId = "#homePage";
 var baseURL = "http://192.168.2.11:8080/";
 //var baseURL = "http://10.1.0.134:8080/";
+
 var bsMessage;
+var recordedPageIds = [];
+
 var converter;  //xml to JSON singleton object
 
 function XML2JSON(xml) {
@@ -28,8 +31,6 @@ function selectRecordedShows() {
     // unable to give focus to the first element here - page not rendered?
 }
 
-var recordedPageIds = [];
-
 function navigateRecordedShowsPage(navigationCommand$) {
 
     console.log("navigateRecordedShowsPage entry");
@@ -40,7 +41,7 @@ function navigateRecordedShowsPage(navigationCommand$) {
     var currentElement = document.activeElement;
     var currentElementId = currentElement.id;
 
-    if (currentElementId == "") {
+    if (currentElementId == "" || currentElementId == "recordedShows") {
         rowIndex = 0;
         colIndex = 0;
     }
@@ -126,23 +127,28 @@ function navigateHomePage(navigationCommand$) {
         }
     }
 
-    switch (navigationCommand$) {
-        case "Up":
-            if (rowIndex > 0) rowIndex--;
-            break;
-        case "Down":
-            if (rowIndex < mainMenuIds.length) rowIndex++;
-            break;
-        case "Left":
-            if (colIndex > 0) colIndex--;
-            break;
-        case "Right":
-            if (colIndex < mainMenuIds[0].length) colIndex++;
-            break;
+    if (rowIndex >= 0 && colIndex >= 0) {
+        switch (navigationCommand$) {
+            case "Up":
+                if (rowIndex > 0) rowIndex--;
+                break;
+            case "Down":
+                if (rowIndex < mainMenuIds.length) rowIndex++;
+                break;
+            case "Left":
+                if (colIndex > 0) colIndex--;
+                break;
+            case "Right":
+                if (colIndex < mainMenuIds[0].length) colIndex++;
+                break;
+        }
+    }
+    else {
+        rowIndex = 0;
+        colIndex = 0;
     }
 
     var newElementId = "#" + mainMenuIds[rowIndex][colIndex];
-    console.log("newElementId is " + newElementId);
      $(newElementId).focus();
 }
 
@@ -232,9 +238,30 @@ function createManualRecording() {
 }
 
 
+function executeRecordedShowAction(actionButtonId) {
+    if (actionButtonId.lastIndexOf("recording") === 0) {
+        console.log("selected recording");
+        var recordingId = actionButtonId.substring("recording".length);
+        executePlaySelectedShow(recordingId);
+    }
+    else if (actionButtonId.lastIndexOf("delete") === 0) {
+        console.log("selected delete");
+        var recordingId = actionButtonId.substring("delete".length);
+        executeDeleteSelectedShow(recordingId);
+    }
+    else {
+        console.log("executeRecordedShowAction - no matching action found for " + actionButtonId);
+    }
+}
+
 function playSelectedShow(event) {
     var recordingId = event.data.recordingId;
-    console.log("playSelectedShow " + recordingId);
+    executePlaySelectedShow(recordingId);
+}
+
+function executePlaySelectedShow(recordingId)
+{
+    console.log("executePlaySelectedShow " + recordingId);
 
     var aUrl = baseURL + "recording";
 
@@ -257,7 +284,12 @@ function playSelectedShow(event) {
 
 function deleteSelectedShow(event) {
     var recordingId = event.data.recordingId;
-    console.log("deleteSelectedShow " + recordingId);
+    executeDeleteSelectedShow(recordingId);
+}
+
+function executeDeleteSelectedShow(recordingId)
+{
+    console.log("executeDeleteSelectedShow " + recordingId);
 
     var aUrl = baseURL + "deleteRecording";
 
@@ -449,6 +481,40 @@ $(document).ready(function () {
                         case "#recordedShowsPage":
                             console.log("navigation entered while recordedShowsPage visible");
                             navigateRecordedShowsPage(command$)
+                            break;
+                    }
+                }
+                else if (command$ = "Enter") {
+                    switch (currentActiveElementId) {
+                        case "#homePage":
+                            var currentElement = document.activeElement;
+                            var currentElementId = currentElement.id;
+                            console.log("active home page item is " + currentElementId);
+                            switch (currentElementId) {
+                                case "channelGuide":
+                                    selectChannelGuide();
+                                    break;
+                                case "setManualRecord":
+                                    selectSetManualRecord();
+                                    break;
+                                case "recordedShows":
+                                    selectRecordedShows();
+                                    break;
+                                case "userSelection":
+                                    selectUserSelection();
+                                    break;
+                                case "toDoList":
+                                    selectToDoList();
+                                    break;
+                                case "myPlayVideo":
+                                    break;
+                            }
+                            break;
+                        case "#recordedShowsPage":
+                            var currentElement = document.activeElement;
+                            var currentElementId = currentElement.id;
+                            console.log("active recorded shows page item is " + currentElementId);
+                            executeRecordedShowAction(currentElementId);
                             break;
                     }
                 }
