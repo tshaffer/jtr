@@ -151,7 +151,7 @@ Sub AddDBRecording(scheduledRecording As Object)
 
 	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, Path, LastViewedPosition) VALUES(?,?,?,?,?);"
 
-	params = CreateObject("roArray", 4, false)
+	params = CreateObject("roArray", 5, false)
 	params[ 0 ] = scheduledRecording.title$
 	params[ 1 ] = scheduledRecording.dateTime.GetString()
 	params[ 2 ] = scheduledRecording.duration%
