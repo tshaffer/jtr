@@ -170,16 +170,17 @@ function togglePlayIcon() {
 function toggleProgressBar() {
     if (!$("#progressBar").length) {
         var percentComplete = 50;
-        var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
-        toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
+        var toAppend = '<div id="progressBar" class="meter"><span id="progressBarSpan" class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
         toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
 
         for (i = 1; i < 8; i++) {
             var theId = "progressBarTick" + i.toString()
             toAppend += '<div id=' + theId + ' class="meterTick"><p></p></div>';
         }
+
+        toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
         toAppend += '<div id="progressBarTickCurrent" class="meterCurrentPositionTick"><p></p></div>';
-        
+
         $("#videoControlRegion").append(toAppend);
 
         // TODO - should retrieve these attributes dynamically
@@ -190,6 +191,9 @@ function toggleProgressBar() {
             console.log("tickOffset=" + tickOffset.toString());
             $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
         }
+
+        $("#progressBarSpan").width("75%");
+
     } else {
         $("#progressBar").remove();
     }
@@ -507,7 +511,7 @@ $(document).ready(function () {
                             break;
                     }
                 }
-                else if (command$ = "Enter") {
+                else if (command$ == "Enter") {
                     switch (currentActiveElementId) {
                         case "#homePage":
                             var currentElement = document.activeElement;
@@ -541,6 +545,48 @@ $(document).ready(function () {
                             break;
                     }
                 }
+                else if (command$ == "UpdateProgressBar") {
+
+                    if ($("#progressBar").length) {
+
+                        console.log("progressBar visible");
+
+                        // currentOffset in seconds
+                        var currentOffset = msg.data["currentOffset"];
+                        console.log('### currentOffset : ' + currentOffset);
+
+                        // duration in seconds
+                        var recordingDuration = msg.data["recordingDuration"];
+                        console.log('### recordingDuration : ' + recordingDuration);
+
+                        // update progress bar if it's visible
+                        var percentComplete = (currentOffset / recordingDuration * 100).toString() + "%";
+                        console.log("percentComplete = " + percentComplete);
+
+                        $("#progressBarSpan").width(percentComplete);
+
+                        // update progress bar position
+                        // offset is wrong - need to consider where progress bar offset and width
+                        $("#progressBarElapsedTime").css({ left: percentComplete.toString() + '%' });
+
+                        // update progress bar position tick
+//                        percentComplete = ((currentOffset / recordingDuration * 100) + 2).toString() + "%";
+                        $("#progressBarTickCurrent").css({ left: percentComplete.toString() + '%' });
+
+                        // calculate current offset in hh:mm
+                        var hourOffset = Math.floor(Number(currentOffset) / 3600).toString();
+                        hourOffset = twoDigitFormat(hourOffset);
+                        console.log("hourOffset = " + hourOffset);
+
+                        var minuteOffset = Math.floor((Number(currentOffset) / 60) % 60).toString();
+                        minuteOffset = twoDigitFormat(minuteOffset);
+                        console.log("minuteOffset = " + minuteOffset);
+
+                        $("#progressBarElapsedTime").html("<p>" + hourOffset + ":" + minuteOffset + "</p>");
+                    }
+
+                    return;
+                }
             }
         }
     }
@@ -566,25 +612,25 @@ $(document).ready(function () {
         // 	$("#recordedShows").addClass("btn-primary");
         // }
 
-//        if (e.which === 80) { //'p'
-//            if (!$("#playIcon").length) {
-//                var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
-//                $("#videoControlRegion").append(toAppend);
-//            } else {
-//                $("#playIcon").remove();
-//            }
-//        } else if (e.which === 72) { //'h'
-//            switchToPage("homePage");
-//        } else if (e.which === 32) { //' '
-//            if (!$("#progressBar").length) {
-//                var percentComplete = 25;
-//                var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
-//                $("#videoControlRegion").append(toAppend);
-//            } else {
-//                $("#progressBar").remove();
-//            }
+        //        if (e.which === 80) { //'p'
+        //            if (!$("#playIcon").length) {
+        //                var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
+        //                $("#videoControlRegion").append(toAppend);
+        //            } else {
+        //                $("#playIcon").remove();
+        //            }
+        //        } else if (e.which === 72) { //'h'
+        //            switchToPage("homePage");
+        //        } else if (e.which === 32) { //' '
+        //            if (!$("#progressBar").length) {
+        //                var percentComplete = 25;
+        //                var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+        //                $("#videoControlRegion").append(toAppend);
+        //            } else {
+        //                $("#progressBar").remove();
+        //            }
 
-//        }
+        //        }
 
     });
 });

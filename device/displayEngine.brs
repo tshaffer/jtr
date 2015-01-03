@@ -209,6 +209,19 @@ Function STShowingVideoEventHandler(event As Object, stateData As Object) As Obj
 
 			' TODO - send message to UI if progress bar is displayed
 			' TODO - update the database once per minute
+			if type(m.stateMachine.selectedRecording) = "roAssociativeArray" then
+				print  "send message to js to update progress bar"
+				print "offset from beginning of recording = ";m.stateMachine.currentVideoPosition%
+				print "total length of recording = ";(m.stateMachine.selectedRecording.Duration*60)
+
+				' send message to js to update progress bar
+				aa = {}
+				aa.AddReplace("bsMessage", "UpdateProgressBar")
+				aa.AddReplace("currentOffset", stri(m.stateMachine.currentVideoPosition%))
+				aa.AddReplace("recordingDuration", stri(m.stateMachine.selectedRecording.Duration*60))
+				m.stateMachine.htmlWidget.PostJSMessage(aa)
+
+			endif
 
 			return "HANDLED"
 		endif

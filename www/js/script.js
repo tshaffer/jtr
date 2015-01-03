@@ -278,7 +278,7 @@ $(document).ready(function () {
         } else if (e.which === 32) { //' '
             if (!$("#progressBar").length) {
                 var percentComplete = 50;
-                var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+                var toAppend = '<div id="progressBar" class="meter"><span id="progressBarSpan" class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
                 toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
                 toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
 
@@ -300,6 +300,8 @@ $(document).ready(function () {
                 console.log("tickOffset=" + tickOffset.toString());
                 $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
             }
+
+            $("#progressBarSpan").width("75%");
         }
     });
 });
