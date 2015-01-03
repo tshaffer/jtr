@@ -178,10 +178,11 @@ function toggleProgressBar() {
             var theId = "progressBarTick" + i.toString()
             toAppend += '<div id=' + theId + ' class="meterTick"><p></p></div>';
         }
-
         toAppend += '<div id="progressBarTickCurrent" class="meterCurrentPositionTick"><p></p></div>';
+        
         $("#videoControlRegion").append(toAppend);
 
+        // TODO - should retrieve these attributes dynamically
         var leftOffset = 5;
         var rightOffset = 90;
         for (i = 1; i < 8; i++) {

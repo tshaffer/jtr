@@ -286,14 +286,8 @@ $(document).ready(function () {
                     var theId = "progressBarTick" + i.toString()
                     toAppend += '<div id=' + theId + ' class="meterTick"><p></p></div>';
                 }
-
-//                toAppend += '<div id="progressBarTick1" class="meterTick"><p></p></div>';
-//                toAppend += '<div id="progressBarTick2" class="meterTick"><p></p></div>';
-//                toAppend += '<div id="progressBarTick3" class="meterTick"><p></p></div>';
-//                toAppend += '<div id="progressBarTick4" class="meterTick"><p></p></div>';
-//                toAppend += '<div id="progressBarTick5" class="meterTick"><p></p></div>';
-//                toAppend += '<div id="progressBarTick6" class="meterTick"><p></p></div>';
                 toAppend += '<div id="progressBarTickCurrent" class="meterCurrentPositionTick"><p></p></div>';
+
                 $("#videoControlRegion").append(toAppend);
             } else {
                 $("#progressBar").remove();
@@ -306,12 +300,6 @@ $(document).ready(function () {
                 console.log("tickOffset=" + tickOffset.toString());
                 $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
             }
-
-
-
-            //            $("#progressBarTick4").attr("left", "58%");
-//            $("#progressBarTick4").css({ left: '58%', position: 'absolute' });
         }
-
     });
 });

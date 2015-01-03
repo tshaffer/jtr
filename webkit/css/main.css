@@ -81,78 +81,6 @@ body {
 }
 
 
-.meterTick1 
-{
-  height: 10px;
-  position: absolute;
-  z-index: 4;
-  top: 95%;
-  left: 12.5%;
-  width: 0.25%;
-  color: white;
-  background: white;
-}
-
-.meterTick2 
-{
-  height: 10px;
-  position: absolute;
-  z-index: 4;
-  top: 95%;
-  left: 25%;
-  width: 0.25%;
-  color: white;
-  background: white;
-}
-
-.meterTick3 
-{
-  height: 10px;
-  position: absolute;
-  z-index: 4;
-  top: 95%;
-  left: 37.5%;
-  width: 0.25%;
-  color: white;
-  background: white;
-}
-
-.meterTick4 
-{
-  height: 10px;
-  position: absolute;
-  z-index: 4;
-  top: 95%;
-/*  left: 50%; */
-  width: 0.25%;
-  color: white;
-  background: white;
-}
-
-.meterTick5 
-{
-  height: 10px;
-  position: absolute;
-  z-index: 4;
-  top: 95%;
-  left: 62.5%;
-  width: 0.25%;
-  color: white;
-  background: white;
-}
-
-.meterTick6 
-{
-  height: 10px;
-  position: absolute;
-  z-index: 4;
-  top: 95%;
-  left: 75%;
-  width: 0.25%;
-  color: white;
-  background: white;
-}
-
 .meterCurrentPositionTick
 {
   height: 30px;
@@ -174,7 +102,6 @@ body {
   width: 4%;
   font-size: 20px;
   font-weight:bold;
-/*  background: #555; */
   background: #222;
   -webkit-border-radius: 25px;
   padding-top: 1px;
@@ -194,7 +121,6 @@ body {
   width: 4%;
   font-size: 20px;
   font-weight:bold;
-/*  background: #555; */
   background: #222;
   -webkit-border-radius: 25px;
   padding-top: 1px;
