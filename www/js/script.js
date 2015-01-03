@@ -277,8 +277,11 @@ $(document).ready(function(){
             $("#videoZone").remove();
         } else if(e.which === 32) { //' '
             if(!$("#progressBar").length) {
-                var percentComplete = 25;
+                var percentComplete = 50;
                 var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+                toAppend += '<div id="progressBarElapsedTime" class="meterElapsedTime"><p>1:00</p></div>';
+                toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
+                toAppend += '<div id="progressBarTick0" class="meterTick0"><p></p></div>';
                 $("#videoControlRegion").append(toAppend);
             } else {
                 $("#progressBar").remove();

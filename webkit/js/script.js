@@ -1,5 +1,5 @@
 var currentActiveElementId = "#homePage";
-var baseURL = "http://192.168.2.11:8080/";
+var baseURL = "http://192.168.2.12:8080/";
 //var baseURL = "http://10.1.0.134:8080/";
 
 var bsMessage;
@@ -169,8 +169,12 @@ function togglePlayIcon() {
 
 function toggleProgressBar() {
     if (!$("#progressBar").length) {
-        var percentComplete = 25;
+        var percentComplete = 50;
         var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+        toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
+        toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick0"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterCurrentPositionTick"><p></p></div>';
         $("#videoControlRegion").append(toAppend);
     } else {
         $("#progressBar").remove();
@@ -548,25 +552,25 @@ $(document).ready(function () {
         // 	$("#recordedShows").addClass("btn-primary");
         // }
 
-        if (e.which === 80) { //'p'
-            if (!$("#playIcon").length) {
-                var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
-                $("#videoControlRegion").append(toAppend);
-            } else {
-                $("#playIcon").remove();
-            }
-        } else if (e.which === 72) { //'h'
-            switchToPage("homePage");
-        } else if (e.which === 32) { //' '
-            if (!$("#progressBar").length) {
-                var percentComplete = 25;
-                var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
-                $("#videoControlRegion").append(toAppend);
-            } else {
-                $("#progressBar").remove();
-            }
+//        if (e.which === 80) { //'p'
+//            if (!$("#playIcon").length) {
+//                var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
+//                $("#videoControlRegion").append(toAppend);
+//            } else {
+//                $("#playIcon").remove();
+//            }
+//        } else if (e.which === 72) { //'h'
+//            switchToPage("homePage");
+//        } else if (e.which === 32) { //' '
+//            if (!$("#progressBar").length) {
+//                var percentComplete = 25;
+//                var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+//                $("#videoControlRegion").append(toAppend);
+//            } else {
+//                $("#progressBar").remove();
+//            }
 
-        }
+//        }
 
     });
 });
