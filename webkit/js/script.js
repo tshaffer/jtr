@@ -545,45 +545,48 @@ $(document).ready(function () {
                             break;
                     }
                 }
-                else if (command$ == "UpdateProgressBar") {
+                else if (command$ == "UpdateProgressBar" && $("#progressBar").length) {
 
-                    if ($("#progressBar").length) {
+                    // currentOffset in seconds
+                    var currentOffset = msg.data["currentOffset"];
+                    console.log('### currentOffset : ' + currentOffset);
 
-                        console.log("progressBar visible");
+                    // duration in seconds
+                    var recordingDuration = msg.data["recordingDuration"];
+                    console.log('### recordingDuration : ' + recordingDuration);
 
-                        // currentOffset in seconds
-                        var currentOffset = msg.data["currentOffset"];
-                        console.log('### currentOffset : ' + currentOffset);
+                    var percentCompleteVal = (currentOffset / recordingDuration * 100);
+                    var percentComplete = percentCompleteVal.toString() + "%";
+                    console.log("percentComplete = " + percentComplete);
 
-                        // duration in seconds
-                        var recordingDuration = msg.data["recordingDuration"];
-                        console.log('### recordingDuration : ' + recordingDuration);
+                    $("#progressBarSpan").width(percentComplete);
 
-                        // update progress bar if it's visible
-                        var percentComplete = (currentOffset / recordingDuration * 100).toString() + "%";
-                        console.log("percentComplete = " + percentComplete);
+                    // TODO - should retrieve these attributes dynamically
+                    var leftOffset = 5;
+                    var rightOffset = 90;
+                    var offset = leftOffset + (rightOffset - leftOffset) * (currentOffset / recordingDuration);
+                    console.log("offset = " + offset);
 
-                        $("#progressBarSpan").width(percentComplete);
+                    // update progress bar position (width is 4%)
+                    var labelOffset = offset - 4.0 / 2;
+                    $("#progressBarElapsedTime").css({ left: labelOffset.toString() + '%' });
 
-                        // update progress bar position
-                        // offset is wrong - need to consider where progress bar offset and width
-                        $("#progressBarElapsedTime").css({ left: percentComplete.toString() + '%' });
+                    // update progress bar position tick (width is 0.25%)
+                    var tickOffset = offset - 0.25 / 2;
+                    $("#progressBarTickCurrent").css({ left: tickOffset.toString() + '%' });
+                    //                    var eOffset = leftOffset.toString() + "%";
+                    //                    $("#progressBarTickCurrent").css({ left: eOffset });
 
-                        // update progress bar position tick
-//                        percentComplete = ((currentOffset / recordingDuration * 100) + 2).toString() + "%";
-                        $("#progressBarTickCurrent").css({ left: percentComplete.toString() + '%' });
+                    // calculate current offset in hh:mm
+                    var hourOffset = Math.floor(Number(currentOffset) / 3600).toString();
+                    hourOffset = twoDigitFormat(hourOffset);
+                    console.log("hourOffset = " + hourOffset);
 
-                        // calculate current offset in hh:mm
-                        var hourOffset = Math.floor(Number(currentOffset) / 3600).toString();
-                        hourOffset = twoDigitFormat(hourOffset);
-                        console.log("hourOffset = " + hourOffset);
+                    var minuteOffset = Math.floor((Number(currentOffset) / 60) % 60).toString();
+                    minuteOffset = twoDigitFormat(minuteOffset);
+                    console.log("minuteOffset = " + minuteOffset);
 
-                        var minuteOffset = Math.floor((Number(currentOffset) / 60) % 60).toString();
-                        minuteOffset = twoDigitFormat(minuteOffset);
-                        console.log("minuteOffset = " + minuteOffset);
-
-                        $("#progressBarElapsedTime").html("<p>" + hourOffset + ":" + minuteOffset + "</p>");
-                    }
+                    $("#progressBarElapsedTime").html("<p>" + hourOffset + ":" + minuteOffset + "</p>");
 
                     return;
                 }
