@@ -256,38 +256,62 @@ function switchToPage(newPage) {
 
 
 //keyboard event listener
-$(document).ready(function(){
-	$("body").keydown(function(e){
-		console.log(e.which);
-		
-		// if(e.which == 9) {
-		// 	$("#channelGuide").removeClass("btn-primary");
-		// 	$("#recordedShows").addClass("btn-primary");
-		// }
+$(document).ready(function () {
+    $("body").keydown(function (e) {
+        console.log(e.which);
 
-		if(e.which === 80) { //'p'
-            if(!$("#playIcon").length) {
+        // if(e.which == 9) {
+        // 	$("#channelGuide").removeClass("btn-primary");
+        // 	$("#recordedShows").addClass("btn-primary");
+        // }
+
+        if (e.which === 80) { //'p'
+            if (!$("#playIcon").length) {
                 var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
                 $("#videoControlRegion").append(toAppend);
             } else {
                 $("#playIcon").remove();
             }
-        } else if(e.which === 72) { //'h'
+        } else if (e.which === 72) { //'h'
             switchToPage("homePage");
             $("#videoZone").remove();
-        } else if(e.which === 32) { //' '
-            if(!$("#progressBar").length) {
+        } else if (e.which === 32) { //' '
+            if (!$("#progressBar").length) {
                 var percentComplete = 50;
                 var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
-                toAppend += '<div id="progressBarElapsedTime" class="meterElapsedTime"><p>1:00</p></div>';
+                toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
                 toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
-                toAppend += '<div id="progressBarTick0" class="meterTick0"><p></p></div>';
+
+                for (i = 1; i < 8; i++) {
+                    var theId = "progressBarTick" + i.toString()
+                    toAppend += '<div id=' + theId + ' class="meterTick"><p></p></div>';
+                }
+
+//                toAppend += '<div id="progressBarTick1" class="meterTick"><p></p></div>';
+//                toAppend += '<div id="progressBarTick2" class="meterTick"><p></p></div>';
+//                toAppend += '<div id="progressBarTick3" class="meterTick"><p></p></div>';
+//                toAppend += '<div id="progressBarTick4" class="meterTick"><p></p></div>';
+//                toAppend += '<div id="progressBarTick5" class="meterTick"><p></p></div>';
+//                toAppend += '<div id="progressBarTick6" class="meterTick"><p></p></div>';
+                toAppend += '<div id="progressBarTickCurrent" class="meterCurrentPositionTick"><p></p></div>';
                 $("#videoControlRegion").append(toAppend);
             } else {
                 $("#progressBar").remove();
             }
 
+            var leftOffset = 5;
+            var rightOffset = 90;
+            for (i = 1; i < 8; i++) {
+                var tickOffset = leftOffset + (rightOffset - leftOffset) * i / 8.0;
+                console.log("tickOffset=" + tickOffset.toString());
+                $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
+            }
+
+
+
+            //            $("#progressBarTick4").attr("left", "58%");
+//            $("#progressBarTick4").css({ left: '58%', position: 'absolute' });
         }
 
-	});
+    });
 });

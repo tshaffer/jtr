@@ -69,6 +69,18 @@ body {
   z-index: 2;
 }
 
+.meterTick
+{
+  height: 10px;
+  position: absolute;
+  z-index: 4;
+  top: 95%;
+  width: 0.25%;
+  color: white;
+  background: white;
+}
+
+
 .meterTick1 
 {
   height: 10px;
@@ -111,7 +123,7 @@ body {
   position: absolute;
   z-index: 4;
   top: 95%;
-  left: 50%;
+/*  left: 50%; */
   width: 0.25%;
   color: white;
   background: white;
