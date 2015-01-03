@@ -173,7 +173,12 @@ function toggleProgressBar() {
         var toAppend = '<div id="progressBar" class="meter"><span class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
         toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
         toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
-        toAppend += '<div id="progressBarTick0" class="meterTick0"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick1"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick2"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick3"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick4"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick5"><p></p></div>';
+        toAppend += '<div id="progressBarTick0" class="meterTick6"><p></p></div>';
         toAppend += '<div id="progressBarTick0" class="meterCurrentPositionTick"><p></p></div>';
         $("#videoControlRegion").append(toAppend);
     } else {

@@ -69,13 +69,73 @@ body {
   z-index: 2;
 }
 
-.meterTick0 
+.meterTick1 
 {
   height: 10px;
   position: absolute;
   z-index: 4;
   top: 95%;
-  left: 35%;
+  left: 12.5%;
+  width: 0.25%;
+  color: white;
+  background: white;
+}
+
+.meterTick2 
+{
+  height: 10px;
+  position: absolute;
+  z-index: 4;
+  top: 95%;
+  left: 25%;
+  width: 0.25%;
+  color: white;
+  background: white;
+}
+
+.meterTick3 
+{
+  height: 10px;
+  position: absolute;
+  z-index: 4;
+  top: 95%;
+  left: 37.5%;
+  width: 0.25%;
+  color: white;
+  background: white;
+}
+
+.meterTick4 
+{
+  height: 10px;
+  position: absolute;
+  z-index: 4;
+  top: 95%;
+  left: 50%;
+  width: 0.25%;
+  color: white;
+  background: white;
+}
+
+.meterTick5 
+{
+  height: 10px;
+  position: absolute;
+  z-index: 4;
+  top: 95%;
+  left: 62.5%;
+  width: 0.25%;
+  color: white;
+  background: white;
+}
+
+.meterTick6 
+{
+  height: 10px;
+  position: absolute;
+  z-index: 4;
+  top: 95%;
+  left: 75%;
   width: 0.25%;
   color: white;
   background: white;
@@ -102,7 +162,8 @@ body {
   width: 4%;
   font-size: 20px;
   font-weight:bold;
-  background: #555;
+/*  background: #555; */
+  background: #222;
   -webkit-border-radius: 25px;
   padding-top: 1px;
   padding-bottom: 5px;
@@ -121,7 +182,8 @@ body {
   width: 4%;
   font-size: 20px;
   font-weight:bold;
-  background: #555;
+/*  background: #555; */
+  background: #222;
   -webkit-border-radius: 25px;
   padding-top: 1px;
   padding-bottom: 5px;
@@ -143,7 +205,8 @@ body {
 /*  top: 67%;
   left: 2%;
   width: 62%; */
-  background: #555;
+/*  background: #555; */
+  background: #222;
   -webkit-border-radius: 25px;
   padding: 10px;
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
@@ -156,18 +219,24 @@ body {
   -webkit-border-bottom-right-radius: 8px;
   -webkit-border-top-left-radius: 20px;
   -webkit-border-bottom-left-radius: 20px;
-  background-color: rgb(43,194,83);
+ /*  background-color: rgb(43,194,83);*/
+  background-color: rgb(43,214,83);
+  
+/*    color-stop(0, rgb(43,194,83)),*/
+/*    color-stop(1, rgb(84,240,84)) */
   background-image: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(0, rgb(43,194,83)),
-    color-stop(1, rgb(84,240,84))
+    color-stop(0, rgb(43,214,83)),
+    color-stop(1, rgb(84,255,84))
    );
+/*    rgb(43,194,83) 37%,
+    rgb(84,240,84) 69% */
   background-image: -webkit-linear-gradient(
     center bottom,
-    rgb(43,194,83) 37%,
-    rgb(84,240,84) 69%
+    rgb(43,214,83) 37%,
+    rgb(84,255,84) 69%
    );
   -webkit-box-shadow: 
     inset 0 2px 9px  rgba(255,255,255,0.3),
