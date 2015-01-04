@@ -304,6 +304,14 @@ $(document).ready(function () {
                 $("#videoControlRegion").append(toAppend);
             } else {
                 $("#progressBar").remove();
+                $("#progressBarTotalTime").remove();
+                $("#progressBarElapsedTime").remove();
+                $("#progressBarTickCurrent").remove();
+
+                for (i = 1; i < 8; i++) {
+                    var theId = "#progressBarTick" + i.toString()
+                    $(theId).remove();
+                }
             }
 
             var leftOffset = 5;
