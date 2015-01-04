@@ -167,6 +167,20 @@ function togglePlayIcon() {
     }
 }
 
+function SecondsToHourMinuteLabel(numSeconds) {
+
+    // convert seconds to hh:mm
+    var hours = Math.floor(Number(numSeconds) / 3600).toString();
+    hours = twoDigitFormat(hours);
+    console.log("hours = " + hours);
+
+    var minutes = Math.floor((Number(numSeconds) / 60) % 60).toString();
+    minutes = twoDigitFormat(minutes);
+    console.log("minutes = " + minutes);
+
+    return hours + ":" + minutes;
+}
+
 function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
 
     // currentOffset in seconds
@@ -194,26 +208,27 @@ function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
     // update progress bar position tick (width is 0.25%)
     var tickOffset = offset - 0.25 / 2;
     $("#progressBarTickCurrent").css({ left: tickOffset.toString() + '%' });
+    // to show where the tick is when all the way on the left (time=0)
     //                    var eOffset = leftOffset.toString() + "%";
     //                    $("#progressBarTickCurrent").css({ left: eOffset });
 
-    // calculate current offset in hh:mm
-    var hourOffset = Math.floor(Number(currentOffset) / 3600).toString();
-    hourOffset = twoDigitFormat(hourOffset);
-    console.log("hourOffset = " + hourOffset);
 
-    var minuteOffset = Math.floor((Number(currentOffset) / 60) % 60).toString();
-    minuteOffset = twoDigitFormat(minuteOffset);
-    console.log("minuteOffset = " + minuteOffset);
+    var elapsedTimeLabel = SecondsToHourMinuteLabel(currentOffset);
+    $("#progressBarElapsedTime").html("<p>" + elapsedTimeLabel + "</p>");
 
-    $("#progressBarElapsedTime").html("<p>" + hourOffset + ":" + minuteOffset + "</p>");
+    // TODO - should only need to do this when progress bar is first updated with a recording
+    var totalTimeLabel = SecondsToHourMinuteLabel(recordingDuration);
+    $("#progressBarTotalTime").html("<p>" + totalTimeLabel + "</p>");
+
 }
 
 function toggleProgressBar(currentOffset, recordingDuration) {
     if (!$("#progressBar").length) {
         var percentComplete = 50;
         var toAppend = '<div id="progressBar" class="meter"><span id="progressBarSpan" class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
-        toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>2:00</p></div>';
+
+        var timeLabel = SecondsToHourMinuteLabel(recordingDuration)
+        toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>' + timeLabel + '</p></div>';
 
         for (i = 1; i < 8; i++) {
             var theId = "progressBarTick" + i.toString()
