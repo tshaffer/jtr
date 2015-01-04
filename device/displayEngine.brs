@@ -240,10 +240,15 @@ Function STShowingVideoEventHandler(event As Object, stateData As Object) As Obj
 			return "HANDLED"
 
 		else if remoteCommand$ = "VOLDWN" then
-			aa = {}
-			aa.AddReplace("bsMessage", "toggleProgressBar")
-			m.stateMachine.htmlWidget.PostJSMessage(aa)
-					
+
+			if type(m.stateMachine.selectedRecording) = "roAssociativeArray" then
+				aa = {}
+				aa.AddReplace("bsMessage", "toggleProgressBar")
+				aa.AddReplace("currentOffset", stri(m.stateMachine.currentVideoPosition%))
+				aa.AddReplace("recordingDuration", stri(m.stateMachine.selectedRecording.Duration*60))
+				m.stateMachine.htmlWidget.PostJSMessage(aa)
+			endif				
+
 			return "HANDLED"
 
 		endif

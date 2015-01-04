@@ -167,7 +167,49 @@ function togglePlayIcon() {
     }
 }
 
-function toggleProgressBar() {
+function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
+
+    // currentOffset in seconds
+    console.log('### currentOffset : ' + currentOffset);
+
+    // duration in seconds
+    console.log('### recordingDuration : ' + recordingDuration);
+
+    var percentCompleteVal = (currentOffset / recordingDuration * 100);
+    var percentComplete = percentCompleteVal.toString() + "%";
+    console.log("percentComplete = " + percentComplete);
+
+    $("#progressBarSpan").width(percentComplete);
+
+    // TODO - should retrieve these attributes dynamically
+    var leftOffset = 5;
+    var rightOffset = 90;
+    var offset = leftOffset + (rightOffset - leftOffset) * (currentOffset / recordingDuration);
+    console.log("offset = " + offset);
+
+    // update progress bar position (width is 4%)
+    var labelOffset = offset - 4.0 / 2;
+    $("#progressBarElapsedTime").css({ left: labelOffset.toString() + '%' });
+
+    // update progress bar position tick (width is 0.25%)
+    var tickOffset = offset - 0.25 / 2;
+    $("#progressBarTickCurrent").css({ left: tickOffset.toString() + '%' });
+    //                    var eOffset = leftOffset.toString() + "%";
+    //                    $("#progressBarTickCurrent").css({ left: eOffset });
+
+    // calculate current offset in hh:mm
+    var hourOffset = Math.floor(Number(currentOffset) / 3600).toString();
+    hourOffset = twoDigitFormat(hourOffset);
+    console.log("hourOffset = " + hourOffset);
+
+    var minuteOffset = Math.floor((Number(currentOffset) / 60) % 60).toString();
+    minuteOffset = twoDigitFormat(minuteOffset);
+    console.log("minuteOffset = " + minuteOffset);
+
+    $("#progressBarElapsedTime").html("<p>" + hourOffset + ":" + minuteOffset + "</p>");
+}
+
+function toggleProgressBar(currentOffset, recordingDuration) {
     if (!$("#progressBar").length) {
         var percentComplete = 50;
         var toAppend = '<div id="progressBar" class="meter"><span id="progressBarSpan" class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
@@ -192,7 +234,7 @@ function toggleProgressBar() {
             $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
         }
 
-        $("#progressBarSpan").width("75%");
+        UpdateProgressBarGraphics(currentOffset, recordingDuration);
 
     } else {
         $("#progressBar").remove();
@@ -506,9 +548,6 @@ $(document).ready(function () {
                 else if (command$ == "togglePlayIcon") {
                     togglePlayIcon();
                 }
-                else if (command$ == "toggleProgressBar") {
-                    toggleProgressBar();
-                }
                 else if (command$ == "Up" || command$ == "Down" || command$ == "Left" || command$ == "Right") {
                     console.log("currentActiveElementId is " + currentActiveElementId);
                     switch (currentActiveElementId) {
@@ -556,6 +595,18 @@ $(document).ready(function () {
                             break;
                     }
                 }
+                else if (command$ == "toggleProgressBar") {
+
+                    // currentOffset in seconds
+                    var currentOffset = msg.data["currentOffset"];
+                    console.log('### currentOffset : ' + currentOffset);
+
+                    // duration in seconds
+                    var recordingDuration = msg.data["recordingDuration"];
+                    console.log('### recordingDuration : ' + recordingDuration);
+
+                    toggleProgressBar(currentOffset, recordingDuration);
+                }
                 else if (command$ == "UpdateProgressBar" && $("#progressBar").length) {
 
                     // currentOffset in seconds
@@ -566,38 +617,7 @@ $(document).ready(function () {
                     var recordingDuration = msg.data["recordingDuration"];
                     console.log('### recordingDuration : ' + recordingDuration);
 
-                    var percentCompleteVal = (currentOffset / recordingDuration * 100);
-                    var percentComplete = percentCompleteVal.toString() + "%";
-                    console.log("percentComplete = " + percentComplete);
-
-                    $("#progressBarSpan").width(percentComplete);
-
-                    // TODO - should retrieve these attributes dynamically
-                    var leftOffset = 5;
-                    var rightOffset = 90;
-                    var offset = leftOffset + (rightOffset - leftOffset) * (currentOffset / recordingDuration);
-                    console.log("offset = " + offset);
-
-                    // update progress bar position (width is 4%)
-                    var labelOffset = offset - 4.0 / 2;
-                    $("#progressBarElapsedTime").css({ left: labelOffset.toString() + '%' });
-
-                    // update progress bar position tick (width is 0.25%)
-                    var tickOffset = offset - 0.25 / 2;
-                    $("#progressBarTickCurrent").css({ left: tickOffset.toString() + '%' });
-                    //                    var eOffset = leftOffset.toString() + "%";
-                    //                    $("#progressBarTickCurrent").css({ left: eOffset });
-
-                    // calculate current offset in hh:mm
-                    var hourOffset = Math.floor(Number(currentOffset) / 3600).toString();
-                    hourOffset = twoDigitFormat(hourOffset);
-                    console.log("hourOffset = " + hourOffset);
-
-                    var minuteOffset = Math.floor((Number(currentOffset) / 60) % 60).toString();
-                    minuteOffset = twoDigitFormat(minuteOffset);
-                    console.log("minuteOffset = " + minuteOffset);
-
-                    $("#progressBarElapsedTime").html("<p>" + hourOffset + ":" + minuteOffset + "</p>");
+                    UpdateProgressBarGraphics(currentOffset, recordingDuration);
 
                     return;
                 }
