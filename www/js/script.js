@@ -151,6 +151,24 @@ function deleteSelectedShow(event) {
 }
 
 
+function addRecordedShowsLine(jtrRecording) {
+    var toAppend = "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true'></span></button></td>" +
+
+	            "<td><button type='button' class='btn btn-default' id='delete" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+    //                "<td>" + result[i].series + "</td>" +
+    //                "<td>" + result[i].episode + "</td>" +
+                "<td>" + jtrRecording.title + "</td>" +
+                "<td>" + "" + "</td>" +
+                "<td>" + jtrRecording.startDateTime + "</td>" +
+    //                "<td>" + result[i].lastPlayedDate + "</td>" +
+                "<td>" + "" + "</td>" +
+                "<td>" + jtrRecording.duration + "</td>" +
+    //                "<td>" + result[i].channel + "</td></tr>";
+	            "<td>" + "" + "</td></tr>";
+
+    return toAppend;
+}
+
 function getRecordedShows() {
 	var aUrl = baseURL + "recordings";
 
@@ -160,40 +178,50 @@ function getRecordedShows() {
 	    dataType: "xml",
 	    success: function (xml) {
 	        var recordings = XML2JSON(xml);
+
 	        var jtrRecordings = recordings.BrightSignRecordings.BrightSignRecording;
 
 	        var toAppend = "";
 	        var recordingIds = [];
 
-	        $.each(jtrRecordings, function (index, jtrRecording) {
-	            toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true'></span></button></td>" +
+	        if (jtrRecordings.constructor == Array) {
+	            $.each(jtrRecordings, function (index, jtrRecording) {
 
-	            "<td><button type='button' class='btn btn-default' id='delete" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
-	            //                "<td>" + result[i].series + "</td>" +
-	            //                "<td>" + result[i].episode + "</td>" +
-                "<td>" + jtrRecording.title + "</td>" +
-                "<td>" + "" + "</td>" +
-                "<td>" + jtrRecording.startDateTime + "</td>" +
-	            //                "<td>" + result[i].lastPlayedDate + "</td>" +
-                "<td>" + "" + "</td>" +
-                "<td>" + jtrRecording.duration + "</td>" +
-	            //                "<td>" + result[i].channel + "</td></tr>";
-	            "<td>" + "" + "</td></tr>";
+	                toAppend += addRecordedShowsLine(jtrRecording);
+	                //	            toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true'></span></button></td>" +
 
+	                //	            "<td><button type='button' class='btn btn-default' id='delete" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+	                //	            //                "<td>" + result[i].series + "</td>" +
+	                //	            //                "<td>" + result[i].episode + "</td>" +
+	                //                "<td>" + jtrRecording.title + "</td>" +
+	                //                "<td>" + "" + "</td>" +
+	                //                "<td>" + jtrRecording.startDateTime + "</td>" +
+	                //	            //                "<td>" + result[i].lastPlayedDate + "</td>" +
+	                //                "<td>" + "" + "</td>" +
+	                //                "<td>" + jtrRecording.duration + "</td>" +
+	                //	            //                "<td>" + result[i].channel + "</td></tr>";
+	                //	            "<td>" + "" + "</td></tr>";
+
+	                recordingIds.push(jtrRecording.recordingId);
+	            });
+	        }
+	        else {
+	            jtrRecording = jtrRecordings;
+	            toAppend += addRecordedShowsLine(jtrRecording);
 	            recordingIds.push(jtrRecording.recordingId);
-	        });
+	        }
 
 	        // is there a reason do this all at the end instead of once for each row?
 	        $("#recordedShowsTableBody").append(toAppend);
 
-            // add button handlers for each recording - note, the handlers need to be added after the html has been added!!
+	        // add button handlers for each recording - note, the handlers need to be added after the html has been added!!
 	        $.each(recordingIds, function (index, recordingId) {
 
-                // play a recording
+	            // play a recording
 	            var btnId = "#recording" + recordingId;
 	            $(btnId).click({ recordingId: recordingId }, playSelectedShow);
 
-                // delete a recording
+	            // delete a recording
 	            btnId = "#delete" + recordingId;
 	            $(btnId).click({ recordingId: recordingId }, deleteSelectedShow);
 	        });
