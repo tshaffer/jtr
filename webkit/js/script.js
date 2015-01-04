@@ -363,33 +363,6 @@ function getRecordedShows() {
 
             $("#recordedShowsTableBody").empty();
 
-//            var firstLine = true;
-
-//            $.each(jtrRecordings, function (index, jtrRecording) {
-//                if (firstLine) {
-//                    toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true' autofocus></span></button></td>";
-//                }
-//                else {
-//                    toAppend += "<tr><td><button type='button' class='btn btn-default' id='recording" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-play-circle' aria-hidden='true'></span></button></td>";
-//                }
-
-//                toAppend += "<td><button type='button' class='btn btn-default' id='delete" + jtrRecording.recordingId + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
-//                //                "<td>" + result[i].series + "</td>" +
-//                //                "<td>" + result[i].episode + "</td>" +
-//                "<td>" + jtrRecording.title + "</td>" +
-//                "<td>" + "" + "</td>" +
-//                "<td>" + jtrRecording.startDateTime + "</td>" +
-//                //                "<td>" + result[i].lastPlayedDate + "</td>" +
-//                "<td>" + "" + "</td>" +
-//                "<td>" + jtrRecording.duration + "</td>" +
-//                //                "<td>" + result[i].channel + "</td></tr>";
-//	            "<td>" + "" + "</td></tr>";
-
-//                recordingIds.push(jtrRecording.recordingId);
-
-//                firstLine = false;
-//            });
-
             if (jtrRecordings.constructor == Array) {
                 $.each(jtrRecordings, function (index, jtrRecording) {
                     toAppend += addRecordedShowsLine(jtrRecording);
