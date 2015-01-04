@@ -15,6 +15,7 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.RewindVideo					= RewindVideo
 	DisplayEngine.Jump							= Jump
 	DisplayEngine.SeekToCurrentVideoPosition	= SeekToCurrentVideoPosition
+	DisplayEngine.UpdateProgressBar				= UpdateProgressBar
 
 	DisplayEngine.LaunchWebkit					= LaunchWebkit
 
@@ -105,6 +106,7 @@ Function STShowingUIEventHandler(event As Object, stateData As Object) As Object
 				ok = m.stateMachine.videoPlayer.PlayFile(m.stateMachine.selectedRecording.Path)
 				if not ok stop
 		
+				m.stateMachine.UpdateProgressBar()
 				m.stateMachine.SeekToCurrentVideoPosition()
 
 				m.stateMachine.videoProgressTimer = CreateObject("roTimer")
@@ -207,21 +209,9 @@ Function STShowingVideoEventHandler(event As Object, stateData As Object) As Obj
 			print "m.stateMachine.currentVideoPosition%=";m.stateMachine.currentVideoPosition%
 			m.stateMachine.videoProgressTimer.Start()
 
-			' TODO - send message to UI if progress bar is displayed
 			' TODO - update the database once per minute
-			if type(m.stateMachine.selectedRecording) = "roAssociativeArray" then
-				print  "send message to js to update progress bar"
-				print "offset from beginning of recording = ";m.stateMachine.currentVideoPosition%
-				print "total length of recording = ";(m.stateMachine.selectedRecording.Duration*60)
 
-				' send message to js to update progress bar
-				aa = {}
-				aa.AddReplace("bsMessage", "UpdateProgressBar")
-				aa.AddReplace("currentOffset", stri(m.stateMachine.currentVideoPosition%))
-				aa.AddReplace("recordingDuration", stri(m.stateMachine.selectedRecording.Duration*60))
-				m.stateMachine.htmlWidget.PostJSMessage(aa)
-
-			endif
+			m.stateMachine.UpdateProgressBar()
 
 			return "HANDLED"
 		endif
@@ -310,6 +300,7 @@ Function STPlayingEventHandler(event As Object, stateData As Object) As Object
 				m.stateMachine.selectedRecording = recording
 '				m.stateMachine.currentVideoPosition% = 0 - do this when executing 'play from beginning'
 				m.stateMachine.currentVideoPosition% = recording.LastViewedPosition
+				m.stateMachine.UpdateProgressBar()
 				m.stateMachine.LaunchVideo()
 				return "HANDLED"            
 			endif
@@ -498,6 +489,8 @@ Sub QuickSkipVideo()
 
 	m.currentVideoPosition% = m.currentVideoPosition% + 10	' quick skip currently jumps ahead 10 seconds
 
+	m.UpdateProgressBar()
+
 	m.SeekToCurrentVideoPosition()
 
 End Sub
@@ -509,6 +502,8 @@ Sub InstantReplayVideo()
 	if m.currentVideoPosition% < 0 then
 		m.currentVideoPosition% = 0
 	endif
+
+	m.UpdateProgressBar()
 
 	m.SeekToCurrentVideoPosition()
 
@@ -562,6 +557,7 @@ stop ' should be impossible??
 	' seek to last watched position
 	m.currentVideoPosition% = m.selectedRecording.LastViewedPosition
 	print "Jump:: get last viewed position for ";m.selectedRecording.RecordingId;" it is "; m.currentVideoPosition%
+	m.UpdateProgressBar()
 	m.SeekToCurrentVideoPosition()
 
 End Sub
@@ -572,6 +568,24 @@ End Sub
 
 
 Sub RewindVideo()
+End Sub
+
+
+Sub UpdateProgressBar()
+
+	if type(m.selectedRecording) = "roAssociativeArray" then
+		print  "send message to js to update progress bar"
+		print "offset from beginning of recording = ";m.currentVideoPosition%
+		print "total length of recording = ";(m.selectedRecording.Duration*60)
+
+		' send message to js to update progress bar
+		aa = {}
+		aa.AddReplace("bsMessage", "UpdateProgressBar")
+		aa.AddReplace("currentOffset", stri(m.currentVideoPosition%))
+		aa.AddReplace("recordingDuration", stri(m.selectedRecording.Duration*60))
+		m.htmlWidget.PostJSMessage(aa)
+	endif
+
 End Sub
 
 
