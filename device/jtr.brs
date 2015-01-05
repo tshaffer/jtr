@@ -37,7 +37,7 @@ Sub RunJtr()
 
 '	aa = {}
 '	aa.source = "Iguana"
-'	aa.encodings = "NEC"
+'	aa.encodings = ["NEC","RC5"]
 '	JTR.irReceiver = CreateObject("roIRReceiver", aa)
 '	if type(JTR.irReceiver) <> "roIRReceiver" stop
 '	JTR.irReceiver.SetPort(msgPort)
