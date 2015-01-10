@@ -11,6 +11,8 @@ Sub InitializeServer()
 	m.TestRecordAA =					{ HandleEvent: TestRecord, mVar: m }
 	m.RecordAA =						{ HandleEvent: Record, mVar: m }
 
+	m.FilePostedAA =					{ HandleEvent: FilePosted, mVar: m }
+
 	m.localServer.AddGetFromEvent({ url_path: "/manualRecord", user_data: m.manualRecordAA })
 	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.recordingAA })
 	m.localServer.AddGetFromEvent({ url_path: "/deleteRecording", user_data: m.deleteRecordingAA })
@@ -20,6 +22,10 @@ Sub InitializeServer()
 	m.localServer.AddGetFromEvent({ url_path: "/TestRecord", user_data: m.TestRecordAA })
 
 	m.localServer.AddGetFromEvent({ url_path: "/Record", user_data: m.RecordAA })
+
+' test for transcoder
+	m.localServer.AddGetFromFile({ url_path: "/content/20150103T120300.ts", filename: "content/20150103T120300.ts", content_type: "video/mpeg"})
+	m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.FilePostedAA })
 
 '    service = { name: "JTR Web Service", type: "_http._tcp", port: 8080, _functionality: BSP.lwsConfig$, _serialNumber: sysInfo.deviceUniqueID$, _unitName: unitName$, _unitNamingMethod: unitNamingMethod$,  }
 '    JTR.advert = CreateObject("roNetworkAdvertisement", service)
@@ -235,6 +241,23 @@ Sub manualRecord(userData as Object, e as Object)
     e.SendResponse(200)
 
 End Sub
+
+
+Sub FilePosted(userData as Object, e as Object)
+
+stop
+
+    print "respond to FilePosted request"
+
+	destinationFilename = e.GetRequestHeader("Destination-Filename")
+
+	MoveFile(e.GetRequestBodyFile(), destinationFilename)
+
+	e.SetResponseBodyString("RECEIVED")
+    e.SendResponse(200)
+
+End Sub
+
 
 
 Sub TestRecord(userData as Object, e as Object)
