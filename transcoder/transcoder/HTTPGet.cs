@@ -128,10 +128,14 @@ public class HTTPGet
             this.escapedBody = "No Server Response";
             this.responseTime = 0.0;
 
-            // return 401 correctly
+            // return 401, 404 correctly
             if (ex.ToString().IndexOf("401") > 0)
             {
                 this.statusCode = 401;
+            }
+            else if (ex.ToString().IndexOf("404") > 0)
+            {
+                this.statusCode = 404;
             }
         }
     }

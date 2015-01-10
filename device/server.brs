@@ -25,9 +25,8 @@ Sub InitializeServer()
 	m.localServer.AddGetFromEvent({ url_path: "/Record", user_data: m.RecordAA })
 
 ' test for transcoder
-'	m.localServer.AddGetFromFile({ url_path: "/content/20150103T120300.ts", filename: "content/20150103T120300.ts", content_type: "video/mpeg"})
 	m.localServer.AddGetFromEvent({ url_path: "/fileToTranscode", user_data: m.fileToTranscodeAA })
-	m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.FilePostedAA })
+	m.localServer.AddPostToFile({ url_path: "/TranscodedFile", destination_directory: GetDefaultDrive(), user_data: m.FilePostedAA })
 
 '    service = { name: "JTR Web Service", type: "_http._tcp", port: 8080, _functionality: BSP.lwsConfig$, _serialNumber: sysInfo.deviceUniqueID$, _unitName: unitName$, _unitNamingMethod: unitNamingMethod$,  }
 '    JTR.advert = CreateObject("roNetworkAdvertisement", service)
