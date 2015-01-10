@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Specialized;
@@ -11,48 +8,59 @@ namespace transcoder
 {
     class Program
     {
-        private string _tmpFolder = String.Empty;
+        private static string _bsIPAddress = "192.168.2.9:8080";
+        private static string _tmpFolder = String.Empty;
 
         static void Main(string[] args)
         {
-            // perform initialization
-            
-            // while true
+            try
+            {
+                Initialize();
 
-            //      get a file to transcode
+                while (true)
+                {
+                    string fileToTranscodePath = GetFileToTranscode();
 
-            //      if file returned
+                    string transcodedFilePath = TranscodeFile(fileToTranscodePath);
 
-            //          run ffmpeg on it
+                    if (!String.IsNullOrEmpty(transcodedFilePath))
+                    {
+                        bool ok = UploadFileToServer(transcodedFilePath);
 
-            //          invoke transcoded file to push it to device
+                        if (ok)
+                        {
+                            // delete local files (downloaded file and converted file)
+                            File.Delete(fileToTranscodePath);
+                            File.Delete(transcodedFilePath);
+                        }
+                        // delay some amount of time before looking for the next file
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Exception in Main: " + ex.ToString());
+            }
+        }
 
-            //          wait x amount of time
+        private static void Initialize()
+        {
+            _tmpFolder = System.Windows.Forms.Application.LocalUserAppDataPath;
 
-            //      else
-            
-            //          wait y amount of time
+            _tmpFolder = System.IO.Path.Combine(_tmpFolder, "tmp");
+            if (!Directory.Exists(_tmpFolder))
+            {
+                Trace.WriteLine("Create temporary folder : " + _tmpFolder);
+                Directory.CreateDirectory(_tmpFolder);
+            }
+        }
 
-            //      endif
-
-            // end while
-
+        private static string GetFileToTranscode()
+        {
             HTTPGet httpGet = new HTTPGet();
 
-            string tmpFolder = System.Windows.Forms.Application.LocalUserAppDataPath;
-
-            tmpFolder = System.IO.Path.Combine(tmpFolder, "tmp");
-            if (!Directory.Exists(tmpFolder))
-            {
-                Trace.WriteLine("Create temporary folder : " + tmpFolder);
-                Directory.CreateDirectory(tmpFolder);
-            }
-
-            string tsFilePath = System.IO.Path.Combine(tmpFolder, "myFile.ts");
-
-
-            string url = String.Concat("http://", "192.168.2.9", ":8080/fileToTranscode");
-            httpGet.Timeout = 10000;
+            string url = String.Concat("http://", _bsIPAddress, "/fileToTranscode");
+            httpGet.Timeout = 120000;   // 2 minutes - long enough for large files?
 
             httpGet.Request(url);
             if (httpGet.StatusCode == 200)
@@ -65,28 +73,41 @@ namespace transcoder
                 if (nodes.Count > 0)
                 {
                     XmlElement fileToTranscodeElem = (XmlElement)nodes[0];
-                    string path = fileToTranscodeElem.InnerText;
+
+                    // XML contains the path of the file relative to root. Use that as the relative url; then use the last part of the relative Url as the file name
+                    string relativeUrl = fileToTranscodeElem.InnerText;
+                    string tmpPath = System.IO.Path.Combine(_tmpFolder, relativeUrl);
+                    string targetPath = System.IO.Path.Combine(_tmpFolder, System.IO.Path.GetFileName(tmpPath));
 
                     httpGet = new HTTPGet();
-                    httpGet.RequestToFile("http://192.168.2.9:8080/" + path, tsFilePath);
+                    httpGet.RequestToFile("http://" + _bsIPAddress + "/" + relativeUrl, targetPath);
 
+                    if (httpGet.StatusCode == 200)
+                    {
+                        return targetPath;
+                    }
+                    else
+                    {
+                        // TODO - check for errors
+                        return null;
+                    }
                 }
-
+            }
+            else
+            {
+                // no file to transcode or an error
+                // TODO log it.
+                // TODO wait for a while
             }
 
+            return null;
+        }
 
-            tsFilePath = System.IO.Path.Combine(tmpFolder, "myFile.ts");
-            string mp4FilePath = System.IO.Path.Combine(tmpFolder, "myFile.mp4");
+        public static string TranscodeFile(string sourcePath)
+        {
+            string targetPath = System.IO.Path.Combine(_tmpFolder, System.IO.Path.GetFileNameWithoutExtension(sourcePath) + ".mp4");
 
-            //UploadToServer(mp4FilePath);
-
-            return;
-
-            //HTTPGet httpGet = new HTTPGet();
-
-            httpGet.RequestToFile("http://192.168.2.9:8080/content/20150103T120300.ts", tsFilePath);
-
-            string ffmpegArgs = String.Format("-i \"{0}\" -bsf:a aac_adtstoasc -c copy  \"{1}\"", tsFilePath, mp4FilePath);
+            string ffmpegArgs = String.Format("-i \"{0}\" -bsf:a aac_adtstoasc -c copy  \"{1}\"", sourcePath, targetPath);
 
             Process process = new Process();
             try
@@ -102,7 +123,7 @@ namespace transcoder
                 if (!process.Start())
                 {
                     Trace.WriteLine("Error starting");
-                    return;
+                    return null;
                 }
                 StreamReader reader = process.StandardError;
                 string line;
@@ -115,21 +136,20 @@ namespace transcoder
             }
             catch (Exception ex)
             {
-                //Trace.WriteLine("Exception in ffmpeg: source = " + source + ", path = " + path);
-                //Trace.WriteLine("Exception in ffmpeg: AppDomain.CurrentDomain.BaseDirectory = " + AppDomain.CurrentDomain.BaseDirectory);
+                Trace.WriteLine("ffmpeg exception converting " + sourcePath + " to " + targetPath);
                 Trace.WriteLine(ex.ToString());
+
+                targetPath = null;
             }
             finally
             {
                 process.Dispose();
             }
+
+            return targetPath;
         }
 
-        private static void Initialize()
-        {
-        }
-
-        private static void UploadToServer(string filePath)
+        private static bool UploadFileToServer(string filePath)
         {
             string fileName = System.IO.Path.GetFileName(filePath);
 
@@ -138,7 +158,23 @@ namespace transcoder
             nvc.Add("Destination-Filename", String.Concat("content/", fileName));
             nvc.Add("Friendly-Filename", fileName);
 
-            HTTPPost.HttpUploadFile("http://192.168.2.9:8080/UploadFile", filePath, "myFile.mp4", nvc);
+            try
+            {
+                string responseString = HTTPPost.HttpUploadFile("http://" + _bsIPAddress + "/UploadFile", filePath, fileName, nvc);
+                if (responseString != "RECEIVED")
+                {
+                    // TODO - error handling / logging
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO - error handling / logging
+                Trace.WriteLine("Error in HTTPPost: " + ex.ToString());
+                return false;
+            }
+
+            return true;
         }
     }
 }
