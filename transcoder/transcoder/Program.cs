@@ -5,13 +5,40 @@ using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Specialized;
+using System.Xml;
 
 namespace transcoder
 {
     class Program
     {
+        private string _tmpFolder = String.Empty;
+
         static void Main(string[] args)
         {
+            // perform initialization
+            
+            // while true
+
+            //      get a file to transcode
+
+            //      if file returned
+
+            //          run ffmpeg on it
+
+            //          invoke transcoded file to push it to device
+
+            //          wait x amount of time
+
+            //      else
+            
+            //          wait y amount of time
+
+            //      endif
+
+            // end while
+
+            HTTPGet httpGet = new HTTPGet();
+
             string tmpFolder = System.Windows.Forms.Application.LocalUserAppDataPath;
 
             tmpFolder = System.IO.Path.Combine(tmpFolder, "tmp");
@@ -22,13 +49,40 @@ namespace transcoder
             }
 
             string tsFilePath = System.IO.Path.Combine(tmpFolder, "myFile.ts");
+
+
+            string url = String.Concat("http://", "192.168.2.9", ":8080/fileToTranscode");
+            httpGet.Timeout = 10000;
+
+            httpGet.Request(url);
+            if (httpGet.StatusCode == 200)
+            {
+                string xml = httpGet.ResponseBody;
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(xml);
+
+                XmlNodeList nodes = doc.GetElementsByTagName("FileToTranscode");
+                if (nodes.Count > 0)
+                {
+                    XmlElement fileToTranscodeElem = (XmlElement)nodes[0];
+                    string path = fileToTranscodeElem.InnerText;
+
+                    httpGet = new HTTPGet();
+                    httpGet.RequestToFile("http://192.168.2.9:8080/" + path, tsFilePath);
+
+                }
+
+            }
+
+
+            tsFilePath = System.IO.Path.Combine(tmpFolder, "myFile.ts");
             string mp4FilePath = System.IO.Path.Combine(tmpFolder, "myFile.mp4");
 
-            UploadToServer(mp4FilePath);
+            //UploadToServer(mp4FilePath);
 
             return;
 
-            HTTPGet httpGet = new HTTPGet();
+            //HTTPGet httpGet = new HTTPGet();
 
             httpGet.RequestToFile("http://192.168.2.9:8080/content/20150103T120300.ts", tsFilePath);
 
@@ -69,6 +123,10 @@ namespace transcoder
             {
                 process.Dispose();
             }
+        }
+
+        private static void Initialize()
+        {
         }
 
         private static void UploadToServer(string filePath)

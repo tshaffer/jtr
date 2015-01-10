@@ -7,6 +7,7 @@ Sub InitializeServer()
 	m.recordingAA =						{ HandleEvent: getRecording, mVar: m }
 	m.deleteRecordingAA =				{ HandleEvent: deleteRecording, mVar: m }
 	m.recordingsAA =					{ HandleEvent: recordings, mVar: m }
+	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
 
 	m.TestRecordAA =					{ HandleEvent: TestRecord, mVar: m }
 	m.RecordAA =						{ HandleEvent: Record, mVar: m }
@@ -24,7 +25,8 @@ Sub InitializeServer()
 	m.localServer.AddGetFromEvent({ url_path: "/Record", user_data: m.RecordAA })
 
 ' test for transcoder
-	m.localServer.AddGetFromFile({ url_path: "/content/20150103T120300.ts", filename: "content/20150103T120300.ts", content_type: "video/mpeg"})
+'	m.localServer.AddGetFromFile({ url_path: "/content/20150103T120300.ts", filename: "content/20150103T120300.ts", content_type: "video/mpeg"})
+	m.localServer.AddGetFromEvent({ url_path: "/fileToTranscode", user_data: m.fileToTranscodeAA })
 	m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.FilePostedAA })
 
 '    service = { name: "JTR Web Service", type: "_http._tcp", port: 8080, _functionality: BSP.lwsConfig$, _serialNumber: sysInfo.deviceUniqueID$, _unitName: unitName$, _unitNamingMethod: unitNamingMethod$,  }
@@ -120,6 +122,43 @@ Sub deleteRecording(userData as Object, e as Object)
     e.AddResponseHeader("Content-type", "text/plain")
     e.SetResponseBodyString("ok")
     e.SendResponse(200)
+
+End Sub
+
+
+Sub fileToTranscode(userData as Object, e as Object)
+
+	print "fileToTranscode endpoint invoked"
+
+    mVar = userData.mVar
+
+    root = CreateObject("roXMLElement")
+    root.SetName("BrightSignFileToTranscode")
+
+	fileToTranscodeRecord = mVar.GetDBFileToTranscode()
+
+	if type(fileToTranscodeRecord) = "roAssociativeArray" then
+
+		' setup handler so this file can be retrieved
+'		mVar.localServer.AddGetFromFile({ url_path: "/content/20150103T120300.ts", filename: "content/20150103T120300.ts", content_type: "video/mpeg"})
+		mVar.localServer.AddGetFromFile({ url_path: "/" + fileToTranscodeRecord.path, filename: fileToTranscodeRecord.path, content_type: "video/mpeg"})
+print "fileToTranscode: add endpoint " + "/" + fileToTranscodeRecord.path
+
+		' information to return: path
+		fileToTranscodeElem = root.AddElement("FileToTranscode")
+		fileToTranscodeElem.SetBody(fileToTranscodeRecord.path)
+
+	    xml = root.GenXML({ indent: " ", newline: chr(10), header: true })
+
+		e.AddResponseHeader("Content-type", "text/xml")
+		e.SetResponseBodyString(xml)
+		e.SendResponse(200)
+	else
+		e.AddResponseHeader("Content-type", "text/plain; charset=utf-8")
+		e.SetResponseBodyString("No file to transcode.")
+		e.SendResponse(404)
+	endif
+
 
 End Sub
 
@@ -244,8 +283,6 @@ End Sub
 
 
 Sub FilePosted(userData as Object, e as Object)
-
-stop
 
     print "respond to FilePosted request"
 
