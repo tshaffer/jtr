@@ -11,6 +11,8 @@ namespace transcoder
     {
         // constants
         private static string _bsIPAddress = "192.168.2.9:8080";
+        private static StreamWriter _writer = null;
+
         private static int _timeToDelayAfterConversion = 10000;
         private static int _timeBetweenChecks = 5000;
 
@@ -54,19 +56,36 @@ namespace transcoder
             catch (Exception ex)
             {
                 LogMessage(GetTimeStamp() + " : Main: " + ex.ToString());
+                if (_writer != null) _writer.Close();
             }
         }
 
         private static void Initialize()
         {
-            _tmpFolder = System.Windows.Forms.Application.LocalUserAppDataPath;
-
-            _tmpFolder = System.IO.Path.Combine(_tmpFolder, "tmp");
-            if (!Directory.Exists(_tmpFolder))
+            try
             {
-                Trace.WriteLine("Create temporary folder : " + _tmpFolder);
-                Directory.CreateDirectory(_tmpFolder);
+                _tmpFolder = System.Windows.Forms.Application.LocalUserAppDataPath;
+
+                _tmpFolder = System.IO.Path.Combine(_tmpFolder, "tmp");
+                if (!Directory.Exists(_tmpFolder))
+                {
+                    Trace.WriteLine("Create temporary folder : " + _tmpFolder);
+                    Directory.CreateDirectory(_tmpFolder);
+                }
+
+                string logFilePath = System.IO.Path.Combine(System.Windows.Forms.Application.LocalUserAppDataPath, DateTime.Now.ToString("yyyyMMdd-HHmm") + ".txt");
+
+                _writer = new StreamWriter(logFilePath);
+                _writer.AutoFlush = true;
+
+                // Redirect standard output from the console to the output file.
+                Console.SetOut(_writer);
             }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Exception in initialize: " + ex.ToString());
+            }
+
         }
 
         private static string GetTimeStamp()
