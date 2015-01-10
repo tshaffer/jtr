@@ -126,43 +126,6 @@ Sub deleteRecording(userData as Object, e as Object)
 End Sub
 
 
-Sub fileToTranscode(userData as Object, e as Object)
-
-	print "fileToTranscode endpoint invoked"
-
-    mVar = userData.mVar
-
-    root = CreateObject("roXMLElement")
-    root.SetName("BrightSignFileToTranscode")
-
-	fileToTranscodeRecord = mVar.GetDBFileToTranscode()
-
-	if type(fileToTranscodeRecord) = "roAssociativeArray" then
-
-		' setup handler so this file can be retrieved
-'		mVar.localServer.AddGetFromFile({ url_path: "/content/20150103T120300.ts", filename: "content/20150103T120300.ts", content_type: "video/mpeg"})
-		mVar.localServer.AddGetFromFile({ url_path: "/" + fileToTranscodeRecord.path, filename: fileToTranscodeRecord.path, content_type: "video/mpeg"})
-print "fileToTranscode: add endpoint " + "/" + fileToTranscodeRecord.path
-
-		' information to return: path
-		fileToTranscodeElem = root.AddElement("FileToTranscode")
-		fileToTranscodeElem.SetBody(fileToTranscodeRecord.path)
-
-	    xml = root.GenXML({ indent: " ", newline: chr(10), header: true })
-
-		e.AddResponseHeader("Content-type", "text/xml")
-		e.SetResponseBodyString(xml)
-		e.SendResponse(200)
-	else
-		e.AddResponseHeader("Content-type", "text/plain; charset=utf-8")
-		e.SetResponseBodyString("No file to transcode.")
-		e.SendResponse(404)
-	endif
-
-
-End Sub
-
-
 Sub recordings(userData as Object, e as Object)
 
 	print "recordings endpoint invoked"
@@ -282,13 +245,60 @@ Sub manualRecord(userData as Object, e as Object)
 End Sub
 
 
+Sub fileToTranscode(userData as Object, e as Object)
+
+	print "fileToTranscode endpoint invoked"
+
+    mVar = userData.mVar
+
+    root = CreateObject("roXMLElement")
+    root.SetName("BrightSignFileToTranscode")
+
+	fileToTranscodeRecord = mVar.GetDBFileToTranscode()
+
+	if type(fileToTranscodeRecord) = "roAssociativeArray" then
+
+		' setup handler so this file can be retrieved
+		print "fileToTranscode: add endpoint " + "/" + fileToTranscodeRecord.path
+		mVar.localServer.AddGetFromFile({ url_path: "/" + fileToTranscodeRecord.path, filename: fileToTranscodeRecord.path, content_type: "video/mpeg"})
+
+		' information to return: id, path
+		fileToTranscodeElem = root.AddElement("FileToTranscode")
+'		fileToTranscodeElem.SetBody(fileToTranscodeRecord.path)
+
+		idElem = fileToTranscodeElem.AddElement("id")
+		idElem.SetBody(stri(fileToTranscodeRecord.RecordingId))
+
+		pathElem = fileToTranscodeElem.AddElement("path")
+		pathElem.SetBody(fileToTranscodeRecord.path)
+
+	    xml = root.GenXML({ indent: " ", newline: chr(10), header: true })
+
+		e.AddResponseHeader("Content-type", "text/xml")
+		e.SetResponseBodyString(xml)
+		e.SendResponse(200)
+	else
+		e.AddResponseHeader("Content-type", "text/plain; charset=utf-8")
+		e.SetResponseBodyString("No file to transcode.")
+		e.SendResponse(404)
+	endif
+
+
+End Sub
+
+
 Sub FilePosted(userData as Object, e as Object)
+
+    mVar = userData.mVar
 
     print "respond to FilePosted request"
 
 	destinationFilename = e.GetRequestHeader("Destination-Filename")
-
 	MoveFile(e.GetRequestBodyFile(), destinationFilename)
+
+	' update the database to indicate that this file has been transcoded
+	dbId = int(val(e.GetRequestHeader("DB-Id")))
+	mVar.UpdateDBTranscodeComplete(dbId)
 
 	e.SetResponseBodyString("RECEIVED")
     e.SendResponse(200)

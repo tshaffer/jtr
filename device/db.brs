@@ -248,6 +248,15 @@ Function GetDBFileToTranscode() As Object
 End Function
 
 
+Sub UpdateDBTranscodeComplete(recordingId% As Integer)
+
+    params = { ri_param: recordingId% }
+
+    m.db.RunBackground("UPDATE Recordings SET TranscodeComplete=1 WHERE RecordingId=:ri_param;", params)
+
+End Sub
+
+
 Sub UpdateDBLastViewedPosition(recordingId% As Integer, lastViewedPosition% As Integer)
 
     params = { ri_param: recordingId%, lv_param: lastViewedPosition% }
