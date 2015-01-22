@@ -338,6 +338,41 @@ function switchToPage(newPage) {
 }
 
 
+function displayEngine() {
+
+    this.displayEngineHSM = new HSM();
+    this.displayEngineHSM.InitialPseudoStateHandler = InitializeDisplayEngineStateMachine;
+
+    this.displayEngineHSM.stTop = new HState(this.displayEngineHSM, "Top");
+    this.displayEngineHSM.stTop.HStateEventHandler = STTopEventHandler;
+
+    this.displayEngineHSM.stShowingUI = new HState(this.displayEngineHSM, "ShowingUI");
+    this.displayEngineHSM.stShowingUI.HStateEventHandler = STShowingUIEventHandler;
+    this.displayEngineHSM.stShowingUI.superState = this.displayEngineHSM.stTop;
+
+    this.displayEngineHSM.stShowingVideo = new HState(this.displayEngineHSM, "ShowingVideo");
+    this.displayEngineHSM.stShowingVideo.HStateEventHandler = STShowingVideoEventHandler;
+    this.displayEngineHSM.stShowingVideo.superState = this.displayEngineHSM.stTop;
+
+    this.displayEngineHSM.stPlaying = new HState(this.displayEngineHSM, "Playing");
+    this.displayEngineHSM.stPlaying.HStateEventHandler = STPlayingEventHandler;
+    this.displayEngineHSM.stPlaying.superState = this.displayEngineHSM.stShowingVideo;
+
+    this.displayEngineHSM.stPaused = new HState(this.displayEngineHSM, "Paused");
+    this.displayEngineHSM.stPaused.HStateEventHandler = STPausedEventHandler;
+    this.displayEngineHSM.stPaused.superState = this.displayEngineHSM.stShowingVideo;
+
+    this.displayEngineHSM.stFastForwarding = new HState(this.displayEngineHSM, "FastForwarding");
+    this.displayEngineHSM.stFastForwarding.HStateEventHandler = STFastForwardingEventHandler;
+    this.displayEngineHSM.stFastForwarding.superState = this.displayEngineHSM.stShowingVideo;
+
+    this.displayEngineHSM.stRewinding = new HState(this.displayEngineHSM, "Rewinding");
+    this.displayEngineHSM.stRewinding.HStateEventHandler = STRewindingEventHandler;
+    this.displayEngineHSM.stRewinding.superState = this.displayEngineHSM.stShowingVideo;
+
+    this.displayEngineHSM.topState = this.displayEngineHSM.stTop;
+}
+
 function STShowingUIEventHandler() {
 }
 
@@ -356,48 +391,17 @@ function STFastForwardingEventHandler() {
 function STRewindingEventHandler() {
 }
 
-function de_InitializeDisplayEngineStateMachine() {
+function InitializeDisplayEngineStateMachine() {
     console.log("de_InitializeDisplayEngineStateMachine invoked");
-
-    debugger;
-
-    this.stTop = new HState(this, "Top");
-    this.stTop.HStateEventHandler = STTopEventHandler;
-
-    this.stShowingUI = new HState(this, "ShowingUI");
-    this.stShowingUI.HStateEventHandler = STShowingUIEventHandler;
-    this.stShowingUI.superState = this.stTop;
-
-    this.stShowingVideo = new HState(this, "ShowingVideo");
-    this.stShowingVideo.HStateEventHandler = STShowingVideoEventHandler;
-    this.stShowingVideo.superState = this.stTop;
-
-    this.stPlaying = new HState(this, "Playing");
-    this.stPlaying.HStateEventHandler = STPlayingEventHandler;
-    this.stPlaying.superState = this.stShowingVideo;
-
-    this.stPaused = new HState(this, "Paused");
-    this.stPaused.HStateEventHandler = STPausedEventHandler;
-    this.stPaused.superState = this.stShowingVideo;
-
-    this.stFastForwarding = new HState(this, "FastForwarding");
-    this.stFastForwarding.HStateEventHandler = STFastForwardingEventHandler;
-    this.stFastForwarding.superState = this.stShowingVideo;
-
-    this.stRewinding = new HState(this, "Rewinding");
-    this.stRewinding.HStateEventHandler = STRewindingEventHandler;
-    this.stRewinding.superState = this.stShowingVideo;
-
-    this.topState = this.stTop;
-
 }
 
 //keyboard event listener
 $(document).ready(function () {
 
-    var displayEngineHSM = new HSM();
-    displayEngineHSM.InitialPseudoStateHandler = de_InitializeDisplayEngineStateMachine;
-    displayEngineHSM.Initialize();
+    var displayEngineStateMachine = new displayEngine();
+    displayEngineStateMachine.displayEngineHSM.Initialize();
+
+    debugger;
 
     $("body").keydown(function (e) {
         console.log(e.which);
