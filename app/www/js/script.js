@@ -338,8 +338,67 @@ function switchToPage(newPage) {
 }
 
 
+function STShowingUIEventHandler() {
+}
+
+function STShowingVideoEventHandler() {
+}
+
+function STPlayingEventHandler() {
+}
+
+function STPausedEventHandler() {
+}
+
+function STFastForwardingEventHandler() {
+}
+
+function STRewindingEventHandler() {
+}
+
+function de_InitializeDisplayEngineStateMachine() {
+    console.log("de_InitializeDisplayEngineStateMachine invoked");
+
+    debugger;
+
+    this.stTop = new HState(this, "Top");
+    this.stTop.HStateEventHandler = STTopEventHandler;
+
+    this.stShowingUI = new HState(this, "ShowingUI");
+    this.stShowingUI.HStateEventHandler = STShowingUIEventHandler;
+    this.stShowingUI.superState = this.stTop;
+
+    this.stShowingVideo = new HState(this, "ShowingVideo");
+    this.stShowingVideo.HStateEventHandler = STShowingVideoEventHandler;
+    this.stShowingVideo.superState = this.stTop;
+
+    this.stPlaying = new HState(this, "Playing");
+    this.stPlaying.HStateEventHandler = STPlayingEventHandler;
+    this.stPlaying.superState = this.stShowingVideo;
+
+    this.stPaused = new HState(this, "Paused");
+    this.stPaused.HStateEventHandler = STPausedEventHandler;
+    this.stPaused.superState = this.stShowingVideo;
+
+    this.stFastForwarding = new HState(this, "FastForwarding");
+    this.stFastForwarding.HStateEventHandler = STFastForwardingEventHandler;
+    this.stFastForwarding.superState = this.stShowingVideo;
+
+    this.stRewinding = new HState(this, "Rewinding");
+    this.stRewinding.HStateEventHandler = STRewindingEventHandler;
+    this.stRewinding.superState = this.stShowingVideo;
+
+    this.topState = this.stTop;
+
+}
+
 //keyboard event listener
 $(document).ready(function () {
+
+    var displayEngineHSM = new HSM();
+    displayEngineHSM.InitialPseudoStateHandler = de_InitializeDisplayEngineStateMachine;
+    displayEngineHSM.Initialize();
+
     $("body").keydown(function (e) {
         console.log(e.which);
 
