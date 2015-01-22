@@ -339,41 +339,62 @@ function switchToPage(newPage) {
 
 
 function displayEngine() {
+    
+    HSM.call(this); //call super constructor.
 
-    this.displayEngineHSM = new HSM();
-    this.displayEngineHSM.InitialPseudoStateHandler = InitializeDisplayEngineStateMachine;
+    this.InitialPseudoStateHandler = InitializeDisplayEngineStateMachine;
 
-    this.displayEngineHSM.stTop = new HState(this.displayEngineHSM, "Top");
-    this.displayEngineHSM.stTop.HStateEventHandler = STTopEventHandler;
+    this.stTop = new HState(this, "Top");
+    this.stTop.HStateEventHandler = STTopEventHandler;
 
-    this.displayEngineHSM.stShowingUI = new HState(this.displayEngineHSM, "ShowingUI");
-    this.displayEngineHSM.stShowingUI.HStateEventHandler = STShowingUIEventHandler;
-    this.displayEngineHSM.stShowingUI.superState = this.displayEngineHSM.stTop;
+    this.stShowingUI = new HState(this, "ShowingUI");
+    this.stShowingUI.HStateEventHandler = STShowingUIEventHandler;
+    this.stShowingUI.superState = this.stTop;
 
-    this.displayEngineHSM.stShowingVideo = new HState(this.displayEngineHSM, "ShowingVideo");
-    this.displayEngineHSM.stShowingVideo.HStateEventHandler = STShowingVideoEventHandler;
-    this.displayEngineHSM.stShowingVideo.superState = this.displayEngineHSM.stTop;
+    this.stShowingVideo = new HState(this, "ShowingVideo");
+    this.stShowingVideo.HStateEventHandler = STShowingVideoEventHandler;
+    this.stShowingVideo.superState = this.stTop;
 
-    this.displayEngineHSM.stPlaying = new HState(this.displayEngineHSM, "Playing");
-    this.displayEngineHSM.stPlaying.HStateEventHandler = STPlayingEventHandler;
-    this.displayEngineHSM.stPlaying.superState = this.displayEngineHSM.stShowingVideo;
+    this.stPlaying = new HState(this, "Playing");
+    this.stPlaying.HStateEventHandler = STPlayingEventHandler;
+    this.stPlaying.superState = this.stShowingVideo;
 
-    this.displayEngineHSM.stPaused = new HState(this.displayEngineHSM, "Paused");
-    this.displayEngineHSM.stPaused.HStateEventHandler = STPausedEventHandler;
-    this.displayEngineHSM.stPaused.superState = this.displayEngineHSM.stShowingVideo;
+    this.stPaused = new HState(this, "Paused");
+    this.stPaused.HStateEventHandler = STPausedEventHandler;
+    this.stPaused.superState = this.stShowingVideo;
 
-    this.displayEngineHSM.stFastForwarding = new HState(this.displayEngineHSM, "FastForwarding");
-    this.displayEngineHSM.stFastForwarding.HStateEventHandler = STFastForwardingEventHandler;
-    this.displayEngineHSM.stFastForwarding.superState = this.displayEngineHSM.stShowingVideo;
+    this.stFastForwarding = new HState(this, "FastForwarding");
+    this.stFastForwarding.HStateEventHandler = STFastForwardingEventHandler;
+    this.stFastForwarding.superState = this.stShowingVideo;
 
-    this.displayEngineHSM.stRewinding = new HState(this.displayEngineHSM, "Rewinding");
-    this.displayEngineHSM.stRewinding.HStateEventHandler = STRewindingEventHandler;
-    this.displayEngineHSM.stRewinding.superState = this.displayEngineHSM.stShowingVideo;
+    this.stRewinding = new HState(this, "Rewinding");
+    this.stRewinding.HStateEventHandler = STRewindingEventHandler;
+    this.stRewinding.superState = this.stShowingVideo;
 
-    this.displayEngineHSM.topState = this.displayEngineHSM.stTop;
+    this.topState = this.stTop;
 }
 
-function STShowingUIEventHandler() {
+//subclass extends superclass
+displayEngine.prototype = Object.create(HSM.prototype);
+displayEngine.prototype.constructor = displayEngine;
+
+function STShowingUIEventHandler(event, stateData) {
+
+    debugger;
+
+    stateData.nextState = null;
+
+    // TODO how to tell if the event is an internal event (or other type of event)?
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+    }
+
+    stateData.nextState = this.superState
+    return "SUPER"
 }
 
 function STShowingVideoEventHandler() {
@@ -392,16 +413,19 @@ function STRewindingEventHandler() {
 }
 
 function InitializeDisplayEngineStateMachine() {
-    console.log("de_InitializeDisplayEngineStateMachine invoked");
+
+    console.log("InitializeDisplayEngineStateMachine invoked");
+
+    return this.stShowingUI;
 }
 
 //keyboard event listener
 $(document).ready(function () {
 
-    var displayEngineStateMachine = new displayEngine();
-    displayEngineStateMachine.displayEngineHSM.Initialize();
-
     debugger;
+
+    var displayEngineStateMachine = new displayEngine();
+    displayEngineStateMachine.Initialize();
 
     $("body").keydown(function (e) {
         console.log(e.which);
