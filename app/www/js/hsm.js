@@ -271,7 +271,7 @@ function HState(obj, id) {
 
     this.HStateEventHandler = null;                                             // filled in by HState instance
     
-    this.stateMachine = this;
+    this.stateMachine = obj;
     this.obj = obj;
     
     this.superState = null;                                                     // filled in by HState instance

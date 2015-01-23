@@ -4,6 +4,8 @@ var baseURL = "http://192.168.2.9:8080/";
 //var baseURL = "http://10.1.0.134:8080/";
 var converter;  //xml to JSON singleton object
 
+var displayEngineStateMachine;
+
 function XML2JSON(xml) {
     if (!converter) {
         converter = new X2JS();
@@ -70,8 +72,14 @@ function remotePause() {
 
 function remotePlay() {
 
-    console.log("remotePlay");
-    executeRemoteCommand("play");
+    var remoteEvent = {};
+    remoteEvent["EventType"] = "REMOTE";
+    remoteEvent["Data"] = "PLAY";
+
+    displayEngineStateMachine.Dispatch(remoteEvent);
+
+    //console.log("remotePlay");
+    //executeRemoteCommand("play");
 }
 
 function remoteInstantReplay() {
@@ -339,7 +347,7 @@ function switchToPage(newPage) {
 
 
 function displayEngine() {
-    
+
     HSM.call(this); //call super constructor.
 
     this.InitialPseudoStateHandler = InitializeDisplayEngineStateMachine;
@@ -380,8 +388,6 @@ displayEngine.prototype.constructor = displayEngine;
 
 function STShowingUIEventHandler(event, stateData) {
 
-    debugger;
-
     stateData.nextState = null;
 
     // TODO how to tell if the event is an internal event (or other type of event)?
@@ -393,23 +399,39 @@ function STShowingUIEventHandler(event, stateData) {
         console.log(this.id + ": exit signal");
     }
 
+    else if (event["EventType"] == "REMOTE") {
+        debugger;
+        stateData.nextState = this.stateMachine.stPlaying;
+        return "TRANSITION";
+    }
+
     stateData.nextState = this.superState
     return "SUPER"
 }
 
-function STShowingVideoEventHandler() {
+function STShowingVideoEventHandler(event, stateData) {
+    stateData.nextState = this.superState
+    return "SUPER"
 }
 
-function STPlayingEventHandler() {
+function STPlayingEventHandler(event, stateData) {
+    stateData.nextState = this.superState
+    return "SUPER"
 }
 
-function STPausedEventHandler() {
+function STPausedEventHandler(event, stateData) {
+    stateData.nextState = this.superState
+    return "SUPER"
 }
 
-function STFastForwardingEventHandler() {
+function STFastForwardingEventHandler(event, stateData) {
+    stateData.nextState = this.superState
+    return "SUPER"
 }
 
-function STRewindingEventHandler() {
+function STRewindingEventHandler(event, stateData) {
+    stateData.nextState = this.superState
+    return "SUPER"
 }
 
 function InitializeDisplayEngineStateMachine() {
@@ -422,9 +444,7 @@ function InitializeDisplayEngineStateMachine() {
 //keyboard event listener
 $(document).ready(function () {
 
-    debugger;
-
-    var displayEngineStateMachine = new displayEngine();
+    displayEngineStateMachine = new displayEngine();
     displayEngineStateMachine.Initialize();
 
     $("body").keydown(function (e) {
