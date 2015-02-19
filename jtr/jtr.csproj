@@ -69,6 +69,17 @@
     <Content Include="webkit\js\jquery-2.1.1.min.js" />
     <Content Include="webkit\js\script.js" />
     <Content Include="webkit\js\xml2json.js" />
+    <Content Include="webSite\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="webSite\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="webSite\bootstrap\css\bootstrap.css" />
+    <Content Include="webSite\bootstrap\css\bootstrap.min.css" />
+    <Content Include="webSite\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="webSite\bootstrap\js\bootstrap.js" />
+    <Content Include="webSite\bootstrap\js\bootstrap.min.js" />
+    <Content Include="webSite\css\main.css" />
+    <Content Include="webSite\js\jquery-2.1.1.min.js" />
+    <Content Include="webSite\js\script.js" />
+    <Content Include="webSite\js\xml2json.js" />
     <Content Include="www\bootstrap\css\bootstrap-theme.css" />
     <Content Include="www\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="www\bootstrap\css\bootstrap.css" />
@@ -106,6 +117,15 @@
     <Content Include="www\bootstrap\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="www\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="www\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="webSite\bootstrap\css\bootstrap-theme.css.map" />
+    <Content Include="webSite\bootstrap\css\bootstrap.css.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="webSite\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="webSite\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="webSite\bootstrap\fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
