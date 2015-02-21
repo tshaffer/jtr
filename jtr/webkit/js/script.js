@@ -540,8 +540,6 @@ function addRecordedShowsLine(jtrRecording) {
         Position
     */
 
-    // new try for iOS devices
-
     var weekday = new Array(7);
     weekday[0] = "Sun";
     weekday[1] = "Mon";
