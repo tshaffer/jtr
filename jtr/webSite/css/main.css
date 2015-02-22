@@ -21,14 +21,42 @@ th.recorded {
   padding-left: 4px;
 }
 
+/* webKit only */
+.btn-secondary 
+{
+     color: white;
+     background-color: #777;
+     border-color: #555;
+}
+
+/* webKit only */
+.tv-words
+{
+  font-size: 36px;
+}
+
 /* Space out content a bit */
 body {
   padding-top: 20px;
   padding-bottom: 20px;
+  /* webKit only */
+  background-color: rgba(0,0,0,0);
+  /* webKit only */
+  font-size: 36px;
+
 }
+
+/* webkit only */
+.container {
+  background-color: rgba(200,200,200,255);
+  width: 80%;
+}
+
 
 /* Custom page footer */
 .footer {
+  /* webkit only */
+  background-color: rgba(200,200,200,255);
   padding-top: 19px;
   color: #777;
   border-top: 1px solid #e5e5e5;
@@ -37,7 +65,8 @@ body {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    max-width: 730px;
+    /* commented out in webkit */
+    /*max-width: 730px;*/
   }
 }
 .container-narrow > hr {
@@ -62,6 +91,8 @@ body {
   }
 }
 
+/* not in webKit */
+/*
 #videoZone {
   position: absolute;
   top: 0px;
@@ -69,6 +100,7 @@ body {
   height: auto;
   z-index: 1;
 }
+*/
 
 /*span.glyphicon */
 /* possibly use for play, pause icons */
@@ -78,9 +110,15 @@ body {
 }
 
 .controlIcon {
+    /* webkit only */
+  color: white;
   position: fixed;
-  top: 50px;
-  left: 2%;
+  /* webkit values */
+  top: 1000px;
+  left: 50%;
+  /* www values*/
+  /*top: 50px;
+  left: 2%;*/
   z-index: 2;
 }
 
@@ -121,7 +159,9 @@ body {
   padding-top: 1px;
   padding-bottom: 5px;
   padding-right: 5px;
-  padding-left: 10px;
+  /* webkit value */
+  padding-left: 5px;
+  /*padding-left: 10px;*/
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
   color: white;
 }
@@ -132,7 +172,9 @@ body {
   z-index: 3;
   top: 95.0%;
   left: 90%;
-  width: 4%;
+  /* webkit value */
+  width: 4.2%;
+  /*width: 4%;*/
   font-size: 20px;
   font-weight:bold;
   background: #222;
@@ -157,7 +199,9 @@ body {
 /*  top: 67%;
   left: 2%;
   width: 62%; */
-  background: #555;
+  /* webkit value */
+  background: #222;
+  /*background: #555;*/
   -webkit-border-radius: 25px;
   padding: 10px;
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
@@ -170,17 +214,24 @@ body {
   -webkit-border-bottom-right-radius: 8px;
   -webkit-border-top-left-radius: 20px;
   -webkit-border-bottom-left-radius: 20px;
-  background-color: rgb(43,194,83);
+  /* webkit value */
+  background-color: rgb(43,214,83);
+  /*background-color: rgb(43,194,83);*/
   background-image: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(0, rgb(43,194,83)),
-    color-stop(1, rgb(84,240,84))
+    /* webkit values */
+    color-stop(0, rgb(43,214,83)),
+    color-stop(1, rgb(84,255,84))
+    /*color-stop(0, rgb(43,194,83)),
+    color-stop(1, rgb(84,240,84))*/
    );
   background-image: -webkit-linear-gradient(
     center bottom,
-    rgb(43,194,83) 37%,
+    /* webkit value */
+    rgb(43,214,83) 37%,
+    /*rgb(43,194,83) 37%,*/
     rgb(84,240,84) 69%
    );
   -webkit-box-shadow: 

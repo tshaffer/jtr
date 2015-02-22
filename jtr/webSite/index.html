@@ -20,19 +20,19 @@
 
   <body>
   
-    <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal fade" id="deleteShowDlg" tabindex="-1" role="dialog" aria-labelledby="deleteShowDlg" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel">Basic Modal</h4>
+            <h4 class="modal-title" id="deleteShowDlgTitle">Delete show confirmation</h4>
           </div>
           <div class="modal-body">
-            <h3>Modal Body</h3>
+            <h3 id="deleteShowDlgShowTitle"></h3>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" id="deleteShowDlgClose" class="btn btn-default btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="deleteShowDlgDelete" class="btn btn-primary">Delete</button>
           </div>
         </div>
       </div>
@@ -44,20 +44,28 @@
 
     <div id="cont" class="container">
 
+      <!--webKit only-->
+      <div>
+        <p id="ipAddress">ipAddress: 69.69.69.69</p>
+      </div>
+
       <div id="homePage" class="row">
         <div class="col-lg-6">
-          <button id="recordedShows" class="btn btn-primary" onclick="selectRecordedShows()" autofocus>Recorded Shows</button><br><br>
-          <button id="channelGuide" class="btn btn-secondary" onclick="selectChannelGuide()">Channel Guide</button><br><br>
-          <button id="toDoList" class="btn btn-secondary" onclick="selectToDoList()">To Do List</button><br><br>
+           <!--tv-words is webKit only-->
+          <button id="recordedShows" class="btn btn-primary tv-words" onclick="selectRecordedShows()" autofocus>Recorded Shows</button><br><br>
+          <button id="channelGuide" class="btn btn-secondary tv-words" onclick="selectChannelGuide()">Channel Guide</button><br><br>
+          <button id="toDoList" class="btn btn-secondary tv-words" onclick="selectToDoList()">To Do List</button><br><br>
         </div>
 
+           <!--tv-words is webKit only-->
         <div class="col-lg-6">
-          <button id="setManualRecord" class="btn btn-secondary" onclick="selectSetManualRecord()">Set Manual Record</button><br><br>
-          <button id="userSelection" class="btn btn-secondary" onclick="selectUserSelection()">User Selection</button><br><br>
-          <button id="" class="btn btn-secondary" onclick="selectPlayVideo()">Play Video</button><br>
+          <button id="setManualRecord" class="btn btn-secondary tv-words" onclick="selectSetManualRecord()">Set Manual Record</button><br><br>
+          <button id="userSelection" class="btn btn-secondary tv-words" onclick="selectUserSelection()">User Selection</button><br><br>
+          <button id="" class="btn btn-secondary tv-words" onclick="selectPlayVideo()">Play Video</button><br>
         </div>
       </div>
 
+      <!--trick mode keys is www only--> 
       <div id="trickModeKeys">
           <button type='button' class='btn btn-default' onclick="remoteInstantReplay()" aria-label='Left Align'><span class='glyphicon glyphicon-step-backward' aria-hidden='true'></span></button>
           <button type='button' class='btn btn-default' onclick="remotePause()" aria-label='Left Align'><span class='glyphicon glyphicon-pause' aria-hidden='true'></span></button>
@@ -68,6 +76,7 @@
           <button type='button' class='btn btn-default' onclick="remoteQuickSkip()" aria-label='Left Align'><span class='glyphicon glyphicon-step-forward' aria-hidden='true'></span></button>
       </div>
 
+      <!--from www, not webKit-->
       <div id="manualRecordPage" style="display: none;">
         <h3>Create a Manual Recording</h3>
         <form class="navbar-form navbar-left" role="search">
@@ -87,7 +96,9 @@
 
       <div id="recordedShowsPage" class="table-responsive" style="display: none;">
 
-		<p class="alignleft" style="font-size:30px">Recorded Shows</p>
+        <!--from webKit-->
+		<p class="alignleft">Recorded Shows</p>
+		<!--<p class="alignleft" style="font-size:30px">Recorded Shows</p>-->
 		<p id="recordedShowsRemainingSpace" class="alignright">Free space: </p>
 		<div style="clear: both;"></div>
 

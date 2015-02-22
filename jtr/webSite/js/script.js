@@ -848,7 +848,10 @@ function eraseUI() {
 
 
 function switchToPage(newPage) {
-    bsMessage.PostBSMessage({ message: "switch to " + newPage });
+
+    if (clientType == "BrightSign") {
+        bsMessage.PostBSMessage({ message: "switch to " + newPage });
+    }
 
     var newPageId = "#" + newPage;
 	$(currentActiveElementId).css("display" ,"none");
@@ -936,7 +939,7 @@ $(document).ready(function () {
                     else if (command$ == "showrecordedshows") {
                         selectRecordedShows();
                     }
-                    else if (command$ == "exituI") {
+                    else if (command$ == "exitui") {
                         eraseUI();
                     }
                     else if (command$ == "promptdelete") {
