@@ -10,46 +10,39 @@ import UIKit
 
 class RecordedShowViewController: UIViewController {
     var recordedShow : RecordedShow = RecordedShow()
-    
-    @IBOutlet weak var thumbNail: UIImageView!
-    @IBOutlet weak var titleLable: UITextField!
-    @IBOutlet weak var dateRecordedLabel: UITextField!
-    
-//    override init() {
-//        super.init()
-//    }
-//
-//    required init(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
+
+    @IBOutlet weak var titleLabel: UITextField!
+    @IBOutlet weak var dateLabel: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        println("\(recordedShow.title)")
+        titleLabel.text = recordedShow.title
+        dateLabel.text = recordedShow.dateRecorded
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
 
-    /*
+    @IBAction func deleteButtonPress(sender: AnyObject) {
+        println("delete button pressed")
+    }
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-    }
-    */
-    @IBAction func playButton(sender: AnyObject) {
         
-    }
-    
-    @IBAction func deleteButton(sender: AnyObject) {
         
+        if segue.identifier == "videoStreamer" {
+            let videoStreamerVC = segue.destinationViewController as VideoStreamerViewController
+            videoStreamerVC.urlString = "http://192.168.1.24:8080/file:///file_index.m3u8"
+        }
     }
 
 }

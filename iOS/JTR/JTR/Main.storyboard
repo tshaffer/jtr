@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ww1-5w-Bet">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ehf-MF-JyA">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
@@ -29,8 +29,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="402" id="GUX-0A-daX"/>
-                                    <constraint firstAttribute="height" constant="620" id="P3e-h9-WAm"/>
+                                    <constraint firstAttribute="height" constant="582" id="aT1-Vu-gPs"/>
                                 </constraints>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RecordedShowsCell" id="kxh-a8-nkf" customClass="RecordedShowsTableViewCell" customModule="JTR" customModuleProvider="target">
@@ -73,21 +72,18 @@
                                         <connections>
                                             <outlet property="dateLabel" destination="Oop-G1-F1e" id="I1I-ik-2Lu"/>
                                             <outlet property="titleLabel" destination="IoO-1b-F7u" id="7ls-qC-F71"/>
-                                            <segue destination="yut-4q-3U3" kind="show" identifier="toRecordedShow" id="IEH-XR-aLE"/>
+                                            <segue destination="FsV-fF-osJ" kind="show" identifier="toRecordedShow" id="Gay-IO-Jtq"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <variation key="default">
                                     <mask key="constraints">
-                                        <exclude reference="GUX-0A-daX"/>
-                                        <exclude reference="P3e-h9-WAm"/>
+                                        <exclude reference="aT1-Vu-gPs"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="-2" y="131" width="402" height="620"/>
+                                <variation key="heightClass=regular-widthClass=compact">
                                     <mask key="constraints">
-                                        <include reference="GUX-0A-daX"/>
-                                        <include reference="P3e-h9-WAm"/>
+                                        <include reference="aT1-Vu-gPs"/>
                                     </mask>
                                 </variation>
                                 <connections>
@@ -98,11 +94,11 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="KXG-qd-o2m" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" constant="20" id="2bb-Fv-Bnn"/>
-                            <constraint firstAttribute="centerX" secondItem="KXG-qd-o2m" secondAttribute="centerX" constant="-1" id="UVc-Xh-7q9"/>
-                            <constraint firstItem="mOx-5x-jDq" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leadingMargin" constant="-18" id="ajY-6M-r2g"/>
-                            <constraint firstItem="Djb-ko-YwX" firstAttribute="top" secondItem="mOx-5x-jDq" secondAttribute="bottom" id="tSC-rb-E2m"/>
-                            <constraint firstItem="mOx-5x-jDq" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" constant="122" id="zVS-D1-pmN"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="mOx-5x-jDq" secondAttribute="trailing" constant="15" id="0uv-bx-wiV"/>
+                            <constraint firstItem="KXG-qd-o2m" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" constant="20" id="Zc4-1I-iH1"/>
+                            <constraint firstAttribute="centerX" secondItem="mOx-5x-jDq" secondAttribute="centerX" constant="-1.5" id="d81-bL-Omc"/>
+                            <constraint firstAttribute="centerX" secondItem="KXG-qd-o2m" secondAttribute="centerX" constant="-1.5" id="hWU-aO-7n3"/>
+                            <constraint firstItem="mOx-5x-jDq" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" constant="97" id="rtv-fA-a4x"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -110,11 +106,11 @@
                                 <exclude reference="mOx-5x-jDq"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="tSC-rb-E2m"/>
-                                <exclude reference="2bb-Fv-Bnn"/>
-                                <exclude reference="UVc-Xh-7q9"/>
-                                <exclude reference="ajY-6M-r2g"/>
-                                <exclude reference="zVS-D1-pmN"/>
+                                <exclude reference="Zc4-1I-iH1"/>
+                                <exclude reference="hWU-aO-7n3"/>
+                                <exclude reference="0uv-bx-wiV"/>
+                                <exclude reference="d81-bL-Omc"/>
+                                <exclude reference="rtv-fA-a4x"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -123,113 +119,157 @@
                                 <include reference="mOx-5x-jDq"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="tSC-rb-E2m"/>
-                                <include reference="2bb-Fv-Bnn"/>
-                                <include reference="UVc-Xh-7q9"/>
-                                <include reference="ajY-6M-r2g"/>
-                                <include reference="zVS-D1-pmN"/>
+                                <include reference="Zc4-1I-iH1"/>
+                                <include reference="hWU-aO-7n3"/>
+                                <include reference="0uv-bx-wiV"/>
+                                <include reference="d81-bL-Omc"/>
+                                <include reference="rtv-fA-a4x"/>
                             </mask>
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Recorded Shows" id="F6q-Nt-NeG">
                         <barButtonItem key="backBarButtonItem" title="Home" id="U52-aL-4vy"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="recordedShowsTable" destination="mOx-5x-jDq" id="coI-Zf-WFl"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1495.5" y="501"/>
+            <point key="canvasLocation" x="1536" y="561"/>
         </scene>
-        <!--Recorded Show-->
-        <scene sceneID="8sT-cp-aqH">
+        <!--Recorded Show View Controller-->
+        <scene sceneID="60A-Xa-2ep">
             <objects>
-                <viewController id="yut-4q-3U3" customClass="RecordedShowViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="FsV-fF-osJ" customClass="RecordedShowViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="CEC-FJ-vDT"/>
-                        <viewControllerLayoutGuide type="bottom" id="gJc-5z-gBK"/>
+                        <viewControllerLayoutGuide type="top" id="KFb-Ke-EXi"/>
+                        <viewControllerLayoutGuide type="bottom" id="rJ8-d0-iDY"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="2fq-dN-ovb">
+                    <view key="view" contentMode="scaleToFill" id="g7d-Yb-gGB">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="oO5-f0-FaR">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="65" y="107" width="270" height="177"/>
-                                </variation>
-                            </imageView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Title" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="EPt-4d-XpQ">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="title not set" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fjL-Zl-0JN">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="65" y="313" width="97" height="30"/>
+                                    <rect key="frame" x="92" y="315" width="217" height="30"/>
                                 </variation>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Date Recorded" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nDD-Yn-RE5">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="date recorded not set" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9L5-4s-mho">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="65" y="357" width="118" height="30"/>
+                                    <rect key="frame" x="92" y="364" width="217" height="30"/>
                                 </variation>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zlh-Di-gup">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tV9-BZ-mLL">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" image="glyphicons-221-play-button">
+                                <state key="normal" image="glyphicons-164-iphone">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="295" y="313" width="40" height="44"/>
+                                    <rect key="frame" x="178" y="514" width="45" height="46"/>
                                 </variation>
                                 <connections>
-                                    <action selector="playButton:" destination="yut-4q-3U3" eventType="touchUpInside" id="znm-6d-bwg"/>
+                                    <segue destination="ehf-MF-JyA" kind="show" identifier="videoStreamer" id="VXb-cp-ubu"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dXH-fz-o51">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9bi-Vk-CFa">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" image="glyphicons-17-bin">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="288" y="544" width="55" height="55"/>
+                                    <rect key="frame" x="221" y="443" width="33" height="37"/>
                                 </variation>
                                 <connections>
-                                    <action selector="deleteButton:" destination="yut-4q-3U3" eventType="touchUpInside" id="PVC-lH-9wf"/>
+                                    <action selector="deleteButtonPress:" destination="FsV-fF-osJ" eventType="touchUpInside" id="iZr-fQ-PC5"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="default">
                             <mask key="subviews">
-                                <exclude reference="oO5-f0-FaR"/>
-                                <exclude reference="EPt-4d-XpQ"/>
-                                <exclude reference="nDD-Yn-RE5"/>
-                                <exclude reference="zlh-Di-gup"/>
-                                <exclude reference="dXH-fz-o51"/>
+                                <exclude reference="fjL-Zl-0JN"/>
+                                <exclude reference="9L5-4s-mho"/>
+                                <exclude reference="tV9-BZ-mLL"/>
+                                <exclude reference="9bi-Vk-CFa"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
-                                <include reference="oO5-f0-FaR"/>
-                                <include reference="EPt-4d-XpQ"/>
-                                <include reference="nDD-Yn-RE5"/>
-                                <include reference="zlh-Di-gup"/>
-                                <include reference="dXH-fz-o51"/>
+                                <include reference="fjL-Zl-0JN"/>
+                                <include reference="9L5-4s-mho"/>
+                                <include reference="tV9-BZ-mLL"/>
+                                <include reference="9bi-Vk-CFa"/>
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Recorded Show" id="Zeo-dE-myz"/>
                     <connections>
-                        <outlet property="dateRecordedLabel" destination="nDD-Yn-RE5" id="jOM-DM-zmi"/>
-                        <outlet property="dateRecordedLablel" destination="nDD-Yn-RE5" id="Vm3-Ly-7iY"/>
-                        <outlet property="playButton" destination="zlh-Di-gup" id="Kfi-TB-1L4"/>
-                        <outlet property="thumbNail" destination="oO5-f0-FaR" id="ROw-x5-X5d"/>
-                        <outlet property="titleLable" destination="EPt-4d-XpQ" id="aVs-cP-t7E"/>
+                        <outlet property="dateLabel" destination="9L5-4s-mho" id="iA5-M8-vRI"/>
+                        <outlet property="titleLabel" destination="fjL-Zl-0JN" id="ICJ-SS-luU"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="YeF-ex-6oo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uge-yu-m3J" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2352" y="501"/>
+            <point key="canvasLocation" x="2460" y="571.5"/>
+        </scene>
+        <!--Video Streamer View Controller-->
+        <scene sceneID="Udl-bV-t8v">
+            <objects>
+                <viewController id="ehf-MF-JyA" customClass="VideoStreamerViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="TUU-2r-Yrq"/>
+                        <viewControllerLayoutGuide type="bottom" id="5mO-gE-4UK"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1OP-cC-l4E">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nrw-1U-NvU">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="41" y="139" width="319" height="543"/>
+                                </variation>
+                            </webView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mGN-xd-yAP">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="50" y="81" width="46" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="button:" destination="ehf-MF-JyA" eventType="touchUpInside" id="Yfr-33-lXE"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="Nrw-1U-NvU"/>
+                                <exclude reference="mGN-xd-yAP"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="Nrw-1U-NvU"/>
+                                <include reference="mGN-xd-yAP"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="webView" destination="Nrw-1U-NvU" id="5DT-Ge-IEF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aGE-7W-egJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3447" y="574.5"/>
         </scene>
         <!--To Do List-->
         <scene sceneID="ISi-FO-KmU">
@@ -248,7 +288,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Hv-eX-eSQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2496" y="-249.75"/>
+            <point key="canvasLocation" x="2472" y="-410"/>
         </scene>
         <!--Device Connection View Controller-->
         <scene sceneID="7OD-Fv-vIx">
@@ -301,7 +341,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1vQ-h8-NGg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1758" y="561"/>
+            <point key="canvasLocation" x="-1479" y="571.5"/>
         </scene>
         <!--Tab Container View Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -322,7 +362,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-963" y="570"/>
+            <point key="canvasLocation" x="-645" y="570"/>
         </scene>
         <!--Home-->
         <scene sceneID="eHf-e8-9i5">
@@ -341,7 +381,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pzd-pF-Eed" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="750" y="-320"/>
+            <point key="canvasLocation" x="726" y="-480"/>
         </scene>
         <!--JTR-->
         <scene sceneID="cW8-mc-8id">
@@ -467,7 +507,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Ts-Mk-JPe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1561.5" y="-316.5"/>
+            <point key="canvasLocation" x="1537" y="-477"/>
         </scene>
         <!--Record Now-->
         <scene sceneID="prY-SW-gy4">
@@ -549,7 +589,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OgQ-gQ-Hc5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2511" y="-1574.25"/>
+            <point key="canvasLocation" x="2031" y="-1755"/>
         </scene>
         <!--Manual Recording-->
         <scene sceneID="Ety-5y-T2X">
@@ -663,7 +703,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zYp-wd-PAF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2511" y="-909"/>
+            <point key="canvasLocation" x="2487" y="-1069"/>
         </scene>
         <!--Shows-->
         <scene sceneID="Ihy-Io-SCs">
@@ -682,7 +722,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bMv-de-Uqv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="684" y="504"/>
+            <point key="canvasLocation" x="680" y="570"/>
         </scene>
         <!--Now Playing-->
         <scene sceneID="xZf-0X-ih0">
@@ -703,7 +743,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jnG-oV-Kwh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1483.5" y="1260"/>
+            <point key="canvasLocation" x="1663" y="1518"/>
         </scene>
         <!--Remote-->
         <scene sceneID="ZWd-eg-dfh">
@@ -783,7 +823,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="167" y="399" width="38" height="30"/>
+                                    <rect key="frame" x="174" y="437" width="38" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="stopBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Uo6-dP-gZn"/>
@@ -795,7 +835,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="122" y="396" width="37" height="36"/>
+                                    <rect key="frame" x="129" y="434" width="37" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="instantReplayBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="YKt-SK-3or"/>
@@ -807,7 +847,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="222" y="401" width="31" height="26"/>
+                                    <rect key="frame" x="229" y="439" width="31" height="26"/>
                                 </variation>
                                 <connections>
                                     <action selector="quickSkipBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="f7Y-hS-m1d"/>
@@ -819,7 +859,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="68" y="396" width="46" height="36"/>
+                                    <rect key="frame" x="75" y="434" width="46" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="rewindBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="qOH-XH-r50"/>
@@ -831,34 +871,10 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="266" y="400" width="40" height="28"/>
+                                    <rect key="frame" x="273" y="438" width="40" height="28"/>
                                 </variation>
                                 <connections>
                                     <action selector="fastForwardBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="dzp-Hu-qYA"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2qy-PU-SwU">
-                                <rect key="frame" x="130" y="281" width="16" height="22"/>
-                                <state key="normal" image="glyphicons-174-play">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="131" y="302" width="37" height="41"/>
-                                </variation>
-                                <connections>
-                                    <action selector="playBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="UI1-Mu-H7C"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P8J-qL-jSN">
-                                <rect key="frame" x="182" y="281" width="10" height="22"/>
-                                <state key="normal" image="glyphicons-175-pause">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="183" y="305" width="35" height="37"/>
-                                </variation>
-                                <connections>
-                                    <action selector="pauseBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QyK-rE-PtX"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qQY-V6-1ec">
@@ -885,8 +901,96 @@
                                     <action selector="sortChronoBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="ovM-QY-BU0"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2qy-PU-SwU">
+                                <rect key="frame" x="130" y="281" width="16" height="22"/>
+                                <state key="normal" image="glyphicons-174-play">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="160" y="275" width="37" height="41"/>
+                                </variation>
+                                <connections>
+                                    <action selector="playBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="UI1-Mu-H7C"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P8J-qL-jSN">
+                                <rect key="frame" x="182" y="281" width="10" height="22"/>
+                                <state key="normal" image="glyphicons-175-pause">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="212" y="278" width="35" height="37"/>
+                                </variation>
+                                <connections>
+                                    <action selector="pauseBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QyK-rE-PtX"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JRq-DO-zIO">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-212-right-arrow">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="260" y="279" width="31" height="33"/>
+                                </variation>
+                                <connections>
+                                    <action selector="rightArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="G2t-K9-6Lf"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mXw-EJ-te6">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-211-left-arrow">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="113" y="279" width="29" height="31"/>
+                                </variation>
+                                <connections>
+                                    <action selector="leftArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="XP9-LR-aEL"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nqX-UR-Jc0">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-214-up-arrow">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="183" y="217" width="41" height="36"/>
+                                </variation>
+                                <connections>
+                                    <action selector="upArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="enx-ao-ec6"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hON-aY-UHq">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-213-down-arrow">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="188" y="345" width="30" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="downArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QE7-vl-dbX"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="JRq-DO-zIO"/>
+                                <exclude reference="mXw-EJ-te6"/>
+                                <exclude reference="nqX-UR-Jc0"/>
+                                <exclude reference="hON-aY-UHq"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="JRq-DO-zIO"/>
+                                <include reference="mXw-EJ-te6"/>
+                                <include reference="nqX-UR-Jc0"/>
+                                <include reference="hON-aY-UHq"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Remote" id="yXP-Oa-wiO">
                         <barButtonItem key="backBarButtonItem" title="Home" id="LGU-oL-UsN"/>
@@ -894,7 +998,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PvM-e0-eWO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1483.5" y="1987.5"/>
+            <point key="canvasLocation" x="1462.5" y="2422.5"/>
         </scene>
         <!--Now Playing-->
         <scene sceneID="6v1-4n-OjJ">
@@ -913,7 +1017,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2CZ-mi-vlS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="672" y="1260"/>
+            <point key="canvasLocation" x="888" y="1524"/>
         </scene>
         <!--Remote-->
         <scene sceneID="dtR-gz-6x6">
@@ -932,11 +1036,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tlh-pE-tQC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="661.5" y="1987.5"/>
+            <point key="canvasLocation" x="580.5" y="2313.75"/>
         </scene>
     </scenes>
     <resources>
         <image name="glyphicons-120-table" width="24" height="24"/>
+        <image name="glyphicons-164-iphone" width="14" height="24"/>
         <image name="glyphicons-17-bin" width="20" height="28"/>
         <image name="glyphicons-171-step-backward" width="14" height="18"/>
         <image name="glyphicons-173-rewind" width="23" height="18"/>
@@ -949,7 +1054,10 @@
         <image name="glyphicons-184-volume-down" width="16" height="15"/>
         <image name="glyphicons-185-volume-up" width="24" height="26"/>
         <image name="glyphicons-21-home" width="27" height="26"/>
-        <image name="glyphicons-221-play-button" width="26" height="26"/>
+        <image name="glyphicons-211-left-arrow" width="20" height="18"/>
+        <image name="glyphicons-212-right-arrow" width="20" height="18"/>
+        <image name="glyphicons-213-down-arrow" width="18" height="20"/>
+        <image name="glyphicons-214-up-arrow" width="18" height="20"/>
         <image name="glyphicons-405-sort-by-alphabet" width="22" height="23"/>
         <image name="glyphicons-407-sort-by-order" width="21" height="23"/>
         <image name="glyphicons-578-tv" width="26" height="23"/>

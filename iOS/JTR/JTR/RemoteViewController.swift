@@ -9,7 +9,7 @@
 import UIKit
 
 class RemoteViewController: UIViewController {
-    var network = Networking()
+    var network = Networking("192.168.1.24")
     
 //    TODO: need to add up/down/left/right, exit, select, jump, highest speed FF, highest speed RR
     
@@ -72,7 +72,21 @@ class RemoteViewController: UIViewController {
         network.deleteShow(recordingId)
     }
     
+    @IBAction func upArrowBtn(sender: AnyObject) {
+        network.executeCommand("up")
+    }
     
+    @IBAction func downArrowBtn(sender: AnyObject) {
+        network.executeCommand("down")
+    }
+    
+    @IBAction func leftArrowBtn(sender: AnyObject) {
+        network.executeCommand("left")
+    }
+    
+    @IBAction func rightArrowBtn(sender: AnyObject) {
+        network.executeCommand("right")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

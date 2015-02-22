@@ -12,6 +12,7 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
     let network = Networking("192.168.1.24")
     let cellIdentifier = "RecordedShowsCell"
     var shows : RecordedShows?
+    @IBOutlet weak var recordedShowsTable: UITableView!
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -19,7 +20,8 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        shows = network.getRecordedShows()
+        recordedShowsTable.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,7 +35,11 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3 //network.getRecordedShows().recordedShows.count //recordedShows.recordedShows.count
+        if let shows = shows {
+            return shows.recordedShows.count
+        }
+        
+        return 0
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -41,14 +47,13 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
         
         let row = indexPath.row
         
-//        let recordedShows = network.getRecordedShows()
-//        cell.titleLabel.text = recordedShows.recordedShows[row].title
-//        cell.dateLabel.text = recordedShows.recordedShows[row].dateRecorded
+        let recordedShows = network.getRecordedShows()
+        cell.titleLabel.text = recordedShows.recordedShows[row].title
+        cell.dateLabel.text = recordedShows.recordedShows[row].dateRecorded
 
-//        let recordedShows = network.getRecordedShows()
-        cell.titleLabel.text = "hello" //recordedShows.recordedShows[row].title
-        cell.dateLabel.text = "world" //recordedShows.recordedShows[row].dateRecorded
-       // cell.show = shows[row]
+//        cell.titleLabel.text = "hello"
+//        cell.dateLabel.text = "world"
+
         cell.show = shows?.recordedShows[row]
         
         return cell

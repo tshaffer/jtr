@@ -16,20 +16,28 @@ class Networking {
     }
     
     init(_ base : String) {
-        baseUrl = base
+        baseUrl = "http://" + base + ":8080/"
     }
     
     func executeCommand(cmd: String) {
         println("trying to execute command: \(cmd)")
-        if let baseUrl = baseUrl {
+        self.baseUrl = "http://192.168.1.24:8080/"
+        if let baseUrl = self.baseUrl {
             if let url = NSURL(string: (baseUrl + cmd)) {
                 let urlRequest = NSURLRequest(URL: url);
-                NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue(), completionHandler:
-                    {(resp: NSURLResponse!, data: NSData!, error: NSError!) -> Void
-                        in
-                        //this is the "done" callback
-                        
-                })
+                var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
+                let json = JSON(data: responseData)
+                if json != nil {
+                    println("json not nil")
+                }
+                
+                //                let urlRequest = NSURLRequest(URL: url);
+//                NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue(), completionHandler:
+//                    {(resp: NSURLResponse!, data: NSData!, error: NSError!) -> Void
+//                        in
+//                        //this is the "done" callback
+//                        
+//                })
             }
         }
     }
