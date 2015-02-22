@@ -1,0 +1,15 @@
+﻿@deviceType: BrightSign;
+
+.mixinTransportControls(BrightSign) {
+    display: none;
+}
+
+.mixinTransportControls(Browser) {
+    display: block;
+}
+
+#trickModeKeys {
+    .mixinTransportControls(@deviceType);
+}
+
+

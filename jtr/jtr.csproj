@@ -77,7 +77,9 @@
     <Content Include="webSite\bootstrap\js\bootstrap.js" />
     <Content Include="webSite\bootstrap\js\bootstrap.min.js" />
     <Content Include="webSite\css\main.css" />
+    <Content Include="webSite\index.html" />
     <Content Include="webSite\js\jquery-2.1.1.min.js" />
+    <Content Include="webSite\js\less.min.js" />
     <Content Include="webSite\js\script.js" />
     <Content Include="webSite\js\xml2json.js" />
     <Content Include="www\bootstrap\css\bootstrap-theme.css" />
@@ -127,7 +129,9 @@
     <Content Include="webSite\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="webSite\bootstrap\fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="webSite\css\styles.less" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
