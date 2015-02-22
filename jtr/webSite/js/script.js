@@ -881,6 +881,7 @@ function switchToPage(newPage) {
 
     } else {
 		$("#footerArea").append("<button class=\"btn btn-primary\" onclick=\"selectHomePage()\">Home</button><br><br>");
+		$("#ipAddress").css("display", "none");
 		$("#trickModeKeys").css("display", "none");
     }
 }
