@@ -108,5 +108,28 @@ body {
     .mixinControlIcon(@deviceType);
 }
 
+/* recordedShowsTitle element */
+.mixinRecordedShowsTitle(BrightSign) {
+}
 
+.mixinRecordedShowsTitle(Browser) {
+  font-size:30px
+}
+
+#recordedShowsTitle {
+    .mixinRecordedShowsTitle(@deviceType);
+}
+
+.mixinContainerWidth (BrightSign) {
+}
+
+.mixinContainerWidth (Browser) {
+  .container {
+     max-width: 730px; 
+  }
+}
+
+@media (min-width: 768px) {
+  .mixinContainerWidth(@deviceType);
+}
 
