@@ -22,17 +22,16 @@ th.recorded {
 }
 
 /* webKit only */
+/* looks bad on Browser */
 .btn-secondary 
 {
-     color: white;
+     /*color: white;
      background-color: #777;
-     border-color: #555;
+     border-color: #555;*/
 }
 
-/* webKit only */
 .tv-words
 {
-  font-size: 36px;
 }
 
 /* Space out content a bit */
@@ -40,26 +39,26 @@ body {
   padding-top: 20px;
   padding-bottom: 20px;
   /* webKit only */
-  background-color: rgba(0,0,0,0);
+  /*background-color: rgba(0,0,0,0);*/
   /* webKit only */
-  font-size: 36px;
+  /*font-size: 36px;*/
 
 }
 
 /* webkit only */
 .container {
-  background-color: rgba(200,200,200,255);
-  width: 80%;
+  /*background-color: rgba(200,200,200,255);
+  width: 80%;*/
 }
 
 
 /* Custom page footer */
 .footer {
   /* webkit only */
-  background-color: rgba(200,200,200,255);
+  /*background-color: rgba(200,200,200,255);
   padding-top: 19px;
   color: #777;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid #e5e5e5;*/
 }
 
 /* Customize container */
@@ -110,14 +109,14 @@ body {
 }
 
 .controlIcon {
-    /* webkit only */
+    /* webkit only 
   color: white;
   position: fixed;
-  /* webkit values */
+   webkit values
   top: 1000px;
   left: 50%;
-  /* www values*/
-  /*top: 50px;
+  www values
+  top: 50px;
   left: 2%;*/
   z-index: 2;
 }
