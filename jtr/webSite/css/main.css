@@ -21,12 +21,8 @@ th.recorded {
   padding-left: 4px;
 }
 
-/* webKit only */
 .btn-secondary 
 {
-     /*color: white;
-     background-color: #777;
-     border-color: #555;*/
 }
 
 .tv-words
@@ -37,34 +33,21 @@ th.recorded {
 body {
   padding-top: 20px;
   padding-bottom: 20px;
-  /* webKit only */
-  /*background-color: rgba(0,0,0,0);*/
-  /* webKit only */
-  /*font-size: 36px;*/
 
 }
 
-/* webkit only */
 .container {
-  /*background-color: rgba(200,200,200,255);
-  width: 80%;*/
 }
 
 
 /* Custom page footer */
 .footer {
-  /* webkit only */
-  /*background-color: rgba(200,200,200,255);
-  padding-top: 19px;
-  color: #777; */
   border-top: 1px solid #e5e5e5;
 }
 
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    /* commented out in webkit */
-    /*max-width: 730px;*/
   }
 }
 .container-narrow > hr {
@@ -89,17 +72,6 @@ body {
   }
 }
 
-/* not in webKit */
-/*
-#videoZone {
-  position: absolute;
-  top: 0px;
-  width: auto;
-  height: auto;
-  z-index: 1;
-}
-*/
-
 /*span.glyphicon */
 /* possibly use for play, pause icons */
 .whiteIcon {
@@ -108,15 +80,6 @@ body {
 }
 
 .controlIcon {
-    /* webkit only 
-  color: white;
-  position: fixed;
-   webkit values
-  top: 1000px;
-  left: 50%;
-  www values
-  top: 50px;
-  left: 2%;*/
   z-index: 2;
 }
 
@@ -189,14 +152,9 @@ body {
   height: 30px;
   position: absolute;
   z-index: 3;
-/*  top: 65%;
-  width: 75%; */
   top: 95%;
   width: 85%;
   left: 5%;
-/*  top: 67%;
-  left: 2%;
-  width: 62%; */
   /* webkit value */
   background: #222;
   /*background: #555;*/

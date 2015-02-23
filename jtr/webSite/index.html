@@ -62,20 +62,17 @@
 
     <div id="cont" class="container">
 
-      <!--webKit only-->
       <div id="IPAddressLabel">
         <p id="ipAddress">ipAddress: 69.69.69.69</p>
       </div>
 
       <div id="homePage" class="row">
         <div class="col-lg-6">
-           <!--tv-words is webKit only-->
           <button id="recordedShows" class="btn btn-primary tv-words" onclick="selectRecordedShows()" autofocus>Recorded Shows</button><br><br>
           <button id="channelGuide" class="btn btn-secondary tv-words" onclick="selectChannelGuide()">Channel Guide</button><br><br>
           <button id="toDoList" class="btn btn-secondary tv-words" onclick="selectToDoList()">To Do List</button><br><br>
         </div>
 
-           <!--tv-words is webKit only-->
         <div class="col-lg-6">
           <button id="setManualRecord" class="btn btn-secondary tv-words" onclick="selectSetManualRecord()">Set Manual Record</button><br><br>
           <button id="userSelection" class="btn btn-secondary tv-words" onclick="selectUserSelection()">User Selection</button><br><br>
@@ -94,7 +91,6 @@
           <button type='button' class='btn btn-default' onclick="remoteQuickSkip()" aria-label='Left Align'><span class='glyphicon glyphicon-step-forward' aria-hidden='true'></span></button>
       </div>
 
-      <!--from www, not webKit-->
       <div id="manualRecordPage" style="display: none;">
         <h3>Create a Manual Recording</h3>
         <form class="navbar-form navbar-left" role="search">
@@ -114,9 +110,7 @@
 
       <div id="recordedShowsPage" class="table-responsive" style="display: none;">
 
-        <!--from webKit-->
 		<p class="alignleft" id="recordedShowsTitle">Recorded Shows</p>
-		<!--<p class="alignleft" style="font-size:30px">Recorded Shows</p>-->
 		<p id="recordedShowsRemainingSpace" class="alignright">Free space: </p>
 		<div style="clear: both;"></div>
 
