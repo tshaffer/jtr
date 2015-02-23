@@ -581,6 +581,35 @@ function createManualRecording() {
 }
 
 
+// stream a recorded show from the Recorded Shows page
+function streamSelectedShow(event) {
+    var recordingId = event.data.recordingId;
+
+    var aUrl = baseURL + "hlsUrl";
+    var recordingData = { "recordingId": recordingId }
+
+    $.get(aUrl, recordingData)
+        .done(function (result) {
+            console.log("hlsUrl response received");
+
+            var hlsUrl = result.hlsurl;
+            // http://<ip address>:8088/file://<string returned from hlsUrl>
+            var streamingUrl = "http://192.168.2.6:8088/file://" + hlsUrl;
+            var win = window.open(streamingUrl, '_blank');
+            win.focus();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("hlsUrl failure");
+        })
+        .always(function () {
+            alert("finished");
+        });
+
+    //var win = window.open("http://www.google.com", '_blank');
+    //win.focus();
+}
+
 // Play back a recorded show from the Recorded Shows page
 
 function playSelectedShow(event) {
@@ -762,8 +791,13 @@ function getRecordedShows() {
                     $.each(recordingIds, function (index, recordingId) {
 
                         // play a recording
+                        //var btnIdRecording = "#recording" + recordingId;
+                        //$(btnIdRecording).click({ recordingId: recordingId }, playSelectedShow);
+
+                        // test code
+                        // stream a recording
                         var btnIdRecording = "#recording" + recordingId;
-                        $(btnIdRecording).click({ recordingId: recordingId }, playSelectedShow);
+                        $(btnIdRecording).click({ recordingId: recordingId }, streamSelectedShow);
 
                         // delete a recording
                         var btnIdDelete = "#delete" + recordingId;
