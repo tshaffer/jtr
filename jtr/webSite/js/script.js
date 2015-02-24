@@ -1,5 +1,6 @@
 var isBrightSign;
 var baseURL;
+var baseIP;
 
 // BrightSign only
 var bsMessage;
@@ -581,6 +582,13 @@ function createManualRecording() {
 }
 
 
+var streamingUrl = "";
+
+function playLoadedStream() {
+    var win = window.open(streamingUrl, '_blank');
+    win.focus();
+}
+
 // stream a recorded show from the Recorded Shows page
 function streamSelectedShow(event) {
     var recordingId = event.data.recordingId;
@@ -588,25 +596,42 @@ function streamSelectedShow(event) {
     var aUrl = baseURL + "hlsUrl";
     var recordingData = { "recordingId": recordingId }
 
+    //var win = window.open("http://www.google.com", '_blank');
+    //var videoWindow = window.open('', '_blank');
+
     $.get(aUrl, recordingData)
         .done(function (result) {
             console.log("hlsUrl response received");
 
             var hlsUrl = result.hlsurl;
             // http://<ip address>:8088/file://<string returned from hlsUrl>
-            var streamingUrl = "http://192.168.2.6:8088/file://" + hlsUrl;
-            var win = window.open(streamingUrl, '_blank');
-            win.focus();
+            //var streamingUrl = "http://192.168.2.6:8088/file://" + hlsUrl;
+            streamingUrl = baseIP + ":8088/file://" + hlsUrl;
+            //win.location.replace(streamingUrl);
+            //win.focus();
+
+            //videoWindow.location.href = streamingUrl;
+            //videoWindow.location.replace("http://www.google.com");
+
+            //window.location.replace("http://www.google.com");
+            //window.location.replace(streamingUrl);
+
+            //var win = window.open(streamingUrl, '_blank');
+            //win.focus();
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
             console.log("hlsUrl failure");
         })
         .always(function () {
-            alert("finished");
+            alert("stream loaded: url is " + streamingUrl);
         });
 
     //var win = window.open("http://www.google.com", '_blank');
+    //win.focus();
+
+    //alert("streamingUrl=" + streamingUrl);
+    //var win = window.open(streamingUrl, '_blank');
     //win.focus();
 }
 
@@ -799,9 +824,13 @@ function getRecordedShows() {
                         var btnIdRecording = "#recording" + recordingId;
                         $(btnIdRecording).click({ recordingId: recordingId }, streamSelectedShow);
 
-                        // delete a recording
+                        // play a stream
                         var btnIdDelete = "#delete" + recordingId;
-                        $(btnIdDelete).click({ recordingId: recordingId }, deleteSelectedShow);
+                        $(btnIdDelete).click({ recordingId: recordingId }, playLoadedStream);
+
+                        // delete a recording
+                        //var btnIdDelete = "#delete" + recordingId;
+                        //$(btnIdDelete).click({ recordingId: recordingId }, deleteSelectedShow);                       
 
                         // highlight the last selected show
                         if (recordingId == lastSelectedShowId) {
@@ -939,6 +968,7 @@ $(document).ready(function () {
     if (clientType != "BrightSign") {
         baseURL = document.baseURI.replace("?", "");
         console.log("baseURL from document.baseURI is: " + baseURL);
+        baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
     }
     else {
         // message port
