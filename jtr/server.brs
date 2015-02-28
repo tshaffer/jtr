@@ -3,6 +3,9 @@ Sub InitializeServer()
     m.localServer = CreateObject("roHttpServer", { port: 8080 })
     m.localServer.SetPort(m.msgPort)
 
+	m.browserCommandAA =				{ HandleEvent: browserCommand, mVar: m}
+	m.localServer.AddGetFromEvent({ url_path: "/browserCommand", user_data: m.browserCommandAA })
+
 	m.manualRecordAA =					{ HandleEvent: manualRecord, mVar: m }
 	m.recordNowAA =						{ HandleEvent: recordNow, mVar: m }
 	m.recordingAA =						{ HandleEvent: getRecording, mVar: m }
@@ -154,6 +157,30 @@ Sub AddHandlers(serverDirectory$ As String, listOfHandlers As Object)
 End Sub
 
 
+Sub postMessageToJS(htmlWidget As Object, message As Object)
+	ok = htmlWidget.PostJSMessage(message)
+End Sub
+
+
+' endpoint invoked when a browserCommand is sent from a browser
+Sub browserCommand(userData as Object, e as Object)
+
+	print "browserCommand endpoint invoked - post message to javascript"
+
+    mVar = userData.mVar
+
+	message = e.GetRequestParams()
+
+'	relay the message to js
+	ok = mVar.htmlWidget.PostJSMessage(message)
+
+    e.AddResponseHeader("Content-type", "text/plain")
+    e.SetResponseBodyString("ok")
+    e.SendResponse(200)
+
+End Sub
+
+
 ' endpoint invoked when the user wants to playback a specific recording - playback resumes from where it left off
 Sub getRecording(userData as Object, e as Object)
 
@@ -168,10 +195,11 @@ Sub getRecording(userData as Object, e as Object)
 
 	recording = mVar.GetDBRecording(recordingId)
 
-	playRecordingMessage = CreateObject("roAssociativeArray")
-	playRecordingMessage["EventType"] = "RESUME_PLAYBACK"
-	playRecordingMessage["Recording"] = recording
-	mVar.msgPort.PostMessage(playRecordingMessage)
+'	playRecordingMessage = CreateObject("roAssociativeArray")
+'	playRecordingMessage["EventType"] = "RESUME_PLAYBACK"
+'	playRecordingMessage["Recording"] = recording
+'	mVar.msgPort.PostMessage(playRecordingMessage)
+	StartPlayback(recording)
 
     e.AddResponseHeader("Content-type", "text/plain")
     e.SetResponseBodyString("ok")

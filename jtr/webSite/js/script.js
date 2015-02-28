@@ -581,13 +581,30 @@ function createManualRecording() {
 }
 
 
-// Play back a recorded show from the Recorded Shows page
-
+// Browser handler - send message to bs to relay to state machine to play back a recorded show from the Recorded Shows page
 function playSelectedShow(event) {
+
     var recordingId = event.data.recordingId;
-    executePlaySelectedShow(recordingId);
+
+    var aUrl = baseURL + "browserCommand";
+    //var recordingData = { "command": "playRecordedShow", "commandData": recordingId };
+    var commandData = { "commandPlayRecordedShow": recordingId };
+    console.log(commandData);
+
+    $.get(aUrl, commandData)
+        .done(function (result) {
+            console.log("browserCommand successfully sent");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("browserCommand failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
 }
 
+// HTMLWidget handler - send message to bs to play show (SELECT pressed while Play icon highlighted in Recorded Shows page)
 function executePlaySelectedShow(recordingId) {
     console.log("executePlaySelectedShow " + recordingId);
 
@@ -599,6 +616,9 @@ function executePlaySelectedShow(recordingId) {
     var url = baseURL + "lastSelectedShow";
 
     $.post(url, paramString);
+
+    // erase UI
+    eraseUI();
 
     // launch playback
     var aUrl = baseURL + "recording";
@@ -947,7 +967,15 @@ $(document).ready(function () {
                     baseURL = "http://" + brightSignIPAddress + ":8080/";
                     console.log("baseURL from BrightSign message is: " + baseURL);
                 }
+                else if (name == "commandPlayRecordedShow") {
+                    var recordingId = msg.data[name];
+                    console.log("playRecordedShow " + recordingId);
 
+                    var event = {};
+                    event["EventType"] = "PLAY_RECORDED_SHOW";
+                    event["EventData"] = recordingId;
+                    postMessage(event);
+                }
                 else if (name == "bsMessage") {
                     var command$ = msg.data[name].toLowerCase();
                     if (command$ == "showmenu") {

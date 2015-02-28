@@ -199,7 +199,7 @@ End Function
 Sub sendMessageToJS(message$)
 	aa = {}
 	aa.AddReplace("bsMessage", message$)
-	m.stateMachine.htmlWidget.PostJSMessage(aa)
+	ok = m.stateMachine.htmlWidget.PostJSMessage(aa)
 End Sub
 
 
@@ -1369,6 +1369,8 @@ Sub LaunchWebkit()
 	m.htmlWidget.StartInspectorServer(2999)
 	m.htmlWidget.SetLocalStorageDir("localstorage")
 	m.htmlWidget.SetLocalStorageQuota(1 * 1024 * 1024)
+
+	m.jtr.htmlWidget = m.htmlWidget
 
 	m.htmlWidget.SetUrl("file:///webSite/index.html")
 

@@ -69,6 +69,10 @@ Sub eventHandler_EventLoop()
 				userData.HandleEvent(userData, msg)
 			endif
 
+		else if type(msg) = "roHtmlWidgetEvent" then
+
+			HandleHttpEvent(msg)
+
 		else
 
 			numHSMs% = m.hsms.Count()

@@ -54,6 +54,12 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     //      user chooses play, etc. from Recorded Shows page (SELECT)
     //      remote navigation commands
     //          MENU, EXIT, RECORDED_SHOWS, UP, DOWN, LEFT, RIGHT, SELECT
+    else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
+        var recordingId = event["EventData"];
+        executePlaySelectedShow(recordingId);
+        stateData.nextState = this.stateMachine.stPlaying
+        return "TRANSITION"
+    }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
@@ -109,6 +115,7 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                         var currentElementId = currentElement.id;
                         console.log("active recorded shows page item is " + currentElementId);
                         executeRecordedShowAction(currentElementId);
+                        // for play, could just call executePlaySelectedShow
 
                         // TODO - only do transition when command is Play (not delete)
                         stateData.nextState = this.stateMachine.stPlaying
