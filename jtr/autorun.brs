@@ -250,10 +250,13 @@ Sub StartPlayback(recording As Object)
 
 	JTR = GetGlobalAA().JTR
 
-	' send message to js to exit UI - necessary if command comes from browser
-'	aa = {}
-'	aa.AddReplace("bsMessage", "exitUI")
-'	m.stateMachine.htmlWidget.PostJSMessage(aa)
+	' pause current video
+	' m.stateMachine.PausePlayback()
+	JTRPausePlayback()
+
+	' save current position
+	' m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
+	' m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
 
 	' if there's a current recording, save it for later possible jump
 '	m.stateMachine.priorSelectedRecording = m.stateMachine.selectedRecording
@@ -274,3 +277,33 @@ Sub StartPlayback(recording As Object)
 '	m.stateMachine.StartVideoPlaybackTimer()
 
 End Sub
+
+
+Sub JTRPausePlayback()
+
+	JTR = GetGlobalAA().JTR
+
+	' m.StopVideoPlaybackTimer()
+
+	ok = JTR.videoPlayer.SetPlaybackSpeed(0)
+	ok = JTR.videoPlayer.Pause()
+	' if not ok stop
+
+End Sub
+
+
+Sub JTRResumePlayFromPaused()
+
+	JTR = GetGlobalAA().JTR
+
+'	m.stateMachine.ResumePlayback()
+'	m.stateMachine.StartVideoPlaybackTimer()
+
+	ok = JTR.videoPlayer.Resume()
+	' if not ok stop
+	ok = JTR.videoPlayer.SetPlaybackSpeed(1.0)
+
+'	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
+
+End Sub
+

@@ -224,7 +224,7 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
         switch (eventData) {
             case "PAUSE":
             case "PLAY":
-                executeRemoteCommand("pause");
+                executeRemoteCommand("play");
                 stateData.nextState = this.stateMachine.stPlaying
                 return "TRANSITION";
         }

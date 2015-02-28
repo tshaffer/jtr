@@ -557,8 +557,10 @@ Sub stopCmd(userData as Object, e as Object)
 	postRemoteMessage(userData, e, "STOP")
 End Sub
 
+
 Sub pause(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "PAUSE")
+	JTRPausePlayback()
+'	postRemoteMessage(userData, e, "PAUSE")
 End Sub
 
 
@@ -568,6 +570,7 @@ End Sub
 
 
 Sub play(userData as Object, e as Object)
+	JTRResumePlayFromPaused()
 	postRemoteMessage(userData, e, "PLAY")
 End Sub
 

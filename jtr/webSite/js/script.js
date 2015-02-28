@@ -591,6 +591,9 @@ function playSelectedShow(event) {
     var commandData = { "commandPlayRecordedShow": recordingId };
     console.log(commandData);
 
+    // erase UI overlay
+    eraseUI();
+
     $.get(aUrl, commandData)
         .done(function (result) {
             console.log("browserCommand successfully sent");
@@ -617,7 +620,7 @@ function executePlaySelectedShow(recordingId) {
 
     $.post(url, paramString);
 
-    // erase UI
+    // erase UI overlay
     eraseUI();
 
     // launch playback
@@ -944,7 +947,6 @@ $(document).ready(function () {
             event["EventType"] = "REMOTE";
             event["EventData"] = GetRemoteCommand(e.code);
             postMessage(event);
-
         }
 
         ir_receiver.onremoteup = function (e) {
