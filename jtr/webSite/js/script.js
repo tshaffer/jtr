@@ -887,7 +887,6 @@ function switchToPage(newPage) {
 }
 
 
-//keyboard event listener
 $(document).ready(function () {
 
     console.log("JTR javascript .ready invoked");
@@ -907,7 +906,32 @@ $(document).ready(function () {
         console.log("baseURL from document.baseURI is: " + baseURL);
     }
     else {
-        // message port
+
+        // Create displayEngine state machine
+        displayEngineHSM = new displayEngineStateMachine();
+        registerStateMachine(displayEngineHSM);
+        displayEngineHSM.Initialize();
+
+        // ir receiver
+        ir_receiver = new BSIRReceiver("Iguana", "NEC");
+        console.log("typeof ir_receiver is " + typeof ir_receiver);
+
+        ir_receiver.onremotedown = function (e) {
+            console.log('############ onremotedown: ' + e.irType + " - " + e.code);
+            console.log('############ onremotedown: remoteCommand=' + GetRemoteCommand(e.code));
+
+            var event = {};
+            event["EventType"] = "REMOTE";
+            event["EventData"] = GetRemoteCommand(e.code);
+            postMessage(event);
+
+        }
+
+        ir_receiver.onremoteup = function (e) {
+            console.log('############ onremoteup: ' + e.irType + " - " + e.code);
+        }
+
+        // message port for getting messages from the BrightSign via roMessagePort
         bsMessage = new BSMessagePort();
         console.log("typeof bsMessage is " + typeof bsMessage);
         bsMessage.PostBSMessage({ message: "javascript ready" });
