@@ -1,4 +1,4 @@
-var isBrightSign;
+var clientType;
 var baseURL;
 
 // BrightSign only
@@ -591,8 +591,10 @@ function playSelectedShow(event) {
     var commandData = { "commandPlayRecordedShow": recordingId };
     console.log(commandData);
 
-    // erase UI overlay
-    eraseUI();
+    // erase UI overlay on BrightSign display
+    if (clientType == "BrightSign") {
+        eraseUI();
+    }
 
     $.get(aUrl, commandData)
         .done(function (result) {

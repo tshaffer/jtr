@@ -162,7 +162,7 @@ Sub postMessageToJS(htmlWidget As Object, message As Object)
 End Sub
 
 
-' endpoint invoked when a browserCommand is sent from a browser
+' endpoint invoked when browserCommand is invoked from a browser
 Sub browserCommand(userData as Object, e as Object)
 
 	print "browserCommand endpoint invoked - post message to javascript"
@@ -493,7 +493,7 @@ Sub postRemoteMessage(userData As Object, e as Object, remoteMessage$ As String)
     mVar = userData.mVar
 
 	message = CreateObject("roAssociativeArray")
-	message["EventType"] = remoteMessage$
+	message["command"] = remoteMessage$
 	mVar.msgPort.PostMessage(message)
 
     e.AddResponseHeader("Content-type", "text/plain")
@@ -503,34 +503,34 @@ Sub postRemoteMessage(userData As Object, e as Object, remoteMessage$ As String)
 End Sub
 
 
-Sub up(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "UP")
-End Sub
+'Sub up(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "UP")
+'End Sub
 
 
-Sub down(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "DOWN")
-End Sub
+'Sub down(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "DOWN")
+'End Sub
 
 
-Sub left(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "LEFT")
-End Sub
+'Sub left(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "LEFT")
+'End Sub
 
 
-Sub right(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "RIGHT")
-End Sub
+'Sub right(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "RIGHT")
+'End Sub
 
 
-Sub enter(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "ENTER")
-End Sub
+'Sub enter(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "ENTER")
+'End Sub
 
 
-Sub menu(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "MENU")
-End Sub
+'Sub menu(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "MENU")
+'End Sub
 
 
 Sub recordedShows(userData as Object, e as Object)
@@ -543,9 +543,9 @@ Sub toggleProgressBar(userData as Object, e as Object)
 End Sub
 
 
-Sub exitCmd(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "EXIT")
-End Sub
+'Sub exitCmd(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "EXIT")
+'End Sub
 
 
 Sub jumpCmd(userData as Object, e as Object)
@@ -553,14 +553,13 @@ Sub jumpCmd(userData as Object, e as Object)
 End Sub
 
 
-Sub stopCmd(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "STOP")
-End Sub
+'Sub stopCmd(userData as Object, e as Object)
+'	postRemoteMessage(userData, e, "STOP")
+'End Sub
 
 
 Sub pause(userData as Object, e as Object)
-	JTRPausePlayback()
-'	postRemoteMessage(userData, e, "PAUSE")
+	postRemoteMessage(userData, e, "PAUSE")
 End Sub
 
 
@@ -570,7 +569,6 @@ End Sub
 
 
 Sub play(userData as Object, e as Object)
-	JTRResumePlayFromPaused()
 	postRemoteMessage(userData, e, "PLAY")
 End Sub
 

@@ -62,6 +62,8 @@ Sub de_InitializeWebkit()
 	r = CreateObject("roRectangle", 0, 0, 1920, 1080)
 
 	m.htmlWidget = CreateObject("roHtmlWidget", r)
+	m.jtr.htmlWidget = m.htmlWidget
+
 	m.htmlWidget.SetPort(m.msgPort)
 	m.htmlWidget.EnableMouseEvents(true)
 	m.htmlWidget.SetHWZDefault("on")
@@ -81,9 +83,21 @@ End Sub
 
 Sub de_EventHandler(jtr As Object, event As Object)
 
+	mVar = jtr.displayEngine
+
 	if type(event) = "roHtmlWidgetEvent" then
-		jtr.displayEngine.HandleHttpEvent(event)
-	else
+		mVar.HandleHttpEvent(event)
+	else if type(event) = "roAssociativeArray" then      ' internal message event
+        if IsString(event["command"]) then			
+			command$ = event["command"]
+			if command$ = "PAUSE" then
+				mVar.PausePlayback()
+			else if command$ = "PLAY" then
+				mVar.ResumePlayFromPaused()
+			else
+				stop
+			endif
+		endif
 	endif
 
 End Sub
