@@ -50,49 +50,19 @@ Sub RunJtr()
 
 	JTR.gpio = CreateObject("roGpioControlPort")
 
-	useIRRemote = true
-
-'	if useIRRemote then
-'		JTR.remote = CreateObject("roIRRemote")
-'		if type(JTR.remote) = "roIRRemote" then
-'			JTR.remote.SetPort(msgPort)
-'		else
-''			TODO -if no IR Receiver, log it
-'		endif
-'	else
-'		aa = {}
-''		aa.source = "Iguana"
-''		aa.encodings = ["NEC","RC5"]
-'		aa.source = "IR-in"
-'		aa.encodings = ["NEC"]
-'		JTR.irReceiver = CreateObject("roIRReceiver", aa)
-'		if type(JTR.irReceiver) = "roIRReceiver" then
-'			JTR.irReceiver.SetPort(msgPort)
-'		else
-''			TODO - if no IR Receiver, log it
-'		endif
-'	endif
-
-'	JTR.recordingEngine.Initialize()
-'	JTR.displayEngine.Initialize()
-
-'	JTR.eventHandler.AddHSM(JTR.recordingEngine)
-'	JTR.eventHandler.AddHSM(JTR.displayEngine)
-
-	JTR.videoPlayer = CreateObject("roVideoPlayer")
-	JTR.videoPlayer.SetPort(msgPort)
-    JTR.videoPlayer.SetLoopMode(0)
-
-	JTR.InitializeHTML()
-
-	globalAA = GetGlobalAA()
-	globalAA.JTR = JTR
-	globalAA.msgPort = msgPort
-	globalAA.htmlWidget = JTR.htmlWidget
+' 	useIRRemote = true
 
 	' create and start a media server
 	JTR.mediaServer = CreateObject("roMediaServer")
 	ok = JTR.mediaServer.Start("http:port=8088:trace")
+
+
+'	JTR.eventHandler.AddHSM(JTR.recordingEngine)
+'	JTR.eventHandler.AddHSM(JTR.displayEngine)
+	JTR.eventHandler.AddEventHandler(JTR.displayEngine.eventHandler)
+
+'	JTR.recordingEngine.Initialize()
+	JTR.displayEngine.Initialize()
 
 	JTR.currentState = {}
 	JTR.currentState.state = "idle"
@@ -110,8 +80,6 @@ Function newJTR(msgPort As Object) As Object
 	JTR.InitializeServer				= InitializeServer
 	JTR.AddHandlers						= AddHandlers
 	
-	JTR.InitializeHTML					= InitializeHTML
-
 	JTR.OpenDatabase					= OpenDatabase
 	JTR.CreateDBTable					= CreateDBTable
 	JTR.GetDBVersion					= GetDBVersion
@@ -184,141 +152,4 @@ Sub ListFiles(path$ As String, listOfFiles As Object)
 
 End Sub
 
-
-Sub InitializeHTML()
-
-	print "InitializeHTML invoked"
-
-	' don't want cursor for now
-    m.t=createobject("roTouchScreen")
-    m.t.enablecursor(false)
-
-	r = CreateObject("roRectangle", 0, 0, 1920, 1080)
-
-	m.htmlWidget = CreateObject("roHtmlWidget", r)
-	m.htmlWidget.SetPort(m.msgPort)
-	m.htmlWidget.EnableMouseEvents(true)
-	m.htmlWidget.SetHWZDefault("on")
-	m.htmlWidget.EnableJavascript(true)
-	m.htmlWidget.AllowJavaScriptUrls({ all: "*" })
-	m.htmlWidget.StartInspectorServer(2999)
-	m.htmlWidget.SetLocalStorageDir("localstorage")
-	m.htmlWidget.SetLocalStorageQuota(1 * 1024 * 1024)
-
-	m.htmlWidget.SetUrl("file:///webSite/index.html")
-
-' TODO - modify HTML/javascript so that only a transparent background is shown initially
-	m.htmlWidget.Show()
-
-End Sub
-
-
-Sub HandleHttpEvent(event)
-
-	print "roHTMLWidgetEvent received in HandleHttpEvent"
-	eventData = event.GetData()
-	if type(eventData) = "roAssociativeArray" and type(eventData.reason) = "roString" then
-        print "reason = " + eventData.reason
-		if eventData.reason = "load-started" then
-		else if eventData.reason = "load-finished" then
-
-' send device's IP address to site's javascript
-			' get ip address
-			nc = CreateObject("roNetworkConfiguration", 0)
-			networkConfig = nc.GetCurrentConfig()
-			ipAddress$ = networkConfig.ip4_address
-			print "ipAddress = ";ipAddress$
-
-			' send it via message port
-			aa = {}
-			aa.AddReplace("ipAddress", ipAddress$)
-
-			JTR = GetGlobalAA().JTR
-			JTR.htmlWidget.PostJSMessage(aa)
-
-		else if eventData.reason = "load-error" then
-
-'		else if eventData.reason = "message" then
-'			print "message from javascript: " + eventData.message
-		
-		else if eventData.reason = "message" then
-		
-			aa = eventData.message
-
-			if type(aa.message) = "roString" then
-				print "message from JS: ";aa.message
-			else if type(aa.command) = "roString" then
-				command$ = aa.command
-				if command$ = "playRecordedShow" then
-					print "recordingId=";aa.recordingId
-					recording = GetGlobalAA().JTR.GetDBRecording(aa.recordingId)
-					StartPlayback(recording)
-				endif
-			endif
-		endif
-	endif
-
-End Sub
-
-
-Sub StartPlayback(recording As Object)
-
-	JTR = GetGlobalAA().JTR
-
-	' pause current video
-	' m.stateMachine.PausePlayback()
-	JTRPausePlayback()
-
-	' save current position
-	' m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
-	' m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
-
-	' if there's a current recording, save it for later possible jump
-'	m.stateMachine.priorSelectedRecording = m.stateMachine.selectedRecording
-
-	JTR.selectedRecording = recording
-'   m.stateMachine.currentVideoPosition% = 0 - do this when executing 'play from beginning'
-	JTR.currentVideoPosition% = recording.LastViewedPosition
-
-	' new approach - launch video playback here
-	print "LaunchVideo from StartPlayback"
-
-	ok = JTR.videoPlayer.PlayFile(JTR.selectedRecording.Path)
-	if not ok stop
-		
-'	m.stateMachine.UpdateProgressBar()
-'	m.stateMachine.SeekToCurrentVideoPosition()
-
-'	m.stateMachine.StartVideoPlaybackTimer()
-
-End Sub
-
-
-Sub JTRPausePlayback()
-
-	JTR = GetGlobalAA().JTR
-
-	' m.StopVideoPlaybackTimer()
-
-	ok = JTR.videoPlayer.SetPlaybackSpeed(0)
-	ok = JTR.videoPlayer.Pause()
-	' if not ok stop
-
-End Sub
-
-
-Sub JTRResumePlayFromPaused()
-
-	JTR = GetGlobalAA().JTR
-
-'	m.stateMachine.ResumePlayback()
-'	m.stateMachine.StartVideoPlaybackTimer()
-
-	ok = JTR.videoPlayer.Resume()
-	' if not ok stop
-	ok = JTR.videoPlayer.SetPlaybackSpeed(1.0)
-
-'	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
-
-End Sub
 

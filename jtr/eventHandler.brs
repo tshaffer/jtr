@@ -6,8 +6,10 @@ Function newEventHandler(jtr As Object) As Object
 	EventHandler.msgPort = jtr.msgPort
 
 	EventHandler.hsms = []
+	EventHandler.eventHandlers = []
 
 	EventHandler.AddHSM				= eventHandler_AddHSM
+	EventHandler.AddEventHandler	= eventHandler_AddEventHandler
 	EventHandler.EventLoop			= eventHandler_EventLoop
 
 	return EventHandler
@@ -18,6 +20,13 @@ End Function
 Sub eventHandler_AddHSM( hsm As Object )
 
 	m.hsms.push( hsm )
+
+End Sub
+
+
+Sub eventHandler_AddEventHandler( eventHandler As Object )
+
+	m.eventHandlers.push(eventHandler)
 
 End Sub
 
@@ -69,11 +78,18 @@ Sub eventHandler_EventLoop()
 				userData.HandleEvent(userData, msg)
 			endif
 
-		else if type(msg) = "roHtmlWidgetEvent" then
+'		else if type(msg) = "roHtmlWidgetEvent" then
 
-			HandleHttpEvent(msg)
+'			HandleHttpEvent(msg)
 
 		else
+
+			numEventHandlers% = m.eventHandlers.Count()
+			for i% = 0 to numEventHandlers% - 1
+				m.eventHandler = m.eventHandlers[i%]
+'				m.eventHandler.EventHandler(msg)
+				m.eventHandler(m.jtr, msg)
+			next
 
 			numHSMs% = m.hsms.Count()
 			for i% = 0 to numHSMs% - 1

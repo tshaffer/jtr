@@ -1,5 +1,205 @@
 Function newDisplayEngine(jtr As Object) As Object
 
+	DisplayEngine = {}
+
+' setup methods
+	DisplayEngine.Initialize					= de_Initialize
+	DisplayEngine.InitializeWebkit				= de_InitializeWebkit
+
+	DisplayEngine.jtr = jtr
+	DisplayEngine.msgPort = jtr.msgPort
+
+' setup methods
+    DisplayEngine.EventHandler					= de_EventHandler
+	DisplayEngine.HandleHttpEvent				= de_HandleHttpEvent
+	DisplayEngine.StartPlayback					= de_StartPlayback
+	DisplayEngine.PausePlayback					= de_PausePlayback
+	DisplayEngine.ResumePlayFromPaused			= de_ResumePlayFromPaused
+	
+	return DisplayEngine
+
+End Function
+
+
+Sub de_Initialize()
+
+	m.videoPlayer = CreateObject("roVideoPlayer")
+	m.videoPlayer.SetPort(m.msgPort)
+    m.videoPlayer.SetLoopMode(0)
+
+	m.currentVideoPosition% = 0
+	m.selectedRecording = invalid
+	m.priorSelectedRecording = invalid
+
+	m.playbackSpeeds = CreateObject("roArray", 7, true)
+	m.playbackSpeeds.push(-16.0)
+	m.playbackSpeeds.push(-8.0)
+	m.playbackSpeeds.push(-4.0)
+	m.playbackSpeeds.push(-2.0)
+	m.playbackSpeeds.push(-1.0)
+	m.playbackSpeeds.push(1.0)
+	m.playbackSpeeds.push(2.0)
+	m.playbackSpeeds.push(4.0)
+	m.playbackSpeeds.push(8.0)
+	m.playbackSpeeds.push(16.0)
+
+	m.normalPlaybackSpeedIndex% = 5
+	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
+	
+	m.InitializeWebkit()
+
+End Sub
+
+
+Sub de_InitializeWebkit()
+
+	print "InitializeWebkit invoked"
+
+	' don't want cursor for now
+    m.t=createobject("roTouchScreen")
+    m.t.enablecursor(false)
+
+	r = CreateObject("roRectangle", 0, 0, 1920, 1080)
+
+	m.htmlWidget = CreateObject("roHtmlWidget", r)
+	m.htmlWidget.SetPort(m.msgPort)
+	m.htmlWidget.EnableMouseEvents(true)
+	m.htmlWidget.SetHWZDefault("on")
+	m.htmlWidget.EnableJavascript(true)
+	m.htmlWidget.AllowJavaScriptUrls({ all: "*" })
+	m.htmlWidget.StartInspectorServer(2999)
+	m.htmlWidget.SetLocalStorageDir("localstorage")
+	m.htmlWidget.SetLocalStorageQuota(1 * 1024 * 1024)
+
+	m.htmlWidget.SetUrl("file:///webSite/index.html")
+
+' TODO - modify HTML/javascript so that only a transparent background is shown initially
+	m.htmlWidget.Show()
+
+End Sub
+
+
+Sub de_EventHandler(jtr As Object, event As Object)
+
+	if type(event) = "roHtmlWidgetEvent" then
+		jtr.displayEngine.HandleHttpEvent(event)
+	else
+	endif
+
+End Sub
+
+
+Sub de_HandleHttpEvent(event)
+
+	print "roHTMLWidgetEvent received in HandleHttpEvent"
+	eventData = event.GetData()
+	if type(eventData) = "roAssociativeArray" and type(eventData.reason) = "roString" then
+        print "reason = " + eventData.reason
+		if eventData.reason = "load-started" then
+		else if eventData.reason = "load-finished" then
+
+' send device's IP address to site's javascript
+			' get ip address
+			nc = CreateObject("roNetworkConfiguration", 0)
+			networkConfig = nc.GetCurrentConfig()
+			ipAddress$ = networkConfig.ip4_address
+			print "ipAddress = ";ipAddress$
+
+			' send it via message port
+			aa = {}
+			aa.AddReplace("ipAddress", ipAddress$)
+
+			m.htmlWidget.PostJSMessage(aa)
+
+		else if eventData.reason = "load-error" then
+
+		else if eventData.reason = "message" then
+		
+			aa = eventData.message
+
+			if type(aa.message) = "roString" then
+				print "message from JS: ";aa.message
+			else if type(aa.command) = "roString" then
+				command$ = aa.command
+				if command$ = "playRecordedShow" then
+					print "recordingId=";aa.recordingId
+					recording = m.jtr.GetDBRecording(aa.recordingId)
+					m.StartPlayback(recording)
+				endif
+			endif
+
+		endif
+	endif
+
+End Sub
+
+
+Sub de_StartPlayback(recording As Object)
+
+	' pause current video
+	m.PausePlayback()
+
+	' save current position
+	' m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
+	' m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
+
+	' if there's a current recording, save it for later possible jump
+'	m.stateMachine.priorSelectedRecording = m.stateMachine.selectedRecording
+
+	m.selectedRecording = recording
+'   m.stateMachine.currentVideoPosition% = 0 - do this when executing 'play from beginning'
+	m.currentVideoPosition% = recording.LastViewedPosition
+
+	' new approach - launch video playback here
+	print "LaunchVideo from StartPlayback"
+
+	ok = m.videoPlayer.PlayFile(m.selectedRecording.Path)
+	if not ok stop
+		
+'	m.stateMachine.UpdateProgressBar()
+'	m.stateMachine.SeekToCurrentVideoPosition()
+
+'	m.stateMachine.StartVideoPlaybackTimer()
+
+End Sub
+
+
+
+Sub de_PausePlayback()
+
+	' m.StopVideoPlaybackTimer()
+
+	ok = m.videoPlayer.SetPlaybackSpeed(0)
+	ok = m.videoPlayer.Pause()
+	' if not ok stop
+
+End Sub
+
+
+Sub de_ResumePlayFromPaused()
+
+'	m.stateMachine.ResumePlayback()
+'	m.stateMachine.StartVideoPlaybackTimer()
+
+	ok = m.videoPlayer.Resume()
+	' if not ok stop
+	ok = m.videoPlayer.SetPlaybackSpeed(1.0)
+
+'	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+Function newOldDisplayEngine(jtr As Object) As Object
+
     DisplayEngine = newHSM()
     DisplayEngine.InitialPseudostateHandler = InitializeDisplayEngine
 
