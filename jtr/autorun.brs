@@ -233,13 +233,28 @@ Sub HandleHttpEvent(event)
 			aa = {}
 			aa.AddReplace("ipAddress", ipAddress$)
 
-			globalAA = GetGlobalAA()
-			globalAA.htmlWidget.PostJSMessage(aa)
+			JTR = GetGlobalAA().JTR
+			JTR.htmlWidget.PostJSMessage(aa)
 
 		else if eventData.reason = "load-error" then
 
+'		else if eventData.reason = "message" then
+'			print "message from javascript: " + eventData.message
+		
 		else if eventData.reason = "message" then
-			print "message from javascript: " + eventData.message.message
+		
+			aa = eventData.message
+
+			if type(aa.message) = "roString" then
+				print "message from JS: ";aa.message
+			else if type(aa.command) = "roString" then
+				command$ = aa.command
+				if command$ = "playRecordedShow" then
+					print "recordingId=";aa.recordingId
+					recording = GetGlobalAA().JTR.GetDBRecording(aa.recordingId)
+					StartPlayback(recording)
+				endif
+			endif
 		endif
 	endif
 

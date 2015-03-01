@@ -623,21 +623,23 @@ function executePlaySelectedShow(recordingId) {
     // erase UI overlay
     eraseUI();
 
-    // launch playback
-    var aUrl = baseURL + "recording";
-    var recordingData = { "recordingId": recordingId };
+    bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
 
-    $.get(aUrl, recordingData)
-        .done(function (result) {
-            console.log("recording successfully sent");
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            debugger;
-            console.log("recording failure");
-        })
-        .always(function () {
-            //alert("recording transmission finished");
-        });
+    // launch playback
+    //var aUrl = baseURL + "recording";
+    //var recordingData = { "recordingId": recordingId };
+
+    //$.get(aUrl, recordingData)
+    //    .done(function (result) {
+    //        console.log("recording successfully sent");
+    //    })
+    //    .fail(function (jqXHR, textStatus, errorThrown) {
+    //        debugger;
+    //        console.log("recording failure");
+    //    })
+    //    .always(function () {
+    //        //alert("recording transmission finished");
+    //    });
 }
 
 
