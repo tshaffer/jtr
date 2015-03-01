@@ -15,7 +15,10 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.StartPlayback					= de_StartPlayback
 	DisplayEngine.PausePlayback					= de_PausePlayback
 	DisplayEngine.ResumePlayFromPaused			= de_ResumePlayFromPaused
-	
+	DisplayEngine.QuickSkipVideo				= de_QuickSkipVideo
+	DisplayEngine.InstantReplayVideo			= de_InstantReplayVideo
+	DisplayEngine.SeekToCurrentVideoPosition	= de_SeekToCurrentVideoPosition
+
 	return DisplayEngine
 
 End Function
@@ -94,6 +97,12 @@ Sub de_EventHandler(jtr As Object, event As Object)
 				mVar.PausePlayback()
 			else if command$ = "PLAY" then
 				mVar.ResumePlayFromPaused()
+			else if command$ = "QUICK_SKIP" then
+				mVar.QuickSkipVideo()
+			else if command$ = "INSTANT_REPLAY" then
+				mVar.InstantReplayVideo()
+			else if command$ = "REWIND" then
+			else if command$ = "FASTFORWARD" then
 			else
 				stop
 			endif
@@ -203,6 +212,41 @@ Sub de_ResumePlayFromPaused()
 
 End Sub
 
+
+Sub de_QuickSkipVideo()
+
+	m.currentVideoPosition% = m.currentVideoPosition% + 15	' quick skip currently jumps ahead 15 seconds
+
+	' m.UpdateProgressBar()
+
+	m.SeekToCurrentVideoPosition()
+
+End Sub
+
+
+Sub de_InstantReplayVideo()
+
+	m.currentVideoPosition% = m.currentVideoPosition% - 7		' instant replay currently goes back 7 seconds
+	if m.currentVideoPosition% < 0 then
+		m.currentVideoPosition% = 0
+	endif
+
+	' m.UpdateProgressBar()
+
+	m.SeekToCurrentVideoPosition()
+
+End Sub
+
+
+Sub de_SeekToCurrentVideoPosition()
+
+	print "seekTarget=" + stri(m.currentVideoPosition% * 1000)
+	print "m.currentVideoPosition%=";m.currentVideoPosition%
+
+	ok = m.videoPlayer.Seek(m.currentVideoPosition% * 1000)
+	print "Seek result=";ok
+
+End Sub
 
 
 

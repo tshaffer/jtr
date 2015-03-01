@@ -39,48 +39,48 @@ Sub InitializeServer()
 	m.localServer.AddGetFromEvent({ url_path: "/showUI", user_data: m.showUIAA })
 
 	'up
-	m.upAA =							{ HandleEvent: up, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/up", user_data: m.upAA })
+'	m.upAA =							{ HandleEvent: up, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/up", user_data: m.upAA })
 
 	'down
-	m.downAA =							{ HandleEvent: down, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/down", user_data: m.downAA })
+'	m.downAA =							{ HandleEvent: down, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/down", user_data: m.downAA })
 
 	'left
-	m.leftAA =							{ HandleEvent: left, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/left", user_data: m.leftAA })
+'	m.leftAA =							{ HandleEvent: left, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/left", user_data: m.leftAA })
 
 	'right
-	m.rightAA =							{ HandleEvent: right, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/right", user_data: m.rightAA })
+'	m.rightAA =							{ HandleEvent: right, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/right", user_data: m.rightAA })
 
 	'enter
-	m.enterAA =							{ HandleEvent: enter, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/enter", user_data: m.enterAA })
+'	m.enterAA =							{ HandleEvent: enter, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/enter", user_data: m.enterAA })
 
 	'menu
-	m.menuAA =							{ HandleEvent: menu, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/menu", user_data: m.menuAA })
+'	m.menuAA =							{ HandleEvent: menu, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/menu", user_data: m.menuAA })
 
 	'recorded shows
-	m.recordedShowsAA =					{ HandleEvent: recordedShows, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/recordedShows", user_data: m.recordedShowsAA })
+'	m.recordedShowsAA =					{ HandleEvent: recordedShows, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/recordedShows", user_data: m.recordedShowsAA })
 
 	'toggle progress bar
 	m.toggleProgressBarAA =				{ HandleEvent: toggleProgressBar, mVar: m}
 	m.localServer.AddGetFromEvent({ url_path: "/toggleProgressBar", user_data: m.toggleProgressBarAA })
 
 	'exit
-	m.exitAA =							{ HandleEvent: exitCmd, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/exit", user_data: m.exitAA })
+'	m.exitAA =							{ HandleEvent: exitCmd, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/exit", user_data: m.exitAA })
 
 	'jump
 	m.jumpAA =							{ HandleEvent: jumpCmd, mVar: m}
 	m.localServer.AddGetFromEvent({ url_path: "/jump", user_data: m.jumpAA })
 
 	'stop
-	m.stopAA =							{ HandleEvent: stopCmd, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/stop", user_data: m.stopAA })
+'	m.stopAA =							{ HandleEvent: stopCmd, mVar: m}
+'	m.localServer.AddGetFromEvent({ url_path: "/stop", user_data: m.stopAA })
 
 	m.pauseAA =							{ HandleEvent: pause, mVar: m}
 	m.localServer.AddGetFromEvent({ url_path: "/pause", user_data: m.pauseAA })

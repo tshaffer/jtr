@@ -186,9 +186,19 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stPaused
                 return "TRANSITION";
             case "FF":
+                executeRemoteCommand("fastForward");
+                stateData.nextState = this.stateMachine.stPaused
+                return "TRANSITION";
             case "RW":
+                executeRemoteCommand("rewind");
+                stateData.nextState = this.stateMachine.stPaused
+                return "TRANSITION";
             case "INSTANT_REPLAY":
+                executeRemoteCommand("instantReplay");
+                return "HANDLED";
             case "QUICK_SKIP":
+                executeRemoteCommand("quickSkip");
+                return "HANDLED";
             case "MENU":
             case "STOP":
             case "RECORDED_SHOWS":
