@@ -18,6 +18,10 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.QuickSkipVideo				= de_QuickSkipVideo
 	DisplayEngine.InstantReplayVideo			= de_InstantReplayVideo
 	DisplayEngine.SeekToCurrentVideoPosition	= de_SeekToCurrentVideoPosition
+	DisplayEngine.InitiateFastForward			= de_InitiateFastForward
+	DisplayEngine.NextFastForward				= de_NextFastForward
+	DisplayEngine.InitiateRewind				= de_InitiateRewind
+	DisplayEngine.NextRewind					= de_NextRewind
 
 	return DisplayEngine
 
@@ -102,7 +106,13 @@ Sub de_EventHandler(jtr As Object, event As Object)
 			else if command$ = "INSTANT_REPLAY" then
 				mVar.InstantReplayVideo()
 			else if command$ = "REWIND" then
+				mVar.InitiateRewind()
+			else if command$ = "NEXT_REWIND" then
+				mVar.NextRewind()
 			else if command$ = "FASTFORWARD" then
+				mVar.InitiateFastForward()
+			else if command$ = "NEXT_FASTFORWARD" then
+				mVar.NextFastForward()
 			else
 				stop
 			endif
@@ -208,7 +218,7 @@ Sub de_ResumePlayFromPaused()
 	' if not ok stop
 	ok = m.videoPlayer.SetPlaybackSpeed(1.0)
 
-'	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
+	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
 
 End Sub
 
@@ -249,7 +259,71 @@ Sub de_SeekToCurrentVideoPosition()
 End Sub
 
 
+Sub de_InitiateFastForward()
 
+	' update last viewed position in database
+'	print "update last viewed position for ";m.stateMachine.selectedRecording.RecordingId;" to "; m.stateMachine.currentVideoPosition%
+'	m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
+'	m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
+
+	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% + 1
+	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
+
+	ok = m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
+
+'	currentState = m.stateMachine.jtr.GetCurrentState()
+'	currentState.state = "fastForward"
+'	currentState.currentTime = m.stateMachine.selectedRecording.LastViewedPosition
+'	m.stateMachine.jtr.SetCurrentState(currentState)
+
+End Sub
+
+
+Sub de_NextFastForward()
+
+	m.playbackSpeedIndex% = m.playbackSpeedIndex% + 1
+	if m.playbackSpeedIndex% >= m.playbackSpeeds.Count() then
+		m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% + 1
+	endif
+
+	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
+	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
+
+End Sub
+
+
+Sub de_InitiateRewind()
+
+	' update last viewed position in database
+'	print "update last viewed position for ";m.stateMachine.selectedRecording.RecordingId;" to "; m.stateMachine.currentVideoPosition%
+'	m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
+'	m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
+
+	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% - 1
+	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
+
+	ok = m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
+
+'	currentState = m.stateMachine.jtr.GetCurrentState()
+'	currentState.state = "rewind"
+'	currentState.currentTime = m.stateMachine.selectedRecording.LastViewedPosition
+'	m.stateMachine.jtr.SetCurrentState(currentState)
+
+End Sub
+
+
+Sub de_NextRewind()
+
+	m.playbackSpeedIndex% = m.playbackSpeedIndex% - 1
+	if m.playbackSpeedIndex% < 0 then
+		m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% - 1
+	endif
+
+	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
+	print "setplaybackspeed to ";playbackSpeed
+	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
+
+End Sub
 
 
 
@@ -276,7 +350,7 @@ Function newOldDisplayEngine(jtr As Object) As Object
 	DisplayEngine.PausePlayback					= PausePlayback
 	DisplayEngine.JumpToTick					= JumpToTick
 
-	DisplayEngine.NextFastForward				= NextFastForward
+	' DisplayEngine.NextFastForward				= NextFastForward
 	DisplayEngine.NextRewind					= NextRewind
 
 	DisplayEngine.LaunchWebkit					= LaunchWebkit
@@ -1347,31 +1421,31 @@ Function STFastForwardingEventHandler(event As Object, stateData As Object) As O
 End Function
 
 
-Function NextFastForward()
+'Function NextFastForward()
 
-	m.playbackSpeedIndex% = m.playbackSpeedIndex% + 1
-	if m.playbackSpeedIndex% >= m.playbackSpeeds.Count() then
-		m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% + 1
-	endif
+'	m.playbackSpeedIndex% = m.playbackSpeedIndex% + 1
+'	if m.playbackSpeedIndex% >= m.playbackSpeeds.Count() then
+'		m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% + 1
+'	endif
 
-	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
-	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
+'	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
+'	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
 
-End Function
+'End Function
 
 
-Function NextRewind()
+'Function NextRewind()
 
-	m.playbackSpeedIndex% = m.playbackSpeedIndex% - 1
-	if m.playbackSpeedIndex% < 0 then
-		m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% - 1
-	endif
+'	m.playbackSpeedIndex% = m.playbackSpeedIndex% - 1
+'	if m.playbackSpeedIndex% < 0 then
+'		m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% - 1
+'	endif
 
-	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
-	print "setplaybackspeed to ";playbackSpeed
-	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
+'	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
+'	print "setplaybackspeed to ";playbackSpeed
+'	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
 
-End Function
+'End Function
 
 
 Sub invokeRewindWhenRewinding()

@@ -23,6 +23,14 @@
     this.stPaused.HStateEventHandler = this.STPausedEventHandler
     this.stPaused.superState = this.stShowingVideo
 
+    this.stFastForwarding = new HState(this, "FastForwarding")
+    this.stFastForwarding.HStateEventHandler = this.STFastForwardingEventHandler
+    this.stFastForwarding.superState = this.stShowingVideo
+
+    this.stRewinding = new HState(this, "Rewinding")
+    this.stRewinding.HStateEventHandler = this.STRewindingEventHandler
+    this.stRewinding.superState = this.stShowingVideo
+
     this.topState = this.stTop;
 }
 
@@ -54,6 +62,7 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     //      user chooses play, etc. from Recorded Shows page (SELECT)
     //      remote navigation commands
     //          MENU, EXIT, RECORDED_SHOWS, UP, DOWN, LEFT, RIGHT, SELECT
+    // TODO - should support PLAY if a show is highlighted
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
         executePlaySelectedShow(recordingId);
@@ -73,15 +82,14 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                 console.log("currentActiveElementId is " + currentActiveElementId);
                 switch (currentActiveElementId) {
                     case "#homePage":
-                        console.log("navigation entered while homePage visible");
+                        console.log("navigation remote key pressed while homePage visible");
                         navigateHomePage(command)
                         break;
                     case "#recordedShowsPage":
-                        console.log("navigation entered while recordedShowsPage visible");
+                        console.log("navigation remote key pressed while recordedShowsPage visible");
                         navigateRecordedShowsPage(command)
                         break;
                 }
-
                 return "HANDLED";
                 break;
             case "SELECT":
@@ -186,12 +194,10 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stPaused
                 return "TRANSITION";
             case "FF":
-                executeRemoteCommand("fastForward");
-                stateData.nextState = this.stateMachine.stPaused
+                stateData.nextState = this.stateMachine.stFastForwarding
                 return "TRANSITION";
             case "RW":
-                executeRemoteCommand("rewind");
-                stateData.nextState = this.stateMachine.stPaused
+                stateData.nextState = this.stateMachine.stRewinding
                 return "TRANSITION";
             case "INSTANT_REPLAY":
                 executeRemoteCommand("instantReplay");
@@ -200,9 +206,13 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
                 executeRemoteCommand("quickSkip");
                 return "HANDLED";
             case "MENU":
+                // TODO
             case "STOP":
+                // TODO
             case "RECORDED_SHOWS":
+                // TODO
             case "JUMP":
+                // TODO
         }
     }
     else {
@@ -226,8 +236,11 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
         console.log(this.id + ": exit signal");
     }
     // events to expect include
-    //      PAUSE
-    //      FF
+    //  PAUSE
+    //  PLAY
+    //  INSTANT_REPLAY
+    //  QUICK_SKIP
+    //  MENU
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
@@ -237,6 +250,15 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
                 executeRemoteCommand("play");
                 stateData.nextState = this.stateMachine.stPlaying
                 return "TRANSITION";
+            case "QUICK_SKIP":
+                executeRemoteCommand("quickSkip");
+                return "HANDLED";
+            case "INSTANT_REPLAY":
+                executeRemoteCommand("instantReplay");
+                return "HANDLED";
+            case "MENU":
+                return "HANDLED";
+                break;
         }
     }
     else {
@@ -246,5 +268,111 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
     stateData.nextState = this.superState;
     return "SUPER";
 }
+
+
+displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (event, stateData) {
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+        executeRemoteCommand("fastForward");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+    }
+    // events to expect include
+    //  FF
+    //  PLAY
+    //  PAUSE
+    //  INSTANT_REPLAY
+    //  QUICK_SKIP
+    //  MENU
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        console.log(this.id + ": remote command input: " + eventData);
+        switch (eventData) {
+            case "PAUSE":
+                executeRemoteCommand("pause");
+                stateData.nextState = this.stateMachine.stPaused
+                return "TRANSITION";
+            case "FF":
+                executeRemoteCommand("nextFastForward");
+                return "HANDLED"
+            case "INSTANT_REPLAY":
+                // TODO
+                //executeRemoteCommand("instantReplay");
+                //return "HANDLED";
+            case "QUICK_SKIP":
+                // TODO
+                //executeRemoteCommand("quickSkip");
+                //return "HANDLED";
+            case "MENU":
+                // TODO
+            default:
+                return "HANDLED";
+        }
+    }
+    else {
+        console.log(this.id + ": signal type = " + event["EventType"]);
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
+}
+
+
+displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, stateData) {
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+        executeRemoteCommand("rewind");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+    }
+        // events to expect include
+        //  RW
+        //  PLAY
+        //  PAUSE
+        //  INSTANT_REPLAY
+        //  QUICK_SKIP
+        //  MENU
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        console.log(this.id + ": remote command input: " + eventData);
+        switch (eventData) {
+            case "PAUSE":
+                executeRemoteCommand("pause");
+                stateData.nextState = this.stateMachine.stPaused
+                return "TRANSITION";
+            case "RW":
+                executeRemoteCommand("nextRewind");
+                return "HANDLED"
+            case "INSTANT_REPLAY":
+                // TODO
+                //executeRemoteCommand("instantReplay");
+                //return "HANDLED";
+            case "QUICK_SKIP":
+                // TODO
+                //executeRemoteCommand("quickSkip");
+                //return "HANDLED";
+            case "MENU":
+            // TODO
+            default:
+                return "HANDLED";
+        }
+    }
+    else {
+        console.log(this.id + ": signal type = " + event["EventType"]);
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
+}
+
 
 
