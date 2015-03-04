@@ -143,6 +143,59 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
 }
 
 
+function calculateProgressBar() {
+
+    // number of ticks to display is based on the duration of the recording
+    // 0 < duration <= 5 minutes
+    // every 1 minute
+    // 5 minutes < duration <= 40 minutes
+    // every 5 minutes
+    // 40 minutes < duration <= 1 hour
+    // every 10 minutes
+    // 1 hour < duration <= 3 hours
+    // every 15 minutes
+    // 3 hours < duration <= 4 hours
+    // every 30 minutes
+    // 4 hours < duration
+    // every hour
+    var recordingDuration = _currentRecording.Duration * 60
+    var numMinutes = Math.floor(recordingDuration / 60);
+
+    console.log("toggleProgressBar: duration = " + _currentRecording.Duration);
+    console.log("toggleProgressBar: numMinutes = " + numMinutes);
+
+    var numTicks = 8;
+    var minutesPerTick = 1;
+    if (numMinutes > 240) {
+        minutesPerTick = 60;
+    }
+    else if (numMinutes > 180) {
+        minutesPerTick = 30;
+    }
+    else if (numMinutes > 60) {
+        minutesPerTick = 15;
+    }
+    else if (numMinutes > 40) {
+        minutesPerTick = 10;
+    }
+    else if (numMinutes > 5) {
+        minutesPerTick = 5;
+    }
+    else {
+        minutesPerTick = 1;
+    }
+    numTicks = Math.floor(numMinutes / minutesPerTick);
+
+    console.log("toggleProgressBar: numTicks = " + numTicks);
+    console.log("toggleProgressBar: minutesPerTick = " + minutesPerTick);
+
+    // determine whether or not to draw last tick - don't draw it if it is at the end of the progress bar
+    if (Math.floor(numMinutes) % (Math.floor(minutesPerTick) * numTicks) == 0) {
+        numTicks--;
+    }
+    console.log("toggleProgressBar: numTicks = " + numTicks);
+}
+
 displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event, stateData) {
 
     stateData.nextState = null;
@@ -150,6 +203,18 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
     if (event["EventType"] == "ENTRY_SIGNAL") {
         console.log(this.id + ": entry signal");
         return "HANDLED";
+    }
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        console.log(this.id + ": remote command input: " + eventData);
+
+        switch (eventData) {
+            case "PROGRESS_BAR":
+                console.log("toggle the progress bar");
+                calculateProgressBar();
+
+                break;
+        }
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");

@@ -5,6 +5,9 @@ var baseURL;
 var bsMessage;
 var ir_receiver;
 
+var _currentRecordings;
+var _currentRecording;
+
 // miscellaneous variables
 var currentActiveElementId = "#homePage";
 
@@ -351,7 +354,12 @@ function executeRecordedShowAction(actionButtonId) {
     if (actionButtonId.lastIndexOf("recording") === 0) {
         console.log("selected recording");
         var recordingId = actionButtonId.substring("recording".length);
-        executePlaySelectedShow(recordingId);
+
+        if (recordingId in _currentRecordings) {
+            _currentRecording = _currentRecordings[recordingId];
+            //executePlaySelectedShow(selectedRecording);
+            executePlaySelectedShow(recordingId);
+        }
     }
     else if (actionButtonId.lastIndexOf("delete") === 0) {
         console.log("selected delete");
@@ -586,6 +594,10 @@ function playSelectedShow(event) {
 
     var recordingId = event.data.recordingId;
 
+    if (recordingId in _currentRecordings) {
+        var selectedRecording = _currentRecordings[recordingId];
+    }
+
     var aUrl = baseURL + "browserCommand";
     //var recordingData = { "command": "playRecordedShow", "commandData": recordingId };
     var commandData = { "commandPlayRecordedShow": recordingId };
@@ -611,6 +623,11 @@ function playSelectedShow(event) {
 
 // HTMLWidget handler - send message to bs to play show (SELECT pressed while Play icon highlighted in Recorded Shows page)
 function executePlaySelectedShow(recordingId) {
+//function executePlaySelectedShow(recording) {
+
+    //console.log("executePlaySelectedShow: recording duration = " + recording.Duration);
+
+    //var recordingId = recording.RecordingId;
     console.log("executePlaySelectedShow " + recordingId);
 
     // save lastSelectedShowId in server's persistent memory
@@ -625,6 +642,7 @@ function executePlaySelectedShow(recordingId) {
     // erase UI overlay
     eraseUI();
 
+    //bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId, "duration": recording.Duration });
     bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
 
     // launch playback
@@ -758,16 +776,19 @@ function getRecordedShows() {
 	        $("#recordedShowsRemainingSpace").text(freeSpace);
 
 // display show recordings
-	        var jtrRecordings = recordings.recordings;
+	        jtrRecordings = recordings.recordings;
 
 	        var toAppend = "";
 	        var recordingIds = [];
 
 	        $("#recordedShowsTableBody").empty();
 
+	        _currentRecordings = {};
+
 	        $.each(jtrRecordings, function (index, jtrRecording) {
 	            toAppend += addRecordedShowsLine(jtrRecording);
 	            recordingIds.push(jtrRecording.RecordingId);
+	            _currentRecordings[jtrRecording.RecordingId] = jtrRecording;
 	        });
 
 	        // is there a reason to do this all at the end instead of once for each row?

@@ -58,3 +58,52 @@ function SonyCommand(remoteCode) {
     return remoteCommand
 }
 
+
+function SeikiCommand(remoteCode)
+{
+    if (remoteCode = 163150)
+        remoteCommand = "LEFT"					// LEFT
+    else if (remoteCode = 163145)
+        remoteCommand = "RIGHT"				    // RIGHT
+    else if (remoteCode = 163144)
+        remoteCommand = "UP"					// UP
+    else if (remoteCode = 163149) 
+        remoteCommand = "DOWN"					// DOWN
+    else if (remoteCode = 163146) 
+        remoteCommand = "SELECT"				// SELECT = OK
+    else if (remoteCode = 163141) 
+        remoteCommand = "MENU"					// MENU
+    else if (remoteCode = 163085) 
+        remoteCommand = "EXIT"					// EXIT
+    else if (remoteCode = 163098) 
+        remoteCommand = "PLAY"					// PLAY = V-CHIP
+    else if (remoteCode = 163163) 
+        remoteCommand = "PAUSE"				    // PAUSE = CC
+    else if (remoteCode = 163094) 
+        remoteCommand = "FF"					// FF = D
+    else if (remoteCode = 163159) 
+        remoteCommand = "RW"					// RW = A
+    else if (remoteCode = 163160) 
+        remoteCommand = "QUICK_SKIP"			// QUICK_SKIP = ASPECT
+    else if (remoteCode = 163154) 
+        remoteCommand = "INSTANT_REPLAY"		// INSTANT_REPLAY = AUTO
+    else if (remoteCode = 163143) 
+        remoteCommand = "JUMP"					// JUMP = P.Mode
+    else if (remoteCode = 163157) 
+        remoteCommand = "PLAY_ICON"			    // PLAY_ICON = C
+    else if (remoteCode = 163136) 
+        remoteCommand = "PROGRESS_BAR"			// PROGRESS_BAR = B
+    else if (remoteCode = 163089)
+        remoteCommand = "RECORDED_SHOWS"		// RECORDED_SHOWS = SLEEP
+    else if (remoteCode = 163140)
+        remoteCommand = "HIGHEST_SPEED_FW"		
+    else if (remoteCode = 163096)
+        remoteCommand = "HIGHEST_SPEED_RW"
+    else if (remoteCode = 163139) 
+        remoteCommand = "STOP"					// STOP = S.Mode
+    else
+		remoteCommand = ""
+    endif
+
+    return remoteCommand
+}
