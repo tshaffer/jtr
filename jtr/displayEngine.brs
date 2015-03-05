@@ -91,32 +91,31 @@ Sub de_InitializeWebkit()
 End Sub
 
 
-Sub de_EventHandler(jtr As Object, event As Object)
-
-	mVar = jtr.displayEngine
+' Sub de_EventHandler(jtr As Object, event As Object)
+Sub de_EventHandler(event As Object)
 
 	if type(event) = "roHtmlWidgetEvent" then
-		mVar.HandleHttpEvent(event)
+		m.HandleHttpEvent(event)
 	
 	else if type(event) = "roAssociativeArray" then      ' internal message event
         if IsString(event["command"]) then			
 			command$ = event["command"]
 			if command$ = "PAUSE" then
-				mVar.PausePlayback()
+				m.PausePlayback()
 			else if command$ = "PLAY" then
-				mVar.ResumePlayFromPaused()
+				m.ResumePlayFromPaused()
 			else if command$ = "QUICK_SKIP" then
-				mVar.QuickSkipVideo()
+				m.QuickSkipVideo()
 			else if command$ = "INSTANT_REPLAY" then
-				mVar.InstantReplayVideo()
+				m.InstantReplayVideo()
 			else if command$ = "REWIND" then
-				mVar.InitiateRewind()
+				m.InitiateRewind()
 			else if command$ = "NEXT_REWIND" then
-				mVar.NextRewind()
+				m.NextRewind()
 			else if command$ = "FASTFORWARD" then
-				mVar.InitiateFastForward()
+				m.InitiateFastForward()
 			else if command$ = "NEXT_FASTFORWARD" then
-				mVar.NextFastForward()
+				m.NextFastForward()
 			else
 				stop
 			endif
@@ -127,20 +126,20 @@ Sub de_EventHandler(jtr As Object, event As Object)
 		eventIdentity$ = stri(event.GetSourceIdentity())
 
 		' video progress timer
-		if type(mVar.videoPlaybackTimer) = "roTimer" and stri(mVar.videoPlaybackTimer.GetIdentity()) = eventIdentity$ then
+		if type(m.videoPlaybackTimer) = "roTimer" and stri(m.videoPlaybackTimer.GetIdentity()) = eventIdentity$ then
 
-			mVar.currentVideoPosition% = mVar.currentVideoPosition% + mVar.playbackSpeeds[mVar.playbackSpeedIndex%]
+			m.currentVideoPosition% = m.currentVideoPosition% + m.playbackSpeeds[m.playbackSpeedIndex%]
 
-			print "mVar.currentVideoPosition%=";mVar.currentVideoPosition%
-			mVar.videoPlaybackTimer.Start()
+			print "m.currentVideoPosition%=";m.currentVideoPosition%
+			m.videoPlaybackTimer.Start()
 
 			' TODO - update the database once per minute
 
-			mVar.UpdateProgressBar()
+			m.UpdateProgressBar()
 
-'			currentState = mVar.jtr.GetCurrentState()
-'			currentState.currentTime = mVar.currentVideoPosition%
-'			mVar.jtr.SetCurrentState(currentState)
+'			currentState = m.jtr.GetCurrentState()
+'			currentState.currentTime = m.currentVideoPosition%
+'			m.jtr.SetCurrentState(currentState)
 		endif
 
 	endif

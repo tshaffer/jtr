@@ -59,7 +59,8 @@ Sub RunJtr()
 
 '	JTR.eventHandler.AddHSM(JTR.recordingEngine)
 '	JTR.eventHandler.AddHSM(JTR.displayEngine)
-	JTR.eventHandler.AddEventHandler(JTR.displayEngine.eventHandler)
+'	JTR.eventHandler.AddEventHandler(JTR.displayEngine.eventHandler)
+	JTR.eventHandler.AddEngine(JTR.displayEngine)
 
 '	JTR.recordingEngine.Initialize()
 	JTR.displayEngine.Initialize()

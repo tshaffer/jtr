@@ -7,9 +7,11 @@ Function newEventHandler(jtr As Object) As Object
 
 	EventHandler.hsms = []
 	EventHandler.eventHandlers = []
+	EventHandler.engines = []
 
 	EventHandler.AddHSM				= eventHandler_AddHSM
 	EventHandler.AddEventHandler	= eventHandler_AddEventHandler
+	EventHandler.AddEngine			= eventHandler_AddEngine
 	EventHandler.EventLoop			= eventHandler_EventLoop
 
 	return EventHandler
@@ -27,6 +29,13 @@ End Sub
 Sub eventHandler_AddEventHandler( eventHandler As Object )
 
 	m.eventHandlers.push(eventHandler)
+
+End Sub
+
+
+Sub eventHandler_AddEngine( engine As Object )
+
+	m.engines.push(engine)
 
 End Sub
 
@@ -85,6 +94,11 @@ Sub eventHandler_EventLoop()
 				m.eventHandler = m.eventHandlers[i%]
 '				m.eventHandler.EventHandler(msg)
 				m.eventHandler(m.jtr, msg)
+			next
+
+			numEngines% = m.engines.Count()
+			for i% = 0 to numEngines% - 1
+				m.engines[i%].EventHandler(msg)
 			next
 
 			numHSMs% = m.hsms.Count()
