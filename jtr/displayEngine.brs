@@ -91,7 +91,6 @@ Sub de_InitializeWebkit()
 End Sub
 
 
-' Sub de_EventHandler(jtr As Object, event As Object)
 Sub de_EventHandler(event As Object)
 
 	if type(event) = "roHtmlWidgetEvent" then
@@ -137,9 +136,9 @@ Sub de_EventHandler(event As Object)
 
 			m.UpdateProgressBar()
 
-'			currentState = m.jtr.GetCurrentState()
-'			currentState.currentTime = m.currentVideoPosition%
-'			m.jtr.SetCurrentState(currentState)
+			currentState = m.jtr.GetCurrentState()
+			currentState.currentTime = m.currentVideoPosition%
+			m.jtr.SetCurrentState(currentState)
 		endif
 
 	endif
@@ -156,7 +155,8 @@ Sub de_HandleHttpEvent(event)
 		if eventData.reason = "load-started" then
 		else if eventData.reason = "load-finished" then
 
-' send device's IP address to site's javascript
+			' send device's IP address to site's javascript
+
 			' get ip address
 			nc = CreateObject("roNetworkConfiguration", 0)
 			networkConfig = nc.GetCurrentConfig()
@@ -197,25 +197,31 @@ Sub de_StartPlayback(recording As Object)
 	' pause current video
 	m.PausePlayback()
 
-	' save current position
-	' m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
-	' m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
+	if type(m.selectedRecording) = "roAssociativeArray" then
 
-	' if there's a current recording, save it for later possible jump
-'	m.stateMachine.priorSelectedRecording = m.stateMachine.selectedRecording
+		' save current position
+		m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+
+		m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
+		
+		' TODO - should jump be implemented in JS?
+		' if there's a current recording, save it for later possible jump
+		m.priorSelectedRecording = m.selectedRecording
+
+	endif
+
 
 	m.selectedRecording = recording
-'   m.stateMachine.currentVideoPosition% = 0 - do this when executing 'play from beginning'
+'   m.currentVideoPosition% = 0 - do this when executing 'play from beginning'
 	m.currentVideoPosition% = recording.LastViewedPosition
 
-	' new approach - launch video playback here
 	print "LaunchVideo from StartPlayback"
 
 	ok = m.videoPlayer.PlayFile(m.selectedRecording.Path)
 	if not ok stop
 		
 	m.UpdateProgressBar()
-'	m.stateMachine.SeekToCurrentVideoPosition()
+	m.SeekToCurrentVideoPosition()
 
 	m.StartVideoPlaybackTimer()
 
@@ -224,6 +230,12 @@ End Sub
 
 
 Sub de_PausePlayback()
+
+	if type(m.selectedRecording) = "roAssociativeArray" then
+		' save current position
+		m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+		m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
+	endif
 
 	m.StopVideoPlaybackTimer()
 
@@ -236,7 +248,6 @@ End Sub
 
 Sub de_ResumePlayFromPaused()
 
-'	m.stateMachine.ResumePlayback()
 	m.StartVideoPlaybackTimer()
 
 	ok = m.videoPlayer.Resume()
@@ -287,19 +298,19 @@ End Sub
 Sub de_InitiateFastForward()
 
 	' update last viewed position in database
-'	print "update last viewed position for ";m.stateMachine.selectedRecording.RecordingId;" to "; m.stateMachine.currentVideoPosition%
-'	m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
-'	m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
+	print "update last viewed position for ";m.selectedRecording.RecordingId;" to "; m.currentVideoPosition%
+	m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+	m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 
 	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% + 1
 	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
 
 	ok = m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
 
-'	currentState = m.stateMachine.jtr.GetCurrentState()
-'	currentState.state = "fastForward"
-'	currentState.currentTime = m.stateMachine.selectedRecording.LastViewedPosition
-'	m.stateMachine.jtr.SetCurrentState(currentState)
+	currentState = m.jtr.GetCurrentState()
+	currentState.state = "fastForward"
+	currentState.currentTime = m.selectedRecording.LastViewedPosition
+	m.jtr.SetCurrentState(currentState)
 
 End Sub
 
@@ -320,19 +331,19 @@ End Sub
 Sub de_InitiateRewind()
 
 	' update last viewed position in database
-'	print "update last viewed position for ";m.stateMachine.selectedRecording.RecordingId;" to "; m.stateMachine.currentVideoPosition%
-'	m.stateMachine.jtr.UpdateDBLastViewedPosition(m.stateMachine.selectedRecording.RecordingId, m.stateMachine.currentVideoPosition%)
-'	m.stateMachine.selectedRecording.LastViewedPosition = m.stateMachine.currentVideoPosition%
+	print "update last viewed position for ";m.selectedRecording.RecordingId;" to "; m.currentVideoPosition%
+	m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+	m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 
 	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% - 1
 	playbackSpeed = m.playbackSpeeds[m.playbackSpeedIndex%]
 
 	ok = m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
 
-'	currentState = m.stateMachine.jtr.GetCurrentState()
-'	currentState.state = "rewind"
-'	currentState.currentTime = m.stateMachine.selectedRecording.LastViewedPosition
-'	m.stateMachine.jtr.SetCurrentState(currentState)
+	currentState = m.jtr.GetCurrentState()
+	currentState.state = "rewind"
+	currentState.currentTime = m.selectedRecording.LastViewedPosition
+	m.jtr.SetCurrentState(currentState)
 
 End Sub
 
