@@ -143,7 +143,7 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
 }
 
 
-function calculateProgressBar() {
+function calculateProgressBarParameters() {
 
     // number of ticks to display is based on the duration of the recording
     // 0 < duration <= 5 minutes
@@ -194,6 +194,66 @@ function calculateProgressBar() {
         numTicks--;
     }
     console.log("toggleProgressBar: numTicks = " + numTicks);
+
+    var params = {};
+    params.currentOffset = 0;
+    params.recordingDuration = recordingDuration;
+    params.numMinutes = numMinutes;
+    params.minutesPerTick = minutesPerTick;
+    params.numTicks = numTicks;
+
+    return params;
+
+}
+
+
+function toggleProgressBarNew(currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks) {
+
+    if (!$("#progressBar").length) {
+        var percentComplete = 50;
+        var toAppend = '<div id="progressBar" class="meter"><span id="progressBarSpan" class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
+
+        var timeLabel = SecondsToHourMinuteLabel(recordingDuration)
+        toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>' + timeLabel + '</p></div>';
+
+        for (i = 1; i <= numTicks; i++) {
+            var theId = "progressBarTick" + i.toString()
+            toAppend += '<div id=' + theId + ' class="meterTick"><p></p></div>';
+        }
+
+        toAppend += '<div id="progressBarElapsedTime" class="meterCurrentPositionLabel"><p>1:00</p></div>';
+        toAppend += '<div id="progressBarTickCurrent" class="meterCurrentPositionTick"><p></p></div>';
+
+        $("#videoControlRegion").append(toAppend);
+
+        // TODO - should retrieve these attributes dynamically - good luck with that!!
+        var leftOffset = 5.5;
+        var rightOffset = 89.6;
+        for (i = 1; i <= numTicks; i++) {
+
+            var durationAtTick = i * minutesPerTick;
+            var totalDuration = numMinutes;
+
+            var tickOffset = leftOffset + (rightOffset - leftOffset) * (durationAtTick / totalDuration);
+            tickOffset = tickOffset - 0.25 / 2; // move to left a little to account for width of tick
+
+            console.log("tickOffset=" + tickOffset.toString());
+            $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
+        }
+
+        UpdateProgressBarGraphics(currentOffset, recordingDuration);
+
+    } else {
+        $("#progressBar").remove();
+        $("#progressBarTotalTime").remove();
+        $("#progressBarElapsedTime").remove();
+        $("#progressBarTickCurrent").remove();
+
+        for (i = 1; i < 8; i++) {
+            var theId = "#progressBarTick" + i.toString()
+            $(theId).remove();
+        }
+    }
 }
 
 displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event, stateData) {
@@ -211,8 +271,8 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
         switch (eventData) {
             case "PROGRESS_BAR":
                 console.log("toggle the progress bar");
-                calculateProgressBar();
-
+                var params = calculateProgressBarParameters();
+                toggleProgressBarNew(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
                 break;
         }
     }
