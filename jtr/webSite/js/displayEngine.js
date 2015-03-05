@@ -269,11 +269,32 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
         console.log(this.id + ": remote command input: " + eventData);
 
         switch (eventData) {
+            case "MENU":
+                console.log("display the main menu");
+
+                // TODO - undisplay overlay graphics
+
+                selectHomePage();
+                $("#footerArea").removeAttr("style");
+                // $("#footerArea").css("display", "block");
+
+                // give focus to first element
+                var elementId = "#" + mainMenuIds[0][0];
+                $(elementId).focus();
+
+                stateData.nextState = this.stateMachine.stShowingUI
+                return "TRANSITION";
+
+                break;
+            case "RECORDED_SHOWS":
+                console.log("display recorded shows");
+                break;
             case "PROGRESS_BAR":
                 console.log("toggle the progress bar");
                 var params = calculateProgressBarParameters();
                 toggleProgressBarNew(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
                 break;
+
         }
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
@@ -365,7 +386,6 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
     //  PLAY
     //  INSTANT_REPLAY
     //  QUICK_SKIP
-    //  MENU
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
@@ -381,9 +401,6 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
             case "INSTANT_REPLAY":
                 executeRemoteCommand("instantReplay");
                 return "HANDLED";
-            case "MENU":
-                return "HANDLED";
-                break;
         }
     }
     else {
