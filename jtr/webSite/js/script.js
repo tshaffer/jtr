@@ -207,6 +207,7 @@ function SecondsToHourMinuteLabel(numSeconds) {
     return hours + ":" + minutes;
 }
 
+
 function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
 
     // currentOffset in seconds
@@ -245,6 +246,7 @@ function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
 
     var elapsedTimeLabel = SecondsToHourMinuteLabel(currentOffset);
     $("#progressBarElapsedTime").html("<p>" + elapsedTimeLabel + "</p>");
+    //console.log("currentOffset is " + currentOffset + ", elapsedTimeLabel is " + elapsedTimeLabel);
 
     // TODO - should only need to do this when progress bar is first updated with a recording
     var totalTimeLabel = SecondsToHourMinuteLabel(recordingDuration);
@@ -1131,6 +1133,7 @@ $(document).ready(function () {
                     }
                     else if (command$ == "updateprogressbar" && $("#progressBar").length) {
 
+                        console.log("UPDATEPROGRESSBAR ********************************************************");
                         // currentOffset in seconds
                         var currentOffset = msg.data["currentOffset"];
                         console.log('### currentOffset : ' + currentOffset);

@@ -22,6 +22,9 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.NextFastForward				= de_NextFastForward
 	DisplayEngine.InitiateRewind				= de_InitiateRewind
 	DisplayEngine.NextRewind					= de_NextRewind
+	DisplayEngine.StartVideoPlaybackTimer		= de_StartVideoPlaybackTimer
+	DisplayEngine.StopVideoPlaybackTimer		= de_StopVideoPlaybackTimer
+	DisplayEngine.UpdateProgressBar				= de_UpdateProgressBar
 
 	return DisplayEngine
 
@@ -94,6 +97,7 @@ Sub de_EventHandler(jtr As Object, event As Object)
 
 	if type(event) = "roHtmlWidgetEvent" then
 		mVar.HandleHttpEvent(event)
+	
 	else if type(event) = "roAssociativeArray" then      ' internal message event
         if IsString(event["command"]) then			
 			command$ = event["command"]
@@ -117,6 +121,28 @@ Sub de_EventHandler(jtr As Object, event As Object)
 				stop
 			endif
 		endif
+	
+	else if type(event) = "roTimerEvent" then
+
+		eventIdentity$ = stri(event.GetSourceIdentity())
+
+		' video progress timer
+		if type(mVar.videoPlaybackTimer) = "roTimer" and stri(mVar.videoPlaybackTimer.GetIdentity()) = eventIdentity$ then
+
+			mVar.currentVideoPosition% = mVar.currentVideoPosition% + mVar.playbackSpeeds[mVar.playbackSpeedIndex%]
+
+			print "mVar.currentVideoPosition%=";mVar.currentVideoPosition%
+			mVar.videoPlaybackTimer.Start()
+
+			' TODO - update the database once per minute
+
+			mVar.UpdateProgressBar()
+
+'			currentState = mVar.jtr.GetCurrentState()
+'			currentState.currentTime = mVar.currentVideoPosition%
+'			mVar.jtr.SetCurrentState(currentState)
+		endif
+
 	endif
 
 End Sub
@@ -189,10 +215,10 @@ Sub de_StartPlayback(recording As Object)
 	ok = m.videoPlayer.PlayFile(m.selectedRecording.Path)
 	if not ok stop
 		
-'	m.stateMachine.UpdateProgressBar()
+	m.UpdateProgressBar()
 '	m.stateMachine.SeekToCurrentVideoPosition()
 
-'	m.stateMachine.StartVideoPlaybackTimer()
+	m.StartVideoPlaybackTimer()
 
 End Sub
 
@@ -200,7 +226,7 @@ End Sub
 
 Sub de_PausePlayback()
 
-	' m.StopVideoPlaybackTimer()
+	m.StopVideoPlaybackTimer()
 
 	ok = m.videoPlayer.SetPlaybackSpeed(0)
 	ok = m.videoPlayer.Pause()
@@ -212,7 +238,7 @@ End Sub
 Sub de_ResumePlayFromPaused()
 
 '	m.stateMachine.ResumePlayback()
-'	m.stateMachine.StartVideoPlaybackTimer()
+	m.StartVideoPlaybackTimer()
 
 	ok = m.videoPlayer.Resume()
 	' if not ok stop
@@ -227,7 +253,7 @@ Sub de_QuickSkipVideo()
 
 	m.currentVideoPosition% = m.currentVideoPosition% + 15	' quick skip currently jumps ahead 15 seconds
 
-	' m.UpdateProgressBar()
+	m.UpdateProgressBar()
 
 	m.SeekToCurrentVideoPosition()
 
@@ -241,7 +267,7 @@ Sub de_InstantReplayVideo()
 		m.currentVideoPosition% = 0
 	endif
 
-	' m.UpdateProgressBar()
+	m.UpdateProgressBar()
 
 	m.SeekToCurrentVideoPosition()
 
@@ -324,6 +350,45 @@ Sub de_NextRewind()
 	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
 
 End Sub
+
+
+Sub de_StartVideoPlaybackTimer()
+
+print "****************************************************************************** START_VIDEO_PLAYBACK_TIMER"
+	m.videoPlaybackTimer = CreateObject("roTimer")
+	m.videoPlaybackTimer.SetPort(m.msgPort)
+	m.videoPlaybackTimer.SetElapsed(1, 0)
+	m.videoPlaybackTimer.Start()
+
+End Sub
+
+
+Sub de_StopVideoPlaybackTimer()
+
+print "****************************************************************************** STOP_VIDEO_PLAYBACK_TIMER"
+	if type(m.videoPlaybackTimer) = "roTimer" then
+		m.videoPlaybackTimer.Stop()
+	endif
+
+End Sub
+
+
+Sub de_UpdateProgressBar()
+	if type(m.selectedRecording) = "roAssociativeArray" then
+		print  "send message to js to update progress bar"
+		print "offset from beginning of recording = ";m.currentVideoPosition%
+		print "total length of recording = ";(m.selectedRecording.Duration*60)
+
+		' send message to js to update progress bar
+		aa = {}
+		aa.AddReplace("bsMessage", "UpdateProgressBar")
+		aa.AddReplace("currentOffset", stri(m.currentVideoPosition%))
+		aa.AddReplace("recordingDuration", stri(m.selectedRecording.Duration*60))
+		m.htmlWidget.PostJSMessage(aa)
+	endif
+
+End Sub
+
 
 
 
@@ -1664,7 +1729,7 @@ stop ' should be impossible??
 End Sub
 
 
-Sub UpdateProgressBar()
+Sub UpdateProgressBarOld()
 
 	if type(m.selectedRecording) = "roAssociativeArray" then
 		print  "send message to js to update progress bar"
@@ -1708,25 +1773,6 @@ Sub LaunchWebkit()
 
 ' TODO - modify HTML/javascript so that only a transparent background is shown initially
 	m.htmlWidget.Show()
-
-End Sub
-
-
-Sub StartVideoPlaybackTimer()
-
-print "****************************************************************************** START_VIDEO_PLAYBACK_TIMER"
-	m.videoPlaybackTimer = CreateObject("roTimer")
-	m.videoPlaybackTimer.SetPort(m.msgPort)
-	m.videoPlaybackTimer.SetElapsed(1, 0)
-	m.videoPlaybackTimer.Start()
-
-End Sub
-
-
-Sub StopVideoPlaybackTimer()
-
-print "****************************************************************************** STOP_VIDEO_PLAYBACK_TIMER"
-	m.videoPlaybackTimer.Stop()
 
 End Sub
 
