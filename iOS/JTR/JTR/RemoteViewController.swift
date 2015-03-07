@@ -11,19 +11,11 @@ import UIKit
 class RemoteViewController: UIViewController {
     var network = Networking("192.168.1.24")
     
-//    TODO: need to add up/down/left/right, exit, select, jump, highest speed FF, highest speed RR
+//    TODO: need to add highest speed FF, highest speed RR
     
     @IBAction func homeBtn(sender: AnyObject) {
 //        network.executeCommand("home")
         //should show main menu (and clear the background?)
-    }
-    
-    @IBAction func sortAlphaBtn(sender: AnyObject) {
-//        network.executeCommand("home")
-    }
-    
-    @IBAction func sortChronoBtn(sender: AnyObject) {
-//        network.executeCommand("home")
     }
     
     @IBAction func playBtn(sender: AnyObject) {
@@ -54,18 +46,6 @@ class RemoteViewController: UIViewController {
         network.executeCommand("fastForward")
     }
     
-    @IBAction func muteBtn(sender: AnyObject) {
-//        network.executeCommand("home")
-    }
-    
-    @IBAction func volumeDownBtn(sender: AnyObject) {
-//        network.executeCommand("home")
-    }
-    
-    @IBAction func volumeUpBtn(sender: AnyObject) {
-//        network.executeCommand("home")
-    }
-    
     @IBAction func deleteBtn(sender: AnyObject) {
         //need to get recordingId from the now playing
         var recordingId : String = "";
@@ -86,6 +66,18 @@ class RemoteViewController: UIViewController {
     
     @IBAction func rightArrowBtn(sender: AnyObject) {
         network.executeCommand("right")
+    }
+    
+    @IBAction func selectBtn(sender: AnyObject) {
+        network.executeCommand("select")
+    }
+    
+    @IBAction func exitBtn(sender: AnyObject) {
+        network.executeCommand("exit")
+    }
+    
+    @IBAction func jumpBtn(sender: AnyObject) {
+        network.executeCommand("jump")
     }
     
     override func viewDidLoad() {

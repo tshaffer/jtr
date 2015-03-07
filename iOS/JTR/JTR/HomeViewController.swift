@@ -12,7 +12,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     @IBOutlet var homeTblView: UITableView!
     
-    let menuItems = ["Recorded Shows2", "Record Now", "Manual Record", "To Do List"]
+    let menuItems = ["Recorded Shows", "Record Now", "Manual Record", "To Do List"]
     let textCellIdentifier = ["toRecordedShows", "toRecordNow",  "toManualRecord", "toToDoList"]
 
     override func viewDidLoad() {

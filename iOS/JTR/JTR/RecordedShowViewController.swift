@@ -10,9 +10,10 @@ import UIKit
 
 class RecordedShowViewController: UIViewController {
     var recordedShow : RecordedShow = RecordedShow()
-
-    @IBOutlet weak var titleLabel: UITextField!
-    @IBOutlet weak var dateLabel: UITextField!
+    
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var thumbnail: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +30,14 @@ class RecordedShowViewController: UIViewController {
 
     @IBAction func deleteButtonPress(sender: AnyObject) {
         println("delete button pressed")
+    }
+    
+    @IBAction func playShow(sender: AnyObject) {
+        //the play specific show command
+    }
+    
+    @IBAction func streamShow(sender: AnyObject) {
+    
     }
     
     // MARK: - Navigation
