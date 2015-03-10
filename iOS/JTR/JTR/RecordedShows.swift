@@ -15,6 +15,7 @@ class RecordedShow {
     var recordingId = ""
     var transcodeComplete = ""
     var duration = ""
+    var time = ""
 }
 
 class RecordedShows {

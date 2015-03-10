@@ -19,7 +19,7 @@ class RecordedShowViewController: UIViewController {
         super.viewDidLoad()
         println("\(recordedShow.title)")
         titleLabel.text = recordedShow.title
-        dateLabel.text = recordedShow.dateRecorded
+        dateLabel.text = recordedShow.dateRecorded + " " + recordedShow.time
         
     }
 

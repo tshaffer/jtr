@@ -12,6 +12,21 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
     let cellIdentifier = "RecordedShowsCell"
     var shows : RecordedShows?
     @IBOutlet weak var recordedShowsTable: UITableView!
+    var titleForward = true
+    var dateForward = true
+    
+    @IBAction func clickSort(sender: AnyObject) {
+        let segment = sender as UISegmentedControl
+        let segIndex = segment.selectedSegmentIndex
+        
+        if segIndex == 0 {
+            shows?.recordedShows.sort({ $0.title < $1.title })
+        
+        } else {
+            shows?.recordedShows.sort({ $0.dateRecorded > $1.dateRecorded })
+        }
+        recordedShowsTable.reloadData()
+    }
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

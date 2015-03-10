@@ -105,16 +105,38 @@ class Networking {
                     let recordedShow = RecordedShow()
                     recordedShow.recordingId = show["RecordingId"].stringValue
                     recordedShow.title = show["Title"].stringValue
-                    recordedShow.dateRecorded = show["StartDateTime"].stringValue
+                    recordedShow.dateRecorded = Networking.cleanDate(show["StartDateTime"].stringValue)
                     recordedShow.duration = show["Duration"].stringValue
                     recordedShow.transcodeComplete = show["TranscodeComplete"].stringValue
                     recordedShow.position = show["LastViewedPosition"].stringValue
+                    recordedShow.time = Networking.cleanTime(show["StartDateTime"].stringValue)
                     
                     shows.recordedShows.append(recordedShow)
                 }
             }
         }
         return shows
+    }
+    
+    class func cleanTime(date : String) -> String {
+        var hours = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 11), end: advance(date.endIndex, -10)))
+        let mins = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 14), end: advance(date.endIndex, -7)))
+        var amPm = ""
+        if hours.toInt() > 11 {
+            amPm = "PM"
+            hours = String(hours.toInt()! - 12)
+        } else {
+            amPm = "AM"
+        }
+        
+        return hours + ":" + mins + " " + amPm
+    }
+    
+    class func cleanDate(date : String) -> String {
+        let month = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 5), end: advance(date.endIndex, -16)))
+        let day = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 8), end: advance(date.endIndex, -13)))
+        let year = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 2), end: advance(date.endIndex, -19)))
+        return month + "/" + day + "/" + year
     }
     
     func createThumb(url : String) -> CGImage? {

@@ -24,6 +24,9 @@
                                     <segment title="A -> Z"/>
                                     <segment title="123"/>
                                 </segments>
+                                <connections>
+                                    <action selector="clickSort:" destination="8rJ-Kc-sve" eventType="valueChanged" id="ZFy-5i-PJH"/>
+                                </connections>
                             </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="mOx-5x-jDq">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -915,6 +918,15 @@
                                     <action selector="quickSkip:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="UgN-yk-gHp"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yvZ-dm-40L">
+                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="16" y="423" width="368" height="21"/>
+                                </variation>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="default">
@@ -927,6 +939,7 @@
                                 <exclude reference="Sjb-vB-nqO"/>
                                 <exclude reference="w3x-Mf-LVV"/>
                                 <exclude reference="iAQ-VR-eEr"/>
+                                <exclude reference="yvZ-dm-40L"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -939,6 +952,7 @@
                                 <include reference="Sjb-vB-nqO"/>
                                 <include reference="w3x-Mf-LVV"/>
                                 <include reference="iAQ-VR-eEr"/>
+                                <include reference="yvZ-dm-40L"/>
                             </mask>
                         </variation>
                     </view>
@@ -963,6 +977,7 @@
                         <outlet property="dateRecorded" destination="TRY-GB-Lu3" id="268-ae-Dcm"/>
                         <outlet property="progressBar" destination="w3x-Mf-LVV" id="9GN-G2-QxR"/>
                         <outlet property="showTitle" destination="H44-ks-aKP" id="DAc-9S-3FY"/>
+                        <outlet property="stateLabel" destination="yvZ-dm-40L" id="nF4-92-7WL"/>
                         <outlet property="thumbnail" destination="FqS-3a-OMQ" id="BeZ-Ey-F2x"/>
                     </connections>
                 </viewController>
@@ -1284,7 +1299,7 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="z4Q-Bb-oZN"/>
+        <segue reference="VSO-mG-NrY"/>
         <segue reference="bas-kM-f3d"/>
     </inferredMetricsTieBreakers>
 </document>

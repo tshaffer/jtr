@@ -14,12 +14,16 @@ class NowPlayingViewController: UIViewController {
         didSet {
             if let valid = json {
                 showTitle.text = valid["currentstate"]["title"].stringValue
-                dateRecorded.text = valid["currentstate"]["recordingdate"].stringValue
+                var dateString = valid["currentstate"]["recordingdate"].stringValue
+                var date = Networking.cleanDate(dateString)
+                var time = Networking.cleanTime(dateString)
+                dateRecorded.text = date + " " + time
                 let cgImage = net.createThumb("http://192.168.1.28:8080/content/20150203T180230.mp4")
                 if let cgImg = cgImage {
                     let img = UIImage.init(CGImage: cgImage)
                     thumbnail.image = img
                 }
+                stateLabel.text = "State: " + valid["currentstate"]["state"].stringValue
             }
         }
     }
@@ -28,6 +32,7 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var thumbnail: UIImageView!
     @IBOutlet weak var dateRecorded: UILabel!
     @IBOutlet weak var progressBar: UIProgressView!
+    @IBOutlet weak var stateLabel: UILabel!
     
     
     override func viewDidLoad() {
@@ -49,11 +54,13 @@ class NowPlayingViewController: UIViewController {
     @IBAction func play(sender: AnyObject) {
         net.executeCommand("play")
         updateProgresBar("play")
+        json = net.getCurrentState()
     }
     
     @IBAction func pause(sender: AnyObject) {
         net.executeCommand("pause")
         updateProgresBar("pause")
+        json = net.getCurrentState()
     }
     
     @IBAction func quickSkip(sender: AnyObject) {
