@@ -9,7 +9,7 @@
 import UIKit
 
 class RemoteViewController: UIViewController {
-    var network = Networking("192.168.1.24")
+    let network = Networking.connection
     
 //    TODO: need to add highest speed FF, highest speed RR
     
@@ -78,17 +78,6 @@ class RemoteViewController: UIViewController {
     
     @IBAction func jumpBtn(sender: AnyObject) {
         network.executeCommand("jump")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 

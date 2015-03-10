@@ -129,6 +129,20 @@
                     </view>
                     <navigationItem key="navigationItem" title="Recorded Shows" id="F6q-Nt-NeG">
                         <barButtonItem key="backBarButtonItem" title="Home" id="U52-aL-4vy"/>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="03r-nL-EwE">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KAw-bN-zaA">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="KAw-bN-zaA" id="5lY-ef-Ofs">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="recordedShowsTable" destination="mOx-5x-jDq" id="coI-Zf-WFl"/>
@@ -234,7 +248,22 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Recorded Show" id="BHS-DU-iZJ"/>
+                    <navigationItem key="navigationItem" title="Recorded Show" id="BHS-DU-iZJ">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="fkS-mv-FxH">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="YQY-NF-Bro">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="YQY-NF-Bro" id="eXe-ce-MYn">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="dateLabel" destination="u4u-J1-srK" id="6nG-wJ-j1m"/>
                         <outlet property="thumbnail" destination="mgu-cD-UF4" id="5d6-35-0GO"/>
@@ -330,7 +359,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="192.168.1.24" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="UsV-MT-pDI">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="192.168.1.28" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="UsV-MT-pDI">
                                 <rect key="frame" x="190" y="64" width="195" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
@@ -528,6 +557,20 @@
                     </view>
                     <navigationItem key="navigationItem" title="JTR" id="AO1-NY-9AL">
                         <barButtonItem key="backBarButtonItem" title="Home" id="VHF-RC-8Dp"/>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="nFt-bX-MfA">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="SUf-WB-zut">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="SUf-WB-zut" id="3wd-fb-Yjp">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="homeTblView" destination="DMd-QX-Zkp" id="HHM-5L-GQ6"/>
@@ -613,7 +656,22 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Record Now" id="TfR-qT-6HV"/>
+                    <navigationItem key="navigationItem" title="Record Now" id="TfR-qT-6HV">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="lof-Mp-Xfe">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="5Wh-je-Rgg">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="5Wh-je-Rgg" id="z4Q-Bb-oZN">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OgQ-gQ-Hc5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -727,7 +785,22 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Manual Recording" id="hYb-Q3-GbS"/>
+                    <navigationItem key="navigationItem" title="Manual Recording" id="hYb-Q3-GbS">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="xf4-5E-0hk">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mvK-h0-eSe">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="mvK-h0-eSe" id="EPi-DP-RWz">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zYp-wd-PAF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -779,7 +852,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="384" width="116" height="21"/>
+                                    <rect key="frame" x="16" y="384" width="368" height="21"/>
                                 </variation>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FqS-3a-OMQ">
@@ -830,16 +903,16 @@
                                     <rect key="frame" x="16" y="570" width="368" height="2"/>
                                 </variation>
                             </progressView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="02U-ld-VSL">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iAQ-VR-eEr">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" image="glyphicons-179-step-forward">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="291" y="464" width="28" height="44"/>
+                                    <rect key="frame" x="288" y="471" width="22" height="31"/>
                                 </variation>
                                 <connections>
-                                    <action selector="quickSkip:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="KTg-kd-UCG"/>
+                                    <action selector="quickSkip:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="UgN-yk-gHp"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -853,7 +926,7 @@
                                 <exclude reference="Mxm-ZT-CS4"/>
                                 <exclude reference="Sjb-vB-nqO"/>
                                 <exclude reference="w3x-Mf-LVV"/>
-                                <exclude reference="02U-ld-VSL"/>
+                                <exclude reference="iAQ-VR-eEr"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -865,17 +938,30 @@
                                 <include reference="Mxm-ZT-CS4"/>
                                 <include reference="Sjb-vB-nqO"/>
                                 <include reference="w3x-Mf-LVV"/>
-                                <include reference="02U-ld-VSL"/>
+                                <include reference="iAQ-VR-eEr"/>
                             </mask>
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Now Playing" id="eYc-Kx-cbf">
                         <barButtonItem key="backBarButtonItem" title="Home" id="uy3-GT-qBu"/>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="08k-d2-Qq0">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="A5G-3a-MnR">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="A5G-3a-MnR" id="VSO-mG-NrY">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="dateRecorded" destination="TRY-GB-Lu3" id="268-ae-Dcm"/>
                         <outlet property="progressBar" destination="w3x-Mf-LVV" id="9GN-G2-QxR"/>
-                        <outlet property="quickSkip" destination="02U-ld-VSL" id="83J-26-AQx"/>
                         <outlet property="showTitle" destination="H44-ks-aKP" id="DAc-9S-3FY"/>
                         <outlet property="thumbnail" destination="FqS-3a-OMQ" id="BeZ-Ey-F2x"/>
                     </connections>
@@ -920,73 +1006,13 @@
                                     <action selector="deleteBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="v3P-Fg-BhS"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h5f-He-iwv">
-                                <rect key="frame" x="154" y="372" width="14" height="22"/>
-                                <state key="normal" image="glyphicons-176-stop">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="181" y="437" width="38" height="30"/>
-                                </variation>
-                                <connections>
-                                    <action selector="stopBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Uo6-dP-gZn"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lg-0g-QZ5">
-                                <rect key="frame" x="107" y="372" width="14" height="22"/>
-                                <state key="normal" image="glyphicons-171-step-backward">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="129" y="434" width="37" height="36"/>
-                                </variation>
-                                <connections>
-                                    <action selector="instantReplayBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="YKt-SK-3or"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kqL-eZ-fai">
-                                <rect key="frame" x="200" y="372" width="23" height="22"/>
-                                <state key="normal" image="glyphicons-179-step-forward">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="229" y="439" width="31" height="26"/>
-                                </variation>
-                                <connections>
-                                    <action selector="quickSkipBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="f7Y-hS-m1d"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qsY-Gh-qWU">
-                                <rect key="frame" x="52" y="372" width="25" height="22"/>
-                                <state key="normal" image="glyphicons-173-rewind">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="75" y="434" width="46" height="36"/>
-                                </variation>
-                                <connections>
-                                    <action selector="rewindBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="qOH-XH-r50"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fvw-cz-Ry4">
-                                <rect key="frame" x="250" y="372" width="25" height="22"/>
-                                <state key="normal" image="glyphicons-177-forward">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="273" y="438" width="40" height="28"/>
-                                </variation>
-                                <connections>
-                                    <action selector="fastForwardBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="dzp-Hu-qYA"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2qy-PU-SwU">
                                 <rect key="frame" x="130" y="281" width="16" height="22"/>
                                 <state key="normal" image="glyphicons-174-play">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="160" y="275" width="37" height="41"/>
+                                    <rect key="frame" x="158" y="273" width="37" height="41"/>
                                 </variation>
                                 <connections>
                                     <action selector="playBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="UI1-Mu-H7C"/>
@@ -998,7 +1024,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="212" y="278" width="35" height="37"/>
+                                    <rect key="frame" x="210" y="276" width="35" height="37"/>
                                 </variation>
                                 <connections>
                                     <action selector="pauseBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QyK-rE-PtX"/>
@@ -1010,7 +1036,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="260" y="279" width="31" height="33"/>
+                                    <rect key="frame" x="258" y="277" width="31" height="33"/>
                                 </variation>
                                 <connections>
                                     <action selector="rightArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="G2t-K9-6Lf"/>
@@ -1022,7 +1048,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="113" y="279" width="29" height="31"/>
+                                    <rect key="frame" x="111" y="277" width="29" height="31"/>
                                 </variation>
                                 <connections>
                                     <action selector="leftArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="XP9-LR-aEL"/>
@@ -1034,7 +1060,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="183" y="217" width="41" height="36"/>
+                                    <rect key="frame" x="181" y="215" width="41" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="upArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="enx-ao-ec6"/>
@@ -1046,7 +1072,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="188" y="345" width="30" height="30"/>
+                                    <rect key="frame" x="186" y="343" width="30" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="downArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QE7-vl-dbX"/>
@@ -1091,6 +1117,66 @@
                                     <action selector="jumpBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Rf2-fc-wG8"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h5f-He-iwv">
+                                <rect key="frame" x="154" y="372" width="14" height="22"/>
+                                <state key="normal" image="glyphicons-176-stop">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="182" y="435" width="38" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="stopBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Uo6-dP-gZn"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lg-0g-QZ5">
+                                <rect key="frame" x="107" y="372" width="14" height="22"/>
+                                <state key="normal" image="glyphicons-171-step-backward">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="130" y="432" width="37" height="36"/>
+                                </variation>
+                                <connections>
+                                    <action selector="instantReplayBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="YKt-SK-3or"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kqL-eZ-fai">
+                                <rect key="frame" x="200" y="372" width="23" height="22"/>
+                                <state key="normal" image="glyphicons-179-step-forward">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="230" y="437" width="31" height="26"/>
+                                </variation>
+                                <connections>
+                                    <action selector="quickSkipBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="f7Y-hS-m1d"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qsY-Gh-qWU">
+                                <rect key="frame" x="52" y="372" width="25" height="22"/>
+                                <state key="normal" image="glyphicons-173-rewind">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="76" y="432" width="46" height="36"/>
+                                </variation>
+                                <connections>
+                                    <action selector="rewindBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="qOH-XH-r50"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fvw-cz-Ry4">
+                                <rect key="frame" x="250" y="372" width="25" height="22"/>
+                                <state key="normal" image="glyphicons-177-forward">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="274" y="436" width="40" height="28"/>
+                                </variation>
+                                <connections>
+                                    <action selector="fastForwardBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="dzp-Hu-qYA"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="default">
@@ -1118,6 +1204,20 @@
                     </view>
                     <navigationItem key="navigationItem" title="Remote" id="yXP-Oa-wiO">
                         <barButtonItem key="backBarButtonItem" title="Home" id="LGU-oL-UsN"/>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="8c6-nY-LFg">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="sqv-ss-HQ9">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="glyphicons-137-cogwheel">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ww1-5w-Bet" kind="popoverPresentation" popoverAnchorView="sqv-ss-HQ9" id="yyY-6V-vQG">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PvM-e0-eWO" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1165,6 +1265,7 @@
     </scenes>
     <resources>
         <image name="glyphicons-120-table" width="24" height="24"/>
+        <image name="glyphicons-137-cogwheel" width="24" height="24"/>
         <image name="glyphicons-164-iphone" width="14" height="24"/>
         <image name="glyphicons-17-bin" width="20" height="28"/>
         <image name="glyphicons-171-step-backward" width="14" height="18"/>
@@ -1183,6 +1284,7 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="z4Q-Bb-oZN"/>
         <segue reference="bas-kM-f3d"/>
     </inferredMetricsTieBreakers>
 </document>

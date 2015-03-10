@@ -9,7 +9,6 @@
 import UIKit
 
 class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    let network = Networking("192.168.1.24")
     let cellIdentifier = "RecordedShowsCell"
     var shows : RecordedShows?
     @IBOutlet weak var recordedShowsTable: UITableView!
@@ -20,15 +19,10 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        shows = network.getRecordedShows()
+        shows = Networking.connection.getRecordedShows()
         recordedShowsTable.reloadData()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -46,13 +40,13 @@ class RecordedShowsViewController: UIViewController, UITableViewDataSource, UITa
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as RecordedShowsTableViewCell
         
         let row = indexPath.row
+        var recordedShows : RecordedShows
         
-        let recordedShows = network.getRecordedShows()
-        cell.titleLabel.text = recordedShows.recordedShows[row].title
-        cell.dateLabel.text = recordedShows.recordedShows[row].dateRecorded
-
-//        cell.titleLabel.text = "hello"
-//        cell.dateLabel.text = "world"
+        if self.shows?.recordedShows != nil && self.shows?.recordedShows.count > 0 {
+            recordedShows = self.shows!
+        } else {
+            recordedShows = Networking.connection.getRecordedShows()
+        }
 
         cell.show = shows?.recordedShows[row]
         

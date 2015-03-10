@@ -7,37 +7,41 @@
 //
 
 import Foundation
+import AVFoundation
+
+private let networkConnection = Networking();
 
 class Networking {
-    var baseUrl : String?
+    var baseUrl : String? {
+        didSet {
+            if let url = baseUrl {
+                port8080 = url + ":8080/"
+                port8088 = url + ":8088/"
+            }
+        }
+    }
+    var port8080 : String?
+    var port8088 : String?
+    
+    class var connection : Networking {
+        return networkConnection
+    }
     
     init() {
         
     }
     
-    init(_ base : String) {
-        baseUrl = "http://" + base + ":8080/"
-    }
     
     func executeCommand(cmd: String) {
         println("trying to execute command: \(cmd)")
-        self.baseUrl = "http://192.168.1.24:8080/"
-        if let baseUrl = self.baseUrl {
+        if let baseUrl = self.port8080 {
             if let url = NSURL(string: (baseUrl + cmd)) {
                 let urlRequest = NSURLRequest(URL: url);
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 let json = JSON(data: responseData)
                 if json != nil {
-                    println("json not nil")
+//                    println("json not nil")
                 }
-                
-                //                let urlRequest = NSURLRequest(URL: url);
-//                NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue(), completionHandler:
-//                    {(resp: NSURLResponse!, data: NSData!, error: NSError!) -> Void
-//                        in
-//                        //this is the "done" callback
-//                        
-//                })
             }
         }
     }
@@ -45,7 +49,7 @@ class Networking {
     func deleteShow(recordingId: String) {
         //make a JSON object {recordingId : "<id>"} and send that
         
-        if let baseUrl = baseUrl {
+        if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "deleteRecording")) {
                 let urlRequest = NSURLRequest(URL: url);
                 NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue(), completionHandler:
@@ -57,26 +61,26 @@ class Networking {
         }
     }
     
-    func getCurrentState() {
-        if let baseUrl = baseUrl {
+    func getCurrentState() -> JSON? {
+        var json : JSON?
+        if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "currentState")) {
                 let urlRequest = NSURLRequest(URL: url);
-                NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue(), completionHandler:
-                    {(resp: NSURLResponse!, data: NSData!, error: NSError!) -> Void
-                        in
-                        //this is the "done" callback
-                        
-                        //should return an object with a state field, title, duration, recordingId, date recorded, position
-                })
+                var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
+                json = JSON(data: responseData)
+                if json != nil {
+//                    println("\(json)")
+                }
             }
         }
+        return json
     }
     
     func checkConnection() -> Bool {
         //randomly using the recordings end-point to check if the device is alive, should update later
         
         var didWork = false
-        if let baseUrl = baseUrl {
+        if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "recordings")) {
                 let urlRequest = NSURLRequest(URL: url);
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
@@ -89,18 +93,13 @@ class Networking {
         return didWork
     }
     
-    //192.168.1.24
-    
     func getRecordedShows() -> RecordedShows {
         var shows = RecordedShows()
-        if let baseUrl = baseUrl {
+        if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "recordings")) {
                 let urlRequest = NSURLRequest(URL: url);
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 let json = JSON(data: responseData)
-                
-                //print("\(json)")
-                
                 
                 for (index, show) in json["recordings"] {
                     let recordedShow = RecordedShow()
@@ -116,6 +115,23 @@ class Networking {
             }
         }
         return shows
+    }
+    
+    func createThumb(url : String) -> CGImage? {
+        let assetUrl = NSURL(string: url)
+        let asset: AVAsset = AVAsset.assetWithURL(assetUrl) as AVAsset
+        let imageGenerator = AVAssetImageGenerator(asset: asset);
+        let time = CMTimeMakeWithSeconds(1.0, 1)
+        
+        var actualTime : CMTime = CMTimeMake(0, 0)
+        var error : NSError?
+        let image = imageGenerator.copyCGImageAtTime(time, actualTime: &actualTime, error: &error)
+        
+        if error == nil {
+            return image
+        }
+        return nil
+        
     }
     
 }

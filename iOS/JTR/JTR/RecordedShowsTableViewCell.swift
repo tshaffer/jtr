@@ -14,7 +14,8 @@ class RecordedShowsTableViewCell: UITableViewCell {
     
     var show: RecordedShow? {
         didSet {
-            
+            self.titleLabel.text = show?.title
+            self.dateLabel.text = show?.dateRecorded
         }
     }
     override func awakeFromNib() {

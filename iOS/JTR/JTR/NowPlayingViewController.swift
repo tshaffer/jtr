@@ -9,7 +9,20 @@
 import UIKit
 
 class NowPlayingViewController: UIViewController {
-    var net : Networking = Networking()
+    let net = Networking.connection
+    var json : JSON? {
+        didSet {
+            if let valid = json {
+                showTitle.text = valid["currentstate"]["title"].stringValue
+                dateRecorded.text = valid["currentstate"]["recordingdate"].stringValue
+                let cgImage = net.createThumb("http://192.168.1.28:8080/content/20150203T180230.mp4")
+                if let cgImg = cgImage {
+                    let img = UIImage.init(CGImage: cgImage)
+                    thumbnail.image = img
+                }
+            }
+        }
+    }
     
     @IBOutlet weak var showTitle: UILabel!
     @IBOutlet weak var thumbnail: UIImageView!
@@ -19,8 +32,8 @@ class NowPlayingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        json = net.getCurrentState()
     }
 
     override func didReceiveMemoryWarning() {

@@ -13,21 +13,19 @@ class DeviceConnectionViewController: UIViewController {
     @IBOutlet weak var ipAddress: UITextField!
     
     
-    @IBAction func connectToDevice(sender: AnyObject) {
-        print("\(ipAddress)")
-        var network = Networking()
-        network.baseUrl = "http://" + ipAddress.text + ":8080/"
+    @IBAction func connectToDevice(sender: AnyObject) {       
+        Networking.connection.baseUrl = "http://" + ipAddress.text
         
         
-       // if network.checkConnection() {
-         //   self.performSegueWithIdentifier("deviceConnected", sender: self)
-        //} else {
+        if Networking.connection.checkConnection() {
+            self.performSegueWithIdentifier("deviceConnected", sender: self)
+        } else {
             let alertController = UIAlertController(title: "Could not connect!", message:
                 "", preferredStyle: UIAlertControllerStyle.Alert)
             alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
             
             self.presentViewController(alertController, animated: true, completion: nil)
-        //}
+        }
       
     }
     
