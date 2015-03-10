@@ -8,6 +8,7 @@
 
 import Foundation
 import AVFoundation
+import UIKit
 
 private let networkConnection = Networking();
 
@@ -22,6 +23,8 @@ class Networking {
     }
     var port8080 : String?
     var port8088 : String?
+    let thumbBaseUrl = "http://ec2-54-191-146-217.us-west-2.compute.amazonaws.com/staging/img/"
+    
     
     class var connection : Networking {
         return networkConnection
@@ -31,6 +34,9 @@ class Networking {
         
     }
     
+    func getThumbUrl() -> String {
+        return thumbBaseUrl
+    }
     
     func executeCommand(cmd: String) {
         println("trying to execute command: \(cmd)")
@@ -139,21 +145,46 @@ class Networking {
         return month + "/" + day + "/" + year
     }
     
-    func createThumb(url : String) -> CGImage? {
-        let assetUrl = NSURL(string: url)
-        let asset: AVAsset = AVAsset.assetWithURL(assetUrl) as AVAsset
-        let imageGenerator = AVAssetImageGenerator(asset: asset);
-        let time = CMTimeMakeWithSeconds(1.0, 1)
+    class func createFileName(date : String) -> String {
+        let month = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 5), end: advance(date.endIndex, -16)))
+        let day = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 8), end: advance(date.endIndex, -13)))
+        let year = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 2), end: advance(date.endIndex, -19)))
+        var hours = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 11), end: advance(date.endIndex, -10)))
+        let mins = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 14), end: advance(date.endIndex, -7)))
+        let seconds = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 17), end: advance(date.endIndex, -4)))
         
-        var actualTime : CMTime = CMTimeMake(0, 0)
-        var error : NSError?
-        let image = imageGenerator.copyCGImageAtTime(time, actualTime: &actualTime, error: &error)
         
-        if error == nil {
-            return image
-        }
-        return nil
-        
+        return year + month + date + "T" + hours + mins + seconds + ".png"
     }
     
+    class func resizeImage(image: UIImage?, targetSize: CGSize) -> UIImage? {
+        if let image = image? {
+            let size = image.size
+            
+            let widthRatio  = targetSize.width  / image.size.width
+            let heightRatio = targetSize.height / image.size.height
+            
+            // Figure out what our orientation is, and use that to form the rectangle
+            var newSize: CGSize
+            if(widthRatio > heightRatio) {
+                newSize = CGSizeMake(size.width * heightRatio, size.height * heightRatio)
+            } else {
+                newSize = CGSizeMake(size.width * widthRatio,  size.height * widthRatio)
+            }
+            
+            // This is the rect that we've calculated out and this is what is actually used below
+            let rect = CGRectMake(0, 0, newSize.width, newSize.height)
+            
+            // Actually do the resizing to the rect using the ImageContext stuff
+            UIGraphicsBeginImageContextWithOptions(newSize, false, UIScreen.mainScreen().scale)
+            image.drawInRect(rect)
+            let newImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            
+            return newImage
+        }
+        
+        return nil
+    }
+
 }

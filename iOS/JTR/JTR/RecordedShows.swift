@@ -10,6 +10,7 @@ import Foundation
 
 class RecordedShow {
     var title = ""
+    var fullDate = ""
     var dateRecorded = ""
     var position = ""
     var recordingId = ""

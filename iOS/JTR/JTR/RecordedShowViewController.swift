@@ -10,6 +10,7 @@ import UIKit
 
 class RecordedShowViewController: UIViewController {
     var recordedShow : RecordedShow = RecordedShow()
+    var net = Networking.connection
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -20,6 +21,27 @@ class RecordedShowViewController: UIViewController {
         println("\(recordedShow.title)")
         titleLabel.text = recordedShow.title
         dateLabel.text = recordedShow.dateRecorded + " " + recordedShow.time
+        
+        
+        let urlString = net.getThumbUrl() + Networking.createFileName(recordedShow.fullDate) //"20150222T075336.png"
+        
+        if let url = NSURL(string: urlString) {
+            let urlRequest = NSURLRequest(URL: url)
+            let targetSize = thumbnail?.frame.size
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
+                    let image = UIImage(data: data)
+                    if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.thumbnail?.image = smallImage
+                            return
+                        }
+                    }
+                }
+            }
+        }
         
     }
 

@@ -18,11 +18,6 @@ class NowPlayingViewController: UIViewController {
                 var date = Networking.cleanDate(dateString)
                 var time = Networking.cleanTime(dateString)
                 dateRecorded.text = date + " " + time
-                let cgImage = net.createThumb("http://192.168.1.28:8080/content/20150203T180230.mp4")
-                if let cgImg = cgImage {
-                    let img = UIImage.init(CGImage: cgImage)
-                    thumbnail.image = img
-                }
                 stateLabel.text = "State: " + valid["currentstate"]["state"].stringValue
             }
         }
@@ -35,10 +30,35 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var stateLabel: UILabel!
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        progressBar.setProgress(0.2, animated: true)
+        
         json = net.getCurrentState()
+        
+        if let valid = json {
+            let urlString = net.getThumbUrl() + Networking.createFileName(valid["currentstate"]["recordingdata"].stringValue) //"20150222T075336.png"
+            
+            if let url = NSURL(string: urlString) {
+                let urlRequest = NSURLRequest(URL: url)
+                let targetSize = thumbnail?.frame.size
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                    if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
+                        let image = UIImage(data: data)
+                        if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
+                            
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.thumbnail?.image = smallImage
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -47,6 +67,7 @@ class NowPlayingViewController: UIViewController {
     }
     
     @IBAction func instantReplay(sender: AnyObject) {
+        progressBar.setProgress(0.6, animated: true)
         net.executeCommand("instantReplay")
         updateProgresBar("instantReplay")
     }
@@ -82,6 +103,7 @@ class NowPlayingViewController: UIViewController {
         }
     }
     
+        
     /*
     // MARK: - Navigation
 
