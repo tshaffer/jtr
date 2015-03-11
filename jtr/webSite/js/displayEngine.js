@@ -74,6 +74,21 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
         console.log(this.id + ": remote command input: " + eventData);
 
         switch (eventData) {
+            case "MENU":
+                console.log("selectHomePage");
+                selectHomePage();
+                $("#footerArea").removeAttr("style");
+                // $("#footerArea").css("display", "block");
+
+                // give focus to first element
+                var elementId = "#" + mainMenuIds[0][0];
+                $(elementId).focus();
+                return "HANDLED";
+                break;
+            case "RECORDED_SHOWS":
+                selectRecordedShows();
+                return "HANDLED";
+                break;
             case "UP":
             case "DOWN":
             case "LEFT":
@@ -272,7 +287,7 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
             case "MENU":
                 console.log("display the main menu");
 
-                // TODO - undisplay overlay graphics
+                // TODO - undisplay overlay graphics (progress bar. anything else?)
 
                 selectHomePage();
                 $("#footerArea").removeAttr("style");
@@ -287,7 +302,9 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
 
                 break;
             case "RECORDED_SHOWS":
-                console.log("display recorded shows");
+                selectRecordedShows();
+                stateData.nextState = this.stateMachine.stShowingUI
+                return "TRANSITION";
                 break;
             case "PROGRESS_BAR":
                 console.log("toggle the progress bar");
