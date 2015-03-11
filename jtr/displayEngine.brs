@@ -231,6 +231,8 @@ End Sub
 
 Sub de_PausePlayback()
 
+print "de_PausePlayback() invoked"
+
 	if type(m.selectedRecording) = "roAssociativeArray" then
 		' save current position
 		m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)

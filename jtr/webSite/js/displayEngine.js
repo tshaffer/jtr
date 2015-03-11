@@ -371,7 +371,9 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
             case "MENU":
                 // TODO
             case "STOP":
-                // TODO
+                console.log("STOP invoked when playing");
+                executeRemoteCommand("pause");
+                displayDeleteShowDlg(_currentRecording.Title, _currentRecording.RecordingId);
             case "RECORDED_SHOWS":
                 // TODO
             case "JUMP":

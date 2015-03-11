@@ -74,6 +74,8 @@ function navigateRecordedShowsPage(navigationCommand$) {
 // delete dialog - BrightSign only for now
 function displayDeleteShowDlg(showTitle, showRecordingId) {
 
+    console.log("displayDeleteShowDlg() invoked, showTitle=" + showTitle + ", showRecordingId=" + showRecordingId);
+
     _showRecordingId = showRecordingId;
 
     var options = {
