@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class RecordedShow {
     var title = ""
@@ -17,6 +18,7 @@ class RecordedShow {
     var transcodeComplete = ""
     var duration = ""
     var time = ""
+    var img : UIImage? = nil
 }
 
 class RecordedShows {

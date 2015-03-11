@@ -29,36 +29,47 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var stateLabel: UILabel!
     
-    
+    var img : UIImage? = nil
+    var currentImgFileName : String? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        json = net.getCurrentState()
         
         progressBar.setProgress(0.2, animated: true)
         
-        json = net.getCurrentState()
-        
         if let valid = json {
-            let urlString = net.getThumbUrl() + Networking.createFileName(valid["currentstate"]["recordingdata"].stringValue) //"20150222T075336.png"
+            let date = valid["currentstate"]["recordingdate"].stringValue
+            let urlString = net.getThumbUrl() + Networking.createFileName(date)
             
-            if let url = NSURL(string: urlString) {
-                let urlRequest = NSURLRequest(URL: url)
-                let targetSize = thumbnail?.frame.size
-                
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                    if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
-                        let image = UIImage(data: data)
-                        if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
-                            
-                            dispatch_async(dispatch_get_main_queue()) {
-                                self.thumbnail?.image = smallImage
-                                return
+            if img != nil && currentImgFileName == date {
+                self.thumbnail?.image = img
+            } else {
+                if let url = NSURL(string: urlString) {
+                    let urlRequest = NSURLRequest(URL: url)
+                    let targetSize = thumbnail?.frame.size
+                    
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                        if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
+                            let image = UIImage(data: data)
+                            if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
+                                
+                                dispatch_async(dispatch_get_main_queue()) {
+                                    self.thumbnail?.image = smallImage
+                                    self.img = smallImage
+                                    self.currentImgFileName = date
+                                    return
+                                }
                             }
                         }
                     }
                 }
             }
         }
+
     }
 
     override func didReceiveMemoryWarning() {

@@ -18,31 +18,35 @@ class RecordedShowViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        println("\(recordedShow.title)")
+        
         titleLabel.text = recordedShow.title
         dateLabel.text = recordedShow.dateRecorded + " " + recordedShow.time
         
-        
-        let urlString = net.getThumbUrl() + Networking.createFileName(recordedShow.fullDate) //"20150222T075336.png"
-        
-        if let url = NSURL(string: urlString) {
-            let urlRequest = NSURLRequest(URL: url)
-            let targetSize = thumbnail?.frame.size
+        if recordedShow.img != nil {
+            self.thumbnail?.image = recordedShow.img
+        } else {
+            let date = recordedShow.fullDate
+            let urlString = net.getThumbUrl() + Networking.createFileName(date)
             
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
-                    let image = UIImage(data: data)
-                    if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.thumbnail?.image = smallImage
-                            return
+            if let url = NSURL(string: urlString) {
+                let urlRequest = NSURLRequest(URL: url)
+                let targetSize = thumbnail?.frame.size
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                    if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
+                        let image = UIImage(data: data)
+                        if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
+                            
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.thumbnail?.image = smallImage
+                                self.recordedShow.img = smallImage
+                                return
+                            }
                         }
                     }
                 }
             }
         }
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -56,6 +60,7 @@ class RecordedShowViewController: UIViewController {
     
     @IBAction func playShow(sender: AnyObject) {
         //the play specific show command
+        net.executeCommand("recording?recordingId=" + recordedShow.recordingId)
     }
     
     @IBAction func streamShow(sender: AnyObject) {

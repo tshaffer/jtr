@@ -52,6 +52,7 @@ class Networking {
         }
     }
     
+    
     func deleteShow(recordingId: String) {
         //make a JSON object {recordingId : "<id>"} and send that
         
@@ -116,6 +117,7 @@ class Networking {
                     recordedShow.transcodeComplete = show["TranscodeComplete"].stringValue
                     recordedShow.position = show["LastViewedPosition"].stringValue
                     recordedShow.time = Networking.cleanTime(show["StartDateTime"].stringValue)
+                    recordedShow.fullDate = show["StartDateTime"].stringValue
                     
                     shows.recordedShows.append(recordedShow)
                 }
@@ -148,13 +150,14 @@ class Networking {
     class func createFileName(date : String) -> String {
         let month = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 5), end: advance(date.endIndex, -16)))
         let day = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 8), end: advance(date.endIndex, -13)))
-        let year = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 2), end: advance(date.endIndex, -19)))
+        let year = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 0), end: advance(date.endIndex, -19)))
         var hours = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 11), end: advance(date.endIndex, -10)))
         let mins = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 14), end: advance(date.endIndex, -7)))
         let seconds = date.substringWithRange(Range<String.Index>(start: advance(date.startIndex, 17), end: advance(date.endIndex, -4)))
         
+        let rtn = year + month + day + "T" + hours + mins + seconds + ".png"
         
-        return year + month + date + "T" + hours + mins + seconds + ".png"
+        return rtn
     }
     
     class func resizeImage(image: UIImage?, targetSize: CGSize) -> UIImage? {
