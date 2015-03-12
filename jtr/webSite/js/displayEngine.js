@@ -7,29 +7,33 @@
     this.stTop = new HState(this, "Top");
     this.stTop.HStateEventHandler = STTopEventHandler;
 
-    this.stShowingUI = new HState(this, "ShowingUI")
-    this.stShowingUI.HStateEventHandler = this.STShowingUIEventHandler
-    this.stShowingUI.superState = this.stTop
+    this.stShowingUI = new HState(this, "ShowingUI");
+    this.stShowingUI.HStateEventHandler = this.STShowingUIEventHandler;
+    this.stShowingUI.superState = this.stTop;
 
-    this.stShowingVideo = new HState(this, "ShowingVideo")
-    this.stShowingVideo.HStateEventHandler = this.STShowingVideoEventHandler
-    this.stShowingVideo.superState = this.stTop
+    this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
+    this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
+    this.stShowingModalDlg.superState = this.stTop;
 
-    this.stPlaying = new HState(this, "Playing")
-    this.stPlaying.HStateEventHandler = this.STPlayingEventHandler
-    this.stPlaying.superState = this.stShowingVideo
+    this.stShowingVideo = new HState(this, "ShowingVideo");
+    this.stShowingVideo.HStateEventHandler = this.STShowingVideoEventHandler;
+    this.stShowingVideo.superState = this.stTop;
 
-    this.stPaused = new HState(this, "Paused")
-    this.stPaused.HStateEventHandler = this.STPausedEventHandler
-    this.stPaused.superState = this.stShowingVideo
+    this.stPlaying = new HState(this, "Playing");
+    this.stPlaying.HStateEventHandler = this.STPlayingEventHandler;
+    this.stPlaying.superState = this.stShowingVideo;
 
-    this.stFastForwarding = new HState(this, "FastForwarding")
-    this.stFastForwarding.HStateEventHandler = this.STFastForwardingEventHandler
-    this.stFastForwarding.superState = this.stShowingVideo
+    this.stPaused = new HState(this, "Paused");
+    this.stPaused.HStateEventHandler = this.STPausedEventHandler;
+    this.stPaused.superState = this.stShowingVideo;
 
-    this.stRewinding = new HState(this, "Rewinding")
-    this.stRewinding.HStateEventHandler = this.STRewindingEventHandler
-    this.stRewinding.superState = this.stShowingVideo
+    this.stFastForwarding = new HState(this, "FastForwarding");
+    this.stFastForwarding.HStateEventHandler = this.STFastForwardingEventHandler;
+    this.stFastForwarding.superState = this.stShowingVideo;
+
+    this.stRewinding = new HState(this, "Rewinding");
+    this.stRewinding.HStateEventHandler = this.STRewindingEventHandler;
+    this.stRewinding.superState = this.stShowingVideo;
 
     this.topState = this.stTop;
 }
@@ -151,6 +155,69 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     }
     else {
         console.log(this.id + ": signal type = " + event["EventType"]);
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
+}
+
+
+displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, stateData) {
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+        // TBD - is it necessary to do anything here? hide video? send message to js?
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+    }
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        console.log(this.id + ": remote command input: " + eventData);
+
+        switch (eventData) {
+            case "UP":
+            case "DOWN":
+            case "LEFT":
+            case "RIGHT":
+                console.log("navigation key invoked while modal dialog displayed");
+
+                // temporary code; make it more general purpose when a second dialog is added
+                console.log("selected element was: " + selectedDeleteShowDlgElement);
+
+                $(selectedDeleteShowDlgElement).removeClass("btn-primary");
+                $(selectedDeleteShowDlgElement).addClass("btn-secondary");
+
+                $(unselectedDeleteShowDlgElement).removeClass("btn-secondary");
+                $(unselectedDeleteShowDlgElement).addClass("btn-primary");
+
+                $(unselectedDeleteShowDlgElement).focus();
+
+                var tmp = unselectedDeleteShowDlgElement;
+                unselectedDeleteShowDlgElement = selectedDeleteShowDlgElement;
+                selectedDeleteShowDlgElement = tmp;
+
+                return "HANDLED";
+                break;
+            case "SELECT":
+                console.log("enter key invoked while modal dialog displayed");
+
+                // temporary code; make it more general purpose when a second dialog is added
+                if (selectedDeleteShowDlgElement == "#deleteShowDlgDelete") {
+                    deleteShowDlgDeleteInvoked();
+                }
+                else {
+                    deleteShowDlgCloseInvoked();
+                }
+
+                stateData.nextState = this.stateMachine.stShowingUI
+                return "TRANSITION";
+
+                break;
+        }
     }
 
     stateData.nextState = this.superState;
@@ -374,6 +441,8 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
                 console.log("STOP invoked when playing");
                 executeRemoteCommand("pause");
                 displayDeleteShowDlg(_currentRecording.Title, _currentRecording.RecordingId);
+                stateData.nextState = this.stateMachine.stShowingModalDlg
+                return "TRANSITION";
             case "RECORDED_SHOWS":
                 // TODO
             case "JUMP":
