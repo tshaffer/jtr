@@ -17,11 +17,14 @@ class RecordedShowViewController: UIViewController {
     @IBOutlet weak var thumbnail: UIImageView!
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var streamButton: UIButton!
+    @IBOutlet weak var stateLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        self.streamButton.hidden = true
+        if recordedShow.recordingId != "7" && recordedShow.recordingId != "46" {
+            self.streamButton.hidden = true
+        }
         
         titleLabel.text = recordedShow.title
         dateLabel.text = recordedShow.dateRecorded + " " + recordedShow.time
@@ -64,15 +67,10 @@ class RecordedShowViewController: UIViewController {
         updateProgresBar()
     }
     
-    @IBAction func streamShow(sender: AnyObject) {
-        
-    }
-    
     @IBAction func pause(sender: AnyObject) {
         net.executeCommand("pause")
         updateProgresBar()
     }
-    
     
     @IBAction func quickSkip(sender: AnyObject) {
         net.executeCommand("quickSkip")
@@ -87,10 +85,21 @@ class RecordedShowViewController: UIViewController {
     func updateProgresBar() {
         let json = net.getCurrentState()
         if let valid = json {
-            let currentTime = valid["currentstate"]["currenttime"].floatValue
-            let totalTime = valid["currentstate"]["duration"].floatValue * 60
-            let progress = currentTime / totalTime
-            progressBar.setProgress(progress, animated: true)
+            let state = valid["currentstate"]["state"].stringValue
+            
+            if state != "idle" {
+                let currentTime = valid["currentstate"]["currenttime"].floatValue
+                let totalTime = valid["currentstate"]["duration"].floatValue * 60
+                let progress = currentTime / totalTime
+                progressBar.setProgress(progress, animated: true)
+                
+                let currentlyPlayingShowId = valid["currentstate"]["recordingid"].stringValue
+                if currentlyPlayingShowId == recordedShow.recordingId {
+                    stateLabel.text = "State: " + state
+                }
+            } else {
+                progressBar.setProgress(0.0, animated: true)
+            }
         }
     }
     
@@ -102,7 +111,7 @@ class RecordedShowViewController: UIViewController {
             let videoStreamerVC = segue.destinationViewController as VideoStreamerViewController
             let json = net.getStreamUrl(recordedShow.recordingId)
             if let valid = json {
-                let url = "file://" + valid["hlsrl"].stringValue
+                let url = "file://" + valid["hlsurl"].stringValue
                 videoStreamerVC.urlString = url
             }
         }

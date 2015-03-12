@@ -335,6 +335,7 @@
                     <connections>
                         <outlet property="dateLabel" destination="Jey-1Z-kx2" id="efl-81-qLm"/>
                         <outlet property="progressBar" destination="uAW-qW-xGM" id="cP1-4S-hGh"/>
+                        <outlet property="stateLabel" destination="xUw-z6-Fih" id="aPL-FW-1FY"/>
                         <outlet property="streamButton" destination="tV9-BZ-mLL" id="7pj-f8-2QA"/>
                         <outlet property="thumbnail" destination="hxd-lH-kpB" id="86q-zU-GH7"/>
                         <outlet property="titleLabel" destination="YDp-hc-nsI" id="rSQ-NW-tRv"/>
@@ -356,36 +357,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mGN-xd-yAP">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Refresh">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="72" width="53" height="30"/>
-                                </variation>
-                                <connections>
-                                    <action selector="button:" destination="ehf-MF-JyA" eventType="touchUpInside" id="Yfr-33-lXE"/>
-                                </connections>
-                            </button>
                             <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nrw-1U-NvU">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="0.0" y="101" width="400" height="650"/>
+                                    <rect key="frame" x="0.0" y="64" width="400" height="687"/>
                                 </variation>
                             </webView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="default">
                             <mask key="subviews">
-                                <exclude reference="mGN-xd-yAP"/>
                                 <exclude reference="Nrw-1U-NvU"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
-                                <include reference="mGN-xd-yAP"/>
                                 <include reference="Nrw-1U-NvU"/>
                             </mask>
                         </variation>
@@ -1398,7 +1385,7 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="3wd-fb-Yjp"/>
         <segue reference="bas-kM-f3d"/>
-        <segue reference="eXe-ce-MYn"/>
     </inferredMetricsTieBreakers>
 </document>

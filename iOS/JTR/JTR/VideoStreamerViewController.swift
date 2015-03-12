@@ -9,30 +9,23 @@
 import UIKit
 
 class VideoStreamerViewController: UIViewController {
-
+    var net = Networking.connection
     @IBOutlet weak var webView: UIWebView!
     
-    var urlString: String? {
-        didSet {
-            loadWebPage()
-        }
-    }
+    var urlString: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadWebPage()
+        
     }
-
     
-    @IBAction func button(sender: AnyObject) {
-//        urlString = "http://192.168.1.28:8088/file:///content/hls/20150222T075336_index.m3u8"
-        urlString = "http://192.168.1.28:8088/file:///content/hls/20150208T105839/20150208T105839_index.m3u8"
-    }
     func loadWebPage() {
         if let urlString = urlString? {
-            if let url = NSURL(string: urlString) {
+            let fullUrl = net.port8088! + urlString
+            if let url = NSURL(string: fullUrl) {
                 let urlRequest = NSURLRequest(URL: url)
-                webView?.loadRequest(urlRequest)
+                webView.loadRequest(urlRequest)
             }
         }
     }

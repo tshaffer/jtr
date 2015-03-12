@@ -40,12 +40,12 @@ class Networking {
     
     func getStreamUrl(recordingId : String) -> JSON? {
         var json : JSON? = nil
-        if let baseUrl = self.port8088 {
+        if let baseUrl = self.port8080 {
             if let url = NSURL(string: (baseUrl + "hlsUrl?recordingId=" + recordingId)) {
                 let urlRequest = NSURLRequest(URL: url);
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 json = JSON(data: responseData)
-                
+                println("\(json)")
             }
         }
         return json

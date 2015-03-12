@@ -20,14 +20,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         homeTblView.delegate = self
         homeTblView.dataSource = self
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    
+        homeTblView.scrollEnabled = false
+    }    
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
