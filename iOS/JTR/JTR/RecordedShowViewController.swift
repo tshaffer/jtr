@@ -55,7 +55,8 @@ class RecordedShowViewController: UIViewController {
     }
 
     @IBAction func deleteButtonPress(sender: AnyObject) {
-        println("delete button pressed")
+        net.executeCommand("deleteRecording?recordingId=" + recordedShow.recordingId)
+        
     }
     
     @IBAction func playShow(sender: AnyObject) {
@@ -64,8 +65,22 @@ class RecordedShowViewController: UIViewController {
     }
     
     @IBAction func streamShow(sender: AnyObject) {
-    
+     
     }
+    
+    @IBAction func pause(sender: AnyObject) {
+        net.executeCommand("pause")
+    }
+    
+    
+    @IBAction func quickSkip(sender: AnyObject) {
+        net.executeCommand("quickSkip")
+    }
+    
+    @IBAction func instantReplay(sender: AnyObject) {
+        net.executeCommand("instantReplay")
+    }
+    
     
     // MARK: - Navigation
 

@@ -13,12 +13,17 @@ class NowPlayingViewController: UIViewController {
     var json : JSON? {
         didSet {
             if let valid = json {
-                showTitle.text = valid["currentstate"]["title"].stringValue
-                var dateString = valid["currentstate"]["recordingdate"].stringValue
-                var date = Networking.cleanDate(dateString)
-                var time = Networking.cleanTime(dateString)
-                dateRecorded.text = date + " " + time
-                stateLabel.text = "State: " + valid["currentstate"]["state"].stringValue
+                let state = valid["currentstate"]["state"].stringValue
+                
+                if state != "idle" {
+                    showTitle.text = valid["currentstate"]["title"].stringValue
+                    var dateString = valid["currentstate"]["recordingdate"].stringValue
+                    var date = Networking.cleanDate(dateString)
+                    var time = Networking.cleanTime(dateString)
+                    dateRecorded.text = date + " " + time
+                    stateLabel.text = "State: " + valid["currentstate"]["state"].stringValue
+                    recordingId = valid["currentstate"]["recordingid"].stringValue
+                }
             }
         }
     }
@@ -31,6 +36,7 @@ class NowPlayingViewController: UIViewController {
     
     var img : UIImage? = nil
     var currentImgFileName : String? = nil
+    var recordingId : String? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,37 +45,51 @@ class NowPlayingViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         json = net.getCurrentState()
         
-        progressBar.setProgress(0.2, animated: true)
-        
         if let valid = json {
-            let date = valid["currentstate"]["recordingdate"].stringValue
-            let urlString = net.getThumbUrl() + Networking.createFileName(date)
+            let state = valid["currentstate"]["state"].stringValue
+            if state != "idle" {
+                
             
-            if img != nil && currentImgFileName == date {
-                self.thumbnail?.image = img
-            } else {
-                if let url = NSURL(string: urlString) {
-                    let urlRequest = NSURLRequest(URL: url)
-                    let targetSize = thumbnail?.frame.size
-                    
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                        if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
-                            let image = UIImage(data: data)
-                            if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
-                                
-                                dispatch_async(dispatch_get_main_queue()) {
-                                    self.thumbnail?.image = smallImage
-                                    self.img = smallImage
-                                    self.currentImgFileName = date
-                                    return
+                let date = valid["currentstate"]["recordingdate"].stringValue
+                let urlString = net.getThumbUrl() + Networking.createFileName(date)
+                
+                let currentTime = valid["currentstate"]["currenttime"].floatValue
+                let totalTime = valid["currentstate"]["duration"].floatValue * 60
+                let progress = currentTime / totalTime
+                progressBar.setProgress(progress, animated: true)
+                
+                
+                if img != nil && currentImgFileName == date {
+                    self.thumbnail?.image = img
+                } else {
+                    if let url = NSURL(string: urlString) {
+                        let urlRequest = NSURLRequest(URL: url)
+                        let targetSize = thumbnail?.frame.size
+                        
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                            if let data = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)? {
+                                let image = UIImage(data: data)
+                                if let smallImage = Networking.resizeImage(image, targetSize: targetSize!) {
+                                    
+                                    dispatch_async(dispatch_get_main_queue()) {
+                                        self.thumbnail?.image = smallImage
+                                        self.img = smallImage
+                                        self.currentImgFileName = date
+                                        return
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            else {
+                showTitle.text = "No Show Currently Playing"
+                dateRecorded.text = ""
+                stateLabel.text = "State: idle"
+                progressBar.setProgress(0.0, animated: false)
+            }
         }
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -78,7 +98,6 @@ class NowPlayingViewController: UIViewController {
     }
     
     @IBAction func instantReplay(sender: AnyObject) {
-        progressBar.setProgress(0.6, animated: true)
         net.executeCommand("instantReplay")
         updateProgresBar("instantReplay")
     }
@@ -98,6 +117,12 @@ class NowPlayingViewController: UIViewController {
     @IBAction func quickSkip(sender: AnyObject) {
         net.executeCommand("quickSkip")
         updateProgresBar("quickSkip")
+    }
+    
+    @IBAction func deleteShow(sender: AnyObject) {
+        if let id = recordingId {
+            net.executeCommand("deleteRecording?recordingId=" + id)
+        }
     }
     
     func updateProgresBar(cmd : String?) {
