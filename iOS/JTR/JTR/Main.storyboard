@@ -334,7 +334,11 @@
                     </navigationItem>
                     <connections>
                         <outlet property="dateLabel" destination="Jey-1Z-kx2" id="efl-81-qLm"/>
+                        <outlet property="instantReplayBtn" destination="8JK-rk-OSx" id="Ece-oB-enC"/>
+                        <outlet property="pauseBtn" destination="neX-if-aab" id="Cm3-7F-C5w"/>
+                        <outlet property="playBtn" destination="x8a-Cz-bbR" id="CJw-t2-3M3"/>
                         <outlet property="progressBar" destination="uAW-qW-xGM" id="cP1-4S-hGh"/>
+                        <outlet property="quickSkipBtn" destination="gjI-ew-nDU" id="TP9-iG-evz"/>
                         <outlet property="stateLabel" destination="xUw-z6-Fih" id="aPL-FW-1FY"/>
                         <outlet property="streamButton" destination="tV9-BZ-mLL" id="7pj-f8-2QA"/>
                         <outlet property="thumbnail" destination="hxd-lH-kpB" id="86q-zU-GH7"/>
@@ -1385,7 +1389,7 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="3wd-fb-Yjp"/>
         <segue reference="bas-kM-f3d"/>
+        <segue reference="eXe-ce-MYn"/>
     </inferredMetricsTieBreakers>
 </document>

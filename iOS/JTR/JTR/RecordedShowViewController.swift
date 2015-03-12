@@ -19,6 +19,11 @@ class RecordedShowViewController: UIViewController {
     @IBOutlet weak var streamButton: UIButton!
     @IBOutlet weak var stateLabel: UILabel!
     
+    @IBOutlet weak var quickSkipBtn: UIButton!
+    @IBOutlet weak var pauseBtn: UIButton!
+    @IBOutlet weak var playBtn: UIButton!
+    @IBOutlet weak var instantReplayBtn: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -96,6 +101,15 @@ class RecordedShowViewController: UIViewController {
                 let currentlyPlayingShowId = valid["currentstate"]["recordingid"].stringValue
                 if currentlyPlayingShowId == recordedShow.recordingId {
                     stateLabel.text = "State: " + state
+                    progressBar.hidden = false
+                    instantReplayBtn.hidden = false
+                    pauseBtn.hidden = false
+                    quickSkipBtn.hidden = false
+                } else { //this show is NOT playing
+                    progressBar.hidden = true
+                    instantReplayBtn.hidden = true
+                    pauseBtn.hidden = true
+                    quickSkipBtn.hidden = true
                 }
             } else {
                 progressBar.setProgress(0.0, animated: true)

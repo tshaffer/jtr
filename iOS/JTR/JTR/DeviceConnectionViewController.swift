@@ -17,6 +17,8 @@ class DeviceConnectionViewController: UIViewController {
         Networking.connection.baseUrl = "http://" + ipAddress.text
         
         
+        
+        
         if Networking.connection.checkConnection() {
             self.performSegueWithIdentifier("deviceConnected", sender: self)
         } else {

@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 import UIKit
 
-private let networkConnection = Networking();
+private let networkConnection = Networking()
 
 class Networking {
     var baseUrl : String? {
@@ -42,7 +42,7 @@ class Networking {
         var json : JSON? = nil
         if let baseUrl = self.port8080 {
             if let url = NSURL(string: (baseUrl + "hlsUrl?recordingId=" + recordingId)) {
-                let urlRequest = NSURLRequest(URL: url);
+                let urlRequest = NSURLRequest(URL: url)
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 json = JSON(data: responseData)
                 println("\(json)")
@@ -55,7 +55,7 @@ class Networking {
         println("trying to execute command: \(cmd)")
         if let baseUrl = self.port8080 {
             if let url = NSURL(string: (baseUrl + cmd)) {
-                let urlRequest = NSURLRequest(URL: url);
+                let urlRequest = NSURLRequest(URL: url)
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 let json = JSON(data: responseData)
                 if json != nil {
@@ -71,7 +71,7 @@ class Networking {
         
         if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "deleteRecording")) {
-                let urlRequest = NSURLRequest(URL: url);
+                let urlRequest = NSURLRequest(URL: url)
                 NSURLConnection.sendAsynchronousRequest(urlRequest, queue: NSOperationQueue.mainQueue(), completionHandler:
                     {(resp: NSURLResponse!, data: NSData!, error: NSError!) -> Void
                         in
@@ -85,7 +85,7 @@ class Networking {
         var json : JSON?
         if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "currentState")) {
-                let urlRequest = NSURLRequest(URL: url);
+                let urlRequest = NSURLRequest(URL: url)
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 json = JSON(data: responseData)
                 if json != nil {
@@ -101,12 +101,18 @@ class Networking {
         
         var didWork = false
         if let baseUrl = port8080 {
-            if let url = NSURL(string: (baseUrl + "recordings")) {
-                let urlRequest = NSURLRequest(URL: url);
-                var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
-                let json = JSON(data: responseData)
-                if json != nil {
-                    didWork = true
+            if let url = NSURL(string: (baseUrl + "currentState")) {
+                var urlRequest = NSMutableURLRequest(URL: url)
+                urlRequest.timeoutInterval = 1.0
+                var error: NSError?
+                var jsonResponse: NSURLResponse?
+//                var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &jsonResponse, error: &error)
+                
+                if let responseData : NSData =  NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: &jsonResponse, error: &error) {
+                    let json = JSON(data: responseData)
+                    if json != nil {
+                        didWork = true
+                    }
                 }
             }
         }
@@ -117,7 +123,7 @@ class Networking {
         var shows = RecordedShows()
         if let baseUrl = port8080 {
             if let url = NSURL(string: (baseUrl + "recordings")) {
-                let urlRequest = NSURLRequest(URL: url);
+                let urlRequest = NSURLRequest(URL: url)
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 let json = JSON(data: responseData)
                 
