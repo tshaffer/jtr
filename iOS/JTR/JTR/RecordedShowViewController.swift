@@ -15,12 +15,17 @@ class RecordedShowViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var thumbnail: UIImageView!
+    @IBOutlet weak var progressBar: UIProgressView!
+    @IBOutlet weak var streamButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        self.streamButton.hidden = true
+        
         titleLabel.text = recordedShow.title
         dateLabel.text = recordedShow.dateRecorded + " " + recordedShow.time
+        updateProgresBar()
         
         if recordedShow.img != nil {
             self.thumbnail?.image = recordedShow.img
@@ -49,50 +54,57 @@ class RecordedShowViewController: UIViewController {
         }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     @IBAction func deleteButtonPress(sender: AnyObject) {
         net.executeCommand("deleteRecording?recordingId=" + recordedShow.recordingId)
-        
+        updateProgresBar()
     }
     
     @IBAction func playShow(sender: AnyObject) {
-        //the play specific show command
         net.executeCommand("recording?recordingId=" + recordedShow.recordingId)
+        updateProgresBar()
     }
     
     @IBAction func streamShow(sender: AnyObject) {
-     
+        
     }
     
     @IBAction func pause(sender: AnyObject) {
         net.executeCommand("pause")
+        updateProgresBar()
     }
     
     
     @IBAction func quickSkip(sender: AnyObject) {
         net.executeCommand("quickSkip")
+        updateProgresBar()
     }
     
     @IBAction func instantReplay(sender: AnyObject) {
         net.executeCommand("instantReplay")
+        updateProgresBar()
+    }
+    
+    func updateProgresBar() {
+        let json = net.getCurrentState()
+        if let valid = json {
+            let currentTime = valid["currentstate"]["currenttime"].floatValue
+            let totalTime = valid["currentstate"]["duration"].floatValue * 60
+            let progress = currentTime / totalTime
+            progressBar.setProgress(progress, animated: true)
+        }
     }
     
     
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        
-        
         if segue.identifier == "videoStreamer" {
             let videoStreamerVC = segue.destinationViewController as VideoStreamerViewController
-            videoStreamerVC.urlString = "http://192.168.1.24:8080/file:///file_index.m3u8"
+            let json = net.getStreamUrl(recordedShow.recordingId)
+            if let valid = json {
+                let url = "file://" + valid["hlsrl"].stringValue
+                videoStreamerVC.urlString = url
+            }
         }
     }
 

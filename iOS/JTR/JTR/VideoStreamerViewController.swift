@@ -20,17 +20,13 @@ class VideoStreamerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         loadWebPage()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction func button(sender: AnyObject) {
-        urlString = "http://192.168.1.24:8080/file:///file_index.m3u8"
+//        urlString = "http://192.168.1.28:8088/file:///content/hls/20150222T075336_index.m3u8"
+        urlString = "http://192.168.1.28:8088/file:///content/hls/20150208T105839/20150208T105839_index.m3u8"
     }
     func loadWebPage() {
         if let urlString = urlString? {

@@ -180,15 +180,6 @@
                                     <segue destination="ehf-MF-JyA" kind="show" identifier="videoStreamer" id="VXb-cp-ubu"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YDp-hc-nsI">
-                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="88" width="368" height="21"/>
-                                </variation>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date Recorded" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jey-1Z-kx2">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -283,12 +274,20 @@
                                     <rect key="frame" x="77" y="523" width="240" height="2"/>
                                 </variation>
                             </progressView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YDp-hc-nsI">
+                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="16" y="85" width="368" height="21"/>
+                                </variation>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="tV9-BZ-mLL"/>
-                                <exclude reference="YDp-hc-nsI"/>
                                 <exclude reference="Jey-1Z-kx2"/>
                                 <exclude reference="hxd-lH-kpB"/>
                                 <exclude reference="xUw-z6-Fih"/>
@@ -298,12 +297,12 @@
                                 <exclude reference="gjI-ew-nDU"/>
                                 <exclude reference="9bi-Vk-CFa"/>
                                 <exclude reference="uAW-qW-xGM"/>
+                                <exclude reference="YDp-hc-nsI"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
                                 <include reference="tV9-BZ-mLL"/>
-                                <include reference="YDp-hc-nsI"/>
                                 <include reference="Jey-1Z-kx2"/>
                                 <include reference="hxd-lH-kpB"/>
                                 <include reference="xUw-z6-Fih"/>
@@ -313,6 +312,7 @@
                                 <include reference="gjI-ew-nDU"/>
                                 <include reference="9bi-Vk-CFa"/>
                                 <include reference="uAW-qW-xGM"/>
+                                <include reference="YDp-hc-nsI"/>
                             </mask>
                         </variation>
                     </view>
@@ -334,6 +334,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="dateLabel" destination="Jey-1Z-kx2" id="efl-81-qLm"/>
+                        <outlet property="progressBar" destination="uAW-qW-xGM" id="cP1-4S-hGh"/>
+                        <outlet property="streamButton" destination="tV9-BZ-mLL" id="7pj-f8-2QA"/>
                         <outlet property="thumbnail" destination="hxd-lH-kpB" id="86q-zU-GH7"/>
                         <outlet property="titleLabel" destination="YDp-hc-nsI" id="rSQ-NW-tRv"/>
                     </connections>
@@ -913,79 +915,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H44-ks-aKP">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date Recorded" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xf5-2Y-CsJ">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="87" width="368" height="21"/>
+                                    <rect key="frame" x="16" y="361" width="201" height="21"/>
                                 </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date Recorded" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TRY-GB-Lu3">
-                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="361" width="368" height="21"/>
-                                </variation>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FqS-3a-OMQ">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zVn-Iw-Ymd">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="143" width="347" height="195"/>
                                 </variation>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J2s-t4-Nyk">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" image="glyphicons-174-play">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="153" y="435" width="36" height="49"/>
-                                </variation>
-                                <connections>
-                                    <action selector="play:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="EZ4-FJ-N3G"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mxm-ZT-CS4">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" image="glyphicons-175-pause">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="236" y="429" width="27" height="59"/>
-                                </variation>
-                                <connections>
-                                    <action selector="pause:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="exg-9T-Obb"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sjb-vB-nqO">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" image="glyphicons-171-step-backward">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="80" y="438" width="27" height="42"/>
-                                </variation>
-                                <connections>
-                                    <action selector="instantReplay:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="dVh-Cq-o9L"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iAQ-VR-eEr">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" image="glyphicons-179-step-forward">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="298" y="444" width="22" height="31"/>
-                                </variation>
-                                <connections>
-                                    <action selector="quickSkip:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="UgN-yk-gHp"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yvZ-dm-40L">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="se3-bb-84g">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -994,52 +939,114 @@
                                     <rect key="frame" x="16" y="400" width="368" height="21"/>
                                 </variation>
                             </label>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="w3x-Mf-LVV">
-                                <rect key="frame" x="0.0" y="-2" width="150" height="2"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lgg-49-vOx">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-174-play">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="79" y="520" width="240" height="2"/>
+                                    <rect key="frame" x="153" y="435" width="36" height="49"/>
                                 </variation>
-                            </progressView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Myq-CW-hJz">
+                                <connections>
+                                    <action selector="play:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="9Kl-Ie-uaQ"/>
+                                    <action selector="playShow:" destination="FsV-fF-osJ" eventType="touchUpInside" id="IkH-0L-a99"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJr-0S-qqZ">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-175-pause">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="236" y="429" width="27" height="59"/>
+                                </variation>
+                                <connections>
+                                    <action selector="pause:" destination="FsV-fF-osJ" eventType="touchUpInside" id="5gO-uO-GJo"/>
+                                    <action selector="pause:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="ODi-GI-CfY"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="way-NW-KAy">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-171-step-backward">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="80" y="438" width="27" height="42"/>
+                                </variation>
+                                <connections>
+                                    <action selector="instantReplay:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="BbD-kt-GWZ"/>
+                                    <action selector="instantReplay:" destination="FsV-fF-osJ" eventType="touchUpInside" id="xrn-iP-Kf0"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LqP-Ne-HJP">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" image="glyphicons-179-step-forward">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="298" y="444" width="22" height="31"/>
+                                </variation>
+                                <connections>
+                                    <action selector="quickSkip:" destination="FsV-fF-osJ" eventType="touchUpInside" id="NqS-g0-KFG"/>
+                                    <action selector="quickSkip:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="YIW-ZK-kIa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ybU-Hc-Byh">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" image="glyphicons-17-bin">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="296" y="557" width="24" height="26"/>
+                                    <rect key="frame" x="290" y="560" width="33" height="37"/>
                                 </variation>
                                 <connections>
-                                    <action selector="deleteShow:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="8MT-yc-bbP"/>
+                                    <action selector="deleteButtonPress:" destination="FsV-fF-osJ" eventType="touchUpInside" id="RPC-XX-MMg"/>
+                                    <action selector="deleteShow:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="dxV-jq-8x1"/>
                                 </connections>
                             </button>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="96P-0N-efd">
+                                <rect key="frame" x="0.0" y="-2" width="150" height="2"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="77" y="522" width="240" height="2"/>
+                                </variation>
+                            </progressView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2O6-d8-1sw">
+                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="16" y="83" width="368" height="21"/>
+                                </variation>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="default">
                             <mask key="subviews">
-                                <exclude reference="H44-ks-aKP"/>
-                                <exclude reference="TRY-GB-Lu3"/>
-                                <exclude reference="FqS-3a-OMQ"/>
-                                <exclude reference="J2s-t4-Nyk"/>
-                                <exclude reference="Mxm-ZT-CS4"/>
-                                <exclude reference="Sjb-vB-nqO"/>
-                                <exclude reference="iAQ-VR-eEr"/>
-                                <exclude reference="yvZ-dm-40L"/>
-                                <exclude reference="w3x-Mf-LVV"/>
-                                <exclude reference="Myq-CW-hJz"/>
+                                <exclude reference="Xf5-2Y-CsJ"/>
+                                <exclude reference="zVn-Iw-Ymd"/>
+                                <exclude reference="se3-bb-84g"/>
+                                <exclude reference="lgg-49-vOx"/>
+                                <exclude reference="pJr-0S-qqZ"/>
+                                <exclude reference="way-NW-KAy"/>
+                                <exclude reference="LqP-Ne-HJP"/>
+                                <exclude reference="ybU-Hc-Byh"/>
+                                <exclude reference="96P-0N-efd"/>
+                                <exclude reference="2O6-d8-1sw"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
-                                <include reference="H44-ks-aKP"/>
-                                <include reference="TRY-GB-Lu3"/>
-                                <include reference="FqS-3a-OMQ"/>
-                                <include reference="J2s-t4-Nyk"/>
-                                <include reference="Mxm-ZT-CS4"/>
-                                <include reference="Sjb-vB-nqO"/>
-                                <include reference="iAQ-VR-eEr"/>
-                                <include reference="yvZ-dm-40L"/>
-                                <include reference="w3x-Mf-LVV"/>
-                                <include reference="Myq-CW-hJz"/>
+                                <include reference="Xf5-2Y-CsJ"/>
+                                <include reference="zVn-Iw-Ymd"/>
+                                <include reference="se3-bb-84g"/>
+                                <include reference="lgg-49-vOx"/>
+                                <include reference="pJr-0S-qqZ"/>
+                                <include reference="way-NW-KAy"/>
+                                <include reference="LqP-Ne-HJP"/>
+                                <include reference="ybU-Hc-Byh"/>
+                                <include reference="96P-0N-efd"/>
+                                <include reference="2O6-d8-1sw"/>
                             </mask>
                         </variation>
                     </view>
@@ -1061,11 +1068,11 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="dateRecorded" destination="TRY-GB-Lu3" id="268-ae-Dcm"/>
-                        <outlet property="progressBar" destination="w3x-Mf-LVV" id="9GN-G2-QxR"/>
-                        <outlet property="showTitle" destination="H44-ks-aKP" id="DAc-9S-3FY"/>
-                        <outlet property="stateLabel" destination="yvZ-dm-40L" id="nF4-92-7WL"/>
-                        <outlet property="thumbnail" destination="FqS-3a-OMQ" id="BeZ-Ey-F2x"/>
+                        <outlet property="dateRecorded" destination="Xf5-2Y-CsJ" id="3Hv-Xx-NYq"/>
+                        <outlet property="progressBar" destination="96P-0N-efd" id="tj0-eP-mFg"/>
+                        <outlet property="showTitle" destination="2O6-d8-1sw" id="nWr-uL-lLi"/>
+                        <outlet property="stateLabel" destination="se3-bb-84g" id="T1j-go-7zc"/>
+                        <outlet property="thumbnail" destination="zVn-Iw-Ymd" id="H4M-b5-Gnl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jnG-oV-Kwh" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1189,8 +1196,7 @@
                                     <rect key="frame" x="292" y="161" width="43" height="30"/>
                                 </variation>
                                 <connections>
-                                    <action selector="select:" destination="4E9-jR-hiu" eventType="touchUpInside" id="rBR-Oa-p7H"/>
-                                    <action selector="selectBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="C9z-1i-d5i"/>
+                                    <action selector="selectBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Yeg-GY-6nL"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lUp-SL-hwS">
@@ -1202,21 +1208,7 @@
                                     <rect key="frame" x="53" y="161" width="30" height="30"/>
                                 </variation>
                                 <connections>
-                                    <action selector="exit:" destination="4E9-jR-hiu" eventType="touchUpInside" id="XCL-d9-wxh"/>
-                                    <action selector="exitBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Ok0-UW-gMB"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dKR-kt-PAC">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Jump">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="45" y="536" width="39" height="30"/>
-                                </variation>
-                                <connections>
-                                    <action selector="jump:" destination="4E9-jR-hiu" eventType="touchUpInside" id="s1J-9o-gyC"/>
-                                    <action selector="jumpBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Rf2-fc-wG8"/>
+                                    <action selector="exitBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="bAF-b5-wYY"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h5f-He-iwv">
@@ -1277,6 +1269,18 @@
                                 </variation>
                                 <connections>
                                     <action selector="fastForwardBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="dzp-Hu-qYA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dKR-kt-PAC">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" title="Jump">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="44" y="536" width="39" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="jumpBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="mlN-jl-u4e"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1394,7 +1398,7 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="eXe-ce-MYn"/>
         <segue reference="bas-kM-f3d"/>
+        <segue reference="eXe-ce-MYn"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -10,32 +10,23 @@ import UIKit
 import MediaPlayer
 
 class StreamingVideoViewController: UIViewController {
-    var streamer : MPMoviePlayerController!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        playVideo()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
-    func playVideo() {
-        let url = NSURL(fileURLWithPath: "http://192.168.1.24:8080/file:///file_index.m3u8")
-        streamer = MPMoviePlayerController(contentURL: url)
-        
-        streamer.view.frame = CGRect(x: 20, y: 100, width: 200, height: 150)
-        
-        self.view.addSubview(streamer.view)
-        
-        streamer.fullscreen = true
-        
-        streamer.controlStyle = MPMovieControlStyle.Embedded
-    }
+//    var streamer : MPMoviePlayerController!
+//    
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//
+//        playVideo()
+//    }
+//
+//    func playVideo() {
+////        let url = NSURL(fileURLWithPath: "http://192.168.1.24:8080/file:///file_index.m3u8")
+//        let url = NSURL(fileURLWithPath: "http://192.168.1.28:8088/file:///content/hls/20150222T075336/20150222T075336_index.m3u8")
+//        streamer = MPMoviePlayerController(contentURL: url)
+//        streamer.view.frame = CGRect(x: 20, y: 100, width: 200, height: 150)
+//        self.view.addSubview(streamer.view)
+//        streamer.fullscreen = true
+//        streamer.controlStyle = MPMovieControlStyle.Embedded
+//    }
     
     /*
     // MARK: - Navigation

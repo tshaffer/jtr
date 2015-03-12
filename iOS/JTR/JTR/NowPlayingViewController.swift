@@ -38,18 +38,12 @@ class NowPlayingViewController: UIViewController {
     var currentImgFileName : String? = nil
     var recordingId : String? = nil
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func viewWillAppear(animated: Bool) {
         json = net.getCurrentState()
         
         if let valid = json {
             let state = valid["currentstate"]["state"].stringValue
             if state != "idle" {
-                
-            
                 let date = valid["currentstate"]["recordingdate"].stringValue
                 let urlString = net.getThumbUrl() + Networking.createFileName(date)
                 
@@ -91,51 +85,41 @@ class NowPlayingViewController: UIViewController {
             }
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction func instantReplay(sender: AnyObject) {
         net.executeCommand("instantReplay")
-        updateProgresBar("instantReplay")
+        updateProgresBar()
     }
 
     @IBAction func play(sender: AnyObject) {
         net.executeCommand("play")
-        updateProgresBar("play")
-        json = net.getCurrentState()
+        updateProgresBar()
     }
     
     @IBAction func pause(sender: AnyObject) {
         net.executeCommand("pause")
-        updateProgresBar("pause")
-        json = net.getCurrentState()
+        updateProgresBar()
     }
     
     @IBAction func quickSkip(sender: AnyObject) {
         net.executeCommand("quickSkip")
-        updateProgresBar("quickSkip")
+        updateProgresBar()
     }
     
     @IBAction func deleteShow(sender: AnyObject) {
         if let id = recordingId {
             net.executeCommand("deleteRecording?recordingId=" + id)
+            progressBar.setProgress(0.0, animated: false)
         }
     }
     
-    func updateProgresBar(cmd : String?) {
-        if let command = cmd {
-            if command == "instantReplay" {
-                
-            } else if command == "play" {
-                
-            } else if command == "pause" {
-                
-            } else if command == "quickSkip" {
-                
-            }
+    func updateProgresBar() {
+        json = net.getCurrentState()
+        if let valid = json {
+            let currentTime = valid["currentstate"]["currenttime"].floatValue
+            let totalTime = valid["currentstate"]["duration"].floatValue * 60
+            let progress = currentTime / totalTime
+            progressBar.setProgress(progress, animated: true)
         }
     }
     

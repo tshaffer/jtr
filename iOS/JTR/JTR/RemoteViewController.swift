@@ -47,9 +47,11 @@ class RemoteViewController: UIViewController {
     }
     
     @IBAction func deleteBtn(sender: AnyObject) {
-        //need to get recordingId from the now playing
-        var recordingId : String = "";
-        network.deleteShow(recordingId)
+        let json = network.getCurrentState()
+        if let valid = json {
+            let id = valid["currentstate"]["recordingid"].stringValue
+            network.deleteShow(id)
+        }
     }
     
     @IBAction func upArrowBtn(sender: AnyObject) {
