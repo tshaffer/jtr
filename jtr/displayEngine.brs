@@ -148,7 +148,7 @@ End Sub
 
 Sub de_HandleHttpEvent(event)
 
-	print "roHTMLWidgetEvent received in HandleHttpEvent"
+	print "roHTMLWidgetEvent received in de_HandleHttpEvent"
 	eventData = event.GetData()
 	if type(eventData) = "roAssociativeArray" and type(eventData.reason) = "roString" then
         print "reason = " + eventData.reason

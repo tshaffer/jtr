@@ -1,5 +1,77 @@
 Function newRecordingEngine(jtr As Object) As Object
 
+	RecordingEngine = {}
+
+' setup methods
+	RecordingEngine.Initialize					= re_Initialize
+
+	RecordingEngine.jtr = jtr
+	RecordingEngine.msgPort = jtr.msgPort
+
+' setup methods
+    RecordingEngine.EventHandler				= re_EventHandler
+	RecordingEngine.HandleHttpEvent				= re_HandleHttpEvent
+
+	return RecordingEngine
+
+End Function
+
+
+Sub re_Initialize()
+
+'	m.contentFolder = "content/"
+
+'	m.scheduledRecordings = {}
+'	m.recordingInProgressTimerId$ = ""
+
+	m.mediaStreamer = CreateObject("roMediaStreamer")
+
+End Sub
+
+
+Sub re_EventHandler(event As Object)
+
+	if type(event) = "roHtmlWidgetEvent" then
+		m.HandleHttpEvent(event)
+	endif
+
+End Sub
+
+
+Sub re_HandleHttpEvent(event)
+
+	print "roHTMLWidgetEvent received in re_HandleHttpEvent"
+	eventData = event.GetData()
+
+	if type(eventData) = "roAssociativeArray" and type(eventData.reason) = "roString" then
+        print "reason = " + eventData.reason
+		if eventData.reason = "message" then
+			aa = eventData.message
+			if aa.command = "recordNow" then
+				title$ = aa.title
+				duration$ = aa.duration
+				stop
+			endif
+		endif
+	' don't understand the following
+	else if eventData.reason = "message" then
+		aa = eventData.message
+		print "type(aa)=" + type(aa)		
+		if type(aa.message) = "roString" then
+			print "message from JS: ";aa.message		
+		else if type(aa.command) = "roString" then
+			command$ = aa.command
+			if command$ = "recordNow" then
+				stop
+			endif
+		endif
+	endif
+
+End Sub
+
+
+Function oldNewRecordingEngine(jtr As Object) As Object
+
     RecordingEngine = newHSM()
     RecordingEngine.InitialPseudostateHandler = InitializeRecordingEngine
 

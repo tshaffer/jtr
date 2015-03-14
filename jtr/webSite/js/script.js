@@ -529,6 +529,13 @@ function getRecordingTitle(dateObj, useTuner, channel) {
 
 function recordNow() {
 
+    // this will only work on BrightSigns.
+    //var event = {};
+    //event["EventType"] = "RECORD_NOW";
+    //postMessage(event);
+
+    //return;
+
     // get current date/time - used as title if user doesn't provide one.
     var currentDate = new Date();
 
@@ -536,19 +543,41 @@ function recordNow() {
 
     var duration = $("#manualRecordDuration").val();
     
-    var aUrl = baseURL + "recordNow";
     var recordData = { "duration": duration, "title": title }
 
-    $.get(aUrl, recordData)
+    //var aUrl = baseURL + "recordNow";
+
+    //$.get(aUrl, recordData)
+    //    .done(function (result) {
+    //        console.log("record now successfully sent");
+    //    })
+    //    .fail(function (jqXHR, textStatus, errorThrown) {
+    //        debugger;
+    //        console.log("record now failure");
+    //    })
+    //    .always(function () {
+    //        alert("finished");
+    //    });
+
+    var aUrl = baseURL + "browserCommand";
+    var commandData = { "commandRecordNow": recordData };
+    console.log(commandData);
+
+    // erase UI overlay on BrightSign display
+    if (clientType == "BrightSign") {
+        eraseUI();
+    }
+
+    $.get(aUrl, commandData)
         .done(function (result) {
-            console.log("record now successfully sent");
+            console.log("browserCommand successfully sent");
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
-            console.log("record now failure");
+            console.log("browserCommand failure");
         })
         .always(function () {
-            alert("finished");
+            //alert("recording transmission finished");
         });
 }
 
@@ -941,6 +970,9 @@ function switchToPage(newPage) {
 
 $(document).ready(function () {
 
+    var recordingDuration;
+    var recordingTitle;
+
     console.log("JTR javascript .ready invoked");
     console.log("User Agent: " + navigator.userAgent);
 
@@ -963,6 +995,11 @@ $(document).ready(function () {
         displayEngineHSM = new displayEngineStateMachine();
         registerStateMachine(displayEngineHSM);
         displayEngineHSM.Initialize();
+
+        // Create recordingEngine state machine
+        recordingEngineHSM = new recordingEngineStateMachine();
+        registerStateMachine(recordingEngineHSM);
+        recordingEngineHSM.Initialize();
 
         // ir receiver
         ir_receiver = new BSIRReceiver("Iguana", "NEC");
@@ -1006,6 +1043,26 @@ $(document).ready(function () {
                     event["EventType"] = "PLAY_RECORDED_SHOW";
                     event["EventData"] = recordingId;
                     postMessage(event);
+                }
+                else if (name.lastIndexOf("commandRecordNow") == 0) {
+                    console.log("commandRecordNow invoked");
+                    var parameterValue = msg.data[name];
+                    if (name == "commandRecordNow[duration]") {
+                        recordingDuration = parameterValue;
+                        console.log("duration=" + recordingDuration);
+                    }
+                    else if (name == "commandRecordNow[title]") {
+                        recordingTitle = parameterValue;
+                        console.log("title=" + recordingTitle);
+
+                        // hack? title is the last parameter so post message now
+                        var event = {}
+                        event["EventType"] = "RECORD_NOW";
+                        event["Title"] = recordingTitle;
+                        event["Duration"] = recordingDuration;
+                        postMessage(event);
+                    }
+
                 }
                 else if (name == "bsMessage") {
                     var command$ = msg.data[name].toLowerCase();
