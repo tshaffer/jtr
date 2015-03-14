@@ -374,7 +374,7 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
                 return "TRANSITION";
                 break;
             case "PROGRESS_BAR":
-                console.log("toggle the progress bar");
+                console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++toggle the progress bar");
                 var params = calculateProgressBarParameters();
                 toggleProgressBarNew(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
                 break;
@@ -523,9 +523,13 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
         switch (eventData) {
+            case "PLAY":
+                executeRemoteCommand("play");
+                stateData.nextState = this.stateMachine.stPlaying;
+                return "TRANSITION";
             case "PAUSE":
                 executeRemoteCommand("pause");
-                stateData.nextState = this.stateMachine.stPaused
+                stateData.nextState = this.stateMachine.stPaused;
                 return "TRANSITION";
             case "FF":
                 executeRemoteCommand("nextFastForward");
@@ -540,7 +544,6 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
                 //return "HANDLED";
             case "MENU":
                 // TODO
-            default:
                 return "HANDLED";
         }
     }
@@ -575,6 +578,10 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
         switch (eventData) {
+            case "PLAY":
+                executeRemoteCommand("play");
+                stateData.nextState = this.stateMachine.stPlaying;
+                return "TRANSITION";
             case "PAUSE":
                 executeRemoteCommand("pause");
                 stateData.nextState = this.stateMachine.stPaused
@@ -592,7 +599,6 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
                 //return "HANDLED";
             case "MENU":
             // TODO
-            default:
                 return "HANDLED";
         }
     }
