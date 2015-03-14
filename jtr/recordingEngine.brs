@@ -12,6 +12,9 @@ Function newRecordingEngine(jtr As Object) As Object
     RecordingEngine.EventHandler				= re_EventHandler
 	RecordingEngine.HandleHttpEvent				= re_HandleHttpEvent
 
+	RecordingEngine.StartManualRecord			= re_StartManualRecord
+	RecordingEngine.EndManualRecord				= re_EndManualRecord
+
 	return RecordingEngine
 
 End Function
@@ -19,7 +22,7 @@ End Function
 
 Sub re_Initialize()
 
-'	m.contentFolder = "content/"
+	m.contentFolder = "content/"
 
 '	m.scheduledRecordings = {}
 '	m.recordingInProgressTimerId$ = ""
@@ -32,7 +35,23 @@ End Sub
 Sub re_EventHandler(event As Object)
 
 	if type(event) = "roHtmlWidgetEvent" then
+
 		m.HandleHttpEvent(event)
+	
+	else if type(event) = "roTimerEvent" then
+
+		eventIdentity$ = stri(event.GetSourceIdentity())
+
+		' recording timer
+		if type(m.endRecordingTimer) = "roTimer" and stri(m.endRecordingTimer.GetIdentity()) = eventIdentity$ then
+
+			m.EndManualRecord()
+
+			m.recordingToSegment = m.jtr.GetDBRecordingByFileName(m.scheduledRecording.fileName$)
+
+			' start HLS segmentation
+		endif
+
 	endif
 
 End Sub
@@ -50,7 +69,19 @@ Sub re_HandleHttpEvent(event)
 			if aa.command = "recordNow" then
 				title$ = aa.title
 				duration$ = aa.duration
-				stop
+
+				' capture recording parameters
+				scheduledRecording = {}
+				scheduledRecording.title$ = title$
+				scheduledRecording.duration% = int(val(duration$))
+				scheduledRecording.channel$ = "HDMI In"
+				systemTime = CreateObject("roSystemTime")
+				scheduledRecording.dateTime = systemTime.GetLocalDateTime()
+				m.scheduledRecording = scheduledRecording
+
+				' m.stateMachine.scheduledRecordings.AddReplace(scheduledRecording.timerId$, scheduledRecording)
+				m.StartManualRecord()
+				
 			endif
 		endif
 	' don't understand the following
@@ -66,6 +97,66 @@ Sub re_HandleHttpEvent(event)
 			endif
 		endif
 	endif
+
+End Sub
+
+
+Sub re_StartManualRecord()
+
+	print "StartManualRecord " + m.scheduledRecording.title$ + " scheduled for " + m.scheduledRecording.dateTime.GetString()
+
+	' tune channel
+'	m.Tune(scheduledRecording.channel$)
+
+	endDateTime = m.scheduledRecording.dateTime
+	endDateTime.AddSeconds(m.scheduledRecording.duration% * 60)
+
+	print "Manual record will end at " + endDateTime.GetString()
+
+	m.endRecordingTimer = CreateObject("roTimer")
+	m.endRecordingTimer.SetPort(m.msgPort)
+	m.endRecordingTimer.SetDateTime(endDateTime)
+	m.endRecordingTimer.Start()
+
+'	m.stateMachine.recordingInProgressTimerId$ = scheduledRecording.timerId$
+
+	' start recording
+	m.scheduledRecording.fileName$ = Left(m.scheduledRecording.dateTime.ToIsoString(), 15)
+	path$ = m.contentFolder + m.scheduledRecording.fileName$ + ".ts"
+
+	if type(m.mediaStreamer) = "roMediaStreamer" then
+
+		ok = m.mediaStreamer.SetPipeline("hdmi:,encoder:,file:///" + path$)
+		if not ok then stop
+
+		ok = m.mediaStreamer.Start()
+		if not ok then stop
+
+		' turn on record LED
+		m.jtr.SetRecordLED(true)
+
+	endif
+
+End Sub
+
+
+Sub re_EndManualRecord()
+
+	print "EndManualRecord " + m.scheduledRecording.title$
+	ok = m.mediaStreamer.Stop()
+	if not ok then stop
+
+	' Add or update record in database
+	m.jtr.AddDBRecording(m.scheduledRecording)
+
+	' Remove from list of pending records
+'	ok = m.stateMachine.scheduledRecordings.Delete(scheduledRecordingTimerIdentity)
+'	if not ok then stop
+
+	' turn off record LED
+	m.jtr.SetRecordLED(false)
+
+	' TODO - turn on a different LED to indicate that segmentation is in progress
 
 End Sub
 

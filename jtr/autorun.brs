@@ -63,7 +63,7 @@ Sub RunJtr()
 	JTR.eventHandler.AddEngine(JTR.recordingEngine)
 	JTR.eventHandler.AddEngine(JTR.displayEngine)
 
-'	JTR.recordingEngine.Initialize()
+	JTR.recordingEngine.Initialize()
 	JTR.displayEngine.Initialize()
 
 	JTR.currentState = {}
