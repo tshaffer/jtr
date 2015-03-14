@@ -14,6 +14,8 @@ Function newRecordingEngine(jtr As Object) As Object
 
 	RecordingEngine.StartManualRecord			= re_StartManualRecord
 	RecordingEngine.EndManualRecord				= re_EndManualRecord
+	RecordingEngine.StartHLSSegmentation		= re_StartHLSSegmentation
+	RecordingEngine.HLSSegmentationComplete		= re_HLSSegmentationComplete
 
 	return RecordingEngine
 
@@ -50,7 +52,15 @@ Sub re_EventHandler(event As Object)
 			m.recordingToSegment = m.jtr.GetDBRecordingByFileName(m.scheduledRecording.fileName$)
 
 			' start HLS segmentation
+			m.StartHLSSegmentation()
+
 		endif
+
+	else if type(event) = "roMediaStreamerEvent" then
+
+		print "mediaStreamerEvent = ";event.GetEvent()
+
+		m.HLSSegmentationComplete()
 
 	endif
 
@@ -157,6 +167,53 @@ Sub re_EndManualRecord()
 	m.jtr.SetRecordLED(false)
 
 	' TODO - turn on a different LED to indicate that segmentation is in progress
+
+End Sub
+
+
+Sub re_StartHLSSegmentation()
+
+	m.recordingId% = m.recordingToSegment.RecordingId
+	recording = m.jtr.GetDBRecording(stri(m.recordingId%))
+
+	' create directory where hls segments will be generated
+	dirName$ = "content/hls/" + m.recordingToSegment.FileName
+	ok = CreateDirectory(dirName$)
+
+	path$ = GetTSFilePath(m.recordingToSegment.FileName)
+
+	' store segments in /content/hls/file name without extension/fileName
+	pipeLineSpec$ = "file:///" + path$ + ", hls:///" + dirName$ + "/" + m.recordingToSegment.FileName + "?duration=10"
+
+	m.mediaStreamer = CreateObject("roMediaStreamer")
+	m.mediaStreamer.SetPort(m.msgPort)
+	ok = m.mediaStreamer.SetPipeline(pipeLineSpec$)
+
+	systemTime = CreateObject("roSystemTime")
+	print "------- start segmentation at ";systemTime.GetLocalDateTime()
+
+	ok = m.mediaStreamer.Start()
+
+End Sub
+
+
+Sub re_HLSSegmentationComplete()
+
+	systemTime = CreateObject("roSystemTime")
+	print "------- segmentation complete at ";systemTime.GetLocalDateTime()
+
+	' update db to indicate that hls segments were created
+	m.jtr.UpdateHLSSegmentationComplete(m.recordingId%)
+
+	' determine whether or not the .ts file can be deleted
+	okToDelete = m.jtr.tsDeletable(m.recordingId%)
+	if okToDelete then
+		tsPath$ = GetTSFilePath(m.recordingToSegment.FileName)
+		if tsPath$ <> "" then
+			ok = DeleteFile(tsPath$)
+			if not ok print "Delete after transcode complete failed"
+		endif
+	endif
 
 End Sub
 
