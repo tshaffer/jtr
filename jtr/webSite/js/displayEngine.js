@@ -240,14 +240,14 @@ function calculateProgressBarParameters() {
     // every 30 minutes
     // 4 hours < duration
     // every hour
-    var recordingDuration = _currentRecording.Duration * 60
-    var numMinutes = Math.floor(recordingDuration / 60);
+    pbRecordingDuration = _currentRecording.Duration * 60
+    numMinutes = Math.floor(pbRecordingDuration / 60);
 
     console.log("toggleProgressBar: duration = " + _currentRecording.Duration);
     console.log("toggleProgressBar: numMinutes = " + numMinutes);
 
-    var numTicks = 8;
-    var minutesPerTick = 1;
+    numTicks = 8;
+    minutesPerTick = 1;
     if (numMinutes > 240) {
         minutesPerTick = 60;
     }
@@ -279,7 +279,7 @@ function calculateProgressBarParameters() {
 
     var params = {};
     params.currentOffset = 0;
-    params.recordingDuration = recordingDuration;
+    params.recordingDuration = pbRecordingDuration;
     params.numMinutes = numMinutes;
     params.minutesPerTick = minutesPerTick;
     params.numTicks = numTicks;
@@ -539,9 +539,15 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
                 //executeRemoteCommand("instantReplay");
                 //return "HANDLED";
             case "QUICK_SKIP":
-                // TODO
-                //executeRemoteCommand("quickSkip");
-                //return "HANDLED";
+                console.log("-------------------------------------------------------------------------------- invoked FORWARD_TO_TICK");
+                console.log("numTicks=" + numTicks);
+                console.log("minutesPerTick=" + minutesPerTick);
+                console.log("currentOffset=" + currentOffset);
+                console.log("recordingDuration=" + pbRecordingDuration);
+
+                console.log("STFastForwardingEventHandler: QUICK_SKIP received.");
+                bsMessage.PostBSMessage({ command: "forwardToTick", "offset": currentOffset, "duration": pbRecordingDuration, "numTicks": numTicks, "minutesPerTick": minutesPerTick });
+                return "HANDLED";
             case "MENU":
                 // TODO
                 return "HANDLED";

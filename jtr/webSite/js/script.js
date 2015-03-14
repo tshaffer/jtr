@@ -8,6 +8,13 @@ var ir_receiver;
 var _currentRecordings;
 var _currentRecording;
 
+// progress bar parameters
+var numTicks;
+var numMinutes;
+var minutesPerTick;
+var currentOffset;
+var pbRecordingDuration;
+
 // miscellaneous variables
 var currentActiveElementId = "#homePage";
 
@@ -1172,36 +1179,36 @@ $(document).ready(function () {
                     else if (command$ == "toggleprogressbar") {
 
                         // currentOffset in seconds
-                        var currentOffset = msg.data["currentOffset"];
+                        currentOffset = msg.data["currentOffset"];
                         console.log('### currentOffset : ' + currentOffset);
 
                         // duration in seconds
-                        var recordingDuration = msg.data["recordingDuration"];
+                        pbRecordingDuration = msg.data["recordingDuration"];
                         console.log('### recordingDuration : ' + recordingDuration);
 
-                        var numMinutes = msg.data["numMinutes"];
+                        numMinutes = msg.data["numMinutes"];
                         console.log('### numMinutes : ' + numMinutes);
 
-                        var minutesPerTick = msg.data["minutesPerTick"];
+                        minutesPerTick = msg.data["minutesPerTick"];
                         console.log('### minutesPerTick : ' + recordingDuration);
 
-                        var numTicks = msg.data["numTicks"];
+                        numTicks = msg.data["numTicks"];
                         console.log('### numTicks : ' + numTicks);
 
-                        toggleProgressBar(currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks);
+                        toggleProgressBar(currentOffset, pbRecordingDuration, numMinutes, minutesPerTick, numTicks);
                     }
                     else if (command$ == "updateprogressbar" && $("#progressBar").length) {
 
                         console.log("UPDATEPROGRESSBAR ********************************************************");
                         // currentOffset in seconds
-                        var currentOffset = msg.data["currentOffset"];
+                        currentOffset = msg.data["currentOffset"];
                         console.log('### currentOffset : ' + currentOffset);
 
                         // duration in seconds
-                        var recordingDuration = msg.data["recordingDuration"];
-                        console.log('### recordingDuration : ' + recordingDuration);
+                        pbRecordingDuration = msg.data["recordingDuration"];
+                        console.log('### recordingDuration : ' + pbRecordingDuration);
 
-                        UpdateProgressBarGraphics(currentOffset, recordingDuration);
+                        UpdateProgressBarGraphics(currentOffset, pbRecordingDuration);
 
                         return;
                     }

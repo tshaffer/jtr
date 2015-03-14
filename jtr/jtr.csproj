@@ -70,6 +70,7 @@
     <Content Include="webSite\js\hsm.js" />
     <Content Include="webSite\js\jquery-2.1.1.min.js" />
     <Content Include="webSite\js\less.min.js" />
+    <Content Include="webSite\js\recordingEngine.js" />
     <Content Include="webSite\js\remote.js" />
     <Content Include="webSite\js\script.js" />
     <Content Include="webSite\js\xml2json.js" />

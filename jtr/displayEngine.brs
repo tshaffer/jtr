@@ -22,6 +22,8 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.NextFastForward				= de_NextFastForward
 	DisplayEngine.InitiateRewind				= de_InitiateRewind
 	DisplayEngine.NextRewind					= de_NextRewind
+	DisplayEngine.ForwardToTick					= de_ForwardToTick
+
 	DisplayEngine.StartVideoPlaybackTimer		= de_StartVideoPlaybackTimer
 	DisplayEngine.StopVideoPlaybackTimer		= de_StopVideoPlaybackTimer
 	DisplayEngine.UpdateProgressBar				= de_UpdateProgressBar
@@ -97,7 +99,7 @@ Sub de_EventHandler(event As Object)
 		m.HandleHttpEvent(event)
 	
 	else if type(event) = "roAssociativeArray" then      ' internal message event
-        if IsString(event["command"]) then			
+		if IsString(event["command"]) then			
 			command$ = event["command"]
 			if command$ = "PAUSE" then
 				m.PausePlayback()
@@ -115,6 +117,8 @@ Sub de_EventHandler(event As Object)
 				m.InitiateFastForward()
 			else if command$ = "NEXT_FASTFORWARD" then
 				m.NextFastForward()
+			else if command$ = "FORWARD_TO_TICK" then
+				m.ForwardToTick()
 			else
 				stop
 			endif
@@ -183,6 +187,14 @@ Sub de_HandleHttpEvent(event)
 					print "recordingId=";aa.recordingId
 					recording = m.jtr.GetDBRecording(aa.recordingId)
 					m.StartPlayback(recording)
+				else if command$ = "forwardToTick" then
+					stop
+'BrightScript Debugger> ?aa
+'duration:  6600
+'numTicks: 7
+'minutesPerTick: 15
+'offset:  760
+
 				endif
 			endif
 
@@ -361,6 +373,11 @@ Sub de_NextRewind()
 	print "setplaybackspeed to ";playbackSpeed
 	m.videoPlayer.SetPlaybackSpeed(playbackSpeed)
 
+End Sub
+
+
+Sub de_ForwardToTick()
+stop
 End Sub
 
 
