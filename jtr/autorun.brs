@@ -56,7 +56,6 @@ Sub RunJtr()
 	JTR.mediaServer = CreateObject("roMediaServer")
 	ok = JTR.mediaServer.Start("http:port=8088:trace")
 
-
 '	JTR.eventHandler.AddHSM(JTR.displayEngine)
 '	JTR.eventHandler.AddEventHandler(JTR.displayEngine.eventHandler)
 '	JTR.eventHandler.AddHSM(JTR.recordingEngine)

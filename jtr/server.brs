@@ -23,11 +23,6 @@ Sub InitializeServer()
 	m.recordingAA =						{ HandleEvent: getRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.recordingAA })
 
-	' ????
-	' invoked from script.js executeDeleteSelectedShow(); why doesn't it use the message port interface? PostBSMessage
-	m.deleteRecordingAA =				{ HandleEvent: deleteRecording, mVar: m }
-	m.localServer.AddGetFromEvent({ url_path: "/deleteRecording", user_data: m.deleteRecordingAA })
-
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/fileToTranscode", user_data: m.fileToTranscodeAA })
@@ -165,66 +160,6 @@ Sub getRecording(userData as Object, e as Object)
 	recording = mVar.GetDBRecording(recordingId)
 
 	StartPlayback(recording)
-
-    e.AddResponseHeader("Content-type", "text/plain")
-    e.SetResponseBodyString("ok")
-    e.SendResponse(200)
-
-End Sub
-
-
-' endpoint invoked from device on js - why not via message port?
-Sub deleteRecording(userData as Object, e as Object)
-
-	print "delete recording endpoint invoked"
-
-    mVar = userData.mVar
-
-	requestParams = e.GetRequestParams()
-
-	recordingId = requestParams["recordingId"]
-	print "deleteRecording::recordingId ";recordingId
-
-	' for now, delete the file off the card. future, don't delete files until necessary to allow undo
-	recording = mVar.GetDBRecording(recordingId)
-	if type(recording) = "roAssociativeArray" then
-
-		' delete hls segments
-		if type(recording.HLSSegmentationComplete) <> "Invalid" and recording.HLSSegmentationComplete then
-			hlsSegmentsPath$ = "/content/hls/" + recording.FileName
-			listOfHLSSegmentPaths = []
-			ListFiles(hlsSegmentsPath$, listOfHLSSegmentPaths)
-			for each hlsSegmentFilePath in listOfHLSSegmentPaths
-				ok = DeleteFile(hlsSegmentFilePath)
-			next
-
-			' delete folder
-			ok = DeleteDirectory(hlsSegmentsPath$)
-		endif
-
-		' delete ts and/or mp4 files
-		path = GetFilePath(recording.FileName)
-		while path <> ""
-			print "path of file to delete is ";path
-			' TODO - log the deletion
-			ok = DeleteFile(path)
-			if not ok then
-				print "file ";path;" not found in delete operation."
-				' TODO - log the failure to find the file
-			endif
-			path = GetFilePath(recording.FileName)
-		endwhile
-	else
-		e.AddResponseHeader("Content-type", "text/plain; charset=utf-8")
-		e.SetResponseBodyString("Recording not found.")
-	    e.SendResponse(404)
-		return
-	endif
-
-	' add to deleted recordings table
-
-	' remove from database
-	mVar.DeleteDBRecording(recordingId)
 
     e.AddResponseHeader("Content-type", "text/plain")
     e.SetResponseBodyString("ok")

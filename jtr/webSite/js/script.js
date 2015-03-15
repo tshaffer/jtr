@@ -645,13 +645,9 @@ function playSelectedShow(event) {
         });
 }
 
-// HTMLWidget handler - send message to bs to play show (SELECT pressed while Play icon highlighted in Recorded Shows page)
+// HTMLWidget handler - send message to bs to play show (SELECT pressed while Play icon highlighted in Recorded Shows page) or from browser
 function executePlaySelectedShow(recordingId) {
-//function executePlaySelectedShow(recording) {
 
-    //console.log("executePlaySelectedShow: recording duration = " + recording.Duration);
-
-    //var recordingId = recording.RecordingId;
     console.log("executePlaySelectedShow " + recordingId);
 
     // save lastSelectedShowId in server's persistent memory
@@ -663,27 +659,9 @@ function executePlaySelectedShow(recordingId) {
 
     $.post(url, paramString);
 
-    // erase UI overlay
     eraseUI();
 
-    //bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId, "duration": recording.Duration });
     bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
-
-    // launch playback
-    //var aUrl = baseURL + "recording";
-    //var recordingData = { "recordingId": recordingId };
-
-    //$.get(aUrl, recordingData)
-    //    .done(function (result) {
-    //        console.log("recording successfully sent");
-    //    })
-    //    .fail(function (jqXHR, textStatus, errorThrown) {
-    //        debugger;
-    //        console.log("recording failure");
-    //    })
-    //    .always(function () {
-    //        //alert("recording transmission finished");
-    //    });
 }
 
 
@@ -709,24 +687,10 @@ function deleteSelectedShow(event) {
 }
 
 function executeDeleteSelectedShow(recordingId) {
+
     console.log("executeDeleteSelectedShow " + recordingId);
 
-    var aUrl = baseURL + "deleteRecording";
-
-    var deleteRecordingData = { "recordingId": recordingId };
-
-    $.get(aUrl, deleteRecordingData)
-        .done(function (result) {
-            console.log("deleteRecording successfully sent");
-            getRecordedShows();
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            debugger;
-            console.log("deleteRecording failure");
-        })
-        .always(function () {
-            //alert("deleteRecording transmission finished");
-        });
+    bsMessage.PostBSMessage({ command: "deleteRecordedShow", "recordingId": recordingId });
 }
 
 
@@ -939,6 +903,7 @@ function eraseUI() {
 
 function switchToPage(newPage) {
 
+    // ???? - still necessary?
     if (clientType == "BrightSign") {
         bsMessage.PostBSMessage({ message: "switch to " + newPage });
     }

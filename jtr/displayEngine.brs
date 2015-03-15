@@ -17,6 +17,7 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.ResumePlayFromPaused			= de_ResumePlayFromPaused
 	DisplayEngine.QuickSkipVideo				= de_QuickSkipVideo
 	DisplayEngine.InstantReplayVideo			= de_InstantReplayVideo
+	DisplayEngine.DeleteRecording				= de_DeleteRecording
 	DisplayEngine.SeekToCurrentVideoPosition	= de_SeekToCurrentVideoPosition
 	DisplayEngine.InitiateFastForward			= de_InitiateFastForward
 	DisplayEngine.NextFastForward				= de_NextFastForward
@@ -183,9 +184,12 @@ Sub de_HandleHttpEvent(event)
 			else if type(aa.command) = "roString" then
 				command$ = aa.command
 				if command$ = "playRecordedShow" then
-					print "recordingId=";aa.recordingId
+					print "playRecordedShow: recordingId=";aa.recordingId
 					recording = m.jtr.GetDBRecording(aa.recordingId)
 					m.StartPlayback(recording)
+				else if command$ = "deleteRecordedShow" then
+					print "deleteRecordedShow: recordingId=";aa.recordingId
+					m.DeleteRecording(aa.recordingId)
 				else if command$ = "forwardToTick" then
 					m.ForwardToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
 				else if command$ = "backToTick" then
@@ -231,6 +235,50 @@ Sub de_StartPlayback(recording As Object)
 	m.SeekToCurrentVideoPosition()
 
 	m.StartVideoPlaybackTimer()
+
+End Sub
+
+
+Sub de_DeleteRecording(recordingId As String)
+
+	print "de_DeleteRecording::recordingId ";recordingId
+
+	' for now, delete the file off the card. future, don't delete files until necessary to allow undo
+	recording = m.jtr.GetDBRecording(recordingId)
+
+	if type(recording) = "roAssociativeArray" then
+
+		' delete hls segments
+		if type(recording.HLSSegmentationComplete) <> "Invalid" and recording.HLSSegmentationComplete then
+			hlsSegmentsPath$ = "/content/hls/" + recording.FileName
+			listOfHLSSegmentPaths = []
+			ListFiles(hlsSegmentsPath$, listOfHLSSegmentPaths)
+			for each hlsSegmentFilePath in listOfHLSSegmentPaths
+				ok = DeleteFile(hlsSegmentFilePath)
+			next
+
+			' delete folder
+			ok = DeleteDirectory(hlsSegmentsPath$)
+		endif
+
+		' delete ts and/or mp4 files
+		path = GetFilePath(recording.FileName)
+		while path <> ""
+			print "path of file to delete is ";path
+			' TODO - log the deletion
+			ok = DeleteFile(path)
+			if not ok then
+				print "file ";path;" not found in delete operation."
+				' TODO - log the failure to find the file
+			endif
+			path = GetFilePath(recording.FileName)
+		endwhile
+	endif
+
+	' add to deleted recordings table
+
+	' remove from database
+	m.jtr.DeleteDBRecording(recordingId)
 
 End Sub
 
