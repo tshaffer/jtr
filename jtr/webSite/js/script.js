@@ -705,8 +705,23 @@ function executePlaySelectedShow(recordingId) {
 
 function deleteSelectedShow(event) {
     var recordingId = event.data.recordingId;
-    executeDeleteSelectedShow(recordingId);
-    getRecordedShows();
+
+    var aUrl = baseURL + "browserCommand";
+    var commandData = { "commandDeleteRecordedShow": recordingId };
+    console.log(commandData);
+
+    $.get(aUrl, commandData)
+        .done(function (result) {
+            console.log("browserCommand successfully sent");
+            getRecordedShows();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("browserCommand failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
 }
 
 function executeDeleteSelectedShow(recordingId) {
@@ -1048,6 +1063,15 @@ $(document).ready(function () {
 
                     var event = {};
                     event["EventType"] = "PLAY_RECORDED_SHOW";
+                    event["EventData"] = recordingId;
+                    postMessage(event);
+                }
+                else if (name == "commandDeleteRecordedShow") {
+                    var recordingId = msg.data[name];
+                    console.log("deleteRecordedShow " + recordingId);
+
+                    var event = {};
+                    event["EventType"] = "DELETE_RECORDED_SHOW";
                     event["EventData"] = recordingId;
                     postMessage(event);
                 }

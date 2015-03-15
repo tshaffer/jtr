@@ -195,7 +195,7 @@ Sub deleteRecording(userData as Object, e as Object)
 	if type(recording) = "roAssociativeArray" then
 
 		' delete hls segments
-		if recording.HLSSegmentationComplete then
+		if type(recording.HLSSegmentationComplete) <> "Invalid" and recording.HLSSegmentationComplete then
 			hlsSegmentsPath$ = "/content/hls/" + recording.FileName
 			listOfHLSSegmentPaths = []
 			ListFiles(hlsSegmentsPath$, listOfHLSSegmentPaths)

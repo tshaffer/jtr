@@ -73,6 +73,11 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
+    else if (event["EventType"] == "DELETE_RECORDED_SHOW") {
+        var recordingId = event["EventData"];
+        executeDeleteSelectedShow(recordingId);
+        return "HANDLED"
+    }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
