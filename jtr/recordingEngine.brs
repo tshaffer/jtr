@@ -67,7 +67,7 @@ Sub re_EventHandler(event As Object)
 End Sub
 
 
-Sub re_HandleHttpEvent(event)
+Sub re_HandleHttpEvent(event As Object)
 
 	print "roHTMLWidgetEvent received in re_HandleHttpEvent"
 	eventData = event.GetData()

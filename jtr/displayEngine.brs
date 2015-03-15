@@ -23,7 +23,8 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.InitiateRewind				= de_InitiateRewind
 	DisplayEngine.NextRewind					= de_NextRewind
 	DisplayEngine.ForwardToTick					= de_ForwardToTick
-
+	DisplayEngine.BackToTick					= de_BackToTick
+	DisplayEngine.JumpToTick					= de_JumpToTick
 	DisplayEngine.StartVideoPlaybackTimer		= de_StartVideoPlaybackTimer
 	DisplayEngine.StopVideoPlaybackTimer		= de_StopVideoPlaybackTimer
 	DisplayEngine.UpdateProgressBar				= de_UpdateProgressBar
@@ -117,8 +118,6 @@ Sub de_EventHandler(event As Object)
 				m.InitiateFastForward()
 			else if command$ = "NEXT_FASTFORWARD" then
 				m.NextFastForward()
-			else if command$ = "FORWARD_TO_TICK" then
-				m.ForwardToTick()
 			else
 				stop
 			endif
@@ -188,13 +187,9 @@ Sub de_HandleHttpEvent(event)
 					recording = m.jtr.GetDBRecording(aa.recordingId)
 					m.StartPlayback(recording)
 				else if command$ = "forwardToTick" then
-					stop
-'BrightScript Debugger> ?aa
-'duration:  6600
-'numTicks: 7
-'minutesPerTick: 15
-'offset:  760
-
+					m.ForwardToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
+				else if command$ = "backToTick" then
+					m.BackToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
 				endif
 			endif
 
@@ -376,8 +371,47 @@ Sub de_NextRewind()
 End Sub
 
 
-Sub de_ForwardToTick()
-stop
+Sub de_JumpToTick(movingForward As Boolean, offset% As Integer, duration% As Integer, minutesPerTick% As Integer, numTicks% As Integer)
+
+	numTicksPassed% = offset% / (minutesPerTick% * 60)
+
+	if movingForward then
+		if numTicksPassed% < numTicks% then
+			jumpToTick% = numTicksPassed% + 1
+			jumpTo% = jumpToTick% * minutesPerTick% * 60
+		else
+			jumpTo% = duration% * 60
+		endif
+	else
+		if numTicksPassed% > 0 then
+			jumpToTick% = numTicksPassed%
+			jumpTo% = jumpToTick% * minutesPerTick% * 60
+		else
+			jumpTo% = 0
+		endif
+	endif
+
+	print "Jump to ";jumpTo%
+
+	m.currentVideoPosition% = jumpTo%
+
+	m.SeekToCurrentVideoPosition()
+	m.UpdateProgressBar()
+
+End Sub
+
+
+Sub de_ForwardToTick(offset% As Integer, duration% As Integer, minutesPerTick% As Integer, numTicks% As Integer)
+
+	m.JumpToTick(true, offset%, duration%, minutesPerTick%, numTicks%)
+
+End Sub
+
+
+Sub de_BackToTick(offset% As Integer, duration% As Integer, minutesPerTick% As Integer, numTicks% As Integer)
+
+	m.JumpToTick(false, offset%, duration%, minutesPerTick%, numTicks%)
+
 End Sub
 
 

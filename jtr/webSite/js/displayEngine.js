@@ -596,9 +596,8 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
                 executeRemoteCommand("nextRewind");
                 return "HANDLED"
             case "INSTANT_REPLAY":
-                // TODO
-                //executeRemoteCommand("instantReplay");
-                //return "HANDLED";
+                bsMessage.PostBSMessage({ command: "backToTick", "offset": currentOffset, "duration": pbRecordingDuration, "numTicks": numTicks, "minutesPerTick": minutesPerTick });
+                return "HANDLED";
             case "QUICK_SKIP":
                 // TODO
                 //executeRemoteCommand("quickSkip");
