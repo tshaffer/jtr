@@ -100,22 +100,6 @@ function deleteShowDlgCloseInvoked() {
     $('#deleteShowDlg').modal('hide');
     modalDialogDisplayed = false;
     switchToPage("homePage");
-
-    var aUrl = baseURL + "showUI";
-    var placeholderData = {};
-
-    $.get(aUrl, placeholderData)
-        .done(function (result) {
-            console.log("showUI successfully sent");
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            debugger;
-            console.log("showUI failure");
-        })
-        .always(function () {
-            alert("finished");
-        });
-
 }
 
 function deleteShowDlgDeleteInvoked() {
@@ -795,7 +779,10 @@ function addRecordedShowsLine(jtrRecording) {
 }
 
 function getRecordedShows() {
-	var aUrl = baseURL + "recordings";
+
+    console.log("getRecordedShows() invoked");
+
+	var aUrl = baseURL + "getRecordings";
 
 	$.ajax({
 	    type: "GET",
