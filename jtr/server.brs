@@ -23,6 +23,7 @@ Sub InitializeServer()
 	m.recordingAA =						{ HandleEvent: getRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.recordingAA })
 
+	' ????
 	' invoked from script.js executeDeleteSelectedShow(); why doesn't it use the message port interface? PostBSMessage
 	m.deleteRecordingAA =				{ HandleEvent: deleteRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/deleteRecording", user_data: m.deleteRecordingAA })
@@ -47,9 +48,14 @@ Sub InitializeServer()
 	m.setLastSelectedShowIdAA =			{ HandleEvent: setLastSelectedShowId, mVar: m }
 	m.localServer.AddPostToFormData({ url_path: "/lastSelectedShow", user_data: m.setLastSelectedShowIdAA })
 
-	'jump
+	' !!
+	'jump - not yet implemented in overhaul. unclear whether this will survive new architecture
 	m.jumpAA =							{ HandleEvent: jumpCmd, mVar: m}
 	m.localServer.AddGetFromEvent({ url_path: "/jump", user_data: m.jumpAA })
+
+	' ????
+	' why doesn't it use the message port interface? PostBSMessage
+	' handlers for remote keys; invoked either from device or from browser
 
 	m.pauseAA =							{ HandleEvent: pause, mVar: m}
 	m.localServer.AddGetFromEvent({ url_path: "/pause", user_data: m.pauseAA })
@@ -75,10 +81,6 @@ Sub InitializeServer()
 	m.quickSkipAA =						{ HandleEvent: quickSkip, mVar: m}
 	m.localServer.AddGetFromEvent({ url_path: "/quickSkip", user_data: m.quickSkipAA })
 
-
-
-
-
 ' incorporation of site downloader code
     m.siteFilePostedAA = { HandleEvent: siteFilePosted, mVar: m }
     m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.siteFilePostedAA })
@@ -88,7 +90,6 @@ Sub InitializeServer()
 
     m.restartScriptAA = { HandleEvent: restartScript, mVar: m }
     m.localServer.AddGetFromEvent({ url_path: "/ExitScript", user_data: m.restartScriptAA })
-
 
 ' Bonjour advertisement
 '    service = { name: "JTR Web Service", type: "_http._tcp", port: 8080, _functionality: BSP.lwsConfig$, _serialNumber: sysInfo.deviceUniqueID$, _unitName: unitName$, _unitNamingMethod: unitNamingMethod$,  }
@@ -130,12 +131,7 @@ Sub AddHandlers(serverDirectory$ As String, listOfHandlers As Object)
 End Sub
 
 
-Sub postMessageToJS(htmlWidget As Object, message As Object)
-	ok = htmlWidget.PostJSMessage(message)
-End Sub
-
-
-' endpoint invoked when browserCommand is invoked from a browser
+' endpoint invoked when browserCommand is invoked from a browser or external app
 Sub browserCommand(userData as Object, e as Object)
 
 	print "browserCommand endpoint invoked - post message to javascript"
@@ -177,7 +173,7 @@ Sub getRecording(userData as Object, e as Object)
 End Sub
 
 
-' endpoint invoked when the user selects Delete Recording from Replay Guide
+' endpoint invoked from device on js - why not via message port?
 Sub deleteRecording(userData as Object, e as Object)
 
 	print "delete recording endpoint invoked"
@@ -430,6 +426,7 @@ Sub filePosted(userData as Object, e as Object)
 End Sub
 
 
+' sends remote command to event handlers on device
 Sub postRemoteMessage(userData As Object, e as Object, remoteMessage$ As String)
 
 	print remoteMessage$ + " endpoint invoked"
@@ -445,8 +442,6 @@ Sub postRemoteMessage(userData As Object, e as Object, remoteMessage$ As String)
     e.SendResponse(200)
 
 End Sub
-
-
 
 
 Sub recordedShows(userData as Object, e as Object)
