@@ -100,30 +100,6 @@ Sub de_EventHandler(event As Object)
 	if type(event) = "roHtmlWidgetEvent" then
 		m.HandleHttpEvent(event)
 	
-	else if type(event) = "roAssociativeArray" then      ' internal message event
-		if IsString(event["command"]) then			
-			command$ = event["command"]
-			if command$ = "PAUSE" then
-				m.PausePlayback()
-			else if command$ = "PLAY" then
-				m.ResumePlayFromPaused()
-			else if command$ = "QUICK_SKIP" then
-				m.QuickSkipVideo()
-			else if command$ = "INSTANT_REPLAY" then
-				m.InstantReplayVideo()
-			else if command$ = "REWIND" then
-				m.InitiateRewind()
-			else if command$ = "NEXT_REWIND" then
-				m.NextRewind()
-			else if command$ = "FASTFORWARD" then
-				m.InitiateFastForward()
-			else if command$ = "NEXT_FASTFORWARD" then
-				m.NextFastForward()
-			else
-				stop
-			endif
-		endif
-	
 	else if type(event) = "roTimerEvent" then
 
 		eventIdentity$ = stri(event.GetSourceIdentity())
@@ -150,10 +126,12 @@ Sub de_EventHandler(event As Object)
 End Sub
 
 
+' this includes commands sent from Javascript via PostBSMessage
 Sub de_HandleHttpEvent(event)
 
 	print "roHTMLWidgetEvent received in de_HandleHttpEvent"
 	eventData = event.GetData()
+
 	if type(eventData) = "roAssociativeArray" and type(eventData.reason) = "roString" then
         print "reason = " + eventData.reason
 		if eventData.reason = "load-started" then
@@ -183,6 +161,7 @@ Sub de_HandleHttpEvent(event)
 				print "message from JS: ";aa.message
 			else if type(aa.command) = "roString" then
 				command$ = aa.command
+				print "de_HandleHttpEvent: command=" + command$
 				if command$ = "playRecordedShow" then
 					print "playRecordedShow: recordingId=";aa.recordingId
 					recording = m.jtr.GetDBRecording(aa.recordingId)
@@ -194,6 +173,26 @@ Sub de_HandleHttpEvent(event)
 					m.ForwardToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
 				else if command$ = "backToTick" then
 					m.BackToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
+				else if command$ = "remoteCommand" then
+					if aa.remoteCommand = "pause" then
+						m.PausePlayback()
+					else if aa.remoteCommand = "play" then
+						m.ResumePlayFromPaused()
+					else if aa.remoteCommand = "quickSkip" then
+						m.QuickSkipVideo()
+					else if aa.remoteCommand = "instantReplay" then
+						m.InstantReplayVideo()
+					else if aa.remoteCommand = "rewind" then
+						m.InitiateRewind()
+					else if aa.remoteCommand = "nextRewind" then
+						m.NextRewind()
+					else if aa.remoteCommand = "fastForward" then
+						m.InitiateFastForward()
+					else if aa.remoteCommand = "nextFastForward" then
+						m.NextFastForward()
+					else
+						stop
+					endif
 				endif
 			endif
 
@@ -486,9 +485,9 @@ End Sub
 
 Sub de_UpdateProgressBar()
 	if type(m.selectedRecording) = "roAssociativeArray" then
-		print  "send message to js to update progress bar"
-		print "offset from beginning of recording = ";m.currentVideoPosition%
-		print "total length of recording = ";(m.selectedRecording.Duration*60)
+'		print  "send message to js to update progress bar"
+'		print "offset from beginning of recording = ";m.currentVideoPosition%
+'		print "total length of recording = ";(m.selectedRecording.Duration*60)
 
 		' send message to js to update progress bar
 		aa = {}

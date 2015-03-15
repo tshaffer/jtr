@@ -82,8 +82,8 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
 
-        switch (eventData) {
-            case "MENU":
+        switch (eventData.toLowerCase()) {
+            case "menu":
                 console.log("selectHomePage");
                 selectHomePage();
                 $("#footerArea").removeAttr("style");
@@ -94,14 +94,14 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                 $(elementId).focus();
                 return "HANDLED";
                 break;
-            case "RECORDED_SHOWS":
+            case "recorded_shows":
                 selectRecordedShows();
                 return "HANDLED";
                 break;
-            case "UP":
-            case "DOWN":
-            case "LEFT":
-            case "RIGHT":
+            case "up":
+            case "down":
+            case "left":
+            case "right":
                 var command = eventData.toLowerCase();
                 console.log("currentActiveElementId is " + currentActiveElementId);
                 switch (currentActiveElementId) {
@@ -116,7 +116,7 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                 }
                 return "HANDLED";
                 break;
-            case "SELECT":
+            case "select":
                 switch (currentActiveElementId) {
                     case "#homePage":
                         var currentElement = document.activeElement;
@@ -183,11 +183,11 @@ displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (ev
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
 
-        switch (eventData) {
-            case "UP":
-            case "DOWN":
-            case "LEFT":
-            case "RIGHT":
+        switch (eventData.toLowerCase()) {
+            case "up":
+            case "down":
+            case "left":
+            case "right":
                 console.log("navigation key invoked while modal dialog displayed");
 
                 // temporary code; make it more general purpose when a second dialog is added
@@ -207,7 +207,7 @@ displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (ev
 
                 return "HANDLED";
                 break;
-            case "SELECT":
+            case "select":
                 console.log("enter key invoked while modal dialog displayed");
 
                 // temporary code; make it more general purpose when a second dialog is added
@@ -355,8 +355,8 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
 
-        switch (eventData) {
-            case "MENU":
+        switch (eventData.toLowerCase()) {
+            case "menu":
                 console.log("display the main menu");
 
                 // TODO - undisplay overlay graphics (progress bar. anything else?)
@@ -373,12 +373,12 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
                 return "TRANSITION";
 
                 break;
-            case "RECORDED_SHOWS":
+            case "recorded_shows":
                 selectRecordedShows();
                 stateData.nextState = this.stateMachine.stShowingUI
                 return "TRANSITION";
                 break;
-            case "PROGRESS_BAR":
+            case "progress_bar":
                 console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++toggle the progress bar");
                 var params = calculateProgressBarParameters();
                 toggleProgressBarNew(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
@@ -423,34 +423,36 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
-        switch (eventData) {
-            case "PAUSE":
+        switch (eventData.toLowerCase()) {
+            case "pause":
                 executeRemoteCommand("pause");
                 stateData.nextState = this.stateMachine.stPaused
                 return "TRANSITION";
-            case "FF":
+            case "ff":
+            case "fastforward":
                 stateData.nextState = this.stateMachine.stFastForwarding
                 return "TRANSITION";
-            case "RW":
+            case "rw":
+            case "rewind":
                 stateData.nextState = this.stateMachine.stRewinding
                 return "TRANSITION";
-            case "INSTANT_REPLAY":
+            case "instant_replay":
                 executeRemoteCommand("instantReplay");
                 return "HANDLED";
-            case "QUICK_SKIP":
+            case "quick_skip":
                 executeRemoteCommand("quickSkip");
                 return "HANDLED";
-            case "MENU":
+            case "menu":
                 // TODO
-            case "STOP":
+            case "stop":
                 console.log("STOP invoked when playing");
                 executeRemoteCommand("pause");
                 displayDeleteShowDlg(_currentRecording.Title, _currentRecording.RecordingId);
                 stateData.nextState = this.stateMachine.stShowingModalDlg
                 return "TRANSITION";
-            case "RECORDED_SHOWS":
+            case "recorded_shows":
                 // TODO
-            case "JUMP":
+            case "jump":
                 // TODO
         }
     }
@@ -482,16 +484,16 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
-        switch (eventData) {
-            case "PAUSE":
-            case "PLAY":
+        switch (eventData.toLowerCase()) {
+            case "pause":
+            case "play":
                 executeRemoteCommand("play");
                 stateData.nextState = this.stateMachine.stPlaying
                 return "TRANSITION";
-            case "QUICK_SKIP":
+            case "quick_skip":
                 executeRemoteCommand("quickSkip");
                 return "HANDLED";
-            case "INSTANT_REPLAY":
+            case "instant_replay":
                 executeRemoteCommand("instantReplay");
                 return "HANDLED";
         }
@@ -527,23 +529,24 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
-        switch (eventData) {
-            case "PLAY":
+        switch (eventData.toLowerCase()) {
+            case "play":
                 executeRemoteCommand("play");
                 stateData.nextState = this.stateMachine.stPlaying;
                 return "TRANSITION";
-            case "PAUSE":
+            case "pause":
                 executeRemoteCommand("pause");
                 stateData.nextState = this.stateMachine.stPaused;
                 return "TRANSITION";
-            case "FF":
+            case "ff":
+            case "fastforward":
                 executeRemoteCommand("nextFastForward");
                 return "HANDLED"
-            case "INSTANT_REPLAY":
+            case "instant_replay":
                 // TODO
                 //executeRemoteCommand("instantReplay");
                 //return "HANDLED";
-            case "QUICK_SKIP":
+            case "quick_skip":
                 console.log("-------------------------------------------------------------------------------- invoked FORWARD_TO_TICK");
                 console.log("numTicks=" + numTicks);
                 console.log("minutesPerTick=" + minutesPerTick);
@@ -553,7 +556,7 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
                 console.log("STFastForwardingEventHandler: QUICK_SKIP received.");
                 bsMessage.PostBSMessage({ command: "forwardToTick", "offset": currentOffset, "duration": pbRecordingDuration, "numTicks": numTicks, "minutesPerTick": minutesPerTick });
                 return "HANDLED";
-            case "MENU":
+            case "menu":
                 // TODO
                 return "HANDLED";
         }
@@ -588,26 +591,27 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
-        switch (eventData) {
-            case "PLAY":
+        switch (eventData.toLowerCase()) {
+            case "play":
                 executeRemoteCommand("play");
                 stateData.nextState = this.stateMachine.stPlaying;
                 return "TRANSITION";
-            case "PAUSE":
+            case "pause":
                 executeRemoteCommand("pause");
                 stateData.nextState = this.stateMachine.stPaused
                 return "TRANSITION";
-            case "RW":
+            case "rw":
+            case "rewind":
                 executeRemoteCommand("nextRewind");
                 return "HANDLED"
-            case "INSTANT_REPLAY":
+            case "instant_replay":
                 bsMessage.PostBSMessage({ command: "backToTick", "offset": currentOffset, "duration": pbRecordingDuration, "numTicks": numTicks, "minutesPerTick": minutesPerTick });
                 return "HANDLED";
-            case "QUICK_SKIP":
+            case "quick_skip":
                 // TODO
                 //executeRemoteCommand("quickSkip");
                 //return "HANDLED";
-            case "MENU":
+            case "menu":
             // TODO
                 return "HANDLED";
         }

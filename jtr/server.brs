@@ -20,6 +20,7 @@ Sub InitializeServer()
 	' ????
 	' retrieve information about a specific recording
 	' USED?? - question posed to Joel
+	' rename getRecording to something else
 	m.recordingAA =						{ HandleEvent: getRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.recordingAA })
 

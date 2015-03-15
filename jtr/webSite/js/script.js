@@ -380,63 +380,60 @@ function togglePlayIcon() {
     }
 }
 
+// send trick commands to device via message port - this function only exists on the device
+function executeRemoteCommand(remoteCommand) {
+    console.log("executeRemoteCommand:" + remoteCommand);
+    bsMessage.PostBSMessage({ command: "remoteCommand", "remoteCommand": remoteCommand });
+}
 
-// browser only functionality
-function executeRemoteCommand(endPoint) {
+// send trick commands to device for boomerang back to JS to state machine
+function sendRemoteCommandToDevice(remoteCommand) {
 
-    var aUrl = baseURL + endPoint;
+    console.log("sendRemoteCommandToDevice: " + remoteCommand);
 
-    $.get(aUrl, {})
+    var aUrl = baseURL + "browserCommand";
+    var commandData = { "remoteCommand": remoteCommand };
+    console.log(commandData);
+
+    $.get(aUrl, commandData)
         .done(function (result) {
-            console.log("remote command successfully sent");
+            console.log("browserCommand successfully sent");
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
-            console.log("remote command failure");
+            console.log("browserCommand failure");
         })
         .always(function () {
-            //alert("remote command transmission finished");
+            //alert("recording transmission finished");
         });
 }
 
 function remotePause() {
-
-    console.log("remotePause");
-    executeRemoteCommand("pause");
+    sendRemoteCommandToDevice("pause");
 }
 
 function remotePlay() {
-
-    console.log("remotePlay");
-    executeRemoteCommand("play");
+    sendRemoteCommandToDevice("play");
 }
 
 function remoteRewind() {
-
-    console.log("remoteRewind");
-    executeRemoteCommand("rewind");
+    sendRemoteCommandToDevice("rewind");
 }
 
 function remoteFastForward() {
-
-    console.log("remoteFastForward");
-    executeRemoteCommand("fastForward");
+    sendRemoteCommandToDevice("fastForward");
 }
 
 function remoteInstantReplay() {
-
-    console.log("remoteInstantReplay");
-    executeRemoteCommand("instantReplay");
+    sendRemoteCommandToDevice("instantReplay");
 }
 
 function remoteQuickSkip() {
-
-    console.log("remoteQuickSkip");
-    executeRemoteCommand("quickSkip");
+    sendRemoteCommandToDevice("quickSkip");
 }
 
 function remoteStop() {
-    console.log("remoteStop");
+    sendRemoteCommandToDevice("stop");
 }
 
 
@@ -1008,6 +1005,15 @@ $(document).ready(function () {
                     $("#ipAddress").html("ip address: " + brightSignIPAddress);
                     baseURL = "http://" + brightSignIPAddress + ":8080/";
                     console.log("baseURL from BrightSign message is: " + baseURL);
+                }
+                else if (name == "remoteCommand") {
+                    var remoteCommand = msg.data[name];
+                    console.log("remoteCommand: " + remoteCommand);
+
+                    var event = {};
+                    event["EventType"] = "REMOTE";
+                    event["EventData"] = remoteCommand;
+                    postMessage(event);
                 }
                 else if (name == "commandPlayRecordedShow") {
                     var recordingId = msg.data[name];
