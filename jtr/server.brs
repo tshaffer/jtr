@@ -44,39 +44,6 @@ Sub InitializeServer()
 	m.setLastSelectedShowIdAA =			{ HandleEvent: setLastSelectedShowId, mVar: m }
 	m.localServer.AddPostToFormData({ url_path: "/lastSelectedShow", user_data: m.setLastSelectedShowIdAA })
 
-	' !!
-	'jump - not yet implemented in overhaul. unclear whether this will survive new architecture
-	m.jumpAA =							{ HandleEvent: jumpCmd, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/jump", user_data: m.jumpAA })
-
-	' ????
-	' why doesn't it use the message port interface? PostBSMessage
-	' handlers for remote keys; invoked either from device or from browser
-
-	m.pauseAA =							{ HandleEvent: pause, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/pause", user_data: m.pauseAA })
-
-	m.rewindAA =						{ HandleEvent: rewind, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/rewind", user_data: m.rewindAA })
-
-	m.nextRewindAA =					{ HandleEvent: nextRewind, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/nextRewind", user_data: m.nextRewindAA })
-
-	m.playAA =							{ HandleEvent: play, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/play", user_data: m.playAA })
-
-	m.fastForwardAA =					{ HandleEvent: fastForward, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/fastForward", user_data: m.fastForwardAA })
-
-	m.nextFastForwardAA =				{ HandleEvent: nextFastForward, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/nextFastForward", user_data: m.nextFastForwardAA })
-
-	m.instantReplayAA =					{ HandleEvent: instantReplay, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/instantReplay", user_data: m.instantReplayAA })
-
-	m.quickSkipAA =						{ HandleEvent: quickSkip, mVar: m}
-	m.localServer.AddGetFromEvent({ url_path: "/quickSkip", user_data: m.quickSkipAA })
-
 ' incorporation of site downloader code
     m.siteFilePostedAA = { HandleEvent: siteFilePosted, mVar: m }
     m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.siteFilePostedAA })
@@ -359,74 +326,6 @@ Sub filePosted(userData as Object, e as Object)
 	e.SetResponseBodyString("RECEIVED")
     e.SendResponse(200)
 
-End Sub
-
-
-' sends remote command to event handlers on device
-Sub postRemoteMessage(userData As Object, e as Object, remoteMessage$ As String)
-
-	print remoteMessage$ + " endpoint invoked"
-
-    mVar = userData.mVar
-
-	message = CreateObject("roAssociativeArray")
-	message["command"] = remoteMessage$
-	mVar.msgPort.PostMessage(message)
-
-    e.AddResponseHeader("Content-type", "text/plain")
-    e.SetResponseBodyString("ok")
-    e.SendResponse(200)
-
-End Sub
-
-
-Sub recordedShows(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "RECORDED_SHOWS")
-End Sub
-
-
-Sub jumpCmd(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "JUMP")
-End Sub
-
-
-Sub pause(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "PAUSE")
-End Sub
-
-
-Sub rewind(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "REWIND")
-End Sub
-
-
-Sub nextRewind(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "NEXT_REWIND")
-End Sub
-
-
-Sub play(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "PLAY")
-End Sub
-
-
-Sub fastForward(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "FASTFORWARD")
-End Sub
-
-
-Sub nextFastForward(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "NEXT_FASTFORWARD")
-End Sub
-
-
-Sub instantReplay(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "INSTANT_REPLAY")
-End Sub
-
-
-Sub quickSkip(userData as Object, e as Object)
-	postRemoteMessage(userData, e, "QUICK_SKIP")
 End Sub
 
 
