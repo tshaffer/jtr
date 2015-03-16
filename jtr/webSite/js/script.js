@@ -438,11 +438,6 @@ function remoteStop() {
 
 
 // Common functionality
-
-function setNav() {
-
-}
-
 function selectChannelGuide() {
 
 }
@@ -517,13 +512,6 @@ function getRecordingTitle(dateObj, useTuner, channel) {
 
 function recordNow() {
 
-    // this will only work on BrightSigns.
-    //var event = {};
-    //event["EventType"] = "RECORD_NOW";
-    //postMessage(event);
-
-    //return;
-
     // get current date/time - used as title if user doesn't provide one.
     var currentDate = new Date();
 
@@ -532,20 +520,6 @@ function recordNow() {
     var duration = $("#manualRecordDuration").val();
     
     var recordData = { "duration": duration, "title": title }
-
-    //var aUrl = baseURL + "recordNow";
-
-    //$.get(aUrl, recordData)
-    //    .done(function (result) {
-    //        console.log("record now successfully sent");
-    //    })
-    //    .fail(function (jqXHR, textStatus, errorThrown) {
-    //        debugger;
-    //        console.log("record now failure");
-    //    })
-    //    .always(function () {
-    //        alert("finished");
-    //    });
 
     var aUrl = baseURL + "browserCommand";
     var commandData = { "commandRecordNow": recordData };
@@ -1051,135 +1025,10 @@ $(document).ready(function () {
                         event["Duration"] = recordingDuration;
                         postMessage(event);
                     }
-
                 }
                 else if (name == "bsMessage") {
                     var command$ = msg.data[name].toLowerCase();
-                    if (command$ == "showmenu") {
-                        console.log("selectHomePage");
-                        selectHomePage();
-                        $("#footerArea").removeAttr("style");
-                        // $("#footerArea").css("display", "block");
-
-                        // give focus to first element
-                        var elementId = "#" + mainMenuIds[0][0];
-                        $(elementId).focus();
-
-                    }
-                    else if (command$ == "showrecordedshows") {
-                        selectRecordedShows();
-                    }
-                    else if (command$ == "exitui") {
-                        eraseUI();
-                    }
-                    else if (command$ == "promptdelete") {
-                        displayDeleteShowDlg(msg.data["showTitle"], msg.data["showRecordingId"]);
-                    }
-                    else if (command$ == "toggleplayicon") {
-                        togglePlayIcon();
-                    }
-                    else if (command$ == "up" || command$ == "down" || command$ == "left" || command$ == "right") {
-                        if (modalDialogDisplayed) {
-                            console.log("navigation key invoked while modal dialog displayed");
-
-                            // temporary code; make it more general purpose when a second dialog is added
-                            console.log("selected element was: " + selectedDeleteShowDlgElement);
-
-                            $(selectedDeleteShowDlgElement).removeClass("btn-primary");
-                            $(selectedDeleteShowDlgElement).addClass("btn-secondary");
-
-                            $(unselectedDeleteShowDlgElement).removeClass("btn-secondary");
-                            $(unselectedDeleteShowDlgElement).addClass("btn-primary");
-
-                            $(unselectedDeleteShowDlgElement).focus();
-
-                            var tmp = unselectedDeleteShowDlgElement;
-                            unselectedDeleteShowDlgElement = selectedDeleteShowDlgElement;
-                            selectedDeleteShowDlgElement = tmp;
-                        }
-                        else {
-                            console.log("currentActiveElementId is " + currentActiveElementId);
-                            switch (currentActiveElementId) {
-                                case "#homePage":
-                                    console.log("navigation entered while homePage visible");
-                                    navigateHomePage(command$)
-                                    break;
-                                case "#recordedShowsPage":
-                                    console.log("navigation entered while recordedShowsPage visible");
-                                    navigateRecordedShowsPage(command$)
-                                    break;
-                            }
-                        }
-                    }
-                    else if (command$ == "enter") {
-                        if (modalDialogDisplayed) {
-                            console.log("enter key invoked while modal dialog displayed");
-
-                            // temporary code; make it more general purpose when a second dialog is added
-                            if (selectedDeleteShowDlgElement == "#deleteShowDlgDelete") {
-                                deleteShowDlgDeleteInvoked();
-                            }
-                            else {
-                                deleteShowDlgCloseInvoked();
-                            }
-                        }
-                        else {
-                            switch (currentActiveElementId) {
-                                case "#homePage":
-                                    var currentElement = document.activeElement;
-                                    var currentElementId = currentElement.id;
-                                    console.log("active home page item is " + currentElementId);
-                                    switch (currentElementId) {
-                                        case "channelGuide":
-                                            selectChannelGuide();
-                                            break;
-                                        case "setManualRecord":
-                                            selectSetManualRecord();
-                                            break;
-                                        case "recordedShows":
-                                            selectRecordedShows();
-                                            break;
-                                        case "userSelection":
-                                            selectUserSelection();
-                                            break;
-                                        case "toDoList":
-                                            selectToDoList();
-                                            break;
-                                        case "myPlayVideo":
-                                            break;
-                                    }
-                                    break;
-                                case "#recordedShowsPage":
-                                    var currentElement = document.activeElement;
-                                    var currentElementId = currentElement.id;
-                                    console.log("active recorded shows page item is " + currentElementId);
-                                    executeRecordedShowAction(currentElementId);
-                                    break;
-                            }
-                        }
-                    }
-                    else if (command$ == "toggleprogressbar") {
-
-                        // currentOffset in seconds
-                        currentOffset = msg.data["currentOffset"];
-                        console.log('### currentOffset : ' + currentOffset);
-
-                        // duration in seconds
-                        pbRecordingDuration = msg.data["recordingDuration"];
-                        console.log('### recordingDuration : ' + recordingDuration);
-
-                        numMinutes = msg.data["numMinutes"];
-                        console.log('### numMinutes : ' + numMinutes);
-
-                        minutesPerTick = msg.data["minutesPerTick"];
-                        console.log('### minutesPerTick : ' + recordingDuration);
-
-                        numTicks = msg.data["numTicks"];
-                        console.log('### numTicks : ' + numTicks);
-
-                        toggleProgressBar(currentOffset, pbRecordingDuration, numMinutes, minutesPerTick, numTicks);
-                    }
-                    else if (command$ == "updateprogressbar" && $("#progressBar").length) {
+                    if (command$ == "updateprogressbar" && $("#progressBar").length) {
 
                         console.log("UPDATEPROGRESSBAR ********************************************************");
                         // currentOffset in seconds
