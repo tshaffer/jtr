@@ -17,12 +17,9 @@ Sub InitializeServer()
 	m.getRecordingsAA =					{ HandleEvent: getRecordings, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getRecordings", user_data: m.getRecordingsAA })
 
-	' ????
-	' retrieve information about a specific recording
-	' USED?? - question posed to Joel
-	' rename getRecording to something else
-	m.recordingAA =						{ HandleEvent: getRecording, mVar: m }
-	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.recordingAA })
+	' play a specific recording
+	m.playRecordingAA =					{ HandleEvent: playRecording, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.playRecordingAA })
 
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
@@ -114,7 +111,7 @@ End Sub
 
 
 ' endpoint invoked when the user wants to playback a specific recording - playback resumes from where it left off
-Sub getRecording(userData as Object, e as Object)
+Sub playRecording(userData as Object, e as Object)
 
 	print "recording endpoint invoked"
 
@@ -123,7 +120,7 @@ Sub getRecording(userData as Object, e as Object)
 	requestParams = e.GetRequestParams()
 
 	recordingId = requestParams["recordingId"]
-	print "getRecording::play recording ";recordingId
+	print "playRecording::play recording ";recordingId
 
 	recording = mVar.GetDBRecording(recordingId)
 
