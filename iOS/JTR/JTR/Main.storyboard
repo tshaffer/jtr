@@ -18,22 +18,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="KXG-qd-o2m">
+                            <segmentedControl contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="KXG-qd-o2m">
                                 <rect key="frame" x="-61" y="-14" width="123" height="29"/>
+                                <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                 <segments>
                                     <segment title="A -> Z"/>
                                     <segment title="123"/>
                                 </segments>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="149" y="84" width="105" height="29"/>
+                                </variation>
                                 <connections>
                                     <action selector="clickSort:" destination="8rJ-Kc-sve" eventType="valueChanged" id="ZFy-5i-PJH"/>
                                 </connections>
                             </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="mOx-5x-jDq">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="582" id="aT1-Vu-gPs"/>
                                 </constraints>
+                                <color key="sectionIndexColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="sectionIndexTrackingBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RecordedShowsCell" id="kxh-a8-nkf" customClass="RecordedShowsTableViewCell" customModule="JTR" customModuleProvider="target">
                                         <autoresizingMask key="autoresizingMask"/>
@@ -43,7 +52,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oop-G1-F1e">
                                                     <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                     <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                                         <rect key="frame" x="15" y="13" width="78" height="21"/>
@@ -52,13 +61,14 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IoO-1b-F7u">
                                                     <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                     <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                                         <rect key="frame" x="101" y="12" width="268" height="21"/>
                                                     </variation>
                                                 </label>
                                             </subviews>
+                                            <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                             <variation key="default">
                                                 <mask key="subviews">
                                                     <exclude reference="Oop-G1-F1e"/>
@@ -72,6 +82,7 @@
                                                 </mask>
                                             </variation>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                         <connections>
                                             <outlet property="dateLabel" destination="Oop-G1-F1e" id="I1I-ik-2Lu"/>
                                             <outlet property="titleLabel" destination="IoO-1b-F7u" id="7ls-qC-F71"/>
@@ -84,7 +95,8 @@
                                         <exclude reference="aT1-Vu-gPs"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=compact">
+                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="34" y="161" width="335" height="582"/>
                                     <mask key="constraints">
                                         <include reference="aT1-Vu-gPs"/>
                                     </mask>
@@ -95,7 +107,7 @@
                                 </connections>
                             </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="mOx-5x-jDq" secondAttribute="trailing" constant="15" id="0uv-bx-wiV"/>
                             <constraint firstItem="KXG-qd-o2m" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" constant="20" id="Zc4-1I-iH1"/>
@@ -182,7 +194,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date Recorded" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jey-1Z-kx2">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="362" width="201" height="21"/>
@@ -197,7 +209,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xUw-z6-Fih">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="401" width="368" height="21"/>
@@ -205,9 +217,8 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x8a-Cz-bbR">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" image="glyphicons-174-play">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <state key="normal" image="glyphicons-174-play"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="153" y="436" width="36" height="49"/>
                                 </variation>
@@ -276,14 +287,14 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YDp-hc-nsI">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="85" width="368" height="21"/>
                                 </variation>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="tV9-BZ-mLL"/>
@@ -411,6 +422,7 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Ja-GV-rSy">
                                 <rect key="frame" x="191" y="136" width="59" height="30"/>
                                 <state key="normal" title="Conenct">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
@@ -423,14 +435,14 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="IP Address: " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LBD-lk-bAL">
                                 <rect key="frame" x="55" y="68" width="94" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="26" y="63" width="94" height="21"/>
                                 </variation>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902720451355" green="0.32549020648002625" blue="0.56862747669219971" alpha="1" colorSpace="deviceRGB"/>
                     </view>
                     <connections>
                         <outlet property="ipAddress" destination="UsV-MT-pDI" id="uwO-id-MUL"/>
@@ -446,10 +458,13 @@
             <objects>
                 <tabBarController id="49e-Tb-3d3" customClass="TabContainerViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="W28-zg-YXA">
+                    <tabBar key="tabBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
                         <segue destination="5XB-PZ-fTa" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
@@ -472,9 +487,16 @@
                         </userDefinedRuntimeAttributes>
                     </tabBarItem>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="PmU-7E-mfC">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="PmU-7E-mfC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="textShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -497,9 +519,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="DMd-QX-Zkp">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="DMd-QX-Zkp">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="195" id="NbY-de-1Eq"/>
+                                    <constraint firstAttribute="width" constant="285" id="sYi-MA-2SF"/>
+                                </constraints>
+                                <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="sectionIndexTrackingBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="toRecordedShows" textLabel="gNP-0X-1lS" style="IBUITableViewCellStyleDefault" id="O5r-oJ-WOs">
                                         <autoresizingMask key="autoresizingMask"/>
@@ -509,7 +540,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gNP-0X-1lS">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -517,6 +548,7 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                         <connections>
                                             <segue destination="8rJ-Kc-sve" kind="show" id="bas-kM-f3d"/>
                                         </connections>
@@ -529,7 +561,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Glh-nk-OtP">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -537,6 +569,7 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                         <connections>
                                             <segue destination="Mpm-LR-pIC" kind="show" id="bSR-1F-GID"/>
                                         </connections>
@@ -549,7 +582,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="HrY-hR-vLm">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -557,6 +590,7 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                         <connections>
                                             <segue destination="Yzy-nd-opd" kind="show" id="Ff3-kI-4el"/>
                                         </connections>
@@ -569,7 +603,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cw2-Vs-et6">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -577,26 +611,49 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                                         <connections>
                                             <segue destination="cJr-aI-hAw" kind="show" id="UQx-Vh-KHc"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <sections/>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="58" y="88" width="285" height="263"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="NbY-de-1Eq"/>
+                                        <exclude reference="sYi-MA-2SF"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="NbY-de-1Eq"/>
+                                        <include reference="sYi-MA-2SF"/>
+                                    </mask>
                                 </variation>
                             </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="centerX" secondItem="DMd-QX-Zkp" secondAttribute="centerX" constant="8.5" id="CEo-0j-JQI"/>
+                            <constraint firstItem="DMd-QX-Zkp" firstAttribute="top" secondItem="fhO-Tr-Wc2" secondAttribute="bottom" constant="88" id="fwl-lo-oMq"/>
+                        </constraints>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="DMd-QX-Zkp"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="CEo-0j-JQI"/>
+                                <exclude reference="fwl-lo-oMq"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
                                 <include reference="DMd-QX-Zkp"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="CEo-0j-JQI"/>
+                                <include reference="fwl-lo-oMq"/>
                             </mask>
                         </variation>
                     </view>
@@ -623,7 +680,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Ts-Mk-JPe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1537" y="-477"/>
+            <point key="canvasLocation" x="1536" y="-477"/>
         </scene>
         <!--To Do List-->
         <scene sceneID="yJ6-lC-VfO">
@@ -631,7 +688,12 @@
                 <tableViewController id="cJr-aI-hAw" customClass="ToDoListTableViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="dLp-Qs-EKz">
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="separatorColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="sectionIndexColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="sectionIndexBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="sectionIndexTrackingBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="toDoCell" textLabel="UFq-J1-CY6" detailTextLabel="Hi9-VK-7aN" style="IBUITableViewCellStyleValue1" id="nvl-dV-YG5">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -641,7 +703,7 @@
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UFq-J1-CY6">
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                             <variation key="heightClass=regular-widthClass=compact">
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -650,7 +712,7 @@
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Hi9-VK-7aN">
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                             <variation key="heightClass=regular-widthClass=compact">
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -658,6 +720,7 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -677,6 +740,7 @@
                                     <segue destination="Yzy-nd-opd" kind="show" id="8jz-3A-gYV"/>
                                 </connections>
                             </button>
+                            <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
@@ -707,7 +771,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title (optional)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tQK-iA-UZt">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="121" width="108" height="21"/>
@@ -716,7 +780,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration (mins)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uUP-lf-y62">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="176" width="116" height="21"/>
@@ -733,6 +797,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lw0-Q8-cx1">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Start Recording">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
@@ -740,7 +805,7 @@
                                 </variation>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="cjq-ZS-l5z"/>
@@ -779,7 +844,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OgQ-gQ-Hc5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2031" y="-1755"/>
+            <point key="canvasLocation" x="2337" y="-1368"/>
         </scene>
         <!--Manual Recording-->
         <scene sceneID="Ety-5y-T2X">
@@ -796,7 +861,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title (optional)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7p7-Ix-xFh">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="145" width="108" height="21"/>
@@ -805,7 +870,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration (mins)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0uF-SH-gTg">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="205" width="116" height="21"/>
@@ -839,7 +904,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Channel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y9k-Mm-amh">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="259" width="64" height="21"/>
@@ -866,7 +931,8 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="7p7-Ix-xFh"/>
@@ -929,9 +995,12 @@
                         </userDefinedRuntimeAttributes>
                     </tabBarItem>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="YkG-ob-Wqi">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="YkG-ob-Wqi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -957,7 +1026,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date Recorded" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xf5-2Y-CsJ">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="361" width="201" height="21"/>
@@ -972,7 +1041,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="se3-bb-84g">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="400" width="368" height="21"/>
@@ -1052,14 +1121,14 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2O6-d8-1sw">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="16" y="83" width="368" height="21"/>
                                 </variation>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="Xf5-2Y-CsJ"/>
@@ -1130,25 +1199,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IDA-xr-aY7">
-                                <rect key="frame" x="42" y="110" width="27" height="26"/>
-                                <state key="normal" image="glyphicons-21-home">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="72" width="67" height="65"/>
-                                </variation>
-                                <connections>
-                                    <action selector="homeBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Kkb-sB-bLb"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4ak-o5-rAc">
                                 <rect key="frame" x="289" y="491" width="20" height="28"/>
                                 <state key="normal" image="glyphicons-17-bin">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="287" y="521" width="52" height="45"/>
+                                    <rect key="frame" x="279" y="416" width="52" height="45"/>
                                 </variation>
                                 <connections>
                                     <action selector="deleteBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="v3P-Fg-BhS"/>
@@ -1160,7 +1217,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="158" y="273" width="37" height="41"/>
+                                    <rect key="frame" x="150" y="168" width="37" height="41"/>
                                 </variation>
                                 <connections>
                                     <action selector="playBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="UI1-Mu-H7C"/>
@@ -1172,7 +1229,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="210" y="276" width="35" height="37"/>
+                                    <rect key="frame" x="202" y="171" width="35" height="37"/>
                                 </variation>
                                 <connections>
                                     <action selector="pauseBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QyK-rE-PtX"/>
@@ -1184,7 +1241,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="258" y="277" width="31" height="33"/>
+                                    <rect key="frame" x="250" y="172" width="31" height="33"/>
                                 </variation>
                                 <connections>
                                     <action selector="rightArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="G2t-K9-6Lf"/>
@@ -1196,7 +1253,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="111" y="277" width="29" height="31"/>
+                                    <rect key="frame" x="103" y="172" width="29" height="31"/>
                                 </variation>
                                 <connections>
                                     <action selector="leftArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="XP9-LR-aEL"/>
@@ -1208,7 +1265,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="181" y="215" width="41" height="36"/>
+                                    <rect key="frame" x="173" y="110" width="41" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="upArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="enx-ao-ec6"/>
@@ -1220,7 +1277,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="186" y="343" width="30" height="30"/>
+                                    <rect key="frame" x="178" y="238" width="30" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="downArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QE7-vl-dbX"/>
@@ -1229,10 +1286,11 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Skp-JR-cMH">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Select">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="292" y="161" width="43" height="30"/>
+                                    <rect key="frame" x="284" y="56" width="43" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="selectBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Yeg-GY-6nL"/>
@@ -1241,10 +1299,11 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lUp-SL-hwS">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Exit">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="53" y="161" width="30" height="30"/>
+                                    <rect key="frame" x="45" y="56" width="30" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="exitBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="bAF-b5-wYY"/>
@@ -1256,7 +1315,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="182" y="435" width="38" height="30"/>
+                                    <rect key="frame" x="174" y="330" width="38" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="stopBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Uo6-dP-gZn"/>
@@ -1268,7 +1327,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="130" y="432" width="37" height="36"/>
+                                    <rect key="frame" x="122" y="327" width="37" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="instantReplayBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="YKt-SK-3or"/>
@@ -1280,7 +1339,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="230" y="437" width="31" height="26"/>
+                                    <rect key="frame" x="222" y="332" width="31" height="26"/>
                                 </variation>
                                 <connections>
                                     <action selector="quickSkipBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="f7Y-hS-m1d"/>
@@ -1292,7 +1351,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="76" y="432" width="46" height="36"/>
+                                    <rect key="frame" x="68" y="327" width="46" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="rewindBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="qOH-XH-r50"/>
@@ -1304,7 +1363,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="274" y="436" width="40" height="28"/>
+                                    <rect key="frame" x="266" y="331" width="40" height="28"/>
                                 </variation>
                                 <connections>
                                     <action selector="fastForwardBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="dzp-Hu-qYA"/>
@@ -1313,17 +1372,18 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dKR-kt-PAC">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Jump">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="44" y="536" width="39" height="30"/>
+                                    <rect key="frame" x="36" y="431" width="39" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="jumpBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="mlN-jl-u4e"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="JRq-DO-zIO"/>
@@ -1379,9 +1439,12 @@
                         </userDefinedRuntimeAttributes>
                     </tabBarItem>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="xgJ-ps-nXB">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="xgJ-ps-nXB">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -1402,9 +1465,12 @@
                         </userDefinedRuntimeAttributes>
                     </tabBarItem>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Wf5-MM-11R">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="Wf5-MM-11R">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -1439,6 +1505,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="3wd-fb-Yjp"/>
         <segue reference="bas-kM-f3d"/>
-        <segue reference="8jz-3A-gYV"/>
+        <segue reference="Ff3-kI-4el"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -13,11 +13,6 @@ class RemoteViewController: UIViewController {
     
 //    TODO: need to add highest speed FF, highest speed RR
     
-    @IBAction func homeBtn(sender: AnyObject) {
-//        network.executeCommand("home")
-        //should show main menu (and clear the background?)
-    }
-    
     @IBAction func playBtn(sender: AnyObject) {
         network.executeCommand("play")
     }
