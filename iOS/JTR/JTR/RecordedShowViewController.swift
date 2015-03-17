@@ -27,10 +27,6 @@ class RecordedShowViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if recordedShow.recordingId != "7" && recordedShow.recordingId != "46" {
-            self.streamButton.hidden = true
-        }
-        
         titleLabel.text = recordedShow.title
         dateLabel.text = recordedShow.dateRecorded + " " + recordedShow.time
         updateProgresBar()

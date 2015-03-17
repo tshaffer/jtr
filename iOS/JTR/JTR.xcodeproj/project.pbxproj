@@ -28,7 +28,6 @@
 		95CCE2281A91A74F00348745 /* ManualRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CCE2271A91A74F00348745 /* ManualRecordViewController.swift */; };
 		95CCE22C1A91B34400348745 /* RecordedShowsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CCE22B1A91B34400348745 /* RecordedShowsTableViewCell.swift */; };
 		95CCE22E1A91BE7800348745 /* RecordedShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CCE22D1A91BE7800348745 /* RecordedShowViewController.swift */; };
-		95FBF9C31A9935480085B9A5 /* StreamingVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FBF9C21A9935480085B9A5 /* StreamingVideoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,7 +66,6 @@
 		95CCE2271A91A74F00348745 /* ManualRecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManualRecordViewController.swift; sourceTree = "<group>"; };
 		95CCE22B1A91B34400348745 /* RecordedShowsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordedShowsTableViewCell.swift; sourceTree = "<group>"; };
 		95CCE22D1A91BE7800348745 /* RecordedShowViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordedShowViewController.swift; sourceTree = "<group>"; };
-		95FBF9C21A9935480085B9A5 /* StreamingVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingVideoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +111,6 @@
 				958B6ADD1AB7E0F7000210AC /* ToDoListTableViewController.swift */,
 				956B6A161A9A60C500292490 /* VideoStreamerViewController.swift */,
 				9569FFFD1A8EFED3009CD75E /* RecordedShowsViewController.swift */,
-				95FBF9C21A9935480085B9A5 /* StreamingVideoViewController.swift */,
 				9590F8051A913AC30052DDA4 /* TabContainerViewController.swift */,
 				9569FFFB1A8EFDFF009CD75E /* RemoteViewController.swift */,
 				95855DB21A8A98D800649041 /* HomeViewController.swift */,
@@ -271,7 +268,6 @@
 				9569FFFE1A8EFED3009CD75E /* RecordedShowsViewController.swift in Sources */,
 				95855DB11A8A98D800649041 /* AppDelegate.swift in Sources */,
 				95CCE22E1A91BE7800348745 /* RecordedShowViewController.swift in Sources */,
-				95FBF9C31A9935480085B9A5 /* StreamingVideoViewController.swift in Sources */,
 				95CCE2281A91A74F00348745 /* ManualRecordViewController.swift in Sources */,
 				95CCE2261A91A74100348745 /* RecordNowViewController.swift in Sources */,
 				894CC0331A96592C0030C7FE /* RecordedShows.swift in Sources */,
