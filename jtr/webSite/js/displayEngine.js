@@ -294,7 +294,7 @@ function calculateProgressBarParameters() {
 }
 
 
-function toggleProgressBarNew(currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks) {
+function toggleProgressBar(currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks) {
 
     if (!$("#progressBar").length) {
         var percentComplete = 50;
@@ -381,7 +381,7 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
             case "progress_bar":
                 console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++toggle the progress bar");
                 var params = calculateProgressBarParameters();
-                toggleProgressBarNew(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
+                toggleProgressBar(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
                 break;
 
         }
