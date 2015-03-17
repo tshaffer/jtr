@@ -9,18 +9,58 @@
 import UIKit
 
 class ManualRecordViewController: UIViewController {
-
+    
+    @IBOutlet weak var titleLabel: UITextField!
+    @IBOutlet weak var durationLabel: UITextField!
+    @IBOutlet weak var channelLabel: UITextField!
+    @IBOutlet weak var datePicker: UIDatePicker!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        let currentDate = NSDate()
+        datePicker.minimumDate = currentDate
+        datePicker.date = currentDate
     }
     
+    func dateFormat(date : NSDate) -> String {
+        let dateFormatter = NSDateFormatter()
+        var theDateFormat = NSDateFormatterStyle.ShortStyle
+        let theTimeFormat = NSDateFormatterStyle.ShortStyle
+        
+        dateFormatter.dateStyle = theDateFormat
+        dateFormatter.timeStyle = theTimeFormat
+        
+        let dateString =  dateFormatter.stringFromDate(date)
+        return dateString
+    }
+    
+    func showAlert() {
+        let alertController = UIAlertController(title: "New Recording Created!", message:
+            "", preferredStyle: UIAlertControllerStyle.Alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    func clearFields() {
+        titleLabel.text = ""
+        durationLabel.text = ""
+        channelLabel.text = ""
+        datePicker.date = NSDate()
+    }
+    
+    @IBAction func createRecording(sender: AnyObject) {
+        let title = titleLabel.text
+        let duration = durationLabel.text.toInt()
+        let channel = channelLabel.text
+        let date  = dateFormat(datePicker.date)
+        
+        let newToDoItem = ToDoItem(title: title, duration: duration!, channel: channel, date: date)
+        theToDoListManager.addNewToDoItem(newToDoItem)
+        
+        showAlert()
+        clearFields()
+    }
 
     /*
     // MARK: - Navigation

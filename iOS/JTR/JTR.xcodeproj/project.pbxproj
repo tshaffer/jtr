@@ -20,6 +20,7 @@
 		95855DBD1A8A98D800649041 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95855DBB1A8A98D800649041 /* LaunchScreen.xib */; };
 		95855DC91A8A98D800649041 /* JTRTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95855DC81A8A98D800649041 /* JTRTests.swift */; };
 		958B6ADE1AB7E0F7000210AC /* ToDoListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B6ADD1AB7E0F7000210AC /* ToDoListTableViewController.swift */; };
+		958B6AE01AB7E39D000210AC /* ToDoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B6ADF1AB7E39D000210AC /* ToDoModel.swift */; };
 		9590F8021A9135EB0052DDA4 /* DeviceConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9590F8011A9135EB0052DDA4 /* DeviceConnectionViewController.swift */; };
 		9590F8061A913AC30052DDA4 /* TabContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9590F8051A913AC30052DDA4 /* TabContainerViewController.swift */; };
 		9590F8081A9140EA0052DDA4 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9590F8071A9140EA0052DDA4 /* SwiftyJSON.swift */; };
@@ -58,6 +59,7 @@
 		95855DC71A8A98D800649041 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95855DC81A8A98D800649041 /* JTRTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JTRTests.swift; sourceTree = "<group>"; };
 		958B6ADD1AB7E0F7000210AC /* ToDoListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ToDoListTableViewController.swift; path = ../ToDoListTableViewController.swift; sourceTree = "<group>"; };
+		958B6ADF1AB7E39D000210AC /* ToDoModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoModel.swift; sourceTree = "<group>"; };
 		9590F8011A9135EB0052DDA4 /* DeviceConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceConnectionViewController.swift; sourceTree = "<group>"; };
 		9590F8051A913AC30052DDA4 /* TabContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabContainerViewController.swift; sourceTree = "<group>"; };
 		9590F8071A9140EA0052DDA4 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				95CCE22D1A91BE7800348745 /* RecordedShowViewController.swift */,
 				952568611AAB703000F4A5BF /* NowPlayingViewController.swift */,
 				89EAEA991A93C74E00083A29 /* Main.storyboard */,
+				958B6ADF1AB7E39D000210AC /* ToDoModel.swift */,
 				95855DB91A8A98D800649041 /* Images.xcassets */,
 				95855DBB1A8A98D800649041 /* LaunchScreen.xib */,
 				9590F8071A9140EA0052DDA4 /* SwiftyJSON.swift */,
@@ -275,6 +278,7 @@
 				958B6ADE1AB7E0F7000210AC /* ToDoListTableViewController.swift in Sources */,
 				95855DB31A8A98D800649041 /* HomeViewController.swift in Sources */,
 				956B6A171A9A60C500292490 /* VideoStreamerViewController.swift in Sources */,
+				958B6AE01AB7E39D000210AC /* ToDoModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
