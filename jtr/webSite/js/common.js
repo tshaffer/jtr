@@ -192,3 +192,177 @@ function here(argument) {
     console.log(argument);
 }
 
+
+function selectSetManualRecord() {
+    switchToPage("manualRecordPage");
+    setDefaultDateTimeFields();
+    $("#manualRecordTitle").focus();
+}
+
+function selectUserSelection() {
+
+}
+
+
+function twoDigitFormat(val) {
+    val = '' + val;
+    if (val.length === 1) {
+        val = '0' + val.slice(-2);
+    }
+    return val;
+}
+
+
+function setDefaultDateTimeFields() {
+    var date = new Date();
+
+    var toAppendDate = "<input id=\"manualRecordDate\"  type=\"date\" class=\"form-control\" value=\"" + date.getFullYear() + "-" + twoDigitFormat((date.getMonth() + 1)) + "-" + twoDigitFormat(date.getDate()) + "\">";
+    var toAppendTime = "<input id=\"manualRecordTime\" type=\"time\" class=\"form-control\" value=\"" + twoDigitFormat(date.getHours()) + ":" + twoDigitFormat(date.getMinutes()) + "\">";
+
+    if ($("#manualRecordDate").length) {
+        $("#manualRecordDate").remove();
+        $("#manualRecordTime").remove();
+    }
+
+    $("#manualRecordDateId").append(toAppendDate);
+    $("#manualRecordTimeId").append(toAppendTime);
+}
+
+
+function getRecordingTitle(dateObj, useTuner, channel) {
+
+    var title = $("#manualRecordTitle").val();
+    if (!title) {
+        title = 'MR ' + dateObj.getFullYear() + "-" + twoDigitFormat((dateObj.getMonth() + 1)) + "-" + twoDigitFormat(dateObj.getDate()) + " " + twoDigitFormat(dateObj.getHours()) + ":" + twoDigitFormat(dateObj.getMinutes());
+        if (useTuner) {
+            title += " " + channel;
+        } else {
+            title += " Aux-In";
+        }
+    }
+
+    return title;
+}
+
+
+function createManualRecording() {
+
+    // retrieve date/time from html elements and convert to a format that works on all devices
+    var date = $("#manualRecordDate").val();
+    var time = $("#manualRecordTime").val();
+    var dateTimeStr = date + " " + time;
+
+    // required for iOS devices - http://stackoverflow.com/questions/13363673/javascript-date-is-invalid-on-ios
+    var compatibleDateTimeStr = dateTimeStr.replace(/-/g, '/');
+
+    var bsIsoDateTime = compatibleDateTimeStr.replace(/\//g, '');   // remove slashes
+    bsIsoDateTime = bsIsoDateTime.replace(' ', 'T');                // replace space by T
+    bsIsoDateTime = bsIsoDateTime.replace(':', '');                 // remove colon
+
+    var dateObj = new Date(compatibleDateTimeStr);
+
+    var useTuner = !$("#manualRecordAuxInCheckbox").is(':checked');
+
+    var duration = $("#manualRecordDuration").val();
+    var channel = $("#manualRecordChannel").val();
+
+    var title = getRecordingTitle(dateObj, useTuner, channel);
+
+    var aUrl = baseURL + "manualRecord";
+    var recordData = { "bsIsoDateTime": bsIsoDateTime, "duration": duration, "channel": channel, "title": title, "useTuner": useTuner }
+
+    $.get(aUrl, recordData)
+        .done(function (result) {
+            console.log("manual record successfully sent");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("manual record failure");
+        })
+        .always(function () {
+            alert("finished");
+        });
+}
+
+
+function addRecordedShowsLine(jtrRecording) {
+
+    /*
+        Play icon
+        Delete icon
+        Title
+        Date
+        Day of week
+        Info icon
+        Position
+    */
+
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+
+    var dt = jtrRecording.StartDateTime;
+    var n = dt.indexOf(".");
+    var formattedDayDate;
+    if (n >= 0) {
+        var dtCompatible = dt.substring(0, n);
+        var date = new Date(dtCompatible);
+        formattedDayDate = weekday[date.getDay()] + " " + (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
+    }
+    else {
+        formattedDayDate = "poop";
+    }
+
+    var lastViewedPositionInMinutes = Math.floor(jtrRecording.LastViewedPosition / 60);
+    var position = lastViewedPositionInMinutes.toString() + " of " + jtrRecording.Duration.toString() + " minutes";
+
+    var toAppend =
+        "<tr>" +
+        "<td><button type='button' class='btn btn-default recorded-shows-icon' id='recording" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-play' aria-hidden='true'></span></button></td>" +
+	    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+        "<td>" + jtrRecording.Title + "</td>" +
+        "<td>" + formattedDayDate + "</td>" +
+	    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></button></td>" +
+        "<td>" + position + "</td>";
+
+    return toAppend;
+}
+
+
+function recordedShowDetails(showId) {
+    // body...
+    switchToPage("recordedShowDetailsPage");
+    var showTitle = getShowTitle(showId);
+    var showDescription = getShowDescription(showId);
+
+    var toAppend = "<h3>" + showTitle + "</h3><br><br>"
+        + "<p>" + showDescription + "</p><br><br>"
+        + "<button>Play</button><br><br>"
+        + "<button>Delete</button>";
+
+    $("#recordedShowDetailsPage").append(toAppend);
+}
+
+
+function getShowTitle(showId) {
+    // body...
+}
+
+function getShowDescription(showId) {
+    // body...
+}
+
+
+function eraseUI() {
+    $("#ipAddress").css("display", "none");
+    $(currentActiveElementId).css("display", "none");
+    $("#footerArea").css("display", "none");
+    //    $("#footerArea").removeAttr("style");
+}
+
+
