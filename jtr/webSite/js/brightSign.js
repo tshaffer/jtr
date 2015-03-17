@@ -1,11 +1,9 @@
-var clientType;
 var baseURL;
 
 // BrightSign only
 var bsMessage;
 var ir_receiver;
 
-var _currentRecordings;
 var _currentRecording;
 
 // progress bar parameters
@@ -16,10 +14,7 @@ var currentOffset;
 var pbRecordingDuration;
 
 // miscellaneous variables
-var currentActiveElementId = "#homePage";
-
 var _showRecordingId;
-var recordedPageIds = [];
 
 var modalDialogDisplayed = false;
 var selectedDeleteShowDlgElement = "#deleteShowDlgDelete";
@@ -108,21 +103,6 @@ function deleteShowDlgDeleteInvoked() {
     modalDialogDisplayed = false;
     executeDeleteSelectedShow(_showRecordingId);
     switchToPage("homePage");
-
-    var aUrl = baseURL + "showUI";
-    var placeholderData = {};
-
-    $.get(aUrl, placeholderData)
-        .done(function (result) {
-            console.log("showUI successfully sent");
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            debugger;
-            console.log("showUI failure");
-        })
-        .always(function () {
-            alert("finished");
-        });
 }
 
 // home page
@@ -271,17 +251,18 @@ function executeRecordedShowAction(actionButtonId) {
 }
 
 
-function togglePlayIcon() {
-    console.log("script.js:: togglePlayIcon invoked");
-    if (!$("#playIcon").length) {
-        console.log("script.js:: display play icon");
-        var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
-        $("#videoControlRegion").append(toAppend);
-    } else {
-        console.log("script.js:: remove play icon");
-        $("#playIcon").remove();
-    }
-}
+// currently unused
+//function togglePlayIcon() {
+//    console.log("script.js:: togglePlayIcon invoked");
+//    if (!$("#playIcon").length) {
+//        console.log("script.js:: display play icon");
+//        var toAppend = '<span id="playIcon" class="glyphicon glyphicon-play controlIcon" aria-hidden="true"></span>';
+//        $("#videoControlRegion").append(toAppend);
+//    } else {
+//        console.log("script.js:: remove play icon");
+//        $("#playIcon").remove();
+//    }
+//}
 
 // send trick commands to device via message port - this function only exists on the device
 function executeRemoteCommand(remoteCommand) {
@@ -299,9 +280,7 @@ function executePlaySelectedShow(recordingId) {
     var parts = [];
     parts.push("lastSelectedShowId" + '=' + recordingId.toString());
     var paramString = parts.join('&');
-
     var url = baseURL + "lastSelectedShow";
-
     $.post(url, paramString);
 
     eraseUI();
@@ -318,3 +297,115 @@ function executeDeleteSelectedShow(recordingId) {
 }
 
 
+function initializeBrightSign() {
+    // Create displayEngine state machine
+    displayEngineHSM = new displayEngineStateMachine();
+    registerStateMachine(displayEngineHSM);
+    displayEngineHSM.Initialize();
+
+    // Create recordingEngine state machine
+    recordingEngineHSM = new recordingEngineStateMachine();
+    registerStateMachine(recordingEngineHSM);
+    recordingEngineHSM.Initialize();
+
+    // ir receiver
+    ir_receiver = new BSIRReceiver("Iguana", "NEC");
+    console.log("typeof ir_receiver is " + typeof ir_receiver);
+
+    ir_receiver.onremotedown = function (e) {
+        console.log('############ onremotedown: ' + e.irType + " - " + e.code);
+        console.log('############ onremotedown: remoteCommand=' + GetRemoteCommand(e.code));
+
+        var event = {};
+        event["EventType"] = "REMOTE";
+        event["EventData"] = GetRemoteCommand(e.code);
+        postMessage(event);
+    }
+
+    ir_receiver.onremoteup = function (e) {
+        console.log('############ onremoteup: ' + e.irType + " - " + e.code);
+    }
+
+    // message port for getting messages from the BrightSign via roMessagePort
+    bsMessage = new BSMessagePort();
+    console.log("typeof bsMessage is " + typeof bsMessage);
+    bsMessage.PostBSMessage({ message: "javascript ready" });
+
+    bsMessage.onbsmessage = function (msg) {
+        console.log("onbsmessage invoked");
+        for (name in msg.data) {
+            console.log('### ' + name + ': ' + msg.data[name]);
+
+            if (name == "ipAddress") {
+                var brightSignIPAddress = msg.data[name];
+                $("#ipAddress").html("ip address: " + brightSignIPAddress);
+                baseURL = "http://" + brightSignIPAddress + ":8080/";
+                console.log("baseURL from BrightSign message is: " + baseURL);
+            }
+            else if (name == "remoteCommand") {
+                var remoteCommand = msg.data[name];
+                console.log("remoteCommand: " + remoteCommand);
+
+                var event = {};
+                event["EventType"] = "REMOTE";
+                event["EventData"] = remoteCommand;
+                postMessage(event);
+            }
+            else if (name == "commandPlayRecordedShow") {
+                var recordingId = msg.data[name];
+                console.log("playRecordedShow " + recordingId);
+
+                var event = {};
+                event["EventType"] = "PLAY_RECORDED_SHOW";
+                event["EventData"] = recordingId;
+                postMessage(event);
+            }
+            else if (name == "commandDeleteRecordedShow") {
+                var recordingId = msg.data[name];
+                console.log("deleteRecordedShow " + recordingId);
+
+                var event = {};
+                event["EventType"] = "DELETE_RECORDED_SHOW";
+                event["EventData"] = recordingId;
+                postMessage(event);
+            }
+            else if (name.lastIndexOf("commandRecordNow") == 0) {
+                console.log("commandRecordNow invoked");
+                var parameterValue = msg.data[name];
+                if (name == "commandRecordNow[duration]") {
+                    recordingDuration = parameterValue;
+                    console.log("duration=" + recordingDuration);
+                }
+                else if (name == "commandRecordNow[title]") {
+                    recordingTitle = parameterValue;
+                    console.log("title=" + recordingTitle);
+
+                    // hack? title is the last parameter so post message now
+                    var event = {}
+                    event["EventType"] = "RECORD_NOW";
+                    event["Title"] = recordingTitle;
+                    event["Duration"] = recordingDuration;
+                    postMessage(event);
+                }
+            }
+            else if (name == "bsMessage") {
+                var command$ = msg.data[name].toLowerCase();
+                if (command$ == "updateprogressbar" && $("#progressBar").length) {
+
+                    console.log("UPDATEPROGRESSBAR ********************************************************");
+                    // currentOffset in seconds
+                    currentOffset = msg.data["currentOffset"];
+                    console.log('### currentOffset : ' + currentOffset);
+
+                    // duration in seconds
+                    pbRecordingDuration = msg.data["recordingDuration"];
+                    console.log('### recordingDuration : ' + pbRecordingDuration);
+
+                    UpdateProgressBarGraphics(currentOffset, pbRecordingDuration);
+
+                    return;
+                }
+            }
+        }
+    }
+}

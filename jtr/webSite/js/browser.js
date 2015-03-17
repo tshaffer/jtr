@@ -64,11 +64,6 @@ function recordNow() {
     var commandData = { "commandRecordNow": recordData };
     console.log(commandData);
 
-    // erase UI overlay on BrightSign display
-    if (clientType == "BrightSign") {
-        eraseUI();
-    }
-
     $.get(aUrl, commandData)
         .done(function (result) {
             console.log("browserCommand successfully sent");
@@ -96,11 +91,6 @@ function playSelectedShow(event) {
     //var recordingData = { "command": "playRecordedShow", "commandData": recordingId };
     var commandData = { "commandPlayRecordedShow": recordingId };
     console.log(commandData);
-
-    // erase UI overlay on BrightSign display
-    if (clientType == "BrightSign") {
-        eraseUI();
-    }
 
     $.get(aUrl, commandData)
         .done(function (result) {
