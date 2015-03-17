@@ -66,6 +66,7 @@
     <Content Include="webSite\bootstrap\js\bootstrap.min.js" />
     <Content Include="webSite\css\main.css" />
     <Content Include="webSite\index.html" />
+    <Content Include="webSite\js\common.js" />
     <Content Include="webSite\js\displayEngine.js" />
     <Content Include="webSite\js\hsm.js" />
     <Content Include="webSite\js\jquery-2.1.1.min.js" />
