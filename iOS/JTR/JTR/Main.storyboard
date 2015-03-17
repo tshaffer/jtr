@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ww1-5w-Bet">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ww1-5w-Bet">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -176,7 +176,6 @@
                                     <rect key="frame" x="287" y="350" width="45" height="46"/>
                                 </variation>
                                 <connections>
-                                    <action selector="streamShow:" destination="FsV-fF-osJ" eventType="touchUpInside" id="xL2-HM-eUS"/>
                                     <segue destination="ehf-MF-JyA" kind="show" identifier="videoStreamer" id="VXb-cp-ubu"/>
                                 </connections>
                             </button>
@@ -195,7 +194,7 @@
                                     <rect key="frame" x="16" y="144" width="347" height="195"/>
                                 </variation>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xUw-z6-Fih">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xUw-z6-Fih">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -347,7 +346,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uge-yu-m3J" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2487" y="561"/>
+            <point key="canvasLocation" x="4899" y="-492"/>
         </scene>
         <!--Video Streamer View Controller-->
         <scene sceneID="Udl-bV-t8v">
@@ -365,7 +364,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="0.0" y="64" width="400" height="687"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="400" height="800"/>
                                 </variation>
                             </webView>
                         </subviews>
@@ -387,26 +386,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aGE-7W-egJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3529.5" y="570"/>
-        </scene>
-        <!--To Do List-->
-        <scene sceneID="ISi-FO-KmU">
-            <objects>
-                <viewController id="XWQ-jZ-vir" customClass="ToDoListViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="IC5-JE-Ys9"/>
-                        <viewControllerLayoutGuide type="bottom" id="iXP-ty-DYx"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Qzc-AQ-DVr">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="To Do List" id="sVh-9z-O8S"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="9Hv-eX-eSQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2472" y="-410"/>
+            <point key="canvasLocation" x="3883.5" y="561"/>
         </scene>
         <!--Device Connection View Controller-->
         <scene sceneID="7OD-Fv-vIx">
@@ -598,7 +578,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="XWQ-jZ-vir" kind="show" id="eIm-2U-1dd"/>
+                                            <segue destination="cJr-aI-hAw" kind="show" id="UQx-Vh-KHc"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -644,6 +624,32 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Ts-Mk-JPe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1537" y="-477"/>
+        </scene>
+        <!--To Do List-->
+        <scene sceneID="yJ6-lC-VfO">
+            <objects>
+                <tableViewController id="cJr-aI-hAw" customClass="ToDoListTableViewController" customModule="JTR" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="dLp-Qs-EKz">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="toDoCell" id="nvl-dV-YG5">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nvl-dV-YG5" id="eSd-12-2zK">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="cJr-aI-hAw" id="x6A-UV-zZy"/>
+                            <outlet property="delegate" destination="cJr-aI-hAw" id="njt-q9-yuR"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="To Do List" id="UpR-89-Bcd"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Frd-fh-6w6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2647.5" y="-419.25"/>
         </scene>
         <!--Record Now-->
         <scene sceneID="prY-SW-gy4">
@@ -869,7 +875,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zYp-wd-PAF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2487" y="-1069.5"/>
+            <point key="canvasLocation" x="3405" y="-1069.5"/>
         </scene>
         <!--Shows-->
         <scene sceneID="Ihy-Io-SCs">
@@ -1389,7 +1395,7 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="3wd-fb-Yjp"/>
         <segue reference="bas-kM-f3d"/>
-        <segue reference="eXe-ce-MYn"/>
     </inferredMetricsTieBreakers>
 </document>

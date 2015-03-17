@@ -51,7 +51,7 @@ class Networking {
         return json
     }
     
-    func executeCommand(cmd: String) {
+    func executeCommand(cmd: String) -> Bool {
         println("trying to execute command: \(cmd)")
         if let baseUrl = self.port8080 {
             if let url = NSURL(string: (baseUrl + cmd)) {
@@ -59,10 +59,11 @@ class Networking {
                 var responseData: NSData = NSURLConnection.sendSynchronousRequest(urlRequest, returningResponse: nil, error: nil)!
                 let json = JSON(data: responseData)
                 if json != nil {
-//                    println("json not nil")
+                    return true
                 }
             }
         }
+        return false
     }
     
     

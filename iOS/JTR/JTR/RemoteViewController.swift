@@ -71,7 +71,7 @@ class RemoteViewController: UIViewController {
     }
     
     @IBAction func selectBtn(sender: AnyObject) {
-        network.executeCommand("select")
+        network.executeCommand("enter")
     }
     
     @IBAction func exitBtn(sender: AnyObject) {

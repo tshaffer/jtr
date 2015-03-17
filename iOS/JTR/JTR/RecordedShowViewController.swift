@@ -68,7 +68,13 @@ class RecordedShowViewController: UIViewController {
     }
     
     @IBAction func playShow(sender: AnyObject) {
-        net.executeCommand("recording?recordingId=" + recordedShow.recordingId)
+        if stateLabel.text == "State: not playing" {
+            net.executeCommand("recording?recordingId=" + recordedShow.recordingId)
+            net.executeCommand("pause")
+            net.executeCommand("play")
+        } else {
+            net.executeCommand("play")
+        }
         updateProgresBar()
     }
     
