@@ -27,7 +27,7 @@
                                 </segments>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="149" y="84" width="105" height="29"/>
+                                    <rect key="frame" x="148" y="20" width="105" height="29"/>
                                 </variation>
                                 <connections>
                                     <action selector="clickSort:" destination="8rJ-Kc-sve" eventType="valueChanged" id="ZFy-5i-PJH"/>
@@ -96,7 +96,7 @@
                                     </mask>
                                 </variation>
                                 <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="34" y="161" width="335" height="582"/>
+                                    <rect key="frame" x="33" y="97" width="335" height="582"/>
                                     <mask key="constraints">
                                         <include reference="aT1-Vu-gPs"/>
                                     </mask>
@@ -185,7 +185,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="287" y="350" width="45" height="46"/>
+                                    <rect key="frame" x="287" y="285" width="45" height="46"/>
                                 </variation>
                                 <connections>
                                     <segue destination="ehf-MF-JyA" kind="show" identifier="videoStreamer" id="VXb-cp-ubu"/>
@@ -197,13 +197,13 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="362" width="201" height="21"/>
+                                    <rect key="frame" x="16" y="297" width="201" height="21"/>
                                 </variation>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hxd-lH-kpB">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="144" width="347" height="195"/>
+                                    <rect key="frame" x="16" y="79" width="347" height="195"/>
                                 </variation>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xUw-z6-Fih">
@@ -212,7 +212,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="401" width="368" height="21"/>
+                                    <rect key="frame" x="16" y="336" width="368" height="21"/>
                                 </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x8a-Cz-bbR">
@@ -220,7 +220,7 @@
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="glyphicons-174-play"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="153" y="436" width="36" height="49"/>
+                                    <rect key="frame" x="153" y="371" width="36" height="49"/>
                                 </variation>
                                 <connections>
                                     <action selector="play:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="8oL-S1-sFN"/>
@@ -233,7 +233,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="236" y="430" width="27" height="59"/>
+                                    <rect key="frame" x="236" y="365" width="27" height="59"/>
                                 </variation>
                                 <connections>
                                     <action selector="pause:" destination="FsV-fF-osJ" eventType="touchUpInside" id="StQ-IE-QiS"/>
@@ -246,7 +246,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="80" y="439" width="27" height="42"/>
+                                    <rect key="frame" x="80" y="374" width="27" height="42"/>
                                 </variation>
                                 <connections>
                                     <action selector="instantReplay:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="dIk-oG-cpo"/>
@@ -259,7 +259,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="298" y="445" width="22" height="31"/>
+                                    <rect key="frame" x="298" y="380" width="22" height="31"/>
                                 </variation>
                                 <connections>
                                     <action selector="quickSkip:" destination="FsV-fF-osJ" eventType="touchUpInside" id="VFl-5b-yc4"/>
@@ -272,7 +272,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="290" y="561" width="33" height="37"/>
+                                    <rect key="frame" x="290" y="496" width="33" height="37"/>
                                 </variation>
                                 <connections>
                                     <action selector="deleteButtonPress:" destination="FsV-fF-osJ" eventType="touchUpInside" id="iZr-fQ-PC5"/>
@@ -281,7 +281,7 @@
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="uAW-qW-xGM">
                                 <rect key="frame" x="0.0" y="-2" width="150" height="2"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="77" y="523" width="240" height="2"/>
+                                    <rect key="frame" x="77" y="458" width="240" height="2"/>
                                 </variation>
                             </progressView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YDp-hc-nsI">
@@ -290,7 +290,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="85" width="368" height="21"/>
+                                    <rect key="frame" x="16" y="20" width="368" height="21"/>
                                 </variation>
                             </label>
                         </subviews>
@@ -357,7 +357,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uge-yu-m3J" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4899" y="-492"/>
+            <point key="canvasLocation" x="2787" y="459"/>
         </scene>
         <!--Video Streamer View Controller-->
         <scene sceneID="Udl-bV-t8v">
@@ -373,13 +373,14 @@
                         <subviews>
                             <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nrw-1U-NvU">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="0.0" y="0.0" width="400" height="800"/>
                                 </variation>
                             </webView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="Nrw-1U-NvU"/>
@@ -636,7 +637,7 @@
                         <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="DMd-QX-Zkp" secondAttribute="centerX" constant="8.5" id="CEo-0j-JQI"/>
-                            <constraint firstItem="DMd-QX-Zkp" firstAttribute="top" secondItem="fhO-Tr-Wc2" secondAttribute="bottom" constant="88" id="fwl-lo-oMq"/>
+                            <constraint firstItem="DMd-QX-Zkp" firstAttribute="top" secondItem="fhO-Tr-Wc2" secondAttribute="bottom" constant="60" id="GzO-x3-Bj5"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -644,7 +645,7 @@
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="CEo-0j-JQI"/>
-                                <exclude reference="fwl-lo-oMq"/>
+                                <exclude reference="GzO-x3-Bj5"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -653,7 +654,7 @@
                             </mask>
                             <mask key="constraints">
                                 <include reference="CEo-0j-JQI"/>
-                                <include reference="fwl-lo-oMq"/>
+                                <include reference="GzO-x3-Bj5"/>
                             </mask>
                         </variation>
                     </view>
@@ -690,7 +691,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <color key="tintColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
-                        <color key="separatorColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="sectionIndexColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="sectionIndexBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
                         <color key="sectionIndexTrackingBackgroundColor" red="0.37254902719999999" green="0.32549020649999999" blue="0.56862747670000002" alpha="1" colorSpace="deviceRGB"/>
@@ -765,7 +766,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="152" y="173" width="97" height="30"/>
+                                    <rect key="frame" x="152" y="76" width="97" height="30"/>
                                 </variation>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title (optional)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tQK-iA-UZt">
@@ -774,7 +775,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="121" width="108" height="21"/>
+                                    <rect key="frame" x="16" y="24" width="108" height="21"/>
                                 </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration (mins)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uUP-lf-y62">
@@ -783,7 +784,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="176" width="116" height="21"/>
+                                    <rect key="frame" x="16" y="79" width="116" height="21"/>
                                 </variation>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZsL-85-JQa">
@@ -791,7 +792,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="152" y="117" width="199" height="30"/>
+                                    <rect key="frame" x="152" y="20" width="199" height="30"/>
                                 </variation>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lw0-Q8-cx1">
@@ -801,7 +802,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="146" y="245" width="108" height="30"/>
+                                    <rect key="frame" x="146" y="148" width="108" height="30"/>
                                 </variation>
                             </button>
                         </subviews>
@@ -864,7 +865,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="145" width="108" height="21"/>
+                                    <rect key="frame" x="16" y="80" width="108" height="21"/>
                                 </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration (mins)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0uF-SH-gTg">
@@ -873,7 +874,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="205" width="116" height="21"/>
+                                    <rect key="frame" x="16" y="140" width="116" height="21"/>
                                 </variation>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="vnD-vx-rek">
@@ -881,7 +882,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="alphabet"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="154" y="141" width="196" height="30"/>
+                                    <rect key="frame" x="154" y="76" width="196" height="30"/>
                                 </variation>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qPy-8Y-OfQ">
@@ -889,7 +890,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="154" y="201" width="97" height="30"/>
+                                    <rect key="frame" x="154" y="136" width="97" height="30"/>
                                 </variation>
                             </textField>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="f5y-Wl-RGT">
@@ -898,7 +899,7 @@
                                     <!--2015-02-16 04:36:42 +0000-->
                                 </date>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="305" width="368" height="162"/>
+                                    <rect key="frame" x="16" y="240" width="368" height="162"/>
                                 </variation>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Channel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y9k-Mm-amh">
@@ -907,7 +908,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="259" width="64" height="21"/>
+                                    <rect key="frame" x="16" y="194" width="64" height="21"/>
                                 </variation>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lyt-zn-oiw">
@@ -915,16 +916,17 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="alphabet"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="154" y="255" width="196" height="30"/>
+                                    <rect key="frame" x="154" y="190" width="196" height="30"/>
                                 </variation>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SXn-j9-46e">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Create Recording">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="140" y="85" width="120" height="30"/>
+                                    <rect key="frame" x="140" y="20" width="120" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="createRecording:" destination="Yzy-nd-opd" eventType="touchUpInside" id="lF5-7q-usl"/>
@@ -1029,13 +1031,13 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="361" width="201" height="21"/>
+                                    <rect key="frame" x="16" y="298" width="201" height="21"/>
                                 </variation>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zVn-Iw-Ymd">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="143" width="347" height="195"/>
+                                    <rect key="frame" x="16" y="80" width="347" height="195"/>
                                 </variation>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="State: not playing " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="se3-bb-84g">
@@ -1044,7 +1046,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="400" width="368" height="21"/>
+                                    <rect key="frame" x="16" y="337" width="368" height="21"/>
                                 </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lgg-49-vOx">
@@ -1053,7 +1055,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="153" y="435" width="36" height="49"/>
+                                    <rect key="frame" x="153" y="372" width="36" height="49"/>
                                 </variation>
                                 <connections>
                                     <action selector="play:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="9Kl-Ie-uaQ"/>
@@ -1066,7 +1068,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="236" y="429" width="27" height="59"/>
+                                    <rect key="frame" x="236" y="366" width="27" height="59"/>
                                 </variation>
                                 <connections>
                                     <action selector="pause:" destination="FsV-fF-osJ" eventType="touchUpInside" id="5gO-uO-GJo"/>
@@ -1079,7 +1081,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="80" y="438" width="27" height="42"/>
+                                    <rect key="frame" x="80" y="375" width="27" height="42"/>
                                 </variation>
                                 <connections>
                                     <action selector="instantReplay:" destination="AIo-Ob-4eV" eventType="touchUpInside" id="BbD-kt-GWZ"/>
@@ -1092,7 +1094,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="298" y="444" width="22" height="31"/>
+                                    <rect key="frame" x="298" y="381" width="22" height="31"/>
                                 </variation>
                                 <connections>
                                     <action selector="quickSkip:" destination="FsV-fF-osJ" eventType="touchUpInside" id="NqS-g0-KFG"/>
@@ -1105,7 +1107,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="290" y="560" width="33" height="37"/>
+                                    <rect key="frame" x="290" y="497" width="33" height="37"/>
                                 </variation>
                                 <connections>
                                     <action selector="deleteButtonPress:" destination="FsV-fF-osJ" eventType="touchUpInside" id="RPC-XX-MMg"/>
@@ -1115,7 +1117,7 @@
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="96P-0N-efd">
                                 <rect key="frame" x="0.0" y="-2" width="150" height="2"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="77" y="522" width="240" height="2"/>
+                                    <rect key="frame" x="77" y="459" width="240" height="2"/>
                                 </variation>
                             </progressView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2O6-d8-1sw">
@@ -1124,7 +1126,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="16" y="83" width="368" height="21"/>
+                                    <rect key="frame" x="16" y="20" width="368" height="21"/>
                                 </variation>
                             </label>
                         </subviews>
@@ -1185,7 +1187,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jnG-oV-Kwh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1662" y="1518"/>
+            <point key="canvasLocation" x="1677" y="1498.5"/>
         </scene>
         <!--Remote-->
         <scene sceneID="ZWd-eg-dfh">
@@ -1205,7 +1207,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="279" y="416" width="52" height="45"/>
+                                    <rect key="frame" x="279" y="393" width="52" height="45"/>
                                 </variation>
                                 <connections>
                                     <action selector="deleteBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="v3P-Fg-BhS"/>
@@ -1217,7 +1219,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="150" y="168" width="37" height="41"/>
+                                    <rect key="frame" x="150" y="145" width="37" height="41"/>
                                 </variation>
                                 <connections>
                                     <action selector="playBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="UI1-Mu-H7C"/>
@@ -1229,7 +1231,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="202" y="171" width="35" height="37"/>
+                                    <rect key="frame" x="202" y="148" width="35" height="37"/>
                                 </variation>
                                 <connections>
                                     <action selector="pauseBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QyK-rE-PtX"/>
@@ -1241,7 +1243,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="250" y="172" width="31" height="33"/>
+                                    <rect key="frame" x="250" y="149" width="31" height="33"/>
                                 </variation>
                                 <connections>
                                     <action selector="rightArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="G2t-K9-6Lf"/>
@@ -1253,7 +1255,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="103" y="172" width="29" height="31"/>
+                                    <rect key="frame" x="103" y="149" width="29" height="31"/>
                                 </variation>
                                 <connections>
                                     <action selector="leftArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="XP9-LR-aEL"/>
@@ -1265,7 +1267,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="173" y="110" width="41" height="36"/>
+                                    <rect key="frame" x="173" y="87" width="41" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="upArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="enx-ao-ec6"/>
@@ -1277,7 +1279,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="178" y="238" width="30" height="30"/>
+                                    <rect key="frame" x="178" y="215" width="30" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="downArrowBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="QE7-vl-dbX"/>
@@ -1290,7 +1292,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="284" y="56" width="43" height="30"/>
+                                    <rect key="frame" x="284" y="33" width="43" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="selectBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Yeg-GY-6nL"/>
@@ -1303,7 +1305,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="45" y="56" width="30" height="30"/>
+                                    <rect key="frame" x="45" y="33" width="30" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="exitBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="bAF-b5-wYY"/>
@@ -1315,7 +1317,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="174" y="330" width="38" height="30"/>
+                                    <rect key="frame" x="174" y="307" width="38" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="stopBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="Uo6-dP-gZn"/>
@@ -1327,7 +1329,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="122" y="327" width="37" height="36"/>
+                                    <rect key="frame" x="122" y="304" width="37" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="instantReplayBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="YKt-SK-3or"/>
@@ -1339,7 +1341,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="222" y="332" width="31" height="26"/>
+                                    <rect key="frame" x="222" y="309" width="31" height="26"/>
                                 </variation>
                                 <connections>
                                     <action selector="quickSkipBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="f7Y-hS-m1d"/>
@@ -1351,7 +1353,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="68" y="327" width="46" height="36"/>
+                                    <rect key="frame" x="68" y="304" width="46" height="36"/>
                                 </variation>
                                 <connections>
                                     <action selector="rewindBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="qOH-XH-r50"/>
@@ -1363,7 +1365,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="266" y="331" width="40" height="28"/>
+                                    <rect key="frame" x="266" y="308" width="40" height="28"/>
                                 </variation>
                                 <connections>
                                     <action selector="fastForwardBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="dzp-Hu-qYA"/>
@@ -1376,7 +1378,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="36" y="431" width="39" height="30"/>
+                                    <rect key="frame" x="36" y="408" width="39" height="30"/>
                                 </variation>
                                 <connections>
                                     <action selector="jumpBtn:" destination="4E9-jR-hiu" eventType="touchUpInside" id="mlN-jl-u4e"/>
@@ -1427,7 +1429,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PvM-e0-eWO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1462.5" y="2422.5"/>
+            <point key="canvasLocation" x="1495.5" y="2406"/>
         </scene>
         <!--Now Playing-->
         <scene sceneID="6v1-4n-OjJ">
@@ -1503,8 +1505,8 @@
         <image name="glyphicons-589-remote-control-tv" width="12" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="3wd-fb-Yjp"/>
+        <segue reference="EPi-DP-RWz"/>
+        <segue reference="8jz-3A-gYV"/>
         <segue reference="bas-kM-f3d"/>
-        <segue reference="Ff3-kI-4el"/>
     </inferredMetricsTieBreakers>
 </document>

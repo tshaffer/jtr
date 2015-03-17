@@ -78,4 +78,9 @@ class ToDoListManager {
         self.toDoItems.append(toDoItem)
         self.save();
     }
+    
+    func removeElem(index : Int) {
+        self.toDoItems.removeAtIndex(index)
+        self.save()
+    }
 }
