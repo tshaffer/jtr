@@ -10,6 +10,7 @@
     this.stShowingUI = new HState(this, "ShowingUI");
     this.stShowingUI.HStateEventHandler = this.STShowingUIEventHandler;
     this.stShowingUI.superState = this.stTop;
+    this.stShowingUI.getAction = this.getAction;
 
     this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
     this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
@@ -146,12 +147,27 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                         var currentElement = document.activeElement;
                         var currentElementId = currentElement.id;
                         console.log("active recorded shows page item is " + currentElementId);
-                        executeRecordedShowAction(currentElementId);
-                        // for play, could just call executePlaySelectedShow
 
-                        // TODO - only do transition when command is Play (not delete)
-                        stateData.nextState = this.stateMachine.stPlaying
-                        return "TRANSITION"
+                        var action = this.getAction(currentElementId);
+                        if (action != "") {
+                            var recordingId = currentElementId.substring(action.length);
+                            switch (action) {
+                                case "recording":
+                                    if (recordingId in _currentRecordings) {
+                                        _currentRecording = _currentRecordings[recordingId];
+                                        executePlaySelectedShow(recordingId);
+                                        stateData.nextState = this.stateMachine.stPlaying
+                                        return "TRANSITION"
+                                    }
+                                    break;
+                                case "delete":
+                                    executeDeleteSelectedShow(recordingId);
+                                    getRecordedShows();
+                                    break;
+                            }
+                        }
+
+                        return "HANDLED"
 
                         break;
                 }
@@ -164,6 +180,17 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
 
     stateData.nextState = this.superState;
     return "SUPER";
+}
+
+displayEngineStateMachine.prototype.getAction = function (actionButtonId) {
+    if (actionButtonId.lastIndexOf("recording") === 0) {
+        return "recording";
+    }
+    else if (actionButtonId.lastIndexOf("delete") === 0) {
+        return "delete";
+    }
+    console.log("getAction - no matching action found for " + actionButtonId);
+    return "";
 }
 
 

@@ -227,30 +227,6 @@ function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
 
 }
 
-// process action selected from Recorded Shows screens
-function executeRecordedShowAction(actionButtonId) {
-    if (actionButtonId.lastIndexOf("recording") === 0) {
-        console.log("selected recording");
-        var recordingId = actionButtonId.substring("recording".length);
-
-        if (recordingId in _currentRecordings) {
-            _currentRecording = _currentRecordings[recordingId];
-            //executePlaySelectedShow(selectedRecording);
-            executePlaySelectedShow(recordingId);
-        }
-    }
-    else if (actionButtonId.lastIndexOf("delete") === 0) {
-        console.log("selected delete");
-        var recordingId = actionButtonId.substring("delete".length);
-        executeDeleteSelectedShow(recordingId);
-        getRecordedShows();
-    }
-    else {
-        console.log("executeRecordedShowAction - no matching action found for " + actionButtonId);
-    }
-}
-
-
 // currently unused
 //function togglePlayIcon() {
 //    console.log("script.js:: togglePlayIcon invoked");
