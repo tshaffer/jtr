@@ -6,10 +6,6 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
-function selectRecordedShows() {
-    switchToPage("recordedShowsPage");
-    getRecordedShows();
-}
 
 function switchToPage(newPage) {
 
@@ -44,6 +40,17 @@ function switchToPage(newPage) {
         $("#ipAddress").css("display", "none");
         $("#trickModeKeys").css("display", "none");
     }
+}
+
+
+function selectHomePage() {
+    switchToPage("homePage");
+}
+
+
+function selectRecordedShows() {
+    switchToPage("recordedShowsPage");
+    getRecordedShows();
 }
 
 
@@ -157,6 +164,55 @@ function getRecordedShows() {
 }
 
 
+function addRecordedShowsLine(jtrRecording) {
+
+    /*
+        Play icon
+        Delete icon
+        Title
+        Date
+        Day of week
+        Info icon
+        Position
+    */
+
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+
+    var dt = jtrRecording.StartDateTime;
+    var n = dt.indexOf(".");
+    var formattedDayDate;
+    if (n >= 0) {
+        var dtCompatible = dt.substring(0, n);
+        var date = new Date(dtCompatible);
+        formattedDayDate = weekday[date.getDay()] + " " + (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
+    }
+    else {
+        formattedDayDate = "poop";
+    }
+
+    var lastViewedPositionInMinutes = Math.floor(jtrRecording.LastViewedPosition / 60);
+    var position = lastViewedPositionInMinutes.toString() + " of " + jtrRecording.Duration.toString() + " minutes";
+
+    var toAppend =
+        "<tr>" +
+        "<td><button type='button' class='btn btn-default recorded-shows-icon' id='recording" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-play' aria-hidden='true'></span></button></td>" +
+	    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+        "<td>" + jtrRecording.Title + "</td>" +
+        "<td>" + formattedDayDate + "</td>" +
+	    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></button></td>" +
+        "<td>" + position + "</td>";
+
+    return toAppend;
+}
+
+
 function selectChannelGuide() {
 
 }
@@ -186,13 +242,8 @@ function getToDoList() {
 }
 
 
-function selectHomePage() {
-    switchToPage("homePage");
-}
+function selectUserSelection() {
 
-
-function here(argument) {
-    console.log(argument);
 }
 
 
@@ -200,10 +251,6 @@ function selectSetManualRecord() {
     switchToPage("manualRecordPage");
     setDefaultDateTimeFields();
     $("#manualRecordTitle").focus();
-}
-
-function selectUserSelection() {
-
 }
 
 
@@ -285,55 +332,6 @@ function createManualRecording() {
         .always(function () {
             alert("finished");
         });
-}
-
-
-function addRecordedShowsLine(jtrRecording) {
-
-    /*
-        Play icon
-        Delete icon
-        Title
-        Date
-        Day of week
-        Info icon
-        Position
-    */
-
-    var weekday = new Array(7);
-    weekday[0] = "Sun";
-    weekday[1] = "Mon";
-    weekday[2] = "Tue";
-    weekday[3] = "Wed";
-    weekday[4] = "Thu";
-    weekday[5] = "Fri";
-    weekday[6] = "Sat";
-
-    var dt = jtrRecording.StartDateTime;
-    var n = dt.indexOf(".");
-    var formattedDayDate;
-    if (n >= 0) {
-        var dtCompatible = dt.substring(0, n);
-        var date = new Date(dtCompatible);
-        formattedDayDate = weekday[date.getDay()] + " " + (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
-    }
-    else {
-        formattedDayDate = "poop";
-    }
-
-    var lastViewedPositionInMinutes = Math.floor(jtrRecording.LastViewedPosition / 60);
-    var position = lastViewedPositionInMinutes.toString() + " of " + jtrRecording.Duration.toString() + " minutes";
-
-    var toAppend =
-        "<tr>" +
-        "<td><button type='button' class='btn btn-default recorded-shows-icon' id='recording" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-play' aria-hidden='true'></span></button></td>" +
-	    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
-        "<td>" + jtrRecording.Title + "</td>" +
-        "<td>" + formattedDayDate + "</td>" +
-	    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></button></td>" +
-        "<td>" + position + "</td>";
-
-    return toAppend;
 }
 
 

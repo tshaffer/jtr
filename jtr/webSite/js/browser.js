@@ -78,7 +78,6 @@ function recordNow() {
 }
 
 
-// Browser handler - send message to bs to relay to state machine to play back a recorded show from the Recorded Shows page
 function playSelectedShow(event) {
 
     var recordingId = event.data.recordingId;
