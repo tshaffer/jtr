@@ -11,6 +11,7 @@
     this.stShowingUI.HStateEventHandler = this.STShowingUIEventHandler;
     this.stShowingUI.superState = this.stTop;
     this.stShowingUI.getAction = this.getAction;
+    this.stShowingUI.playSelectedShow = this.playSelectedShow;
 
     this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
     this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
@@ -21,7 +22,7 @@
     this.stShowingVideo.superState = this.stTop;
     this.stShowingVideo.calculateProgressBarParameters = this.calculateProgressBarParameters;
     this.stShowingVideo.toggleProgressBar = this.toggleProgressBar;
-    this.stShowingVideo.UpdateProgressBarGraphics = this.UpdateProgressBarGraphics;
+    this.stShowingVideo.updateProgressBarGraphics = this.updateProgressBarGraphics;
     
     this.stPlaying = new HState(this, "Playing");
     this.stPlaying.HStateEventHandler = this.STPlayingEventHandler;
@@ -73,7 +74,7 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     // TODO - should support PLAY if a show is highlighted
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
-        executePlaySelectedShow(recordingId);
+        this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
@@ -158,7 +159,7 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                                 case "recording":
                                     if (recordingId in _currentRecordings) {
                                         _currentRecording = _currentRecordings[recordingId];
-                                        executePlaySelectedShow(recordingId);
+                                        this.playSelectedShow(recordingId);
                                         stateData.nextState = this.stateMachine.stPlaying
                                         return "TRANSITION"
                                     }
@@ -184,6 +185,25 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     stateData.nextState = this.superState;
     return "SUPER";
 }
+
+
+displayEngineStateMachine.prototype.playSelectedShow = function (recordingId) {
+
+    console.log("playSelectedShow " + recordingId);
+
+    // save lastSelectedShowId in server's persistent memory
+    var parts = [];
+    parts.push("lastSelectedShowId" + '=' + recordingId.toString());
+    var paramString = parts.join('&');
+    var url = baseURL + "lastSelectedShow";
+    $.post(url, paramString);
+
+    eraseUI();
+
+    bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
+}
+
+
 
 displayEngineStateMachine.prototype.getAction = function (actionButtonId) {
     if (actionButtonId.lastIndexOf("recording") === 0) {
@@ -350,7 +370,7 @@ displayEngineStateMachine.prototype.toggleProgressBar = function () {
             $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
         }
 
-        this.UpdateProgressBarGraphics();
+        this.updateProgressBarGraphics();
 
     } else {
         $("#progressBar").remove();
@@ -366,7 +386,7 @@ displayEngineStateMachine.prototype.toggleProgressBar = function () {
 }
 
 
-displayEngineStateMachine.prototype.UpdateProgressBarGraphics = function () {
+displayEngineStateMachine.prototype.updateProgressBarGraphics = function () {
 
     // currentOffset in seconds
     console.log('### currentOffset : ' + this.stateMachine.currentOffset);
@@ -424,7 +444,7 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
     else if (event["EventType"] == "UPDATE_PROGRESS_BAR") {
         this.stateMachine.currentOffset = event["Offset"];
         this.stateMachine.recordingDuration = event["Duration"];
-        this.UpdateProgressBarGraphics();
+        this.updateProgressBarGraphics();
         return "HANDLED"
     }
     else if (event["EventType"] == "REMOTE") {

@@ -194,24 +194,6 @@ function executeRemoteCommand(remoteCommand) {
 }
 
 
-// HTMLWidget handler - send message to bs to play show (SELECT pressed while Play icon highlighted in Recorded Shows page) or from browser
-function executePlaySelectedShow(recordingId) {
-
-    console.log("executePlaySelectedShow " + recordingId);
-
-    // save lastSelectedShowId in server's persistent memory
-    var parts = [];
-    parts.push("lastSelectedShowId" + '=' + recordingId.toString());
-    var paramString = parts.join('&');
-    var url = baseURL + "lastSelectedShow";
-    $.post(url, paramString);
-
-    eraseUI();
-
-    bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
-}
-
-
 function executeDeleteSelectedShow(recordingId) {
 
     console.log("executeDeleteSelectedShow " + recordingId);
