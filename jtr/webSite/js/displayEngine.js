@@ -19,7 +19,10 @@
     this.stShowingVideo = new HState(this, "ShowingVideo");
     this.stShowingVideo.HStateEventHandler = this.STShowingVideoEventHandler;
     this.stShowingVideo.superState = this.stTop;
-
+    this.stShowingVideo.calculateProgressBarParameters = this.calculateProgressBarParameters;
+    this.stShowingVideo.toggleProgressBar = this.toggleProgressBar;
+    this.stShowingVideo.UpdateProgressBarGraphics = this.UpdateProgressBarGraphics;
+    
     this.stPlaying = new HState(this, "Playing");
     this.stPlaying.HStateEventHandler = this.STPlayingEventHandler;
     this.stPlaying.superState = this.stShowingVideo;
@@ -257,7 +260,7 @@ displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (ev
 }
 
 
-function calculateProgressBarParameters() {
+displayEngineStateMachine.prototype.calculateProgressBarParameters = function () {
 
     // number of ticks to display is based on the duration of the recording
     // 0 < duration <= 5 minutes
@@ -321,7 +324,7 @@ function calculateProgressBarParameters() {
 }
 
 
-function toggleProgressBar(currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks) {
+displayEngineStateMachine.prototype.toggleProgressBar = function (currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks) {
 
     if (!$("#progressBar").length) {
         var percentComplete = 50;
@@ -355,7 +358,7 @@ function toggleProgressBar(currentOffset, recordingDuration, numMinutes, minutes
             $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
         }
 
-        UpdateProgressBarGraphics(currentOffset, recordingDuration);
+        this.UpdateProgressBarGraphics(currentOffset, recordingDuration);
 
     } else {
         $("#progressBar").remove();
@@ -370,6 +373,54 @@ function toggleProgressBar(currentOffset, recordingDuration, numMinutes, minutes
     }
 }
 
+
+displayEngineStateMachine.prototype.UpdateProgressBarGraphics = function (currentOffset, recordingDuration) {
+
+    // currentOffset in seconds
+    console.log('### currentOffset : ' + currentOffset);
+
+    // duration in seconds
+    console.log('### recordingDuration : ' + recordingDuration);
+
+    var percentCompleteVal = (currentOffset / recordingDuration * 100);
+    var percentComplete = percentCompleteVal.toString() + "%";
+    console.log("percentComplete = " + percentComplete);
+
+    $("#progressBarSpan").width(percentComplete);
+
+    // TODO - should retrieve these attributes dynamically
+    var leftOffset = 5.5;
+    var rightOffset = 89.6;
+    var offset = leftOffset + (rightOffset - leftOffset) * (currentOffset / recordingDuration);
+    console.log("offset = " + offset);
+
+    // update progress bar position (width is 4%)
+    var labelOffset = offset - 4.0 / 2;
+    $("#progressBarElapsedTime").css({ left: labelOffset.toString() + '%' });
+
+    // update progress bar position tick (width is 0.25%)
+    var tickOffset = offset - 0.25 / 2;
+    $("#progressBarTickCurrent").css({ left: tickOffset.toString() + '%' });
+
+    // to show where the tick is when all the way on the left (time=0)
+    // var eOffset = leftOffset.toString() + "%";
+    // $("#progressBarTickCurrent").css({ left: eOffset });
+
+    // to show where the tick is when all the way on the right
+    //var eOffset = rightOffset.toString() + "%";
+    //$("#progressBarTickCurrent").css({ left: eOffset });
+
+    var elapsedTimeLabel = SecondsToHourMinuteLabel(currentOffset);
+    $("#progressBarElapsedTime").html("<p>" + elapsedTimeLabel + "</p>");
+    //console.log("currentOffset is " + currentOffset + ", elapsedTimeLabel is " + elapsedTimeLabel);
+
+    // TODO - should only need to do this when progress bar is first updated with a recording
+    var totalTimeLabel = SecondsToHourMinuteLabel(recordingDuration);
+    $("#progressBarTotalTime").html("<p>" + totalTimeLabel + "</p>");
+
+}
+
+
 displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event, stateData) {
 
     stateData.nextState = null;
@@ -377,6 +428,12 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
     if (event["EventType"] == "ENTRY_SIGNAL") {
         console.log(this.id + ": entry signal");
         return "HANDLED";
+    }
+    else if (event["EventType"] == "UPDATE_PROGRESS_BAR") {
+        var offset = event["Offset"];
+        var duration = event["Duration"];
+        this.UpdateProgressBarGraphics(currentOffset, duration);
+        return "HANDLED"
     }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
@@ -407,8 +464,8 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
                 break;
             case "progress_bar":
                 console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++toggle the progress bar");
-                var params = calculateProgressBarParameters();
-                toggleProgressBar(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
+                var params = this.calculateProgressBarParameters();
+                this.toggleProgressBar(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
                 break;
 
         }

@@ -181,52 +181,6 @@ function SecondsToHourMinuteLabel(numSeconds) {
 }
 
 
-function UpdateProgressBarGraphics(currentOffset, recordingDuration) {
-
-    // currentOffset in seconds
-    console.log('### currentOffset : ' + currentOffset);
-
-    // duration in seconds
-    console.log('### recordingDuration : ' + recordingDuration);
-
-    var percentCompleteVal = (currentOffset / recordingDuration * 100);
-    var percentComplete = percentCompleteVal.toString() + "%";
-    console.log("percentComplete = " + percentComplete);
-
-    $("#progressBarSpan").width(percentComplete);
-
-    // TODO - should retrieve these attributes dynamically
-    var leftOffset = 5.5;
-    var rightOffset = 89.6;
-    var offset = leftOffset + (rightOffset - leftOffset) * (currentOffset / recordingDuration);
-    console.log("offset = " + offset);
-
-    // update progress bar position (width is 4%)
-    var labelOffset = offset - 4.0 / 2;
-    $("#progressBarElapsedTime").css({ left: labelOffset.toString() + '%' });
-
-    // update progress bar position tick (width is 0.25%)
-    var tickOffset = offset - 0.25 / 2;
-    $("#progressBarTickCurrent").css({ left: tickOffset.toString() + '%' });
-
-    // to show where the tick is when all the way on the left (time=0)
-    // var eOffset = leftOffset.toString() + "%";
-    // $("#progressBarTickCurrent").css({ left: eOffset });
-
-    // to show where the tick is when all the way on the right
-    //var eOffset = rightOffset.toString() + "%";
-    //$("#progressBarTickCurrent").css({ left: eOffset });
-
-    var elapsedTimeLabel = SecondsToHourMinuteLabel(currentOffset);
-    $("#progressBarElapsedTime").html("<p>" + elapsedTimeLabel + "</p>");
-    //console.log("currentOffset is " + currentOffset + ", elapsedTimeLabel is " + elapsedTimeLabel);
-
-    // TODO - should only need to do this when progress bar is first updated with a recording
-    var totalTimeLabel = SecondsToHourMinuteLabel(recordingDuration);
-    $("#progressBarTotalTime").html("<p>" + totalTimeLabel + "</p>");
-
-}
-
 // currently unused
 //function togglePlayIcon() {
 //    console.log("script.js:: togglePlayIcon invoked");
@@ -377,7 +331,11 @@ function initializeBrightSign() {
                     pbRecordingDuration = msg.data["recordingDuration"];
                     console.log('### recordingDuration : ' + pbRecordingDuration);
 
-                    UpdateProgressBarGraphics(currentOffset, pbRecordingDuration);
+                    var event = {}
+                    event["EventType"] = "UPDATE_PROGRESS_BAR";
+                    event["Offset"] = currentOffset;
+                    event["Duration"] = pbRecordingDuration;
+                    postMessage(event);
 
                     return;
                 }
