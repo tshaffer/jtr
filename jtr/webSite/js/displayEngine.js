@@ -262,6 +262,8 @@ displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (ev
 
 displayEngineStateMachine.prototype.calculateProgressBarParameters = function () {
 
+    this.stateMachine.currentOffset = 0;
+
     // number of ticks to display is based on the duration of the recording
     // 0 < duration <= 5 minutes
     // every 1 minute
@@ -275,65 +277,55 @@ displayEngineStateMachine.prototype.calculateProgressBarParameters = function ()
     // every 30 minutes
     // 4 hours < duration
     // every hour
-    pbRecordingDuration = _currentRecording.Duration * 60
-    numMinutes = Math.floor(pbRecordingDuration / 60);
+    this.stateMachine.recordingDuration = _currentRecording.Duration * 60
+    this.stateMachine.numMinutes = Math.floor(this.stateMachine.recordingDuration / 60);
 
     console.log("toggleProgressBar: duration = " + _currentRecording.Duration);
-    console.log("toggleProgressBar: numMinutes = " + numMinutes);
+    console.log("toggleProgressBar: numMinutes = " + this.stateMachine.numMinutes);
 
-    numTicks = 8;
+    this.stateMachine.numTicks = 8;
     minutesPerTick = 1;
-    if (numMinutes > 240) {
-        minutesPerTick = 60;
+    if (this.stateMachine.numMinutes > 240) {
+        this.stateMachine.minutesPerTick = 60;
     }
-    else if (numMinutes > 180) {
-        minutesPerTick = 30;
+    else if (this.stateMachine.numMinutes > 180) {
+        this.stateMachine.minutesPerTick = 30;
     }
-    else if (numMinutes > 60) {
-        minutesPerTick = 15;
+    else if (this.stateMachine.numMinutes > 60) {
+        this.stateMachine.minutesPerTick = 15;
     }
-    else if (numMinutes > 40) {
-        minutesPerTick = 10;
+    else if (this.stateMachine.numMinutes > 40) {
+        this.stateMachine.minutesPerTick = 10;
     }
-    else if (numMinutes > 5) {
-        minutesPerTick = 5;
+    else if (this.stateMachine.numMinutes > 5) {
+        this.stateMachine.minutesPerTick = 5;
     }
     else {
-        minutesPerTick = 1;
+        this.stateMachine.minutesPerTick = 1;
     }
-    numTicks = Math.floor(numMinutes / minutesPerTick);
+    this.stateMachine.numTicks = Math.floor(this.stateMachine.numMinutes / this.stateMachine.minutesPerTick);
 
-    console.log("toggleProgressBar: numTicks = " + numTicks);
-    console.log("toggleProgressBar: minutesPerTick = " + minutesPerTick);
+    console.log("toggleProgressBar: numTicks = " + this.stateMachine.numTicks);
+    console.log("toggleProgressBar: minutesPerTick = " + this.stateMachine.minutesPerTick);
 
     // determine whether or not to draw last tick - don't draw it if it is at the end of the progress bar
-    if (Math.floor(numMinutes) % (Math.floor(minutesPerTick) * numTicks) == 0) {
-        numTicks--;
+    if (Math.floor(this.stateMachine.numMinutes) % (Math.floor(this.stateMachine.minutesPerTick) * this.stateMachine.numTicks) == 0) {
+        this.stateMachine.numTicks--;
     }
-    console.log("toggleProgressBar: numTicks = " + numTicks);
-
-    var params = {};
-    params.currentOffset = 0;
-    params.recordingDuration = pbRecordingDuration;
-    params.numMinutes = numMinutes;
-    params.minutesPerTick = minutesPerTick;
-    params.numTicks = numTicks;
-
-    return params;
-
+    console.log("toggleProgressBar: numTicks = " + this.stateMachine.numTicks);
 }
 
 
-displayEngineStateMachine.prototype.toggleProgressBar = function (currentOffset, recordingDuration, numMinutes, minutesPerTick, numTicks) {
+displayEngineStateMachine.prototype.toggleProgressBar = function () {
 
     if (!$("#progressBar").length) {
         var percentComplete = 50;
         var toAppend = '<div id="progressBar" class="meter"><span id="progressBarSpan" class="meter-span" style="width: ' + percentComplete + '%;"></span></div>';
 
-        var timeLabel = SecondsToHourMinuteLabel(recordingDuration)
+        var timeLabel = SecondsToHourMinuteLabel(this.stateMachine.recordingDuration)
         toAppend += '<div id="progressBarTotalTime" class="meterTotalTime"><p>' + timeLabel + '</p></div>';
 
-        for (i = 1; i <= numTicks; i++) {
+        for (i = 1; i <= this.stateMachine.numTicks; i++) {
             var theId = "progressBarTick" + i.toString()
             toAppend += '<div id=' + theId + ' class="meterTick"><p></p></div>';
         }
@@ -346,10 +338,10 @@ displayEngineStateMachine.prototype.toggleProgressBar = function (currentOffset,
         // TODO - should retrieve these attributes dynamically - good luck with that!!
         var leftOffset = 5.5;
         var rightOffset = 89.6;
-        for (i = 1; i <= numTicks; i++) {
+        for (i = 1; i <= this.stateMachine.numTicks; i++) {
 
-            var durationAtTick = i * minutesPerTick;
-            var totalDuration = numMinutes;
+            var durationAtTick = i * this.stateMachine.minutesPerTick;
+            var totalDuration = this.stateMachine.numMinutes;
 
             var tickOffset = leftOffset + (rightOffset - leftOffset) * (durationAtTick / totalDuration);
             tickOffset = tickOffset - 0.25 / 2; // move to left a little to account for width of tick
@@ -358,7 +350,7 @@ displayEngineStateMachine.prototype.toggleProgressBar = function (currentOffset,
             $("#progressBarTick" + i.toString()).css({ left: tickOffset.toString() + '%', position: 'absolute' });
         }
 
-        this.UpdateProgressBarGraphics(currentOffset, recordingDuration);
+        this.UpdateProgressBarGraphics();
 
     } else {
         $("#progressBar").remove();
@@ -374,15 +366,15 @@ displayEngineStateMachine.prototype.toggleProgressBar = function (currentOffset,
 }
 
 
-displayEngineStateMachine.prototype.UpdateProgressBarGraphics = function (currentOffset, recordingDuration) {
+displayEngineStateMachine.prototype.UpdateProgressBarGraphics = function () {
 
     // currentOffset in seconds
-    console.log('### currentOffset : ' + currentOffset);
+    console.log('### currentOffset : ' + this.stateMachine.currentOffset);
 
     // duration in seconds
-    console.log('### recordingDuration : ' + recordingDuration);
+    console.log('### recordingDuration : ' + this.stateMachine.recordingDuration);
 
-    var percentCompleteVal = (currentOffset / recordingDuration * 100);
+    var percentCompleteVal = (this.stateMachine.currentOffset / this.stateMachine.recordingDuration * 100);
     var percentComplete = percentCompleteVal.toString() + "%";
     console.log("percentComplete = " + percentComplete);
 
@@ -391,7 +383,7 @@ displayEngineStateMachine.prototype.UpdateProgressBarGraphics = function (curren
     // TODO - should retrieve these attributes dynamically
     var leftOffset = 5.5;
     var rightOffset = 89.6;
-    var offset = leftOffset + (rightOffset - leftOffset) * (currentOffset / recordingDuration);
+    var offset = leftOffset + (rightOffset - leftOffset) * (this.stateMachine.currentOffset / this.stateMachine.recordingDuration);
     console.log("offset = " + offset);
 
     // update progress bar position (width is 4%)
@@ -410,12 +402,12 @@ displayEngineStateMachine.prototype.UpdateProgressBarGraphics = function (curren
     //var eOffset = rightOffset.toString() + "%";
     //$("#progressBarTickCurrent").css({ left: eOffset });
 
-    var elapsedTimeLabel = SecondsToHourMinuteLabel(currentOffset);
+    var elapsedTimeLabel = SecondsToHourMinuteLabel(this.stateMachine.currentOffset);
     $("#progressBarElapsedTime").html("<p>" + elapsedTimeLabel + "</p>");
     //console.log("currentOffset is " + currentOffset + ", elapsedTimeLabel is " + elapsedTimeLabel);
 
     // TODO - should only need to do this when progress bar is first updated with a recording
-    var totalTimeLabel = SecondsToHourMinuteLabel(recordingDuration);
+    var totalTimeLabel = SecondsToHourMinuteLabel(this.stateMachine.recordingDuration);
     $("#progressBarTotalTime").html("<p>" + totalTimeLabel + "</p>");
 
 }
@@ -430,9 +422,9 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
         return "HANDLED";
     }
     else if (event["EventType"] == "UPDATE_PROGRESS_BAR") {
-        var offset = event["Offset"];
-        var duration = event["Duration"];
-        this.UpdateProgressBarGraphics(currentOffset, duration);
+        this.stateMachine.currentOffset = event["Offset"];
+        this.stateMachine.recordingDuration = event["Duration"];
+        this.UpdateProgressBarGraphics();
         return "HANDLED"
     }
     else if (event["EventType"] == "REMOTE") {
@@ -464,8 +456,8 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
                 break;
             case "progress_bar":
                 console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++toggle the progress bar");
-                var params = this.calculateProgressBarParameters();
-                this.toggleProgressBar(params.currentOffset, params.recordingDuration, params.numMinutes, params.minutesPerTick, params.numTicks);
+                this.calculateProgressBarParameters();
+                this.toggleProgressBar(this.stateMachine.recordingDuration);
                 break;
 
         }
@@ -632,13 +624,13 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
                 //return "HANDLED";
             case "quick_skip":
                 console.log("-------------------------------------------------------------------------------- invoked FORWARD_TO_TICK");
-                console.log("numTicks=" + numTicks);
-                console.log("minutesPerTick=" + minutesPerTick);
-                console.log("currentOffset=" + currentOffset);
-                console.log("recordingDuration=" + pbRecordingDuration);
+                console.log("numTicks=" + this.stateMachine.numTicks);
+                console.log("minutesPerTick=" + this.stateMachine.minutesPerTick);
+                console.log("currentOffset=" + this.stateMachine.currentOffset);
+                console.log("recordingDuration=" + this.stateMachine.recordingDuration);
 
                 console.log("STFastForwardingEventHandler: QUICK_SKIP received.");
-                bsMessage.PostBSMessage({ command: "forwardToTick", "offset": currentOffset, "duration": pbRecordingDuration, "numTicks": numTicks, "minutesPerTick": minutesPerTick });
+                bsMessage.PostBSMessage({ command: "forwardToTick", "offset": this.stateMachine.currentOffset, "duration": this.stateMachine.recordingDuration, "numTicks": this.stateMachine.numTicks, "minutesPerTick": this.stateMachine.minutesPerTick });
                 return "HANDLED";
             case "menu":
                 // TODO
@@ -689,7 +681,7 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
                 executeRemoteCommand("nextRewind");
                 return "HANDLED"
             case "instant_replay":
-                bsMessage.PostBSMessage({ command: "backToTick", "offset": currentOffset, "duration": pbRecordingDuration, "numTicks": numTicks, "minutesPerTick": minutesPerTick });
+                bsMessage.PostBSMessage({ command: "backToTick", "offset": this.stateMachine.currentOffset, "duration": this.stateMachine.recordingDuration, "numTicks": this.stateMachine.numTicks, "minutesPerTick": this.stateMachine.minutesPerTick });
                 return "HANDLED";
             case "quick_skip":
                 // TODO

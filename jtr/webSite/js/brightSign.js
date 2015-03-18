@@ -6,13 +6,6 @@ var ir_receiver;
 
 var _currentRecording;
 
-// progress bar parameters
-var numTicks;
-var numMinutes;
-var minutesPerTick;
-var currentOffset;
-var pbRecordingDuration;
-
 // miscellaneous variables
 var _showRecordingId;
 
@@ -324,17 +317,17 @@ function initializeBrightSign() {
 
                     console.log("UPDATEPROGRESSBAR ********************************************************");
                     // currentOffset in seconds
-                    currentOffset = msg.data["currentOffset"];
+                    var currentOffset = msg.data["currentOffset"];
                     console.log('### currentOffset : ' + currentOffset);
 
                     // duration in seconds
-                    pbRecordingDuration = msg.data["recordingDuration"];
-                    console.log('### recordingDuration : ' + pbRecordingDuration);
+                    var recordingDuration = msg.data["recordingDuration"];
+                    console.log('### recordingDuration : ' + recordingDuration);
 
                     var event = {}
                     event["EventType"] = "UPDATE_PROGRESS_BAR";
                     event["Offset"] = currentOffset;
-                    event["Duration"] = pbRecordingDuration;
+                    event["Duration"] = recordingDuration;
                     postMessage(event);
 
                     return;
