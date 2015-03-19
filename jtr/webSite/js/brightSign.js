@@ -4,10 +4,10 @@ var baseURL;
 var bsMessage;
 var ir_receiver;
 
-var _currentRecording;
 
 // miscellaneous variables
 var _showRecordingId;
+var _currentRecording;
 
 var modalDialogDisplayed = false;
 var selectedDeleteShowDlgElement = "#deleteShowDlgDelete";
@@ -187,7 +187,6 @@ function SecondsToHourMinuteLabel(numSeconds) {
 //    }
 //}
 
-// send trick commands to device via message port - this function only exists on the device
 function executeRemoteCommand(remoteCommand) {
     console.log("executeRemoteCommand:" + remoteCommand);
     bsMessage.PostBSMessage({ command: "remoteCommand", "remoteCommand": remoteCommand });
