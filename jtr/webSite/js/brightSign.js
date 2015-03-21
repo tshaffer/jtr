@@ -81,6 +81,14 @@ function displayDeleteShowDlg(showTitle, showRecordingId) {
 
     modalDialogDisplayed = true;
     selectedDeleteShowDlgElement = "#deleteShowDlgDelete";
+    unselectedDeleteShowDlgElement = "#deleteShowDlgClose";
+
+    // when dialog is displayed, highlight Delete, unhighlight Close
+    $(selectedDeleteShowDlgElement).removeClass("btn-secondary");
+    $(selectedDeleteShowDlgElement).addClass("btn-primary");
+
+    $(unselectedDeleteShowDlgElement).removeClass("btn-primary");
+    $(unselectedDeleteShowDlgElement).addClass("btn-secondary");
 }
 
 function deleteShowDlgCloseInvoked() {
