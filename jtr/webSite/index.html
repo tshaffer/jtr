@@ -18,107 +18,120 @@
     <script src="./js/xml2json.js"></script>
     <script>
         var userAgent = navigator.userAgent;
+        var n = userAgent.lastIndexOf("BrightSign");
+        if (n >= 0) {
+            var deviceType = "BrightSign";
+        }
+        else {
+            var deviceType = "Browser";
+        }
+        console.log("deviceType = " + deviceType);
     </script>
-<!--    <script src="./js/common.js"></script>
-    <script src="./js/browser.js"></script>-->
     <script>
 
-        $.getScript("./js/remote.js")
-            .done(function (script, textStatus) {
-                console.log("remote.js " + textStatus);
+        console.log("deviceType = " + deviceType);
+
+        if (deviceType == "Browser") {
+            $.getScript("./js/browser.js")
+                .done(function (script, textStatus) {
+                    console.log("browser.js " + textStatus);
+
+                    $.getScript("./js/common.js")
+                        .done(function (script, textStatus) {
+                            console.log("common.js " + textStatus);
+                        })
+                        .fail(function (jqxhr, settings, exception) {
+                            console.log("Failed to load common.js");
+                            console.log(exception);
+                            console.log(jqxhr.status);
+                        });
+                })
+                .fail(function (jqxhr, settings, exception) {
+                    console.log("Failed to load browser.js");
+                    console.log(exception);
+                    console.log(jqxhr.status);
+                });
+        }
+        else {
+
+            $.getScript("./js/remote.js")
+                .done(function (script, textStatus) {
+                    console.log("remote.js " + textStatus);
 
 
-                $.getScript("./js/hsm.js")
-                    .done(function (script, textStatus) {
-                        console.log("hsm.js " + textStatus);
+                    $.getScript("./js/hsm.js")
+                        .done(function (script, textStatus) {
+                            console.log("hsm.js " + textStatus);
 
-                        $.getScript("./js/recordingEngine.js")
-                            .done(function (script, textStatus) {
-                                console.log("recordingEngine.js " + textStatus);
-
-
-                                $.getScript("./js/displayEngine.js")
-                                    .done(function (script, textStatus) {
-                                        console.log("displayEngine.js " + textStatus);
+                            $.getScript("./js/recordingEngine.js")
+                                .done(function (script, textStatus) {
+                                    console.log("recordingEngine.js " + textStatus);
 
 
-                                        $.getScript("./js/brightSign.js")
-                                            .done(function (script, textStatus) {
-                                                console.log("brightSign.js " + textStatus);
+                                    $.getScript("./js/displayEngine.js")
+                                        .done(function (script, textStatus) {
+                                            console.log("displayEngine.js " + textStatus);
 
 
-                                                $.getScript("./js/browser.js")
-                                                    .done(function (script, textStatus) {
-                                                        console.log("browser.js " + textStatus);
+                                            $.getScript("./js/brightSign.js")
+                                                .done(function (script, textStatus) {
+                                                    console.log("brightSign.js " + textStatus);
 
-                                                        $.getScript("./js/common.js")
-                                                            .done(function (script, textStatus) {
-                                                                console.log("common.js " + textStatus);
-                                                            })
-                                                            .fail(function (jqxhr, settings, exception) {
-                                                                console.log("Failed to load common.js");
-                                                                console.log(exception);
-                                                                console.log(jqxhr.status);
-                                                            });
+                                                    $.getScript("./js/common.js")
+                                                        .done(function (script, textStatus) {
+                                                            console.log("common.js " + textStatus);
+                                                        })
+                                                        .fail(function (jqxhr, settings, exception) {
+                                                            console.log("Failed to load common.js");
+                                                            console.log(exception);
+                                                            console.log(jqxhr.status);
+                                                        });
 
-
-
-
-
-                                                    })
-                                                    .fail(function (jqxhr, settings, exception) {
-                                                        console.log("Failed to load browser.js");
-                                                        console.log(exception);
-                                                        console.log(jqxhr.status);
-                                                    });
-
-
-
-                                            })
-                                            .fail(function (jqxhr, settings, exception) {
-                                                console.log("Failed to load brightSign.js");
-                                                console.log(exception);
-                                                console.log(jqxhr.status);
-                                            });
-
-
-
-                                    })
-                                    .fail(function (jqxhr, settings, exception) {
-                                        console.log("Failed to load displayEngine.js");
-                                        console.log(exception);
-                                        console.log(jqxhr.status);
-                                    });
-
-
-
-                            })
-                            .fail(function (jqxhr, settings, exception) {
-                                console.log("Failed to load recordingEngine.js");
-                                console.log(exception);
-                                console.log(jqxhr.status);
-                            });
+                                                })
+                                                .fail(function (jqxhr, settings, exception) {
+                                                    console.log("Failed to load brightSign.js");
+                                                    console.log(exception);
+                                                    console.log(jqxhr.status);
+                                                });
 
 
 
-                    })
-                    .fail(function (jqxhr, settings, exception) {
-                        console.log("Failed to load hsm.js");
-                        console.log(exception);
-                        console.log(jqxhr.status);
-                    });
+                                        })
+                                        .fail(function (jqxhr, settings, exception) {
+                                            console.log("Failed to load displayEngine.js");
+                                            console.log(exception);
+                                            console.log(jqxhr.status);
+                                        });
+
+
+
+                                })
+                                .fail(function (jqxhr, settings, exception) {
+                                    console.log("Failed to load recordingEngine.js");
+                                    console.log(exception);
+                                    console.log(jqxhr.status);
+                                });
+
+
+
+                        })
+                        .fail(function (jqxhr, settings, exception) {
+                            console.log("Failed to load hsm.js");
+                            console.log(exception);
+                            console.log(jqxhr.status);
+                        });
 
 
 
 
 
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.log("Failed to load remote.js");
-                console.log(exception);
-                console.log(jqxhr.status);
-            });
-
+                })
+                .fail(function (jqxhr, settings, exception) {
+                    console.log("Failed to load remote.js");
+                    console.log(exception);
+                    console.log(jqxhr.status);
+                });
+        }
     </script>
 
     <link rel="stylesheet/less" type="text/css" href="./css/styles.less" />
