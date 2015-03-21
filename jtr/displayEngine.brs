@@ -229,6 +229,9 @@ Sub de_StartPlayback(recording As Object)
 
 	ok = m.videoPlayer.PlayFile(m.selectedRecording.Path)
 	if not ok stop
+	ok = m.videoPlayer.SetPlaybackSpeed(1.0)
+	if not ok stop
+	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex%
 		
 	m.UpdateProgressBar()
 	m.SeekToCurrentVideoPosition()

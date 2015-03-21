@@ -82,9 +82,10 @@ function playSelectedShow(event) {
 
     var recordingId = event.data.recordingId;
 
-    if (recordingId in _currentRecordings) {
-        var selectedRecording = _currentRecordings[recordingId];
-    }
+    // unused?
+    //if (recordingId in _currentRecordings) {
+    //    var selectedRecording = _currentRecordings[recordingId];
+    //}
 
     var aUrl = baseURL + "browserCommand";
     //var recordingData = { "command": "playRecordedShow", "commandData": recordingId };

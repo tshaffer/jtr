@@ -27,18 +27,22 @@
     this.stPlaying = new HState(this, "Playing");
     this.stPlaying.HStateEventHandler = this.STPlayingEventHandler;
     this.stPlaying.superState = this.stShowingVideo;
+    this.stPlaying.playSelectedShow = this.playSelectedShow;
 
     this.stPaused = new HState(this, "Paused");
     this.stPaused.HStateEventHandler = this.STPausedEventHandler;
     this.stPaused.superState = this.stShowingVideo;
+    this.stPaused.playSelectedShow = this.playSelectedShow;
 
     this.stFastForwarding = new HState(this, "FastForwarding");
     this.stFastForwarding.HStateEventHandler = this.STFastForwardingEventHandler;
     this.stFastForwarding.superState = this.stShowingVideo;
+    this.stFastForwarding.playSelectedShow = this.playSelectedShow;
 
     this.stRewinding = new HState(this, "Rewinding");
     this.stRewinding.HStateEventHandler = this.STRewindingEventHandler;
     this.stRewinding.superState = this.stShowingVideo;
+    this.stRewinding.playSelectedShow = this.playSelectedShow;
 
     this.topState = this.stTop;
 }
@@ -67,13 +71,17 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
     }
-    // events to expect include
-    //      user chooses play, etc. from Recorded Shows page (SELECT)
-    //      remote navigation commands
-    //          MENU, EXIT, RECORDED_SHOWS, UP, DOWN, LEFT, RIGHT, SELECT
+    // events
+        //      API - from browser or other external app
+        //          Play a specific recording - PLAY_RECORDED_SHOW
+        //          Delete a specific recording - DELETE_RECORDED_SHOW
+        //      Remote Control - note: 'remote commands' coming from API are indistinguishable from actual remote control commands on the device
+        //          Menu, recorded_shows?, up, down, left, right, select
+        //          Trick mode keys are ignored in this state
     // TODO - should support PLAY if a show is highlighted
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
+        _currentRecording = _currentRecordings[recordingId];
         this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
@@ -497,16 +505,7 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
 
 displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, stateData) {
 
-    stateData.nextState = null;
-
-    if (event["EventType"] == "ENTRY_SIGNAL") {
-        console.log(this.id + ": entry signal");
-        return "HANDLED";
-    }
-    else if (event["EventType"] == "EXIT_SIGNAL") {
-        console.log(this.id + ": exit signal");
-    }
-    // events to expect include
+    // events handled
     //      PAUSE
     //      FF
     //      RW
@@ -516,6 +515,22 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
     //      STOP
     //      RECORDED_SHOWS
     //      JUMP
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+    }
+    else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
+        var recordingId = event["EventData"];
+        _currentRecording = _currentRecordings[recordingId];
+        this.playSelectedShow(recordingId);
+        return "HANDLED"
+    }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
@@ -572,6 +587,13 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
     }
+    else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
+        var recordingId = event["EventData"];
+        _currentRecording = _currentRecordings[recordingId];
+        this.playSelectedShow(recordingId);
+        stateData.nextState = this.stateMachine.stPlaying
+        return "TRANSITION"
+    }
     // events to expect include
     //  PAUSE
     //  PLAY
@@ -615,7 +637,14 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
     }
-    // events to expect include
+    else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
+        var recordingId = event["EventData"];
+        _currentRecording = _currentRecordings[recordingId];
+        this.playSelectedShow(recordingId);
+        stateData.nextState = this.stateMachine.stPlaying
+        return "TRANSITION"
+    }
+        // events to expect include
     //  FF
     //  PLAY
     //  PAUSE
@@ -676,6 +705,13 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
+    }
+    else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
+        var recordingId = event["EventData"];
+        _currentRecording = _currentRecordings[recordingId];
+        this.playSelectedShow(recordingId);
+        stateData.nextState = this.stateMachine.stPlaying
+        return "TRANSITION"
     }
         // events to expect include
         //  RW

@@ -1,6 +1,6 @@
 ﻿var clientType;
 
-var _currentRecordings;
+var _currentRecordings = {};
 
 var currentActiveElementId = "#homePage";
 
