@@ -129,6 +129,12 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                 }
                 return "HANDLED";
                 break;
+            case "exit":
+                // TODO
+                // what state to transfer to? paused? playing? - assume paused for now
+                eraseUI();
+                stateData.nextState = this.stateMachine.stPaused;
+                return "TRANSITION";
             case "select":
                 switch (currentActiveElementId) {
                     case "#homePage":
@@ -276,10 +282,15 @@ displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (ev
                     deleteShowDlgCloseInvoked();
                 }
 
-                stateData.nextState = this.stateMachine.stShowingUI
+                stateData.nextState = this.stateMachine.stShowingUI;
                 return "TRANSITION";
 
-                break;
+            case "exit":
+                deleteShowDlgCloseInvoked();
+
+                stateData.nextState = this.stateMachine.stShowingUI;
+                return "TRANSITION";
+
         }
     }
 
