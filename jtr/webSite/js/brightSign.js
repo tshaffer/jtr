@@ -246,6 +246,15 @@ function initializeBrightSign() {
                 baseURL = "http://" + brightSignIPAddress + ":8080/";
                 console.log("baseURL from BrightSign message is: " + baseURL);
             }
+            else if (name == "recordings") {
+                console.log("recordings received from device bs");
+                var recordings = JSON.parse(msg.data[name]);
+                var jtrRecordings = recordings.recordings;
+                _currentRecordings = {};
+                $.each(jtrRecordings, function (index, jtrRecording) {
+                    _currentRecordings[jtrRecording.RecordingId] = jtrRecording;
+                });
+            }
             else if (name == "remoteCommand") {
                 var remoteCommand = msg.data[name];
                 console.log("remoteCommand: " + remoteCommand);

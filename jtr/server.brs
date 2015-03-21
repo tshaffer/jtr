@@ -154,6 +154,13 @@ Sub getRecordings(userData as Object, e as Object)
     e.SetResponseBodyString(json)
     e.SendResponse(200)
 
+	' send data directly to js (for the case where the request came from the browser or an external app)
+	
+	aa = {}
+	aa.AddReplace("recordings", json)
+	ok = mVar.htmlWidget.PostJSMessage(aa)
+	if not ok stop
+
 End Sub
 
 

@@ -94,7 +94,7 @@ function getRecordedShows() {
             $("#recordedShowsRemainingSpace").text(freeSpace);
 
             // display show recordings
-            jtrRecordings = recordings.recordings;
+            var jtrRecordings = recordings.recordings;
 
             var toAppend = "";
             var recordingIds = [];
