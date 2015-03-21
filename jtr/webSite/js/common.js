@@ -6,6 +6,11 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
+var mainMenuIds = [
+    ['recordedShows', 'setManualRecord'],
+    ['channelGuide', 'userSelection'],
+    ['toDoList', 'myPlayVideo']
+];
 
 function switchToPage(newPage) {
 

@@ -145,6 +145,10 @@ Sub de_HandleHttpEvent(event)
 			ipAddress$ = networkConfig.ip4_address
 			print "ipAddress = ";ipAddress$
 
+			' wait for all javascript to finish loading
+			sleep(2000)
+			print "post  to javascript"
+
 			' send it via message port
 			aa = {}
 			aa.AddReplace("ipAddress", ipAddress$)

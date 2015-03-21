@@ -13,7 +13,13 @@ var modalDialogDisplayed = false;
 var selectedDeleteShowDlgElement = "#deleteShowDlgDelete";
 var unselectedDeleteShowDlgElement = "#deleteShowDlgClose";
 
-// BrightSign specific functionality
+// dummy stubs
+function playSelectedShow(event) {
+}
+
+function deleteSelectedShow(event) {
+}
+
 function navigateRecordedShowsPage(navigationCommand$) {
 
     console.log("navigateRecordedShowsPage entry");
@@ -99,12 +105,6 @@ function deleteShowDlgDeleteInvoked() {
 }
 
 // home page
-var mainMenuIds = [
-    ['recordedShows', 'setManualRecord'],
-    ['channelGuide', 'userSelection'],
-    ['toDoList', 'myPlayVideo']
-];
-
 function navigateHomePage(navigationCommand$) {
 
     var rowIndex = -1;
