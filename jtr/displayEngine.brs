@@ -29,6 +29,7 @@ Function newDisplayEngine(jtr As Object) As Object
 	DisplayEngine.StartVideoPlaybackTimer		= de_StartVideoPlaybackTimer
 	DisplayEngine.StopVideoPlaybackTimer		= de_StopVideoPlaybackTimer
 	DisplayEngine.UpdateProgressBar				= de_UpdateProgressBar
+	DisplayEngine.UpdateLastViewedPosition		= de_UpdateLastViewedPosition
 
 	return DisplayEngine
 
@@ -202,6 +203,22 @@ Sub de_HandleHttpEvent(event)
 End Sub
 
 
+Sub de_UpdateLastViewedPosition(recording As Object, position% As Integer)
+
+	' prevent position from going outside of the bounds of the recording
+	if position% < 0 then
+		position% = 0
+	endif
+
+	if position% >= (recording.Duration * 60) then
+		position% = recording.Duration * 60 - 1
+	endif
+
+	m.jtr.UpdateDBLastViewedPosition(recording.RecordingId, position%)
+
+End Sub
+
+
 Sub de_StartPlayback(recording As Object)
 
 	' pause current video
@@ -211,7 +228,7 @@ Sub de_StartPlayback(recording As Object)
 	if type(m.selectedRecording) = "roAssociativeArray" then
 
 		' save current position
-		m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+		m.UpdateLastViewedPosition(m.selectedRecording, m.currentVideoPosition%)
 
 		m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 		
@@ -289,7 +306,7 @@ print "de_PausePlayback() invoked"
 
 	if type(m.selectedRecording) = "roAssociativeArray" then
 		' save current position
-		m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+		m.UpdateLastViewedPosition(m.selectedRecording, m.currentVideoPosition%)
 		m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 	endif
 
@@ -355,7 +372,7 @@ Sub de_InitiateFastForward()
 
 	' update last viewed position in database
 	print "update last viewed position for ";m.selectedRecording.RecordingId;" to "; m.currentVideoPosition%
-	m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+	m.UpdateLastViewedPosition(m.selectedRecording, m.currentVideoPosition%)
 	m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 
 	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% + 1
@@ -388,7 +405,7 @@ Sub de_InitiateRewind()
 
 	' update last viewed position in database
 	print "update last viewed position for ";m.selectedRecording.RecordingId;" to "; m.currentVideoPosition%
-	m.jtr.UpdateDBLastViewedPosition(m.selectedRecording.RecordingId, m.currentVideoPosition%)
+	m.UpdateLastViewedPosition(m.selectedRecording, m.currentVideoPosition%)
 	m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 
 	m.playbackSpeedIndex% = m.normalPlaybackSpeedIndex% - 1
