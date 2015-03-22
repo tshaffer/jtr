@@ -98,6 +98,8 @@ End Sub
 
 Sub de_EventHandler(event As Object)
 
+    MEDIA_END = 8
+
 	if type(event) = "roHtmlWidgetEvent" then
 		m.HandleHttpEvent(event)
 	
@@ -121,6 +123,23 @@ Sub de_EventHandler(event As Object)
 			currentState.currentTime = m.currentVideoPosition%
 			m.jtr.SetCurrentState(currentState)
 		endif
+
+	' mediaEnd event is generated when in play or fast forward mode.
+	else if type(event) = "roVideoEvent" and event.GetInt() = MEDIA_END then
+
+		m.StopVideoPlaybackTimer()
+
+		' send mediaEnd event to js
+		aa = {}
+		aa.AddReplace("bsMessage", "mediaEnd")
+		m.htmlWidget.PostJSMessage(aa)
+
+		if type(m.selectedRecording) = "roAssociativeArray" then
+			' save current position
+			m.UpdateLastViewedPosition(m.selectedRecording, m.currentVideoPosition%)
+			m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
+		endif
+
 
 	endif
 

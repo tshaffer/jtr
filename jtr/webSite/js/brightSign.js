@@ -329,6 +329,12 @@ function initializeBrightSign() {
 
                     return;
                 }
+                else if (command$ == "mediaend") {
+                    console.log("MEDIA_END ********************************************************");
+                    var event = {}
+                    event["EventType"] = "MEDIA_END";
+                    postMessage(event);
+                }
             }
         }
     }

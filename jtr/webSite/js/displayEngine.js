@@ -550,6 +550,11 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
         this.playSelectedShow(recordingId);
         return "HANDLED"
     }
+    else if (event["EventType"] == "MEDIA_END") {
+        // executeRemoteCommand("pause");
+        stateData.nextState = this.stateMachine.stPaused
+        return "TRANSITION";
+    }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
         console.log(this.id + ": remote command input: " + eventData);
