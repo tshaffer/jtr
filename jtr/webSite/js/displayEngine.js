@@ -28,6 +28,7 @@
     this.stPlaying.HStateEventHandler = this.STPlayingEventHandler;
     this.stPlaying.superState = this.stShowingVideo;
     this.stPlaying.playSelectedShow = this.playSelectedShow;
+    this.stPlaying.jump = this.jump;
 
     this.stPaused = new HState(this, "Paused");
     this.stPaused.HStateEventHandler = this.STPausedEventHandler;
@@ -56,6 +57,9 @@ displayEngineStateMachine.prototype.InitializeDisplayEngineHSM = function () {
 
     console.log("InitializeDisplayEngineHSM invoked");
 
+    this.currentRecording = null;
+    this.priorSelectedRecording = null;
+
     return this.stShowingUI;
 }
 
@@ -81,7 +85,6 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
     // TODO - should support PLAY if a show is highlighted
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
-        _currentRecording = _currentRecordings[recordingId];
         this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
@@ -172,7 +175,6 @@ displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, s
                             switch (action) {
                                 case "recording":
                                     if (recordingId in _currentRecordings) {
-                                        _currentRecording = _currentRecordings[recordingId];
                                         this.playSelectedShow(recordingId);
                                         stateData.nextState = this.stateMachine.stPlaying
                                         return "TRANSITION"
@@ -205,6 +207,12 @@ displayEngineStateMachine.prototype.playSelectedShow = function (recordingId) {
 
     console.log("playSelectedShow " + recordingId);
 
+    // if there's a current recording, save it for later possible jump
+    this.stateMachine.priorSelectedRecording = this.stateMachine.currentRecording;
+
+    // set new recording
+    this.stateMachine.currentRecording = _currentRecordings[recordingId];
+
     // save lastSelectedShowId in server's persistent memory
     var parts = [];
     parts.push("lastSelectedShowId" + '=' + recordingId.toString());
@@ -215,7 +223,7 @@ displayEngineStateMachine.prototype.playSelectedShow = function (recordingId) {
     eraseUI();
 
     // initialize value used by progress bar to last position viewed
-    this.stateMachine.currentOffset = _currentRecordings[recordingId].LastViewedPosition;
+    this.stateMachine.currentOffset = this.stateMachine.currentRecording.LastViewedPosition;
 
     bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
 }
@@ -317,10 +325,10 @@ displayEngineStateMachine.prototype.calculateProgressBarParameters = function ()
     // every 30 minutes
     // 4 hours < duration
     // every hour
-    this.stateMachine.recordingDuration = _currentRecording.Duration * 60
+    this.stateMachine.recordingDuration = this.stateMachine.currentRecording.Duration * 60
     this.stateMachine.numMinutes = Math.floor(this.stateMachine.recordingDuration / 60);
 
-    console.log("toggleProgressBar: duration = " + _currentRecording.Duration);
+    console.log("toggleProgressBar: duration = " + this.stateMachine.currentRecording.Duration);
     console.log("toggleProgressBar: numMinutes = " + this.stateMachine.numMinutes);
 
     this.stateMachine.numTicks = 8;
@@ -539,7 +547,6 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
     }
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
-        _currentRecording = _currentRecordings[recordingId];
         this.playSelectedShow(recordingId);
         return "HANDLED"
     }
@@ -570,13 +577,12 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
             case "stop":
                 console.log("STOP invoked when playing");
                 executeRemoteCommand("pause");
-                displayDeleteShowDlg(_currentRecording.Title, _currentRecording.RecordingId);
+                displayDeleteShowDlg(this.stateMachine.currentRecording.Title, this.stateMachine.currentRecording.RecordingId);
                 stateData.nextState = this.stateMachine.stShowingModalDlg
                 return "TRANSITION";
-            case "recorded_shows":
-                // TODO
             case "jump":
-                // TODO
+                this.jump();
+                return "HANDLED";
         }
     }
     else {
@@ -587,6 +593,22 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
     return "SUPER";
 }
 
+
+displayEngineStateMachine.prototype.jump = function () {
+
+    if (this.stateMachine.currentRecording == null) {
+        console.log("no currentRecording");
+        return;
+    }
+
+    if (this.stateMachine.priorSelectedRecording == null) {
+        console.log("no priorSelectedRecording");
+        return;
+    }
+
+    this.playSelectedShow(this.stateMachine.priorSelectedRecording.RecordingId);
+
+}
 
 displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stateData) {
 
@@ -601,7 +623,6 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
     }
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
-        _currentRecording = _currentRecordings[recordingId];
         this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
@@ -651,7 +672,6 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
     }
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
-        _currentRecording = _currentRecordings[recordingId];
         this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
@@ -720,7 +740,6 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
     }
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
-        _currentRecording = _currentRecordings[recordingId];
         this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"

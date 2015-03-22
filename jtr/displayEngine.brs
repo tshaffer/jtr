@@ -207,6 +207,7 @@ Sub de_StartPlayback(recording As Object)
 	' pause current video
 	m.PausePlayback()
 
+	' save the playback position for the current show before starting playback on a new show
 	if type(m.selectedRecording) = "roAssociativeArray" then
 
 		' save current position
@@ -214,10 +215,6 @@ Sub de_StartPlayback(recording As Object)
 
 		m.selectedRecording.LastViewedPosition = m.currentVideoPosition%
 		
-		' TODO - should jump be implemented in JS?
-		' if there's a current recording, save it for later possible jump
-		m.priorSelectedRecording = m.selectedRecording
-
 	endif
 
 

@@ -7,7 +7,6 @@ var ir_receiver;
 
 // miscellaneous variables
 var _showRecordingId;
-var _currentRecording;
 
 var modalDialogDisplayed = false;
 var selectedDeleteShowDlgElement = "#deleteShowDlgDelete";
