@@ -214,6 +214,9 @@ displayEngineStateMachine.prototype.playSelectedShow = function (recordingId) {
 
     eraseUI();
 
+    // initialize value used by progress bar to last position viewed
+    this.stateMachine.currentOffset = _currentRecordings[recordingId].LastViewedPosition;
+
     bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
 }
 
@@ -300,8 +303,6 @@ displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (ev
 
 
 displayEngineStateMachine.prototype.calculateProgressBarParameters = function () {
-
-    this.stateMachine.currentOffset = 0;
 
     // number of ticks to display is based on the duration of the recording
     // 0 < duration <= 5 minutes
