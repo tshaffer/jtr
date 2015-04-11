@@ -10,12 +10,7 @@
     this.stIdle = new HState(this, "Idle");
     this.stIdle.HStateEventHandler = this.STIdleEventHandler;
     this.stIdle.superState = this.stTop;
-
-    this.stShowingUI = new HState(this, "ShowingUI");
-    this.stShowingUI.HStateEventHandler = this.STShowingUIEventHandler;
-    this.stShowingUI.superState = this.stTop;
-    this.stShowingUI.getAction = this.getAction;
-    this.stShowingUI.playSelectedShow = this.playSelectedShow;
+    this.stIdle.playSelectedShow = this.playSelectedShow;
 
     this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
     this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
@@ -79,143 +74,11 @@ displayEngineStateMachine.prototype.STIdleEventHandler = function (event, stateD
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
     }
-
-    stateData.nextState = this.superState;
-    return "SUPER";
-}
-
-
-displayEngineStateMachine.prototype.STShowingUIEventHandler = function (event, stateData) {
-
-    stateData.nextState = null;
-
-    if (event["EventType"] == "ENTRY_SIGNAL") {
-        console.log(this.id + ": entry signal");
-        return "HANDLED";
-    }
-    else if (event["EventType"] == "EXIT_SIGNAL") {
-        console.log(this.id + ": exit signal");
-    }
-    // events
-        //      API - from browser or other external app
-        //          Play a specific recording - PLAY_RECORDED_SHOW
-        //          Delete a specific recording - DELETE_RECORDED_SHOW
-        //      Remote Control - note: 'remote commands' coming from API are indistinguishable from actual remote control commands on the device
-        //          Menu, recorded_shows?, up, down, left, right, select
-        //          Trick mode keys are ignored in this state
-    // TODO - should support PLAY if a show is highlighted
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
         this.playSelectedShow(recordingId);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
-    }
-    else if (event["EventType"] == "DELETE_RECORDED_SHOW") {
-        var recordingId = event["EventData"];
-        executeDeleteSelectedShow(recordingId);
-        return "HANDLED"
-    }
-    else if (event["EventType"] == "REMOTE") {
-        var eventData = event["EventData"]
-        console.log(this.id + ": remote command input: " + eventData);
-
-        switch (eventData.toLowerCase()) {
-            case "menu":
-                console.log("selectHomePage");
-                selectHomePage();
-                $("#footerArea").css("display", "none");
-
-                // give focus to first element
-                var elementId = "#" + mainMenuIds[0][0];
-                $(elementId).focus();
-                return "HANDLED";
-                break;
-            case "recorded_shows":
-                selectRecordedShows();
-                return "HANDLED";
-                break;
-            case "up":
-            case "down":
-            case "left":
-            case "right":
-                var command = eventData.toLowerCase();
-                console.log("currentActiveElementId is " + currentActiveElementId);
-                switch (currentActiveElementId) {
-                    case "#homePage":
-                        console.log("navigation remote key pressed while homePage visible");
-                        navigateHomePage(command)
-                        break;
-                    case "#recordedShowsPage":
-                        console.log("navigation remote key pressed while recordedShowsPage visible");
-                        navigateRecordedShowsPage(command)
-                        break;
-                }
-                return "HANDLED";
-                break;
-            case "exit":
-                // TODO
-                // what state to transfer to? paused? playing? - assume paused for now
-                eraseUI();
-                stateData.nextState = this.stateMachine.stPaused;
-                return "TRANSITION";
-            case "select":
-                switch (currentActiveElementId) {
-                    case "#homePage":
-                        var currentElement = document.activeElement;
-                        var currentElementId = currentElement.id;
-                        console.log("active home page item is " + currentElementId);
-                        switch (currentElementId) {
-                            case "channelGuide":
-                                selectChannelGuide();
-                                break;
-                            case "setManualRecord":
-                                selectSetManualRecord();
-                                break;
-                            case "recordedShows":
-                                selectRecordedShows();
-                                break;
-                            case "userSelection":
-                                selectUserSelection();
-                                break;
-                            case "toDoList":
-                                selectToDoList();
-                                break;
-                            case "myPlayVideo":
-                                break;
-                        }
-                        break;
-                    case "#recordedShowsPage":
-                        var currentElement = document.activeElement;
-                        var currentElementId = currentElement.id;
-                        console.log("active recorded shows page item is " + currentElementId);
-
-                        var action = this.getAction(currentElementId);
-                        if (action != "") {
-                            var recordingId = currentElementId.substring(action.length);
-                            switch (action) {
-                                case "recording":
-                                    if (recordingId in _currentRecordings) {
-                                        this.playSelectedShow(recordingId);
-                                        stateData.nextState = this.stateMachine.stPlaying
-                                        return "TRANSITION"
-                                    }
-                                    break;
-                                case "delete":
-                                    executeDeleteSelectedShow(recordingId);
-                                    getRecordedShows();
-                                    break;
-                            }
-                        }
-
-                        return "HANDLED"
-
-                        break;
-                }
-                break;
-        }
-    }
-    else {
-        console.log(this.id + ": signal type = " + event["EventType"]);
     }
 
     stateData.nextState = this.superState;
@@ -500,27 +363,6 @@ displayEngineStateMachine.prototype.STShowingVideoEventHandler = function (event
         console.log(this.id + ": remote command input: " + eventData);
 
         switch (eventData.toLowerCase()) {
-            case "menu":
-                console.log("display the main menu");
-
-                // TODO - undisplay overlay graphics (progress bar. anything else?)
-
-                selectHomePage();
-                $("#footerArea").css("display", "none");
-
-                // give focus to first element
-                var elementId = "#" + mainMenuIds[0][0];
-                $(elementId).focus();
-
-                stateData.nextState = this.stateMachine.stShowingUI
-                return "TRANSITION";
-
-                break;
-            case "recorded_shows":
-                selectRecordedShows();
-                stateData.nextState = this.stateMachine.stShowingUI
-                return "TRANSITION";
-                break;
             case "progress_bar":
                 console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++toggle the progress bar");
                 this.calculateProgressBarParameters();
