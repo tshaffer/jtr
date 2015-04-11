@@ -336,6 +336,72 @@ displayEngineStateMachine.prototype.STLiveVideoEventHandler = function (event, s
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"];
+        switch (eventData.toLowerCase()) {
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                bsMessage.PostBSMessage({ command: "debugPrint", "debugMessage": "STLiveVideoEventHandler: remote key entered="+eventData });
+
+                var ir_transmitter = new BSIRTransmitter("IR-out");
+                console.log("typeof ir_transmitter is " + typeof ir_transmitter);
+
+                var irCode = -1;
+
+                switch (eventData) {
+                    case "2":
+                        irCode = 65360;
+                        break;
+                    case "4":
+                        irCode = 65367;
+                        break;
+                    case "5":
+                        irCode = 65364;
+                        break;
+                    case "7":
+                        irCode = 65359;
+                        break;
+                    case "9":
+                        irCode = 65292;
+                        break;
+                    case "11":
+                        irCode = 65363;
+                        ir_transmitter.Send("NEC", irCode);
+                        setTimeout(function () {
+                            console.log("send second digit");
+                            bsMessage.PostBSMessage({ command: "debugPrint", "debugMessage": "send second digit" });
+                            ir_transmitter.Send("NEC", irCode);
+                        },
+                        400);
+                        break;
+                }
+
+                if (irCode > 0) {
+                    console.log("tune to " + eventData);
+                    bsMessage.PostBSMessage({ command: "debugPrint", "debugMessage": "tune to " + eventData });
+
+                    ir_transmitter.Send("NEC", irCode);
+                }
+                else {
+                    return;
+                }
+                break;
+            case "CHANNEL_UP":
+                bsMessage.PostBSMessage({ command: "debugPrint", "debugMessage": "STLiveVideoEventHandler: key pressed="+CHANNEL_UP });
+                break;
+            case "CHANNEL_DOWN":
+                bsMessage.PostBSMessage({ command: "debugPrint", "debugMessage": "STLiveVideoEventHandler: key pressed="+CHANNEL_DOWN });
+                break;
+        }
+    }
 
     stateData.nextState = this.superState;
     return "SUPER";
