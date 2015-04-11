@@ -228,7 +228,15 @@ uiEngineStateMachine.prototype.STMainMenuEventHandler = function (event, stateDa
                 //        break;
                 }
                 break;
-            }
+            // swallow the following keys so that they're not used by displayEngine
+            case "ff":                      
+            case "fastforward":
+            case "rw":
+            case "rewind":
+            case "instant_replay":
+            case "quick_skip":
+                return "HANDLED";
+        }
         }
 
     stateData.nextState = this.superState;

@@ -102,18 +102,22 @@ function initializeBrightSign() {
 
     // Create displayEngine state machine
     displayEngineHSM = new displayEngineStateMachine();
-    registerStateMachine(displayEngineHSM);
-    displayEngineHSM.Initialize();
 
     // Create recordingEngine state machine
     recordingEngineHSM = new recordingEngineStateMachine();
-    registerStateMachine(recordingEngineHSM);
-    recordingEngineHSM.Initialize();
 
     // Create uiEngine state machine
     uiEngineHSM = new uiEngineStateMachine();
+
+    // register state machines; UI first so that it gets events first.
     registerStateMachine(uiEngineHSM);
     uiEngineHSM.Initialize();
+
+    registerStateMachine(displayEngineHSM);
+    displayEngineHSM.Initialize();
+
+    registerStateMachine(recordingEngineHSM);
+    recordingEngineHSM.Initialize();
 
     // ir receiver
     try

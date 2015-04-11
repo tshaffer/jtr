@@ -69,6 +69,7 @@ displayEngineStateMachine.prototype.STIdleEventHandler = function (event, stateD
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
+        return "HANDLED";
     }
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
