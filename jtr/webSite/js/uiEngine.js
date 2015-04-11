@@ -11,9 +11,13 @@
     this.stNone.HStateEventHandler = this.STNoneEventHandler;
     this.stNone.superState = this.stTop;
 
+    this.stUIScreen = new HState(this, "UIScreen");
+    this.stUIScreen.HStateEventHandler = this.STUIScreenEventHandler;
+    this.stUIScreen.superState = this.stTop;
+
     this.stMainMenu = new HState(this, "MainMenu");
     this.stMainMenu.HStateEventHandler = this.STMainMenuEventHandler;
-    this.stMainMenu.superState = this.stTop;
+    this.stMainMenu.superState = this.stUIScreen;
 
     this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
     this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
@@ -21,7 +25,7 @@
 
     this.stRecordedShows = new HState(this, "RecordedShows");
     this.stRecordedShows.HStateEventHandler = this.STRecordedShowsEventHandler;
-    this.stRecordedShows.superState = this.stTop;
+    this.stRecordedShows.superState = this.stUIScreen;
     this.stRecordedShows.getAction = this.getAction;
 
     this.topState = this.stTop;
@@ -73,12 +77,54 @@ uiEngineStateMachine.prototype.STNoneEventHandler = function (event, stateData) 
             case "menu":
                 stateData.nextState = this.stateMachine.stMainMenu;
                 return "TRANSITION";
+            case "recorded_shows":
+                stateData.nextState = this.stateMachine.stRecordedShows;
+                return "TRANSITION";
         }
     }
 
     stateData.nextState = this.superState;
     return "SUPER";
 }
+
+
+uiEngineStateMachine.prototype.STUIScreenEventHandler = function (event, stateData) {
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+
+        eraseUI();
+
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        console.log(this.id + ": remote command input: " + eventData);
+
+        switch (eventData.toLowerCase()) {
+            // swallow the following keys so that they're not used by displayEngine
+            case "ff":
+            case "fastforward":
+            case "rw":
+            case "rewind":
+            case "jump":
+            case "instant_replay":
+            case "quick_skip":
+            case "progress_bar":
+                return "HANDLED";
+        }
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
+}
+
 
 
 uiEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, stateData) {
@@ -142,6 +188,19 @@ uiEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, 
 
                 stateData.nextState = this.stateMachine.stRecordedShows;
                 return "TRANSITION";
+
+            // swallow the following keys so that they're not used by displayEngine
+            case "play":
+            case "pause":
+            case "ff":
+            case "fastforward":
+            case "rw":
+            case "rewind":
+            case "jump":
+            case "instant_replay":
+            case "quick_skip":
+            case "progress_bar":
+                return "HANDLED";
 
         }
     }
@@ -228,16 +287,8 @@ uiEngineStateMachine.prototype.STMainMenuEventHandler = function (event, stateDa
                 //        break;
                 }
                 break;
-            // swallow the following keys so that they're not used by displayEngine
-            case "ff":                      
-            case "fastforward":
-            case "rw":
-            case "rewind":
-            case "instant_replay":
-            case "quick_skip":
-                return "HANDLED";
         }
-        }
+    }
 
     stateData.nextState = this.superState;
     return "SUPER";
