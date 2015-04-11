@@ -222,6 +222,11 @@ function initializeBrightSign() {
     registerStateMachine(recordingEngineHSM);
     recordingEngineHSM.Initialize();
 
+    // Create uiEngine state machine
+    uiEngineHSM = new uiEngineStateMachine();
+    registerStateMachine(uiEngineHSM);
+    uiEngineHSM.Initialize();
+
     // ir receiver
     try
     {

@@ -7,6 +7,10 @@
     this.stTop = new HState(this, "Top");
     this.stTop.HStateEventHandler = STTopEventHandler;
 
+    this.stIdle = new HState(this, "Idle");
+    this.stIdle.HStateEventHandler = this.STIdleEventHandler;
+    this.stIdle.superState = this.stTop;
+
     this.stShowingUI = new HState(this, "ShowingUI");
     this.stShowingUI.HStateEventHandler = this.STShowingUIEventHandler;
     this.stShowingUI.superState = this.stTop;
@@ -60,7 +64,24 @@ displayEngineStateMachine.prototype.InitializeDisplayEngineHSM = function () {
     this.currentRecording = null;
     this.priorSelectedRecording = null;
 
-    return this.stShowingUI;
+    return this.stIdle;
+}
+
+
+displayEngineStateMachine.prototype.STIdleEventHandler = function (event, stateData) {
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        console.log(this.id + ": exit signal");
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
 }
 
 
