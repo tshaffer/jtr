@@ -40,7 +40,7 @@ function deleteShowDlgCloseInvoked() {
     console.log("deleteShowDlgCloseInvoked");
     $('#deleteShowDlg').modal('hide');
     modalDialogDisplayed = false;
-    switchToPage("homePage");
+    //switchToPage("homePage");
 }
 
 function deleteShowDlgDeleteInvoked() {
@@ -48,7 +48,7 @@ function deleteShowDlgDeleteInvoked() {
     $('#deleteShowDlg').modal('hide');
     modalDialogDisplayed = false;
     executeDeleteSelectedShow(_showRecordingId);
-    switchToPage("homePage");
+    //switchToPage("homePage");
 }
 
 // progress bar

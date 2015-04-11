@@ -12,10 +12,6 @@
     this.stIdle.superState = this.stTop;
     this.stIdle.playSelectedShow = this.playSelectedShow;
 
-    this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
-    this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
-    this.stShowingModalDlg.superState = this.stTop;
-
     this.stShowingVideo = new HState(this, "ShowingVideo");
     this.stShowingVideo.HStateEventHandler = this.STShowingVideoEventHandler;
     this.stShowingVideo.superState = this.stTop;
@@ -111,86 +107,6 @@ displayEngineStateMachine.prototype.playSelectedShow = function (recordingId) {
     bsMessage.PostBSMessage({ command: "playRecordedShow", "recordingId": recordingId });
 }
 
-
-
-displayEngineStateMachine.prototype.getAction = function (actionButtonId) {
-    if (actionButtonId.lastIndexOf("recording") === 0) {
-        return "recording";
-    }
-    else if (actionButtonId.lastIndexOf("delete") === 0) {
-        return "delete";
-    }
-    console.log("getAction - no matching action found for " + actionButtonId);
-    return "";
-}
-
-
-displayEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, stateData) {
-
-    stateData.nextState = null;
-
-    if (event["EventType"] == "ENTRY_SIGNAL") {
-        console.log(this.id + ": entry signal");
-        // TBD - is it necessary to do anything here? hide video? send message to js?
-        return "HANDLED";
-    }
-    else if (event["EventType"] == "EXIT_SIGNAL") {
-        console.log(this.id + ": exit signal");
-    }
-    else if (event["EventType"] == "REMOTE") {
-        var eventData = event["EventData"]
-        console.log(this.id + ": remote command input: " + eventData);
-
-        switch (eventData.toLowerCase()) {
-            case "up":
-            case "down":
-            case "left":
-            case "right":
-                console.log("navigation key invoked while modal dialog displayed");
-
-                // temporary code; make it more general purpose when a second dialog is added
-                console.log("selected element was: " + selectedDeleteShowDlgElement);
-
-                $(selectedDeleteShowDlgElement).removeClass("btn-primary");
-                $(selectedDeleteShowDlgElement).addClass("btn-secondary");
-
-                $(unselectedDeleteShowDlgElement).removeClass("btn-secondary");
-                $(unselectedDeleteShowDlgElement).addClass("btn-primary");
-
-                $(unselectedDeleteShowDlgElement).focus();
-
-                var tmp = unselectedDeleteShowDlgElement;
-                unselectedDeleteShowDlgElement = selectedDeleteShowDlgElement;
-                selectedDeleteShowDlgElement = tmp;
-
-                return "HANDLED";
-                break;
-            case "select":
-                console.log("enter key invoked while modal dialog displayed");
-
-                // temporary code; make it more general purpose when a second dialog is added
-                if (selectedDeleteShowDlgElement == "#deleteShowDlgDelete") {
-                    deleteShowDlgDeleteInvoked();
-                }
-                else {
-                    deleteShowDlgCloseInvoked();
-                }
-
-                stateData.nextState = this.stateMachine.stShowingUI;
-                return "TRANSITION";
-
-            case "exit":
-                deleteShowDlgCloseInvoked();
-
-                stateData.nextState = this.stateMachine.stShowingUI;
-                return "TRANSITION";
-
-        }
-    }
-
-    stateData.nextState = this.superState;
-    return "SUPER";
-}
 
 
 displayEngineStateMachine.prototype.calculateProgressBarParameters = function () {
@@ -438,13 +354,17 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
             case "quick_skip":
                 executeRemoteCommand("quickSkip");
                 return "HANDLED";
-            case "menu":
-                // TODO
             case "stop":
                 console.log("STOP invoked when playing");
                 executeRemoteCommand("pause");
-                displayDeleteShowDlg(this.stateMachine.currentRecording.Title, this.stateMachine.currentRecording.RecordingId);
-                stateData.nextState = this.stateMachine.stShowingModalDlg
+
+                var event = {};
+                event["EventType"] = "DISPLAY_DELETE_SHOW_DLG";
+                event["Title"] = this.stateMachine.currentRecording.Title;
+                event["RecordingId"] = this.stateMachine.currentRecording.RecordingId;
+                postMessage(event);
+
+                stateData.nextState = this.stateMachine.stIdle;
                 return "TRANSITION";
             case "jump":
                 this.jump();

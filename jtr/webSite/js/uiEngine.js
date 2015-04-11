@@ -15,6 +15,10 @@
     this.stMainMenu.HStateEventHandler = this.STMainMenuEventHandler;
     this.stMainMenu.superState = this.stTop;
 
+    this.stShowingModalDlg = new HState(this, "ShowingModalDlg");
+    this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
+    this.stShowingModalDlg.superState = this.stTop;
+
     this.stRecordedShows = new HState(this, "RecordedShows");
     this.stRecordedShows.HStateEventHandler = this.STRecordedShowsEventHandler;
     this.stRecordedShows.superState = this.stTop;
@@ -52,6 +56,14 @@ uiEngineStateMachine.prototype.STNoneEventHandler = function (event, stateData) 
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
         console.log(this.id + ": exit signal");
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "DISPLAY_DELETE_SHOW_DLG") {
+        var title = event["Title"];
+        var recordingId = event["RecordingId"];
+        displayDeleteShowDlg(title, recordingId);
+        stateData.nextState = this.stateMachine.stShowingModalDlg;
+        return "TRANSITION";
     }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
@@ -67,6 +79,77 @@ uiEngineStateMachine.prototype.STNoneEventHandler = function (event, stateData) 
     stateData.nextState = this.superState;
     return "SUPER";
 }
+
+
+uiEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, stateData) {
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        console.log(this.id + ": entry signal");
+
+        eraseUI();
+
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        console.log(this.id + ": remote command input: " + eventData);
+
+        switch (eventData.toLowerCase()) {
+            case "up":
+            case "down":
+            case "left":
+            case "right":
+                console.log("navigation key invoked while modal dialog displayed");
+
+                // temporary code; make it more general purpose when a second dialog is added
+                console.log("selected element was: " + selectedDeleteShowDlgElement);
+
+                $(selectedDeleteShowDlgElement).removeClass("btn-primary");
+                $(selectedDeleteShowDlgElement).addClass("btn-secondary");
+
+                $(unselectedDeleteShowDlgElement).removeClass("btn-secondary");
+                $(unselectedDeleteShowDlgElement).addClass("btn-primary");
+
+                $(unselectedDeleteShowDlgElement).focus();
+
+                var tmp = unselectedDeleteShowDlgElement;
+                unselectedDeleteShowDlgElement = selectedDeleteShowDlgElement;
+                selectedDeleteShowDlgElement = tmp;
+
+                return "HANDLED";
+                break;
+            case "select":
+                console.log("enter key invoked while modal dialog displayed");
+
+                // temporary code; make it more general purpose when a second dialog is added
+                if (selectedDeleteShowDlgElement == "#deleteShowDlgDelete") {
+                    deleteShowDlgDeleteInvoked();
+                }
+                else {
+                    deleteShowDlgCloseInvoked();
+                }
+
+                stateData.nextState = this.stateMachine.stRecordedShows;
+                return "TRANSITION";
+
+            case "exit":
+                deleteShowDlgCloseInvoked();
+
+                stateData.nextState = this.stateMachine.stRecordedShows;
+                return "TRANSITION";
+
+        }
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
+}
+
 
 
 // comments transferred from displayEngine.js - need updating
