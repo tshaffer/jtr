@@ -76,6 +76,10 @@ function SonyCommand(remoteCode) {
         remoteCommand = "CHANNEL_UP"
     else if (remoteCode == 17237776)
         remoteCommand = "CHANNEL_DOWN"
+    else if (remoteCode == 163137)
+        remoteCommand = "ENTER"
+    else if (remoteCode == 65303)
+        remoteCommand = "-"
     else
         remoteCommand = ""
 
