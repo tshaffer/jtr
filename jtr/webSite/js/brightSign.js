@@ -1,4 +1,4 @@
-var sendConsoleOutputToBS = false;
+var sendConsoleOutputToBS = true;
 
 // BrightSign only
 var bsMessage;
@@ -231,6 +231,7 @@ function initializeBrightSign() {
                 event["DateTime"] = message.dateTime;
                 event["Title"] = message.title;
                 event["Duration"] = message.duration;
+                consoleLog("message.useTuner=" + message.useTuner);
                 event["UseTuner"] = message.useTuner;
                 event["Channel"] = message.channel;
                 postMessage(event);
