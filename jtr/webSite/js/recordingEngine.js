@@ -61,7 +61,6 @@ recordingEngineStateMachine.prototype.STRecordingControllerEventHandler = functi
         var title = event["Title"];
         var duration = event["Duration"];
         var useTuner = false;
-        consoleLog('event["UseTuner"]' + event["UseTuner"]);
         if (event["UseTuner"] == "true") {
             useTuner = true;
         }
@@ -254,10 +253,6 @@ recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecon
     timerVar = setTimeout(function ()
     {
         consoleLog("startRecordingTimer: timeout");
-        consoleLog("title=" + title);
-        consoleLog("duration=" + duration);
-        consoleLog("useTuner=" + useTuner);
-        consoleLog("channel=" + channel);
 
         thisObj.stateMachine.recordingTitle = title;
         thisObj.stateMachine.recordingDuration = duration;
@@ -266,13 +261,14 @@ recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecon
         var event = {};
         event["EventType"] = "TRANSITION_TO_RECORDING";
         postMessage(event);
-        consoleLog("TRANSITION_TO_RECORDING event posted");
     }
     , millisecondsUntilRecording);
 }
 
 
 recordingEngineStateMachine.prototype.startRecording = function (title, duration, useTuner, channel) {
+
+    consoleLog("startRecording: title=" + title + ", duration=" + duration + ", useTuner=" + useTuner + ",channel=" + channel);
 
     if (!useTuner) {
         consoleLog("No tuner: Title = " + title + ", duration = " + duration + ", useTuner = " + useTuner + ", channel = " + channel);
