@@ -278,48 +278,53 @@ recordingEngineStateMachine.prototype.startRecording = function (title, duration
     }
     else {
         // TODO redo based on liveTV tuning code
-        var ir_transmitter = new BSIRTransmitter("IR-out");
+        if (ir_transmitter == null) {
+            ir_transmitter = new BSIRTransmitter("IR-out");
+        }
         consoleLog("typeof ir_transmitter is " + typeof ir_transmitter);
 
-        var irCode = -1;
+        tuneChannel(channel, false);
 
-        switch (channel) {
-            case "2":
-                irCode = 65360;
-                break;
-            case "4":
-                irCode = 65367;
-                break;
-            case "5":
-                irCode = 65364;
-                break;
-            case "7":
-                irCode = 65359;
-                break;
-            case "9":
-                irCode = 65292;
-                break;
-            case "11":
-                irCode = 65363;
-                ir_transmitter.Send("NEC", irCode);
-                setTimeout(function () {
-                    consoleLog("send second digit");
-                    ir_transmitter.Send("NEC", irCode);
+        //var irCode = -1;
 
-                    consoleLog("Tuner (double digit): Title = " + title + ", duration = " + duration, ", useTuner = " + useTuner + ", channel = " + channel);
-                    bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration });
-                },
-                400);
-                break;
-        }
+        //switch (channel) {
+        //    case "2":
+        //        irCode = 65360;
+        //        break;
+        //    case "4":
+        //        irCode = 65367;
+        //        break;
+        //    case "5":
+        //        irCode = 65364;
+        //        break;
+        //    case "7":
+        //        irCode = 65359;
+        //        break;
+        //    case "9":
+        //        irCode = 65292;
+        //        break;
+        //    case "11":
+        //        irCode = 65363;
+        //        ir_transmitter.Send("NEC", irCode);
+        //        setTimeout(function () {
+        //            consoleLog("send second digit");
+        //            ir_transmitter.Send("NEC", irCode);
 
-        if (irCode > 0) {
-            ir_transmitter.Send("NEC", irCode);
+        //            consoleLog("Tuner (double digit): Title = " + title + ", duration = " + duration, ", useTuner = " + useTuner + ", channel = " + channel);
+        //            bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration });
+        //        },
+        //        400);
+        //        break;
+        //}
 
-            consoleLog("Tuner (single digit): Title = " + title + ", duration = " + duration + ", useTuner = " + useTuner + ", channel = " + channel);
+        //if (irCode > 0) {
+        //    ir_transmitter.Send("NEC", irCode);
 
-            bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration });
-        }
+        //    consoleLog("Tuner (single digit): Title = " + title + ", duration = " + duration + ", useTuner = " + useTuner + ", channel = " + channel);
+
+        //    bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration });
+        //}
+        bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration });
         this.addRecordingEndTimer(Number(duration) * 60 * 1000, title, new Date(), duration);
     }
     displayUserMessage("Recording started: " + title);
