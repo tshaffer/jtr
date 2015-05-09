@@ -314,16 +314,34 @@ recordingEngineStateMachine.prototype.startRecording = function (title, duration
 
     setUserHDMIInput(inputSource);
 
-    if (inputSource != "tuner") {
-        consoleLog("Not tuner: Title = " + title + ", duration = " + duration + ", inputSource = " + inputSource + ", channel = " + channel);
-    }
-    else {
-        tuneChannel(channel, false);
-    }
+    // test
+    var thisObj = this;
+    setTimeout(function () {
 
-    bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording });
-    this.addRecordingEndTimer(duration, title, new Date(), duration);
-    displayUserMessage("Recording started: " + title);
+        consoleLog("timeout after setUserHDMIInput");
+
+        if (inputSource != "tuner") {
+            consoleLog("Not tuner: Title = " + title + ", duration = " + duration + ", inputSource = " + inputSource + ", channel = " + channel);
+        }
+        else {
+            tuneChannel(channel, false);
+        }
+
+        bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording });
+        thisObj.addRecordingEndTimer(duration, title, new Date(), duration);
+        displayUserMessage("Recording started: " + title);
+    }, 5000);
+
+    //if (inputSource != "tuner") {
+    //    consoleLog("Not tuner: Title = " + title + ", duration = " + duration + ", inputSource = " + inputSource + ", channel = " + channel);
+    //}
+    //else {
+    //    tuneChannel(channel, false);
+    //}
+
+    //bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording });
+    //this.addRecordingEndTimer(duration, title, new Date(), duration);
+    //displayUserMessage("Recording started: " + title);
 }
 
 
