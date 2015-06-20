@@ -274,6 +274,39 @@ End Sub
 
 Sub getRecordings(userData as Object, e as Object)
 
+	mVar = userData.mvar
+
+	print "hijack getRecordings for channel guide testing"
+stop
+	url$ = "https://json.schedulesdirect.org/20141201/token"
+
+	mVar.epgUrl = CreateObject( "roUrlTransfer" )
+	mVar.epgUrl.SetTimeout( 30000 )
+	mVar.epgUrl.SetPort( mVar.msgPort )
+	mVar.epgUrl.SetUrl( url$ )
+
+	json = {}
+	json.username = "jtrDev"
+	json.password = "3bacdc30b9598fb498dfefc00b2f2ad52150eef4"
+	paramString$ = FormatJSON(json, 0)
+
+    'var parts = [];
+    'parts.push("lastSelectedShowId" + '=' + recordingId.toString());
+    'var paramString = parts.join('&');
+
+	aa = {}
+	aa.method = "POST"
+	aa.request_body_string = paramString$
+	aa.response_body_string = true
+
+	if not mVar.epgUrl.AsyncMethod( aa ) then
+		stop
+	endif
+
+	return
+
+stop
+
 	print "getRecordings endpoint invoked"
 
     mVar = userData.mVar

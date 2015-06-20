@@ -283,10 +283,10 @@ uiEngineStateMachine.prototype.STMainMenuEventHandler = function (event, stateDa
                 var currentElementId = currentElement.id;
                 consoleLog("active home page item is " + currentElementId);
                 switch (currentElementId) {
-                    //case "channelGuide":
-                //        selectChannelGuide();
-                //        break;
-                //    case "manualRecord":
+                    case "channelGuide":
+                        selectChannelGuide();
+                        break;
+                    case "manualRecord":
                 //        selectManualRecord();
                 //        break;
                     case "recordedShows":

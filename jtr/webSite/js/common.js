@@ -327,8 +327,110 @@ function updateSettings() {
 }
 
 
+function parseHeadends(headends) {
+
+    for (var headendIndex in headends) {
+        var headend = headends[headendIndex];
+        if (headend.headend == "94022" && headend.transport == "Antenna" && headend.location == "94022") {
+            var lineup = headend.lineups[0].lineup;
+            return lineup;
+        }
+    }
+
+    return "";
+}
+
+function getSchedulesDirectHeadends(token) {
+    var url = "https://json.schedulesdirect.org/20141201/headends?country=USA&postalcode=94022";
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        headers: { "token": token }
+    })
+    .done(function (result) {
+        console.log("done in getSchedulesDirectHeadends");
+        console.log(JSON.stringify(result, null, 4));
+        parseHeadends(result);
+    })
+    .fail(function () {
+        alert("getSchedulesDirectHeadends failure");
+    })
+    .always(function () {
+        alert("getSchedulesDirectHeadends complete");
+    });
+}
+
+function getSchedulesDirectStatus(token) {
+
+    var url = "https://json.schedulesdirect.org/20141201/status";
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        headers: { "token": token }
+    })
+    .done(function (result) {
+        console.log("done in getSchedulesDirectStatus");
+        console.log(JSON.stringify(result, null, 4));
+        var systemStatus = result.systemStatus[0].status;
+        console.log("status = " + systemStatus);
+    })
+    .fail(function () {
+        alert("getSchedulesDirectStatus failure");
+    })
+    .always(function() {
+        alert("getSchedulesDirectStatus complete");
+    });
+}
+
+function getSchedulesDirectToken() {
+
+    // cors tutorial
+    //http://www.html5rocks.com/en/tutorials/cors/
+
+    $(document).ajaxError(function () {
+        console.log("Triggered ajaxError handler.");
+    });
+    postData = {}
+
+    postData.username = "jtrDev";
+    postData.password = "3bacdc30b9598fb498dfefc00b2f2ad52150eef4";
+    var postDataStr = JSON.stringify(postData);
+
+    var url = "https://json.schedulesdirect.org/20141201/token";
+
+    $.post(url, postDataStr, function (data) {
+        console.log("returned from selectChannelGuide post");
+        console.log(JSON.stringify(data, null, 4));
+        //console.log(retVal);
+        //console.log(data);
+        //{"code":0,"message":"OK","serverID":"20141201.web.1","token":"5801004984e3ccb3f9289232b745f797"}
+        console.log("code: " + data.code);
+        console.log("message: " + data.message);
+        console.log("serverID: " + data.serverID);
+        console.log("token: " + data.token);
+
+        getSchedulesDirectStatus(data.token)
+    });
+}
+
 function selectChannelGuide() {
 
+    //getSchedulesDirectToken();
+
+    // token as of 6/20/2015 at 11:41 AM
+    // 4c0cfcb3b42df4c34936abdb836491cc
+    var token = "4c0cfcb3b42df4c34936abdb836491cc";
+
+    // get status of schedules direct server
+    //getSchedulesDirectStatus(token);
+
+    // get the headends for 94022
+    var lineup = getSchedulesDirectHeadends(token)
+    console.log("parseHeadends returned lineup " + lineup);
 }
 
 
