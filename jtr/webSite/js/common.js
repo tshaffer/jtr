@@ -327,7 +327,131 @@ function updateSettings() {
 }
 
 
-function parseHeadends(headends) {
+function getSchedulesDirectProgramSchedules(token, stationIds, dates) {
+
+    postData = {}
+
+    //postData.username = "jtrDev";
+    //postData.password = "3bacdc30b9598fb498dfefc00b2f2ad52150eef4";
+    //var postDataStr = JSON.stringify(postData);
+
+    var url = "https://json.schedulesdirect.org/20141201/schedules";
+
+    //$.post(url, postDataStr, function (data) {
+    //    console.log("returned from selectChannelGuide post");
+    //    console.log(JSON.stringify(data, null, 4));
+    //    //console.log(retVal);
+    //    //console.log(data);
+    //    //{"code":0,"message":"OK","serverID":"20141201.web.1","token":"5801004984e3ccb3f9289232b745f797"}
+    //    console.log("code: " + data.code);
+    //    console.log("message: " + data.message);
+    //    console.log("serverID: " + data.serverID);
+    //    console.log("token: " + data.token);
+
+    //    getSchedulesDirectStatus(data.token)
+    //});
+}
+
+function getSchedulesDirectStation(stations, atscMajor, atscMinor) {
+
+    for (var key in stations) {
+        if (stations.hasOwnProperty(key)) {
+            var station = stations[key];
+            //console.log(JSON.stringify(station, null, 4));
+            if (station.atscMajor == atscMajor && station.atscMinor == atscMinor) {
+                return station;
+            }
+        }
+    }
+
+}
+
+function getSchedulesDirectLineupMappings(token, lineup) {
+
+    var url = "https://json.schedulesdirect.org/20141201/lineups/" + lineup;
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        headers: { "token": token }
+    })
+    .done(function (result) {
+        //console.log("done in getSchedulesDirectLineupMappings");
+        //console.log(JSON.stringify(result, null, 4));
+
+        var stations = {};
+        for (mapIndex in result.map) {
+            var stationMap = result.map[mapIndex];
+            var station = {};
+            station.stationId = stationMap.stationID;
+            station.atscMajor = stationMap.atscMajor;
+            station.atscMinor = stationMap.atscMinor;
+            stations[station.stationId] = station;
+        }
+        for (stationIndex in result.stations) {
+            var stationDescription = result.stations[stationIndex];
+            //console.log(JSON.stringify(stationDescription, null, 4));
+            var matchingStation = stations[stationDescription.stationID];
+            matchingStation.name = stationDescription.name;
+            matchingStation.callsign = stationDescription.callsign;
+            //console.log(JSON.stringify(matchingStation, null, 4));
+        }
+        //for (var key in stations) {
+        //    if (stations.hasOwnProperty(key))
+        //        console.log(JSON.stringify(stations[key], null, 4));
+        //}
+
+        // get interesting stations
+        var ktvu = getSchedulesDirectStation(stations, 2, 1);
+        console.log(JSON.stringify(ktvu, null, 4));
+        var kntv = getSchedulesDirectStation(stations, 11, 1);
+        console.log(JSON.stringify(kntv, null, 4));
+    })
+    .fail(function () {
+        alert("getSchedulesDirectLineupMappings failure");
+    })
+    .always(function () {
+        alert("getSchedulesDirectLineupMappings complete");
+    });
+}
+
+
+function getSchedulesDirectUsersLineups(token, desiredLineup) {
+    var url = "https://json.schedulesdirect.org/20141201/lineups";
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        headers: { "token": token }
+    })
+    .done(function (result) {
+        //console.log("done in getSchedulesDirectUsersLineups");
+        //console.log(JSON.stringify(result, null, 4));
+        var lineup = parseScheduledDirectHeadends(result)
+        //console.log("parseScheduledDirectHeadends returned lineup " + lineup);
+
+        // ensure that desired lineup is subscribed to - if not add the new lineup (TBD)
+        var lineupResults = result;
+        for (lineUpIndex in lineupResults.lineups) {
+            var lineup = lineupResults.lineups[lineUpIndex];
+            if (lineup.lineup == desiredLineup) {
+                console.log("found desired lineup");
+                getSchedulesDirectLineupMappings(token, desiredLineup);
+            }
+        }
+    })
+    .fail(function () {
+        alert("getSchedulesDirectUsersLineups failure");
+    })
+    .always(function () {
+        alert("getSchedulesDirectUsersLineups complete");
+    });
+}
+
+
+function parseScheduledDirectHeadends(headends) {
 
     for (var headendIndex in headends) {
         var headend = headends[headendIndex];
@@ -340,6 +464,7 @@ function parseHeadends(headends) {
     return "";
 }
 
+
 function getSchedulesDirectHeadends(token) {
     var url = "https://json.schedulesdirect.org/20141201/headends?country=USA&postalcode=94022";
 
@@ -350,9 +475,11 @@ function getSchedulesDirectHeadends(token) {
         headers: { "token": token }
     })
     .done(function (result) {
-        console.log("done in getSchedulesDirectHeadends");
-        console.log(JSON.stringify(result, null, 4));
-        parseHeadends(result);
+        //console.log("done in getSchedulesDirectHeadends");
+        //console.log(JSON.stringify(result, null, 4));
+        var lineup = parseScheduledDirectHeadends(result)
+        console.log("parseScheduledDirectHeadends returned lineup " + lineup);
+        getSchedulesDirectUsersLineups(token, lineup);
     })
     .fail(function () {
         alert("getSchedulesDirectHeadends failure");
@@ -429,8 +556,7 @@ function selectChannelGuide() {
     //getSchedulesDirectStatus(token);
 
     // get the headends for 94022
-    var lineup = getSchedulesDirectHeadends(token)
-    console.log("parseHeadends returned lineup " + lineup);
+    getSchedulesDirectHeadends(token)
 }
 
 
