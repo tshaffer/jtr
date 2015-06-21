@@ -26,6 +26,11 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE LastSelectedShow (Id TEXT);")
 
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
+
+		m.CreateDBTable("CREATE TABLE Stations (Atsc TEXT PRIMARY KEY, CommonName TEXT, Name TEXT, StationId TEXT, CallSign TEXT);")
+
+		PopulateStationsTable()
+
 	endif
 
 End Sub
@@ -519,3 +524,37 @@ Function tsDeletable(recordingId% As Integer) As Boolean
 	return false
 
 End Function
+
+
+Sub AddDBStation(atsc As String, commonName As String, name as String, stationId as String, callSign As String)
+
+	insertSQL$ = "INSERT INTO Stations (Atsc, CommonName, Name, StationId, CallSign) VALUES(?,?,?,?,?);"
+
+	params = CreateObject("roArray", 7, false)
+	params[ 0 ] = atsc
+	params[ 1 ] = commonName
+	params[ 2 ] = name
+	params[ 3 ] = stationId
+	params[ 4 ] = callSign
+
+	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
+
+
+' hard code for now
+Sub PopulateStationsTable()
+
+	m.AddDBStation("2.1", "KTVU", "KTVUDT (KTVU-DT)", "19571", "KTVUDT")
+	m.AddDBStation("4.1", "KRON", "KRONDT (KRON-DT)", "19573", "KRONDT")
+	m.AddDBStation("5.1", "KPIX", "KPIXDT (KPIX-DT)", "19572", "KPIXDT")
+	m.AddDBStation("7.1", "KGO", "KGODT (KGO-DT)", "19574", "KGODT")
+	m.AddDBStation("9.1", "KQED", "KQEDDT (KQED-DT)", "24344", "KQEDDT")
+	m.AddDBStation("9.2", "KQED-2", "KQEDDT2 (KQED-DT2)", "30507", "KQEDDT2")
+	m.AddDBStation("9.3", "KQED-3", "KQEDDT3 (KQED-DT3)", "35278", "KQEDDT3")
+	m.AddDBStation("11.1", "KNTV", "KNTVDT (KNTV-DT)", "21785", "KNTVDT")
+	m.AddDBStation("36.1", "KICU", "KICUDT (KICU-DT)", "21650", "KICUDT")
+	m.AddDBStation("44.1", "KBCW", "KBCWDT (KBCW-DT)", "19575", "KBCWDT")
+stop
+
+End Sub

@@ -359,7 +359,7 @@ function getSchedulesDirectProgramSchedules(token, stations, dates) {
         headers: { "token": token }
     })
     .done(function (result) {
-        console.log("done in getSchedulesDirectProgramSchedules");
+        //console.log("done in getSchedulesDirectProgramSchedules");
         //console.log(JSON.stringify(result, null, 4));
 
         var stationsProgramData = [];
@@ -389,7 +389,7 @@ function getSchedulesDirectProgramSchedules(token, stations, dates) {
             stationsProgramData.push(stationProgramData);
         }
 
-        console.log(JSON.stringify(stationsProgramData, null, 4));
+        //console.log(JSON.stringify(stationsProgramData, null, 4));
     })
     .fail(function () {
         alert("getSchedulesDirectProgramSchedules failure");
@@ -449,20 +449,37 @@ function getSchedulesDirectLineupMappings(token, lineup) {
         //        console.log(JSON.stringify(stations[key], null, 4));
         //}
 
-        // get interesting stations
-        var ktvu = getSchedulesDirectStation(stations, 2, 1);
-        //console.log(JSON.stringify(ktvu, null, 4));
-        var kntv = getSchedulesDirectStation(stations, 11, 1);
-        //console.log(JSON.stringify(kntv, null, 4));
+        // get jtr stations
+        //var channel2 = getSchedulesDirectStation(stations, 2, 1);
+        //console.log(JSON.stringify(channel2, null, 4));
+        //var channel4 = getSchedulesDirectStation(stations, 4, 1);
+        //console.log(JSON.stringify(channel4, null, 4));
+        //var channel5 = getSchedulesDirectStation(stations, 5, 1);
+        //console.log(JSON.stringify(channel5, null, 4));
+        //var channel7 = getSchedulesDirectStation(stations, 7, 1);
+        //console.log(JSON.stringify(channel7, null, 4));
+        //var channel91 = getSchedulesDirectStation(stations, 9, 1);
+        //console.log(JSON.stringify(channel91, null, 4));
+        //var channel92 = getSchedulesDirectStation(stations, 9, 2);
+        //console.log(JSON.stringify(channel92, null, 4));
+        //var channel93 = getSchedulesDirectStation(stations, 9, 3);
+        //console.log(JSON.stringify(channel93, null, 4));
+        //var channel11 = getSchedulesDirectStation(stations, 11, 1);
+        //console.log(JSON.stringify(channel11, null, 4));
+        //var channel36 = getSchedulesDirectStation(stations, 36, 1);
+        //console.log(JSON.stringify(channel36, null, 4));
+        //var channel44 = getSchedulesDirectStation(stations, 44, 1);
+        //console.log(JSON.stringify(channel44, null, 4));
 
         var stations = [];
-        stations.push(ktvu);
-        stations.push(kntv);
+        //stations.push(ktvu);
+        stations.push(channel2);
 
         var dates = [];
-        dates.push("2015-06-20");
+        dates.push("2015-06-21");
+        dates.push("2015-06-22");
 
-        getSchedulesDirectProgramSchedules(token, stations, dates);
+        // getSchedulesDirectProgramSchedules(token, stations, dates);
     })
     .fail(function () {
         alert("getSchedulesDirectLineupMappings failure");
@@ -600,7 +617,8 @@ function getSchedulesDirectToken() {
     });
 }
 
-function selectChannelGuide() {
+
+function initializeChannelGuide() {
 
     //getSchedulesDirectToken();
 
@@ -612,7 +630,12 @@ function selectChannelGuide() {
     //getSchedulesDirectStatus(token);
 
     // get the headends for 94022
-    getSchedulesDirectHeadends(token)
+    //getSchedulesDirectHeadends(token)
+}
+
+
+function selectChannelGuide() {
+
 }
 
 

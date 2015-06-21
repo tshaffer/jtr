@@ -100,6 +100,8 @@ Function newJTR(msgPort As Object) As Object
 	JTR.SetDBLastTunedChannel			= SetDBLastTunedChannel
 	JTR.GetDBSettings					= GetDBSettings
 	JTR.SetDBSettings					= SetDBSettings
+	JTR.AddDBStation					= AddDBStation
+	JTR.PopulateStationsTable			= PopulateStationsTable
 
 	JTR.tsDeletable						= tsDeletable
 
