@@ -28,9 +28,12 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
 
 		m.CreateDBTable("CREATE TABLE Stations (Atsc TEXT PRIMARY KEY, CommonName TEXT, Name TEXT, StationId TEXT, CallSign TEXT);")
-
 		PopulateStationsTable()
 
+		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
+
+		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
+	
 	endif
 
 End Sub
@@ -558,3 +561,56 @@ Sub PopulateStationsTable()
 stop
 
 End Sub
+
+
+Sub GetDBStationsCallback(resultsData As Object, selectData As Object)
+
+	selectData.stations.push(resultsData)
+
+End Sub
+
+
+Function GetDBStations() As Object
+
+	selectData = {}
+	selectData.stations = []
+
+	select$ = "SELECT Atsc, CommonName, Name, StationId, CallSign FROM Stations;"
+	m.ExecuteDBSelect(select$, GetDBStationsCallback, selectData, invalid)
+
+	return selectData.stations
+
+End Function
+
+
+Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String, modifiedDate as String, md5 as String)
+
+	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?);"
+
+	params = CreateObject("roArray", 7, false)
+	params[ 0 ] = stationId
+	params[ 1 ] = scheduleDate
+	params[ 2 ] = modifiedDate
+	params[ 3 ] = md5
+
+	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
+
+
+Sub AddDBProgramForStation(stationId As String, scheduleDate As String, programId As String, airDateTime As String, duration As String, md5 as String)
+
+	insertSQL$ = "INSERT INTO ProgramsForStations (StationId, ScheduleDate, ProgramId, AirDateTime, Duration, MD5) VALUES(?,?,?,?,?,?);"
+
+	params = CreateObject("roArray", 7, false)
+	params[ 0 ] = stationId
+	params[ 1 ] = scheduleDate
+	params[ 2 ] = programId
+	params[ 3 ] = airDateTime
+	params[ 4 ] = duration
+	params[ 5 ] = md5
+
+	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
+

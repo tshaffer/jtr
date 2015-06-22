@@ -141,7 +141,7 @@ function initializeBrightSign() {
         consoleLog("unable to create ir_receiver");
     }
 
-    initializeChannelGuide();
+    //initializeChannelGuide();
 
     if (typeof ir_receiver != 'undefined') {
         ir_receiver.onremotedown = function (e) {
@@ -203,6 +203,9 @@ function initializeBrightSign() {
                 $("#ipAddress").html("ip address: " + brightSignIPAddress);
                 baseURL = "http://" + brightSignIPAddress + ":8080/";
                 consoleLog("baseURL from BrightSign message is: " + baseURL);
+
+                // temporary location
+                initializeChannelGuide();
 
                 // post message indicating that initialization is complete ??
                 event["EventType"] = "READY";

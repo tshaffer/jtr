@@ -327,29 +327,77 @@ function updateSettings() {
 }
 
 
-function getSchedulesDirectProgramSchedules(token, stations, dates) {
+function getSchedulesDirectScheduleModificationData(token, stations, dates) {
 
+    console.log("getSchedulesDirectScheduleModificationData");
+
+    // same as in getSchedulesDirectProgramSchedules - make common?
     var postData = [];
-    for (stationIndex in stations) {
-        var station = stations[stationIndex];
+
+    $.each(stations, function (index, station) {
 
         var stationData = {};
-        stationData.stationID = station.stationId;
-        stationData.date = [];
 
+        stationData.stationID = station.StationId;
+
+        stationData.date = [];
         for (dateIndex in dates) {
             stationData.date.push(dates[dateIndex]);
         }
 
         postData.push(stationData);
-    }
+    });
+    var postDataStr = JSON.stringify(postData);
+
+    var url = "https://json.schedulesdirect.org/20141201/schedules/md5";
+
+    var jqxhr = $.ajax({
+        type: "POST",
+        url: url,
+        data: postDataStr,
+        dataType: "json",
+        headers: { "token": token }
+    })
+    .done(function (result) {
+        console.log("done in getSchedulesDirectScheduleModificationData");
+        console.log(JSON.stringify(result, null, 4));
+    })
+    .fail(function () {
+        alert("getSchedulesDirectScheduleModificationData failure");
+    })
+    .always(function () {
+        alert("getSchedulesDirectScheduleModificationData complete");
+    });
+}
+
+
+function getSchedulesDirectProgramSchedules(token, stations, dates) {
+
+    console.log("getSchedulesDirectProgramSchedules");
+
+    //console.log(JSON.stringify(stations[0], null, 4));
+
+    var postData = [];
+
+    $.each(stations, function (index, station) {
+
+        var stationData = {};
+
+        stationData.stationID = station.StationId;
+
+        stationData.date = [];
+        for (dateIndex in dates) {
+            stationData.date.push(dates[dateIndex]);
+        }
+
+        postData.push(stationData);
+    });
 
     //console.log(JSON.stringify(postData, null, 4));
+
     var postDataStr = JSON.stringify(postData);
 
     var url = "https://json.schedulesdirect.org/20141201/schedules";
-
-    console.log("post to " + url);
 
     var jqxhr = $.ajax({
         type: "POST",
@@ -362,34 +410,36 @@ function getSchedulesDirectProgramSchedules(token, stations, dates) {
         //console.log("done in getSchedulesDirectProgramSchedules");
         //console.log(JSON.stringify(result, null, 4));
 
-        var stationsProgramData = [];
+        var jtrStationSchedulesForSingleDay = [];
+         
+        for (index in result) {
+            var jtrStationScheduleForSingleDay = {};
+            var stationScheduleForSingleDay = result[index];
+            jtrStationScheduleForSingleDay.stationId = stationScheduleForSingleDay.stationID;
+            jtrStationScheduleForSingleDay.scheduleDate = stationScheduleForSingleDay.metadata.startDate;
+            jtrStationScheduleForSingleDay.modifiedDate = stationScheduleForSingleDay.metadata.modified;
+            jtrStationScheduleForSingleDay.md5 = stationScheduleForSingleDay.metadata.md5;
+            jtrStationSchedulesForSingleDay.push(jtrStationScheduleForSingleDay);
 
-        for (index in result)
-        {
-            var programsForStation = result[index];
-            var stationId = programsForStation.stationID;
-            var programs = [];
-            for (programIndex in programsForStation.programs) {
-                var programForStation = programsForStation.programs[programIndex];
-                var program = {};
-                program.programId = programForStation.programID;
-                program.airDateTime = programForStation.airDateTime;
-                program.duration = programForStation.duration;
-                program.md5 = programForStation.md5;
-                //program.new = programForStation.new;
-                programs.push(program);
+            var jtrProgramsForStations = [];
+            for (programIndex in stationScheduleForSingleDay.programs) {
+                var program = stationScheduleForSingleDay.programs[programIndex];
+                var jtrProgramForStation = {};
+                jtrProgramForStation.stationId = jtrStationScheduleForSingleDay.stationId;
+                jtrProgramForStation.scheduleDate = jtrStationScheduleForSingleDay.scheduleDate;
+                jtrProgramForStation.programId = program.programID;
+                jtrProgramForStation.airDateTime = program.airDateTime;
+                jtrProgramForStation.duration = program.duration;
+                jtrProgramForStation.md5 = program.md5;
+                jtrProgramsForStations.push(jtrProgramForStation);
             }
-            var metadata = programsForStation.metadata;
-
-            var stationProgramData = {};
-            stationProgramData.stationId = stationId;
-            stationProgramData.programs = programs;
-            stationProgramData.metadata = metadata;
-
-            stationsProgramData.push(stationProgramData);
         }
 
-        //console.log(JSON.stringify(stationsProgramData, null, 4));
+        //var jtrStationSchedulesForSingleDayStr = JSON.stringify(jtrStationSchedulesForSingleDay);
+        //bsMessage.PostBSMessage({ command: "addDBStationSchedulesForSingleDay", "schedules": jtrStationSchedulesForSingleDayStr });
+
+        var jtrProgramsForStationsStr = JSON.stringify(jtrProgramsForStations);
+        bsMessage.PostBSMessage({ command: "addDBProgramsForStations", "programs": jtrProgramsForStationsStr });
     })
     .fail(function () {
         alert("getSchedulesDirectProgramSchedules failure");
@@ -564,6 +614,8 @@ function getSchedulesDirectHeadends(token) {
 
 function getSchedulesDirectStatus(token) {
 
+    console.log("getSchedulesDirectStatus");
+
     var url = "https://json.schedulesdirect.org/20141201/status";
 
     var jqxhr = $.ajax({
@@ -613,8 +665,57 @@ function getSchedulesDirectToken() {
         console.log("serverID: " + data.serverID);
         console.log("token: " + data.token);
 
-        getSchedulesDirectStatus(data.token)
+        //getSchedulesDirectStatus(data.token)
     });
+}
+
+
+function getStations(token) {
+
+    console.log("getStations() invoked");
+
+    var url = baseURL + "getStations";
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+    })
+    .done(function (result) {
+        console.log("done in getStations");
+        var jtrStations = result.stations;
+        //console.log(JSON.stringify(result, null, 4));
+
+        var stations = [];
+        $.each(jtrStations, function (index, jtrStation) {
+            stations.push(jtrStation);
+        });
+
+        //console.log(JSON.stringify(stations, null, 4));
+
+        var myStations = [];
+        myStations.push(stations[0]);
+
+        var dates = [];
+
+        var today = new Date();
+        var monthStr = (today.getMonth() + 1).toString();
+        if (monthStr.length == 1) {
+            monthStr = "0" + monthStr;
+        }
+        var todayStr = today.getFullYear().toString() + "-" + monthStr + "-" + today.getDate().toString();
+        dates.push(todayStr);
+
+        getSchedulesDirectProgramSchedules(token, myStations, dates);
+        //getSchedulesDirectScheduleModificationData(token, myStations, dates);
+    })
+    .fail(function () {
+        alert("getStations failure");
+    })
+    .always(function () {
+        alert("getStations complete");
+    });
+
 }
 
 
@@ -622,9 +723,9 @@ function initializeChannelGuide() {
 
     //getSchedulesDirectToken();
 
-    // token as of 6/20/2015 at 11:41 AM
-    // 4c0cfcb3b42df4c34936abdb836491cc
-    var token = "4c0cfcb3b42df4c34936abdb836491cc";
+    var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
+
+    getStations(token);
 
     // get status of schedules direct server
     //getSchedulesDirectStatus(token);

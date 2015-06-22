@@ -33,6 +33,10 @@ Sub InitializeServer()
 	m.playRecordingAA =					{ HandleEvent: playRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/recording", user_data: m.playRecordingAA })
 
+	' retrieve and return all stations
+	m.getStationsAA =					{ HandleEvent: getStations, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/getStations", user_data: m.getStationsAA })
+
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/fileToTranscode", user_data: m.fileToTranscodeAA })
@@ -101,8 +105,6 @@ Sub AddHandlers(serverDirectory$ As String, listOfHandlers As Object)
 			contentType$ = GetMimeTypeByExtension(ext)
 	
 			url$ = Right(filePath, len(filePath) - len(serverDirectory$))
-print "filePath = ";filePath
-print "url = ";url$
 
 			if url$ = "/css/styles.css" then
 
@@ -270,6 +272,28 @@ Sub PopulateScheduledRecordings(mVar As Object, response As Object)
 
 End Sub
 
+
+Sub getStations(userData as Object, e as Object)
+
+	print "getStations endpoint invoked"
+
+    mVar = userData.mVar
+
+	response = {}
+	jtrStations = mVar.GetDBStations()
+
+	response.stations = []
+	for each station in jtrStations
+		response.stations.push(station)
+	next
+
+	json = FormatJson(response, 0)
+
+    e.AddResponseHeader("Content-type", "text/json")
+    e.SetResponseBodyString(json)
+    e.SendResponse(200)
+
+End Sub
 
 
 Sub getRecordings(userData as Object, e as Object)

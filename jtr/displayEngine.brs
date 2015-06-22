@@ -216,6 +216,16 @@ Sub de_HandleHttpEvent(event)
 					m.ForwardToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
 				else if command$ = "backToTick" then
 					m.BackToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
+				else if command$ = "addDBStationSchedulesForSingleDay" then
+					stationSchedulesForSingleDay = parseJSON(aa.schedules)
+					for each stationScheduleForSingleDay in stationSchedulesForSingleDay
+						m.jtr.AddDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
+					next
+				else if command$ = "addDBProgramsForStations" then				
+					programsForStations = parseJSON(aa.programs)
+					for each programForStation in programsForStations
+						m.jtr.AddDBProgramForStation(programForStation.stationId, programForStation.scheduleDate, programForStation.programId, programForStation.airDateTime, StripLeadingSpaces(stri(programForStation.duration)), programForStation.md5)
+					next
 				else if command$ = "remoteCommand" then
 					if aa.remoteCommand = "pause" then
 						m.PausePlayback()
@@ -238,7 +248,6 @@ Sub de_HandleHttpEvent(event)
 					endif
 				endif
 			endif
-
 		endif
 	endif
 
