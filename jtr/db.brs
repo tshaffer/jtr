@@ -34,6 +34,8 @@ Sub OpenDatabase()
 
 		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
 	
+		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, Description TEXT);")
+
 	endif
 
 End Sub
@@ -533,7 +535,7 @@ Sub AddDBStation(atsc As String, commonName As String, name as String, stationId
 
 	insertSQL$ = "INSERT INTO Stations (Atsc, CommonName, Name, StationId, CallSign) VALUES(?,?,?,?,?);"
 
-	params = CreateObject("roArray", 7, false)
+	params = CreateObject("roArray", 5, false)
 	params[ 0 ] = atsc
 	params[ 1 ] = commonName
 	params[ 2 ] = name
@@ -587,7 +589,7 @@ Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String
 
 	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?);"
 
-	params = CreateObject("roArray", 7, false)
+	params = CreateObject("roArray", 4, false)
 	params[ 0 ] = stationId
 	params[ 1 ] = scheduleDate
 	params[ 2 ] = modifiedDate
@@ -602,7 +604,7 @@ Sub AddDBProgramForStation(stationId As String, scheduleDate As String, programI
 
 	insertSQL$ = "INSERT INTO ProgramsForStations (StationId, ScheduleDate, ProgramId, AirDateTime, Duration, MD5) VALUES(?,?,?,?,?,?);"
 
-	params = CreateObject("roArray", 7, false)
+	params = CreateObject("roArray", 6, false)
 	params[ 0 ] = stationId
 	params[ 1 ] = scheduleDate
 	params[ 2 ] = programId
@@ -613,4 +615,20 @@ Sub AddDBProgramForStation(stationId As String, scheduleDate As String, programI
 	m.ExecuteDBInsert(insertSQL$, params)
 
 End Sub
+
+
+Sub AddDBProgram(programId As String, title As String, description as String)
+
+	insertSQL$ = "INSERT INTO Programs (ProgramId, Title, Description) VALUES(?,?,?);"
+
+	params = CreateObject("roArray", 3, false)
+	params[ 0 ] = programId
+	params[ 1 ] = title
+	params[ 2 ] = description
+
+	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
+
+
 

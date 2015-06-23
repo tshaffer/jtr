@@ -327,6 +327,50 @@ function updateSettings() {
 }
 
 
+function getSchedulesDirectPrograms(token, programIds) {
+
+    console.log("getSchedulesDirectPrograms");
+
+    var postDataStr = JSON.stringify(programIds);
+
+    var url = "https://json.schedulesdirect.org/20141201/programs";
+
+    var jqxhr = $.ajax({
+        type: "POST",
+        url: url,
+        data: postDataStr,
+        dataType: "json",
+        headers: { "token": token }
+    })
+    .done(function (result) {
+        console.log("done in getSchedulesDirectPrograms");
+        console.log(JSON.stringify(result, null, 4));
+
+        var jtrPrograms = [];
+        $.each(result, function (index, program) {
+
+            var jtrProgram = {};
+            jtrProgram.programId = program.programID;
+            jtrProgram.title = program.titles[0].title120;
+            jtrProgram.description = "";
+            if (("descriptions" in program) && ("description100" in program.descriptions)) {
+                jtrProgram.description = program.descriptions.description100[0].description;
+            }
+            jtrPrograms.push(jtrProgram);
+        });
+        console.log(JSON.stringify(jtrPrograms, null, 4));
+
+        var jtrProgramsStr = JSON.stringify(jtrPrograms);
+        bsMessage.PostBSMessage({ command: "addDBPrograms", "programs": jtrProgramsStr });
+    })
+    .fail(function () {
+        alert("getSchedulesDirectPrograms failure");
+    })
+    .always(function () {
+        alert("getSchedulesDirectPrograms complete");
+    });
+}
+
 function getSchedulesDirectScheduleModificationData(token, stations, dates) {
 
     console.log("getSchedulesDirectScheduleModificationData");
@@ -435,8 +479,8 @@ function getSchedulesDirectProgramSchedules(token, stations, dates) {
             }
         }
 
-        //var jtrStationSchedulesForSingleDayStr = JSON.stringify(jtrStationSchedulesForSingleDay);
-        //bsMessage.PostBSMessage({ command: "addDBStationSchedulesForSingleDay", "schedules": jtrStationSchedulesForSingleDayStr });
+        var jtrStationSchedulesForSingleDayStr = JSON.stringify(jtrStationSchedulesForSingleDay);
+        bsMessage.PostBSMessage({ command: "addDBStationSchedulesForSingleDay", "schedules": jtrStationSchedulesForSingleDayStr });
 
         var jtrProgramsForStationsStr = JSON.stringify(jtrProgramsForStations);
         bsMessage.PostBSMessage({ command: "addDBProgramsForStations", "programs": jtrProgramsForStationsStr });
@@ -723,9 +767,14 @@ function initializeChannelGuide() {
 
     //getSchedulesDirectToken();
 
-    var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
+    //var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
+    var token = "3bfee352aced350fa2b56e384caf94e3"; // as of 6/22 at 4:32 PM
+    var programIds = [];
+    programIds.push("SH000212230000");
+    programIds.push("SH021831230000");
+    getSchedulesDirectPrograms(token, programIds)
 
-    getStations(token);
+    //getStations(token);
 
     // get status of schedules direct server
     //getSchedulesDirectStatus(token);

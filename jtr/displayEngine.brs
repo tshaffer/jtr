@@ -226,6 +226,11 @@ Sub de_HandleHttpEvent(event)
 					for each programForStation in programsForStations
 						m.jtr.AddDBProgramForStation(programForStation.stationId, programForStation.scheduleDate, programForStation.programId, programForStation.airDateTime, StripLeadingSpaces(stri(programForStation.duration)), programForStation.md5)
 					next
+				else if command$ = "addDBPrograms" then				
+					programs = parseJSON(aa.programs)
+					for each program in programs
+						m.jtr.AddDBProgram(program.programId, program.title, program.description)
+					next
 				else if command$ = "remoteCommand" then
 					if aa.remoteCommand = "pause" then
 						m.PausePlayback()
