@@ -769,12 +769,13 @@ function initializeChannelGuide() {
 
     //var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
     var token = "3bfee352aced350fa2b56e384caf94e3"; // as of 6/22 at 4:32 PM
-    var programIds = [];
-    programIds.push("SH000212230000");
-    programIds.push("SH021831230000");
-    getSchedulesDirectPrograms(token, programIds)
 
-    //getStations(token);
+    //var programIds = [];
+    //programIds.push("SH000212230000");
+    //programIds.push("SH021831230000");
+    //getSchedulesDirectPrograms(token, programIds)
+
+    getStations(token);
 
     // get status of schedules direct server
     //getSchedulesDirectStatus(token);
