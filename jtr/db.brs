@@ -28,7 +28,7 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
 
 		m.CreateDBTable("CREATE TABLE Stations (Atsc TEXT PRIMARY KEY, CommonName TEXT, Name TEXT, StationId TEXT, CallSign TEXT);")
-		PopulateStationsTable()
+		m.PopulateStationsTable()
 
 		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
 
@@ -560,7 +560,6 @@ Sub PopulateStationsTable()
 	m.AddDBStation("11.1", "KNTV", "KNTVDT (KNTV-DT)", "21785", "KNTVDT")
 	m.AddDBStation("36.1", "KICU", "KICUDT (KICU-DT)", "21650", "KICUDT")
 	m.AddDBStation("44.1", "KBCW", "KBCWDT (KBCW-DT)", "19575", "KBCWDT")
-stop
 
 End Sub
 
