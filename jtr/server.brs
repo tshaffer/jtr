@@ -37,6 +37,10 @@ Sub InitializeServer()
 	m.getStationsAA =					{ HandleEvent: getStations, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getStations", user_data: m.getStationsAA })
 
+	' retrieve and return all stationSchedulesForSingleDay
+	m.stationSchedulesForSingleDayAA =					{ HandleEvent: getStationSchedulesForSingleDay, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/getStationSchedulesForSingleDay", user_data: m.stationSchedulesForSingleDayAA })
+
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/fileToTranscode", user_data: m.fileToTranscodeAA })
@@ -285,6 +289,29 @@ Sub getStations(userData as Object, e as Object)
 	response.stations = []
 	for each station in jtrStations
 		response.stations.push(station)
+	next
+
+	json = FormatJson(response, 0)
+
+    e.AddResponseHeader("Content-type", "text/json")
+    e.SetResponseBodyString(json)
+    e.SendResponse(200)
+
+End Sub
+
+
+Sub getStationSchedulesForSingleDay(userData as Object, e as Object)
+
+	print "getStationSchedulesForSingleDay endpoint invoked"
+
+    mVar = userData.mVar
+
+	response = {}
+	jtrStationSchedulesForSingleDay = mVar.GetDBStationSchedulesForSingleDay()
+
+	response.stationSchedulesForSingleDay = []
+	for each stationScheduleForSingleDay in jtrStationSchedulesForSingleDay
+		response.stationSchedulesForSingleDay.push(stationScheduleForSingleDay)
 	next
 
 	json = FormatJson(response, 0)

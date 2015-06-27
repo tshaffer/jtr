@@ -104,6 +104,7 @@ Function newJTR(msgPort As Object) As Object
 	JTR.PopulateStationsTable			= PopulateStationsTable
 	JTR.GetDBStations					= GetDBStations
 	JTR.AddDBStationScheduleForSingleDay= AddDBStationScheduleForSingleDay
+	JTR.GetDBStationSchedulesForSingleDay = GetDBStationSchedulesForSingleDay
 	JTR.AddDBProgramForStation			= AddDBProgramForStation
 	JTR.AddDBProgram					= AddDBProgram
 

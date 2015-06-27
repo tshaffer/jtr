@@ -599,6 +599,26 @@ Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String
 End Sub
 
 
+Sub GetDBStationSchedulesForSingleDayCallback(resultsData As Object, selectData As Object)
+
+	selectData.stationSchedulesForSingleDay.push(resultsData)
+
+End Sub
+
+
+Function GetDBStationSchedulesForSingleDay() As Object
+
+	selectData = {}
+	selectData.stationSchedulesForSingleDay = []
+
+	select$ = "SELECT StationId, ScheduleDate, ModifiedDate, MD5 FROM StationSchedulesForSingleDay;"
+	m.ExecuteDBSelect(select$, GetDBStationSchedulesForSingleDayCallback, selectData, invalid)
+
+	return selectData.stationSchedulesForSingleDay
+
+End Function
+
+
 Sub AddDBProgramForStation(stationId As String, scheduleDate As String, programId As String, airDateTime As String, duration As String, md5 as String)
 
 	insertSQL$ = "INSERT INTO ProgramsForStations (StationId, ScheduleDate, ProgramId, AirDateTime, Duration, MD5) VALUES(?,?,?,?,?,?);"
