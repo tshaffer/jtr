@@ -329,10 +329,10 @@ function updateSettings() {
 
 function initializeChannelGuide() {
 
-    var token = "f2088953af81c8b1b13047e8fd7484d5"; // as of 6/27 at 7:07 AM
+    //schedulesDirectToken = "2cfee6843a63122d4c363c1e60f8af49"; // as of 6/27 at 3:21 PM
 
-    //getSchedulesDirectToken(retrieveEpgData);
-    retrieveEpgData(token);
+    getSchedulesDirectToken(retrieveEpgData);
+    //retrieveEpgData();
 
     //var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
     //var token = "3bfee352aced350fa2b56e384caf94e3"; // as of 6/22 at 4:32 PM

@@ -1,10 +1,57 @@
-﻿function retrieveEpgData(token) {
+﻿var schedulesDirectToken;
 
-    scheduleValidityByStationDate = {};
+var numDaysEpgData = 2;
+
+var stations = [];
+var scheduleValidityByStationDate = {};
+var scheduleModificationData;
+
+function retrieveEpgData() {
 
     // get station schedules for single day and populate scheduleValidityByStationDate
     console.log("retrieveEpgData() invoked");
 
+    getStations(retrieveEpgDataStep2);
+}
+
+
+function retrieveEpgDataStep2() {
+
+    var stationIds = [];
+    var dates = [];
+
+    // build initial scheduleValidityByStationDate. That is, add keys, leave values empty
+    // one entry for each station, date combination
+    $.each(stations, function (index, station) {
+
+        var startDate = new Date();
+
+        for (i = 0; i < numDaysEpgData; i++) {
+            var date = new Date(startDate);
+            date.setDate(date.getDate() + i);
+            var dateVal = date.getFullYear() + "-" + twoDigitFormat((date.getMonth() + 1)) + "-" + twoDigitFormat(date.getDate());
+
+            var stationDate = station.StationId + "-" + dateVal;
+
+            var scheduleValidity = {};
+            scheduleValidity.stationId = station.StationId;
+            scheduleValidity.scheduleDate = dateVal;
+            scheduleValidity.modifiedDate = "";
+            scheduleValidity.md5 = "";
+            scheduleValidity.downloadedNeeded = true;
+            scheduleValidityByStationDate[stationDate] = scheduleValidity;
+
+            if (stationIds.length == 0) {
+                dates.push(dateVal);
+            }
+        }
+
+        stationIds.push(station.StationId);
+    });
+
+    //console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
+
+    // retrieve last fetched station schedules from db
     var url = baseURL + "getStationSchedulesForSingleDay";
 
     var jqxhr = $.ajax({
@@ -14,14 +61,27 @@
     })
     .done(function (result) {
         console.log("successfully return from getStationSchedulesForSingleDay");
-        //var jtrStationSchedulesForSingleDay = result.stationSchedulesForSingleDay;
         var jtrStationSchedulesForSingleDay = result;
-        console.log(JSON.stringify(jtrStationSchedulesForSingleDay, null, 4));
+        //console.log(JSON.stringify(jtrStationSchedulesForSingleDay, null, 4));
 
-        //var stations = [];
-        //$.each(jtrStations, function (index, jtrStation) {
-        //    stations.push(jtrStation);
-        //});
+        //console.log(JSON.stringify(jtrStationSchedulesForSingleDay.stationschedulesforsingleday[0], null, 4));
+
+        // fill in scheduleValidityByStationDate with appropriate data from db
+// change return value so that I dont have to use the nonsense on the next line.
+        $.each(jtrStationSchedulesForSingleDay.stationschedulesforsingleday, function (index, jtrStationScheduleForSingleDay) {
+            var stationDate = jtrStationScheduleForSingleDay.StationId + "-" + jtrStationScheduleForSingleDay.ScheduleDate;
+            if (stationDate in scheduleValidityByStationDate) {
+                var scheduleValidity = scheduleValidityByStationDate[stationDate];
+                scheduleValidity.modifiedDate = jtrStationScheduleForSingleDay.ModifiedDate;
+                scheduleValidity.md5 = jtrStationScheduleForSingleDay.MD5;
+                scheduleValidity.downloadedNeeded = false;
+            }
+        });
+
+        //console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
+
+        // fetch data from Schedules Direct that will indicate the last changed date / information about stations / dates.
+        getSchedulesDirectScheduleModificationData(stationIds, dates, retrieveEpgDataStep3);
     })
     .fail(function () {
         alert("getStationSchedulesForSingleDay failure");
@@ -29,7 +89,37 @@
     .always(function () {
         alert("getStationSchedulesForSingleDay complete");
     });
+
 }
+
+
+function retrieveEpgDataStep3() {
+    console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
+
+    // for each station/date combination, if it already has data, see if it is current
+    $.each(scheduleValidityByStationDate, function (index, scheduleValidity) {
+        if (!scheduleValidity.downloadedNeeded) {
+            // find matching record in scheduleModificationData
+            var stationId = scheduleValidity.stationId;
+            var scheduleDate = scheduleValidity.scheduleDate;
+            if (stationId in scheduleModificationData) {
+                var scheduleModifiedDataForStation = scheduleModificationData[stationId];
+                console.log(JSON.stringify(scheduleModifiedDataForStation, null, 4));
+                if (scheduleDate in scheduleModifiedDataForStation) {
+                    var scheduleModifiedDataForStationDate = scheduleModifiedDataForStation[scheduleDate];
+                    console.log(JSON.stringify(scheduleModifiedDataForStationDate, null, 4));
+                    if (scheduleModifiedDataForStationDate.md5 != scheduleValidity.md5) {
+                        scheduleValidity.downloadedNeeded = true;
+                    }
+                    // TODO - else, also check modified date??
+                }
+            }
+        }
+    });
+
+    // at this point, the system knows which station/date records need updates from the service
+}
+
 
 function getSchedulesDirectToken(nextFunction) {
 
@@ -58,12 +148,41 @@ function getSchedulesDirectToken(nextFunction) {
         console.log("serverID: " + data.serverID);
         console.log("token: " + data.token);
 
+        schedulesDirectToken = data.token;
+
         if (nextFunction != null) {
-            nextFunction(data.token);
+            nextFunction();
         }
     });
 }
 
+
+function getStations(nextFunction) {
+
+    console.log("getStations() invoked");
+
+    var url = baseURL + "getStations";
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+    })
+    .done(function (result) {
+        console.log("successful return from getStations");
+        stations = result.stations;
+        
+        if (nextFunction != null) {
+            nextFunction();
+        }
+    })
+    .fail(function () {
+        alert("getStations failure");
+    })
+    .always(function () {
+        alert("getStations complete");
+    });
+}
 
 function getSchedulesDirectPrograms(token, programIds) {
 
@@ -109,18 +228,18 @@ function getSchedulesDirectPrograms(token, programIds) {
     });
 }
 
-function getSchedulesDirectScheduleModificationData(token, stations, dates) {
+function getSchedulesDirectScheduleModificationData(stationIds, dates, nextFunction) {
 
     console.log("getSchedulesDirectScheduleModificationData");
 
     // same as in getSchedulesDirectProgramSchedules - make common?
     var postData = [];
 
-    $.each(stations, function (index, station) {
+    $.each(stationIds, function (index, stationId) {
 
         var stationData = {};
 
-        stationData.stationID = station.StationId;
+        stationData.stationID = stationId;
 
         stationData.date = [];
         for (dateIndex in dates) {
@@ -133,16 +252,24 @@ function getSchedulesDirectScheduleModificationData(token, stations, dates) {
 
     var url = "https://json.schedulesdirect.org/20141201/schedules/md5";
 
+    console.log("getSchedulesDirectScheduleModificationData - invoke post");
+
     var jqxhr = $.ajax({
         type: "POST",
         url: url,
         data: postDataStr,
         dataType: "json",
-        headers: { "token": token }
+        headers: { "token": schedulesDirectToken }
     })
     .done(function (result) {
         console.log("done in getSchedulesDirectScheduleModificationData");
         console.log(JSON.stringify(result, null, 4));
+
+        scheduleModificationData = result;
+
+        if (nextFunction != null) {
+            nextFunction();
+        }
     })
     .fail(function () {
         alert("getSchedulesDirectScheduleModificationData failure");
@@ -420,52 +547,52 @@ function getSchedulesDirectStatus(token) {
     });
 }
 
-function getStations(token) {
+//function getStations(token) {
 
-    console.log("getStations() invoked");
+//    console.log("getStations() invoked");
 
-    var url = baseURL + "getStations";
+//    var url = baseURL + "getStations";
 
-    var jqxhr = $.ajax({
-        type: "GET",
-        url: url,
-        dataType: "json",
-    })
-    .done(function (result) {
-        console.log("done in getStations");
-        var jtrStations = result.stations;
-        //console.log(JSON.stringify(result, null, 4));
+//    var jqxhr = $.ajax({
+//        type: "GET",
+//        url: url,
+//        dataType: "json",
+//    })
+//    .done(function (result) {
+//        console.log("done in getStations");
+//        var jtrStations = result.stations;
+//        //console.log(JSON.stringify(result, null, 4));
 
-        var stations = [];
-        $.each(jtrStations, function (index, jtrStation) {
-            stations.push(jtrStation);
-        });
+//        var stations = [];
+//        $.each(jtrStations, function (index, jtrStation) {
+//            stations.push(jtrStation);
+//        });
 
-        //console.log(JSON.stringify(stations, null, 4));
+//        //console.log(JSON.stringify(stations, null, 4));
 
-        var myStations = [];
-        myStations.push(stations[0]);
+//        var myStations = [];
+//        myStations.push(stations[0]);
 
-        var dates = [];
+//        var dates = [];
 
-        var today = new Date();
-        var monthStr = (today.getMonth() + 1).toString();
-        if (monthStr.length == 1) {
-            monthStr = "0" + monthStr;
-        }
-        var todayStr = today.getFullYear().toString() + "-" + monthStr + "-" + today.getDate().toString();
-        dates.push(todayStr);
+//        var today = new Date();
+//        var monthStr = (today.getMonth() + 1).toString();
+//        if (monthStr.length == 1) {
+//            monthStr = "0" + monthStr;
+//        }
+//        var todayStr = today.getFullYear().toString() + "-" + monthStr + "-" + today.getDate().toString();
+//        dates.push(todayStr);
 
-        getSchedulesDirectProgramSchedules(token, myStations, dates);
-        //getSchedulesDirectScheduleModificationData(token, myStations, dates);
-    })
-    .fail(function () {
-        alert("getStations failure");
-    })
-    .always(function () {
-        alert("getStations complete");
-    });
+//        getSchedulesDirectProgramSchedules(token, myStations, dates);
+//        //getSchedulesDirectScheduleModificationData(token, myStations, dates);
+//    })
+//    .fail(function () {
+//        alert("getStations failure");
+//    })
+//    .always(function () {
+//        alert("getStations complete");
+//    });
 
-}
+//}
 
 
