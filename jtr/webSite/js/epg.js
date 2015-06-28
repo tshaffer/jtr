@@ -62,7 +62,7 @@ function retrieveEpgDataStep2() {
     .done(function (result) {
         console.log("successfully return from getStationSchedulesForSingleDay");
         var jtrStationSchedulesForSingleDay = result;
-        //console.log(JSON.stringify(jtrStationSchedulesForSingleDay, null, 4));
+        //console.log(JSON.stringify(result, null, 4));
 
         //console.log(JSON.stringify(jtrStationSchedulesForSingleDay.stationschedulesforsingleday[0], null, 4));
 
@@ -138,9 +138,9 @@ function retrieveEpgDataStep3() {
 
                 stationDates = {};
                 stationDates.stationID = stationId;
-                stationDates.dates = [];
+                stationDates.date = [];
             }
-            stationDates.dates.push(scheduleValidity.scheduleDate);
+            stationDates.date.push(scheduleValidity.scheduleDate);
         }
     });
 
@@ -243,8 +243,6 @@ function getSchedulesDirectScheduleModificationData(stationIds, dates, nextFunct
     });
     var postDataStr = JSON.stringify(postData);
 
-    //console.log(postDataStr);
-
     var url = "https://json.schedulesdirect.org/20141201/schedules/md5";
 
     console.log("getSchedulesDirectScheduleModificationData - invoke post");
@@ -258,7 +256,7 @@ function getSchedulesDirectScheduleModificationData(stationIds, dates, nextFunct
     })
     .done(function (result) {
         console.log("done in getSchedulesDirectScheduleModificationData");
-        console.log(JSON.stringify(result, null, 4));
+        //console.log(JSON.stringify(result, null, 4));
 
         scheduleModificationData = result;
 
@@ -281,8 +279,7 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
 
     var postDataStr = JSON.stringify(stationIdDatesNeedingUpdates);
 
-    console.log(postDataStr);
-    return;
+    //console.log(postDataStr);
 
     var url = "https://json.schedulesdirect.org/20141201/schedules";
 
