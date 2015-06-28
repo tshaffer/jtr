@@ -5,6 +5,7 @@ var numDaysEpgData = 2;
 var stations = [];
 var scheduleValidityByStationDate = {};
 var scheduleModificationData;
+var programIdsToRetrieve = [];
 
 function retrieveEpgData() {
 
@@ -153,9 +154,14 @@ function retrieveEpgDataStep3() {
 
     //console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
 
-    getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, null);
+    getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, retrieveEpgDataStep4);
 }
 
+
+function retrieveEpgDataStep4() {
+
+    getSchedulesDirectPrograms(null);
+}
 
 function getSchedulesDirectToken(nextFunction) {
 
@@ -296,8 +302,12 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
 
         var jtrStationSchedulesForSingleDay = [];
 
+        var jtrProgramsForStations = [];
+        var jtrProgramIdsToRetrieve = {};
+
         // to do - convert to $.each
         for (index in result) {
+            //console.log("index=" + index);
             var jtrStationScheduleForSingleDay = {};
             var stationScheduleForSingleDay = result[index];
             jtrStationScheduleForSingleDay.stationId = stationScheduleForSingleDay.stationID;
@@ -307,8 +317,9 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
             jtrStationSchedulesForSingleDay.push(jtrStationScheduleForSingleDay);
 
             // to do - convert to $.each
-            var jtrProgramsForStations = [];
+            console.log("stationScheduleForSingleDay.programs.length=" + stationScheduleForSingleDay.programs.length);
             for (programIndex in stationScheduleForSingleDay.programs) {
+                //console.log("programIndex=" + programIndex);
                 var program = stationScheduleForSingleDay.programs[programIndex];
                 var jtrProgramForStation = {};
                 jtrProgramForStation.stationId = jtrStationScheduleForSingleDay.stationId;
@@ -318,16 +329,28 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
                 jtrProgramForStation.duration = program.duration;
                 jtrProgramForStation.md5 = program.md5;
                 jtrProgramsForStations.push(jtrProgramForStation);
+
+                jtrProgramIdsToRetrieve[program.programID] = program.programID;
             }
         }
 
         var jtrStationSchedulesForSingleDayStr = JSON.stringify(jtrStationSchedulesForSingleDay);
         bsMessage.PostBSMessage({ command: "addDBStationSchedulesForSingleDay", "schedules": jtrStationSchedulesForSingleDayStr });
 
+        //console.log(JSON.stringify(jtrProgramsForStations, null, 4));
+
+        console.log("jtrProgramsForStations length=" + jtrProgramsForStations.length);
+
         var jtrProgramsForStationsStr = JSON.stringify(jtrProgramsForStations);
         bsMessage.PostBSMessage({ command: "addDBProgramsForStations", "programs": jtrProgramsForStationsStr });
 
-        console.log("done for now");
+        // generate an array containing the list of programs to retrieve
+        programIdsToRetrieve = [];
+        for (var programId in jtrProgramIdsToRetrieve) {
+            if (jtrProgramIdsToRetrieve.hasOwnProperty(programId)) {
+                programIdsToRetrieve.push(programId);
+            }
+        }
 
         if (nextFunction != null) {
             nextFunction();
@@ -343,11 +366,19 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
 }
 
 
-function getSchedulesDirectPrograms(token, programIds) {
+function valueIfMetadataExists(program, metadata) {
+
+    if (metadata in program) {
+        return program[metadata];
+    }
+    return "";
+}
+
+function getSchedulesDirectPrograms(nextFunction) {
 
     console.log("getSchedulesDirectPrograms");
 
-    var postDataStr = JSON.stringify(programIds);
+    var postDataStr = JSON.stringify(programIdsToRetrieve);
 
     var url = "https://json.schedulesdirect.org/20141201/programs";
 
@@ -360,7 +391,13 @@ function getSchedulesDirectPrograms(token, programIds) {
     })
     .done(function (result) {
         console.log("done in getSchedulesDirectPrograms");
-        console.log(JSON.stringify(result, null, 4));
+        //console.log(JSON.stringify(result, null, 4));
+
+        // test programIds
+        //      "EP009311820138"
+        //      "EP009311820139"
+        //      "SH004410630000"
+        //      "SH015633870000"
 
         var jtrPrograms = [];
         $.each(result, function (index, program) {
@@ -369,12 +406,32 @@ function getSchedulesDirectPrograms(token, programIds) {
             jtrProgram.programId = program.programID;
             jtrProgram.title = program.titles[0].title120;
             jtrProgram.description = "";
-            if (("descriptions" in program) && ("description100" in program.descriptions)) {
-                jtrProgram.description = program.descriptions.description100[0].description;
+            if ("descriptions" in program) {
+                if ("description100" in program.descriptions) {
+                    jtrProgram.description = program.descriptions.description100[0].description;
+                }
+                else if ("description1000" in program.descriptions) {
+                    jtrProgram.description = program.descriptions.description1000[0].description;
+                }
             }
+
+            jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
+            jtrProgram.episodeTitle = valueIfMetadataExists(program, "episodeTitle150");
+            jtrProgram.showType = valueIfMetadataExists(program, "showType");
+            jtrProgram.md5 = valueIfMetadataExists(program, "md5");
+
+            jtrProgram.castMembers = [];
+            if ("cast" in program) {
+                $.each(program.cast, function (castIndex, castItem) {
+                    jtrProgram.castMembers.push(castItem.name);
+                });
+            }
+
             jtrPrograms.push(jtrProgram);
         });
         console.log(JSON.stringify(jtrPrograms, null, 4));
+
+        return;
 
         var jtrProgramsStr = JSON.stringify(jtrPrograms);
         bsMessage.PostBSMessage({ command: "addDBPrograms", "programs": jtrProgramsStr });

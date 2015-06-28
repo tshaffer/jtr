@@ -331,7 +331,14 @@ function initializeChannelGuide() {
 
     //schedulesDirectToken = "2cfee6843a63122d4c363c1e60f8af49"; // as of 6/27 at 3:21 PM
 
-    getSchedulesDirectToken(retrieveEpgData);
+    //getSchedulesDirectToken(retrieveEpgData);
+    programIdsToRetrieve = [];
+    programIdsToRetrieve.push("EP009311820138");
+    programIdsToRetrieve.push("EP009311820139");
+    programIdsToRetrieve.push("SH004410630000");
+    programIdsToRetrieve.push("SH015633870000");
+    getSchedulesDirectToken(getSchedulesDirectPrograms);
+
     //retrieveEpgData();
 
     //var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
