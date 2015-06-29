@@ -393,13 +393,9 @@ function getSchedulesDirectPrograms(nextFunction) {
         console.log("done in getSchedulesDirectPrograms");
         //console.log(JSON.stringify(result, null, 4));
 
-        // test programIds
-        //      "EP009311820138"
-        //      "EP009311820139"
-        //      "SH004410630000"
-        //      "SH015633870000"
-
         var jtrPrograms = [];
+        var jtrCastMembers = [];
+
         $.each(result, function (index, program) {
 
             var jtrProgram = {};
@@ -423,18 +419,28 @@ function getSchedulesDirectPrograms(nextFunction) {
             jtrProgram.castMembers = [];
             if ("cast" in program) {
                 $.each(program.cast, function (castIndex, castItem) {
-                    jtrProgram.castMembers.push(castItem.name);
+                    var castMember = {};
+                    castMember.programId = program.programID;
+                    castMember.name = castItem.name;
+                    castMember.billingOrder = castItem.billingOrder;
+                    jtrCastMembers.push(castMember);
                 });
             }
 
             jtrPrograms.push(jtrProgram);
         });
         console.log(JSON.stringify(jtrPrograms, null, 4));
-
-        return;
+        console.log(JSON.stringify(jtrCastMembers, null, 4));
 
         var jtrProgramsStr = JSON.stringify(jtrPrograms);
         bsMessage.PostBSMessage({ command: "addDBPrograms", "programs": jtrProgramsStr });
+
+        var jtrCastMembersStr = JSON.stringify(jtrCastMembers);
+        bsMessage.PostBSMessage({ command: "addDBProgramCast", "castMembers": jtrCastMembersStr });
+
+        if (nextFunction != null) {
+            nextFunction();
+        }
     })
     .fail(function () {
         alert("getSchedulesDirectPrograms failure");

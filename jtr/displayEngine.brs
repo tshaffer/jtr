@@ -231,6 +231,11 @@ Sub de_HandleHttpEvent(event)
 					for each program in programs
 						m.jtr.AddDBProgram(program.programId, program.title, program.description)
 					next
+				else if command$ = "addDBProgramCast" then				
+					castMembers = parseJSON(aa.castMembers)
+					for each castMember in castMembers
+						m.jtr.AddDBCastMember(castMember.programId, castMember.name, castMember.billingOrder)
+					next
 				else if command$ = "remoteCommand" then
 					if aa.remoteCommand = "pause" then
 						m.PausePlayback()

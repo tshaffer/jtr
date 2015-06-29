@@ -36,6 +36,8 @@ Sub OpenDatabase()
 	
 		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, Description TEXT);")
 
+		m.CreateDBTable("CREATE TABLE ProgramCast (ProgramId TEXT, Name TEXT, BillingOrder TEXT);")
+
 	endif
 
 End Sub
@@ -644,6 +646,20 @@ Sub AddDBProgram(programId As String, title As String, description as String)
 	params[ 0 ] = programId
 	params[ 1 ] = title
 	params[ 2 ] = description
+
+	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
+
+
+Sub AddDBCastMember(programId As String, name As String, billingOrder as String)
+
+	insertSQL$ = "INSERT INTO ProgramCast (ProgramId, Name, BillingOrder) VALUES(?,?,?);"
+
+	params = CreateObject("roArray", 3, false)
+	params[ 0 ] = programId
+	params[ 1 ] = name
+	params[ 2 ] = billingOrder
 
 	m.ExecuteDBInsert(insertSQL$, params)
 
