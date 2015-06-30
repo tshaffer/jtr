@@ -654,11 +654,12 @@ End Sub
 
 Sub AddDBPrograms(programs As Object)
 
+print "AddDBPrograms start"
+
 	programIndex = 0
 	remainingPrograms = programs.Count()
 
-	remainingPrograms = 6
-	maxBatchSize = 3
+	maxBatchSize = 500
 
 	while remainingPrograms > 0
 	
@@ -691,14 +692,16 @@ Sub AddDBPrograms(programs As Object)
 
 		if startingBatchSize > 0 then
 			params = []
+print "AddDBPrograms initiate insert"
 			m.ExecuteDBInsert(insertSQL$, params)
+print "AddDBPrograms insert complete"
 		endif
 
 		remainingPrograms = remainingPrograms - startingBatchSize
 
 	end while
 
-	stop
+print "AddDBPrograms complete"
 
 End Sub
 
