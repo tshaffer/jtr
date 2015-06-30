@@ -429,8 +429,8 @@ function getSchedulesDirectPrograms(nextFunction) {
 
             jtrPrograms.push(jtrProgram);
         });
-        console.log(JSON.stringify(jtrPrograms, null, 4));
-        console.log(JSON.stringify(jtrCastMembers, null, 4));
+        //console.log(JSON.stringify(jtrPrograms, null, 4));
+        //console.log(JSON.stringify(jtrCastMembers, null, 4));
 
         var jtrProgramsStr = JSON.stringify(jtrPrograms);
         bsMessage.PostBSMessage({ command: "addDBPrograms", "programs": jtrProgramsStr });

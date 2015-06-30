@@ -652,6 +652,73 @@ Sub AddDBProgram(programId As String, title As String, description as String)
 End Sub
 
 
+Sub AddDBPrograms(programs As Object)
+
+	programIndex = 0
+	remainingPrograms = programs.Count()
+
+	remainingPrograms = 6
+	maxBatchSize = 3
+
+	while remainingPrograms > 0
+	
+		if remainingPrograms >= maxBatchSize then
+			batchSize = maxBatchSize
+		else
+			batchSize = remainingPrograms
+		endif
+
+		startingBatchSize = batchSize
+
+		insertSQL$ = "INSERT INTO Programs "
+
+		while batchSize > 0
+			
+			program = programs[programIndex]
+			t$ = SanitizeString(program.title)
+			d$ = SanitizeString(program.description)
+
+			if batchSize = startingBatchSize then
+				insertSQL$ = insertSQL$ + " SELECT '" + program.programId + "' AS ProgramId, '" + t$ + "' AS Title, '" + d$ + "' AS Description "
+			else
+				insertSQL$ = insertSQL$ + " UNION SELECT '" + program.programId + "', '" + t$ + "', '" + d$ + "'"
+			endif
+
+			programIndex = programIndex + 1
+			batchSize = batchSize - 1
+
+		end while
+
+		if startingBatchSize > 0 then
+			params = []
+			m.ExecuteDBInsert(insertSQL$, params)
+		endif
+
+		remainingPrograms = remainingPrograms - startingBatchSize
+
+	end while
+
+	stop
+
+End Sub
+
+
+Function SanitizeString(s$ As String) As String
+'	' = 39
+'	" = 34
+
+	for i% = 0 to len(s$)
+		c = asc(mid(s$, i% + 1, 1))
+		if c = 39 or c = 34 then
+			s$ = mid(s$, 1, i%) + "-" + mid(s$, i% + 2)
+		endif
+	next
+
+	return s$
+
+End Function
+
+
 Sub AddDBCastMember(programId As String, name As String, billingOrder as String)
 
 	insertSQL$ = "INSERT INTO ProgramCast (ProgramId, Name, BillingOrder) VALUES(?,?,?);"
@@ -662,6 +729,12 @@ Sub AddDBCastMember(programId As String, name As String, billingOrder as String)
 	params[ 2 ] = billingOrder
 
 	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
+
+
+Sub AddDBCastMembers(castMembers As Object)
+
 
 End Sub
 

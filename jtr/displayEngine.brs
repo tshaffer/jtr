@@ -223,14 +223,15 @@ Sub de_HandleHttpEvent(event)
 					next
 				else if command$ = "addDBProgramsForStations" then				
 					programsForStations = parseJSON(aa.programs)
-					for each programForStation in programsForStations
-						m.jtr.AddDBProgramForStation(programForStation.stationId, programForStation.scheduleDate, programForStation.programId, programForStation.airDateTime, StripLeadingSpaces(stri(programForStation.duration)), programForStation.md5)
-					next
+'					for each programForStation in programsForStations
+'						m.jtr.AddDBProgramForStation(programForStation.stationId, programForStation.scheduleDate, programForStation.programId, programForStation.airDateTime, StripLeadingSpaces(stri(programForStation.duration)), programForStation.md5)					
+'					next
 				else if command$ = "addDBPrograms" then				
 					programs = parseJSON(aa.programs)
-					for each program in programs
-						m.jtr.AddDBProgram(program.programId, program.title, program.description)
-					next
+					m.jtr.AddDBPrograms(programs)
+'					for each program in programs
+'						m.jtr.AddDBProgram(program.programId, program.title, program.description)
+'					next
 				else if command$ = "addDBProgramCast" then				
 					castMembers = parseJSON(aa.castMembers)
 					for each castMember in castMembers
