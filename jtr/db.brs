@@ -740,6 +740,11 @@ Sub AddDBCastMembers(castMembers As Object)
 End Sub
 
 
+'		INSERT INTO 'tablename'
+'		      SELECT 'data1' AS 'column1', 'data2' AS 'column2'
+'		UNION SELECT 'data3', 'data4'
+'		UNION SELECT 'data5', 'data6'
+'		UNION SELECT 'data7', 'data8'
 Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, startingRowIndex% As Integer, numItemsToInsert% As Integer) As String
 
 	insertSQL$ = "INSERT INTO " + tableName$ + " SELECT "
@@ -825,15 +830,14 @@ Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Obj
 		endif
 
 		insertSQL$ = GenerateSQLInsert(insertItems, tableName$, columnKeys, dbColumnNames, columnSanitizationNecessary, itemIndex, numItemsToInsert)
-stop
+
 		remainingItems = remainingItems - numItemsToInsert
 		itemIndex = itemIndex + numItemsToInsert
 
-print "AddDBPrograms initiate insert"
+print "AddDBItems initiate insert"
 		params = []
 		m.ExecuteDBInsert(insertSQL$, params)
-stop
-print "AddDBPrograms insert complete"
+print "AddDBItems insert complete"
 
 	end while
 
@@ -841,6 +845,22 @@ End Sub
 
 
 Sub AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
+
+	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?),(?,?,?,?);"
+
+	params = CreateObject("roArray", 8, false)
+	params[ 0 ] = "7'90"
+	params[ 1 ] = "79'1"
+	params[ 2 ] = "792'"
+	params[ 3 ] = "'793"
+	params[ 4 ] = chr(34) + "794"
+	params[ 5 ] = "795"
+	params[ 6 ] = "796"
+	params[ 7 ] = "797"
+
+	stop
+	m.ExecuteDBInsert(insertSQL$, params)
+	stop
 
 	columnKeys = []
 	columnKeys.push("stationId")
