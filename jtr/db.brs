@@ -740,17 +740,17 @@ Sub AddDBCastMembers(castMembers As Object)
 End Sub
 
 
-Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, startingRowIndex% As Integer, numItemsToTransfer% As Integer) As String
+Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, startingRowIndex% As Integer, numItemsToInsert% As Integer) As String
 
 	insertSQL$ = "INSERT INTO " + tableName$ + " SELECT "
 
-	for rowIndex% = 0 to rowObjects.Count() - 1
+	for rowIndex% = 0 to numItemsToInsert% - 1
 
 		adjustedRowIndex% = rowIndex% + startingRowIndex%
 
 		rowObject = rowObjects[adjustedRowIndex%]
 
-		if startingRowIndex% = 0 and rowIndex% = 0 then
+		if rowIndex% = 0 then
 			' insertSQL$ = insertSQL$ + " SELECT '" + program.programId + "' AS ProgramId, '" + t$ + "' AS Title, '" + d$ + "' AS Description "
 
 			columnValues = CreateObject("roArray", columnKeys.Count(), true)
@@ -812,7 +812,8 @@ Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Obj
 	print "AddDBItems start"
 
 	itemIndex = 0
-	chunkSize = 500
+'	chunkSize = 500
+	chunkSize = 10
 	remainingItems = insertItems.Count()
 
 	while remainingItems > 0
