@@ -745,7 +745,7 @@ End Sub
 '		UNION SELECT 'data3', 'data4'
 '		UNION SELECT 'data5', 'data6'
 '		UNION SELECT 'data7', 'data8'
-Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, startingRowIndex% As Integer, numItemsToInsert% As Integer) As String
+Function GenerateSQLInsertUnsafe(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, startingRowIndex% As Integer, numItemsToInsert% As Integer) As String
 
 	insertSQL$ = "INSERT INTO " + tableName$ + " SELECT "
 
@@ -812,13 +812,78 @@ Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKey
 End Function
 
 
-Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, tableName$ As String)
+Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, startingRowIndex% As Integer, numItemsToInsert% As Integer) As Object
+
+' example SQL that works
+'	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?),(?,?,?,?);"
+
+	insertSQL$ = "INSERT INTO " + tableName$ + " ("
+
+	for columnIndex% = 0 to dbColumnNames.Count() - 1
+	
+		if columnIndex% > 0 then
+			insertSQL$ = insertSQL$ + ", "
+		endif
+
+		insertSQL$ = insertSQL$ + dbColumnNames[columnIndex%]
+	next
+
+	insertSQL$ = insertSQL$ + ") VALUES "
+
+	for rowIndex% = 0 to numItemsToInsert% - 1
+
+		if rowIndex% > 0 then
+			insertSQL$ = insertSQL$ + ","
+		endif
+
+		insertSQL$ = insertSQL$ + "("
+
+		for columnIndex% = 0 to dbColumnNames.Count() - 1
+
+			if columnIndex% > 0 then
+				insertSQL$ = insertSQL$ + ","
+			endif
+
+			insertSQL$ = insertSQL$ + "?"
+
+		next
+
+		insertSQL$ = insertSQL$ + ")"
+
+	next
+
+	insertSQL$ = insertSQL$ + ";"
+
+	params = []
+
+	for rowIndex% = 0 to numItemsToInsert% - 1
+
+		adjustedRowIndex% = rowIndex% + startingRowIndex%
+
+		rowObject = rowObjects[adjustedRowIndex%]
+
+		for columnIndex% = 0 to columnKeys.Count() - 1
+			params.push(rowObject[columnKeys[columnIndex%]])
+		next
+
+	next
+
+	sqlInsert = {}
+	sqlInsert.insertSQL$ = insertSQL$
+	sqlInsert.params = params
+
+	return sqlInsert
+
+End Function
+
+
+
+Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Object, tableName$ As String)
 
 	print "AddDBItems start"
 
 	itemIndex = 0
-'	chunkSize = 500
-	chunkSize = 10
+	chunkSize = 500
 	remainingItems = insertItems.Count()
 
 	while remainingItems > 0
@@ -829,14 +894,14 @@ Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Obj
 			numItemsToInsert = remainingItems
 		endif
 
-		insertSQL$ = GenerateSQLInsert(insertItems, tableName$, columnKeys, dbColumnNames, columnSanitizationNecessary, itemIndex, numItemsToInsert)
+		sqlInsert = GenerateSQLInsert(insertItems, tableName$, columnKeys, dbColumnNames, itemIndex, numItemsToInsert)
 
 		remainingItems = remainingItems - numItemsToInsert
 		itemIndex = itemIndex + numItemsToInsert
 
 print "AddDBItems initiate insert"
 		params = []
-		m.ExecuteDBInsert(insertSQL$, params)
+		m.ExecuteDBInsert(sqlInsert.insertSQL$, sqlInsert.params)
 print "AddDBItems insert complete"
 
 	end while
@@ -845,22 +910,6 @@ End Sub
 
 
 Sub AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
-
-	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?),(?,?,?,?);"
-
-	params = CreateObject("roArray", 8, false)
-	params[ 0 ] = "7'90"
-	params[ 1 ] = "79'1"
-	params[ 2 ] = "792'"
-	params[ 3 ] = "'793"
-	params[ 4 ] = chr(34) + "794"
-	params[ 5 ] = "795"
-	params[ 6 ] = "796"
-	params[ 7 ] = "797"
-
-	stop
-	m.ExecuteDBInsert(insertSQL$, params)
-	stop
 
 	columnKeys = []
 	columnKeys.push("stationId")
@@ -874,12 +923,6 @@ Sub AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
 	dbColumnNames.push("ModifiedDate")
 	dbColumnNames.push("MD5")
 
-	columnSanitizationNecessary = []
-	columnSanitizationNecessary.push(false)
-	columnSanitizationNecessary.push(false)
-	columnSanitizationNecessary.push(false)
-	columnSanitizationNecessary.push(false)
-
-	m.AddDBItems(stationSchedulesForSingleDay, columnKeys, dbColumnNames, columnSanitizationNecessary,  "StationSchedulesForSingleDay")
+	m.AddDBItems(stationSchedulesForSingleDay, columnKeys, dbColumnNames, "StationSchedulesForSingleDay")
 
 End Sub
