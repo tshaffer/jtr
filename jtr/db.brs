@@ -737,9 +737,128 @@ End Sub
 
 
 Sub AddDBCastMembers(castMembers As Object)
+End Sub
 
+
+Function GenerateSQLInsert(rowObjects As Object, tableName$ As String, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, startingRowIndex% As Integer, numItemsToTransfer% As Integer) As String
+
+	insertSQL$ = "INSERT INTO " + tableName$ + " SELECT "
+
+	for rowIndex% = 0 to rowObjects.Count() - 1
+
+		adjustedRowIndex% = rowIndex% + startingRowIndex%
+
+		rowObject = rowObjects[adjustedRowIndex%]
+
+		if startingRowIndex% = 0 and rowIndex% = 0 then
+			' insertSQL$ = insertSQL$ + " SELECT '" + program.programId + "' AS ProgramId, '" + t$ + "' AS Title, '" + d$ + "' AS Description "
+
+			columnValues = CreateObject("roArray", columnKeys.Count(), true)
+
+			for columnIndex% = 0 to columnKeys.Count() - 1
+
+				columnValues[columnIndex%] = rowObject[columnKeys[columnIndex%]]
+
+				if columnSanitizationNecessary[columnIndex%] then
+					columnValues[columnIndex%] = SanitizeString(columnsValues[columnIndex%])
+				endif
+			
+				if columnIndex% > 0 then
+					insertSQL$ = insertSQL$ + ", "
+				endif
+
+				insertSQL$ = insertSQL$ + "'" + columnValues[columnIndex%] + "' AS " + dbColumnNames[columnIndex%]
+
+			next
+
+			insertSQL$ = insertSQL$ + " "
+
+		else
+
+			' insertSQL$ = insertSQL$ + " UNION SELECT '" + program.programId + "', '" + t$ + "', '" + d$ + "'"
+			insertSQL$ = insertSQL$ + "UNION SELECT "
+
+			columnValues = CreateObject("roArray", columnKeys.Count(), true)
+
+			for columnIndex% = 0 to columnKeys.Count() - 1
+
+				columnValues[columnIndex%] = rowObject[columnKeys[columnIndex%]]
+
+				if columnSanitizationNecessary[columnIndex%] then
+					columnValues[columnIndex%] = SanitizeString(columnValues[columnIndex%])
+				endif
+			
+				if columnIndex% > 0 then
+					insertSQL$ = insertSQL$ + ", "
+				endif
+
+				insertSQL$ = insertSQL$ + "'" + columnValues[columnIndex%] + "'"
+
+			next
+
+			insertSQL$ = insertSQL$ + " "
+
+		endif
+
+	next
+
+	return insertSQL$
+
+End Function
+
+
+Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Object, columnSanitizationNecessary As Object, tableName$ As String)
+
+	print "AddDBItems start"
+
+	itemIndex = 0
+	chunkSize = 500
+	remainingItems = insertItems.Count()
+
+	while remainingItems > 0
+
+		if remainingItems > chunkSize
+			numItemsToInsert = chunkSize
+		else
+			numItemsToInsert = remainingItems
+		endif
+
+		insertSQL$ = GenerateSQLInsert(insertItems, tableName$, columnKeys, dbColumnNames, columnSanitizationNecessary, itemIndex, numItemsToInsert)
+stop
+		remainingItems = remainingItems - numItemsToInsert
+		itemIndex = itemIndex + numItemsToInsert
+
+print "AddDBPrograms initiate insert"
+		params = []
+		m.ExecuteDBInsert(insertSQL$, params)
+stop
+print "AddDBPrograms insert complete"
+
+	end while
 
 End Sub
 
 
+Sub AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
 
+	columnKeys = []
+	columnKeys.push("stationId")
+	columnKeys.push("scheduleDate")
+	columnKeys.push("modifiedDate")
+	columnKeys.push("md5")
+
+	dbColumnNames = []
+	dbColumnNames.push("StationId")
+	dbColumnNames.push("ScheduleDate")
+	dbColumnNames.push("ModifiedDate")
+	dbColumnNames.push("MD5")
+
+	columnSanitizationNecessary = []
+	columnSanitizationNecessary.push(false)
+	columnSanitizationNecessary.push(false)
+	columnSanitizationNecessary.push(false)
+	columnSanitizationNecessary.push(false)
+
+	m.AddDBItems(stationSchedulesForSingleDay, columnKeys, dbColumnNames, columnSanitizationNecessary,  "StationSchedulesForSingleDay")
+
+End Sub

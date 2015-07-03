@@ -218,6 +218,8 @@ Sub de_HandleHttpEvent(event)
 					m.BackToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
 				else if command$ = "addDBStationSchedulesForSingleDay" then
 					stationSchedulesForSingleDay = parseJSON(aa.schedules)
+					m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
+stop
 					for each stationScheduleForSingleDay in stationSchedulesForSingleDay
 						m.jtr.AddDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
 					next
