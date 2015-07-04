@@ -220,8 +220,6 @@ Sub de_HandleHttpEvent(event)
 					stationSchedulesForSingleDayToInsert = parseJSON(aa.schedulesToInsert)
 					stationSchedulesForSingleDayToUpdate = parseJSON(aa.schedulesToUpdate)
 
-					return
-
 					if stationSchedulesForSingleDayToInsert.Count() > 0 then
 						m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDayToInsert)
 					endif
