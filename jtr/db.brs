@@ -32,9 +32,10 @@ Sub OpenDatabase()
 
 		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
 
+		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
 		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
 	
-		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, Description TEXT);")
+		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, Description TEXT, MD5 TEXT);")
 
 		m.CreateDBTable("CREATE TABLE ProgramCast (ProgramId TEXT, Name TEXT, BillingOrder TEXT);")
 
@@ -653,61 +654,6 @@ Sub AddDBProgram(programId As String, title As String, description as String)
 End Sub
 
 
-' OBSOLETE
-Sub AddDBPrograms(programs As Object)
-
-print "AddDBPrograms start"
-
-	programIndex = 0
-	remainingPrograms = programs.Count()
-
-	maxBatchSize = 500
-
-	while remainingPrograms > 0
-	
-		if remainingPrograms >= maxBatchSize then
-			batchSize = maxBatchSize
-		else
-			batchSize = remainingPrograms
-		endif
-
-		startingBatchSize = batchSize
-
-		insertSQL$ = "INSERT INTO Programs "
-
-		while batchSize > 0
-			
-			program = programs[programIndex]
-			t$ = SanitizeString(program.title)
-			d$ = SanitizeString(program.description)
-
-			if batchSize = startingBatchSize then
-				insertSQL$ = insertSQL$ + " SELECT '" + program.programId + "' AS ProgramId, '" + t$ + "' AS Title, '" + d$ + "' AS Description "
-			else
-				insertSQL$ = insertSQL$ + " UNION SELECT '" + program.programId + "', '" + t$ + "', '" + d$ + "'"
-			endif
-
-			programIndex = programIndex + 1
-			batchSize = batchSize - 1
-
-		end while
-
-		if startingBatchSize > 0 then
-			params = []
-print "AddDBPrograms initiate insert"
-			m.ExecuteDBInsert(insertSQL$, params)
-print "AddDBPrograms insert complete"
-		endif
-
-		remainingPrograms = remainingPrograms - startingBatchSize
-
-	end while
-
-print "AddDBPrograms complete"
-
-End Sub
-
-
 Sub AddDBCastMember(programId As String, name As String, billingOrder as String)
 
 	insertSQL$ = "INSERT INTO ProgramCast (ProgramId, Name, BillingOrder) VALUES(?,?,?);"
@@ -1013,3 +959,50 @@ Sub AddDBProgramsForStation(stationDatesToReplace As Object, programsForStations
 	m.AddDBProgramsForStations(programsForStations)
 
 End Sub
+
+
+Sub GetDBProgramsCallback(resultsData As Object, selectData As Object)
+
+	selectData.programs.push(resultsData)
+
+End Sub
+
+
+Function GetDBPrograms() As Object
+
+	selectData = {}
+	selectData.programs = []
+
+	select$ = "SELECT ProgramId, Title, Description, MD5 FROM Programs;"
+	m.ExecuteDBSelect(select$, GetDBProgramsCallback, selectData, invalid)
+
+	' JTR TODO - temporary
+	for each program in selectData.programs
+		program.MD5 = ""
+	next
+
+	return selectData.programs
+
+End Function
+
+
+Sub AddDBPrograms(programs)
+
+	columnKeys = []
+	columnKeys.push("programId")
+	columnKeys.push("title")
+	columnKeys.push("description")
+	columnKeys.push("md5")
+
+	dbColumnNames = []
+	dbColumnNames.push("ProgramId")
+	dbColumnNames.push("Title")
+	dbColumnNames.push("Description")
+	dbColumnNames.push("MD5")
+
+	m.AddDBItems(programs, columnKeys, dbColumnNames, "Programs")
+
+End Sub
+
+
+

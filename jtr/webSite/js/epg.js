@@ -7,6 +7,9 @@ var scheduleValidityByStationDate = {};     // schedule information for each sta
 var scheduleModificationData;
 var programIdsToRetrieve = [];
 
+var programsValidity = {};
+var jtrProgramsToRetrieve = {};
+
 function retrieveEpgData() {
 
     // retrieve epg data for all stations and 'n' days
@@ -178,12 +181,18 @@ function retrieveEpgDataStep3() {
         stationIdDatesToRetrieve.push(stationDates);
     }
 
-    // JTR TODO - what to do if stationIdDatesToRetrieve is empty; no updates required
 
     // dump list of stationId/date(s) combinations to retrieve
-    //console.log(JSON.stringify(stationIdDatesToRetrieve, null, 4));
-    //console.log(JSON.stringify(stationIdDatesNeedingInserts, null, 4));
-    //console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
+    console.log(JSON.stringify(stationIdDatesToRetrieve, null, 4));
+    console.log(JSON.stringify(stationIdDatesNeedingInserts, null, 4));
+    console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
+
+    if (stationIdDatesToRetrieve.length == 0) {
+        console.log("All data up to date, return");
+        return;
+    }
+    console.log("Pending changes, time to write more code");
+    return;
 
     // at this point, there is a list of stationId/date(s) to retrieve from server as well as which to insert in the db vs. update in the db
     getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdDatesNeedingInserts, stationIdDatesNeedingUpdates, retrieveEpgDataStep4);
@@ -192,7 +201,9 @@ function retrieveEpgDataStep3() {
 
 function retrieveEpgDataStep4() {
 
-    getSchedulesDirectPrograms(null);
+    GetProgramsFromDB(null);
+
+    //getSchedulesDirectPrograms(null);
 }
 
 function getSchedulesDirectToken(nextFunction) {
@@ -341,7 +352,7 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
         var jtrStationSchedulesForSingleDayToUpdate = [];
 
         var jtrProgramsForStations = [];
-        var jtrProgramIdsToRetrieve = {};
+        jtrProgramsToRetrieve = {};
 
         var jtrStationDatesToReplace = [];
 
@@ -395,7 +406,7 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
                 jtrProgramsForStations.push(jtrProgramForStation);
 
                 // JTR TODO - is it necessary to retrieve all these programs or might some of the data already be stored and valid?
-                jtrProgramIdsToRetrieve[program.programID] = program.programID;
+                jtrProgramsToRetrieve[program.programID] = program;
             }
         }
 
@@ -413,16 +424,13 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
         var jtrProgramsForStationsStr = JSON.stringify(jtrProgramsForStations);
         bsMessage.PostBSMessage({ command: "addDBProgramsForStations", "station_dates": jtrStationDatesToReplaceStr, "programs": jtrProgramsForStationsStr });
 
-        console.log("DONE FOR NOW");
-        return;
-
-        // generate an array containing the list of programs to retrieve
-        programIdsToRetrieve = [];
-        for (var programId in jtrProgramIdsToRetrieve) {
-            if (jtrProgramIdsToRetrieve.hasOwnProperty(programId)) {
-                programIdsToRetrieve.push(programId);
-            }
-        }
+        // generate an array containing the list of programs to retrieve (convert {} to []) - still necessary?
+        //programIdsToRetrieve = [];
+        //for (var programId in jtrProgramsToRetrieve) {
+        //    if (jtrProgramsToRetrieve.hasOwnProperty(programId)) {
+        //        programIdsToRetrieve.push(programId);
+        //    }
+        //}
 
         if (nextFunction != null) {
             nextFunction();
@@ -433,6 +441,93 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
     })
     .always(function () {
         alert("getSchedulesDirectProgramSchedules complete");
+    });
+
+}
+
+
+function GetProgramsFromDB(nextFunction) {
+
+    // initialize data structure describing programs to retrieve
+    // programs were indicated by /Schedules return data which contains the md5 for the programs
+    var programsValidity = {};
+    for (var programId in jtrProgramsToRetrieve) {
+        if (jtrProgramsToRetrieve.hasOwnProperty(programId)) {
+            var jtrProgramToRetrieve = jtrProgramsToRetrieve[programId];
+            programValidity = {};
+            programValidity.md5 = jtrProgramToRetrieve.md5;
+            programValidity.status = "noData";
+            programsValidity[programId] = programValidity;
+        }
+    }
+
+    // dump initialized data structure for programs to retrieve from SchedulesDirect
+    //console.log(JSON.stringify(programsValidity, null, 4));
+
+    // retrieve programs from db
+    var url = baseURL + "getPrograms";
+
+    var jqxhr = $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+    })
+    .done(function (result) {
+        console.log("successful return from getPrograms");
+
+        // dump programs retrieved from db
+        //console.log(JSON.stringify(result, null, 4));
+        console.log("number of programs retrieved is " + result.programs.length);
+
+        // move these programs from the db into an associative array
+        var programsInDB = {};
+        $.each(result.programs, function (index, program) {
+            programsInDB[program.ProgramId] = program;
+        });
+
+        // for each program that needs to be retrieved, determine if it's an insert or update by comparing to data in db
+        for (var programId in programsValidity) {
+            if (programsValidity.hasOwnProperty(programId)) {
+
+                var programToRetrieve = programsValidity[programId];
+
+                if (programId in programsInDB) {
+                    var programInDB = programsInDB[programId];
+                    if (programInDB.MD5 == programToRetrieve.md5) {
+                        programToRetrieve.status = "dataCurrent";
+                    }
+                    else {
+                        programToRetrieve.status = "dataObsolete";
+                    }
+                }
+                //else {
+                //    programToRetrieve.status = "noData";
+                //}
+            }
+        }
+
+        // dump updated programValidity
+        //console.log(JSON.stringify(programsValidity, null, 4));
+
+        // currently, all programs are obsolete, so all should get inserted
+        programIdsToRetrieve = [];
+        for (var programId in jtrProgramsToRetrieve) {
+            if (jtrProgramsToRetrieve.hasOwnProperty(programId)) {
+                programIdsToRetrieve.push(programId);
+            }
+        }
+
+        // dump ids of programs to retrieve from SchedulesDirect
+        //console.log(JSON.stringify(programIdsToRetrieve, null, 4));
+
+        getSchedulesDirectPrograms(nextFunction);
+
+    })
+    .fail(function () {
+        alert("getPrograms failure");
+    })
+    .always(function () {
+        alert("getPrograms complete");
     });
 
 }
@@ -506,6 +601,9 @@ function getSchedulesDirectPrograms(nextFunction) {
 
         var jtrProgramsStr = JSON.stringify(jtrPrograms);
         bsMessage.PostBSMessage({ command: "addDBPrograms", "programs": jtrProgramsStr });
+
+        console.log("All done for now");
+        return;
 
         var jtrCastMembersStr = JSON.stringify(jtrCastMembers);
         bsMessage.PostBSMessage({ command: "addDBProgramCast", "castMembers": jtrCastMembersStr });

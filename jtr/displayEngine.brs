@@ -241,9 +241,6 @@ Sub de_HandleHttpEvent(event)
 				else if command$ = "addDBPrograms" then				
 					programs = parseJSON(aa.programs)
 					m.jtr.AddDBPrograms(programs)
-'					for each program in programs
-'						m.jtr.AddDBProgram(program.programId, program.title, program.description)
-'					next
 				else if command$ = "addDBProgramCast" then				
 					castMembers = parseJSON(aa.castMembers)
 					for each castMember in castMembers
