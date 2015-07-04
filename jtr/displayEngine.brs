@@ -220,6 +220,8 @@ Sub de_HandleHttpEvent(event)
 					stationSchedulesForSingleDayToInsert = parseJSON(aa.schedulesToInsert)
 					stationSchedulesForSingleDayToUpdate = parseJSON(aa.schedulesToUpdate)
 
+					return
+
 					if stationSchedulesForSingleDayToInsert.Count() > 0 then
 						m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDayToInsert)
 					endif
@@ -228,15 +230,16 @@ Sub de_HandleHttpEvent(event)
 						m.jtr.UpdateDBStationSchedulesForSingleDay(stationSchedulesForSingleDayToUpdate)
 					endif
 
-'					m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
-'					for each stationScheduleForSingleDay in stationSchedulesForSingleDay
-'						m.jtr.AddDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
-'					next
-				else if command$ = "addDBProgramsForStations" then				
+				else if command$ = "addDBProgramsForStations" then
+					
+					' get the list of station/date items that will be replaced in the db	
+					stationDatesToReplace = parseJSON(aa.station_dates)
+
+					' and the programs to add
 					programsForStations = parseJSON(aa.programs)
-'					for each programForStation in programsForStations
-'						m.jtr.AddDBProgramForStation(programForStation.stationId, programForStation.scheduleDate, programForStation.programId, programForStation.airDateTime, StripLeadingSpaces(stri(programForStation.duration)), programForStation.md5)					
-'					next
+
+					m.jtr.AddDBProgramsForStation(stationDatesToReplace, programsForStations)
+
 				else if command$ = "addDBPrograms" then				
 					programs = parseJSON(aa.programs)
 					m.jtr.AddDBPrograms(programs)

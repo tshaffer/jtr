@@ -586,6 +586,7 @@ Function GetDBStations() As Object
 End Function
 
 
+' OBSOLETE?
 'Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String, modifiedDate as String, md5 as String)
 '
 '	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?);"
@@ -652,6 +653,7 @@ Sub AddDBProgram(programId As String, title As String, description as String)
 End Sub
 
 
+' OBSOLETE
 Sub AddDBPrograms(programs As Object)
 
 print "AddDBPrograms start"
@@ -706,22 +708,6 @@ print "AddDBPrograms complete"
 End Sub
 
 
-Function SanitizeString(s$ As String) As String
-'	' = 39
-'	" = 34
-
-	for i% = 0 to len(s$)
-		c = asc(mid(s$, i% + 1, 1))
-		if c = 39 or c = 34 then
-			s$ = mid(s$, 1, i%) + "-" + mid(s$, i% + 2)
-		endif
-	next
-
-	return s$
-
-End Function
-
-
 Sub AddDBCastMember(programId As String, name As String, billingOrder as String)
 
 	insertSQL$ = "INSERT INTO ProgramCast (ProgramId, Name, BillingOrder) VALUES(?,?,?);"
@@ -740,6 +726,24 @@ Sub AddDBCastMembers(castMembers As Object)
 End Sub
 
 
+' NOT IN USE
+Function SanitizeString(s$ As String) As String
+'	' = 39
+'	" = 34
+
+	for i% = 0 to len(s$)
+		c = asc(mid(s$, i% + 1, 1))
+		if c = 39 or c = 34 then
+			s$ = mid(s$, 1, i%) + "-" + mid(s$, i% + 2)
+		endif
+	next
+
+	return s$
+
+End Function
+
+
+' NOT IN USE
 '		INSERT INTO 'tablename'
 '		      SELECT 'data1' AS 'column1', 'data2' AS 'column2'
 '		UNION SELECT 'data3', 'data4'
@@ -880,10 +884,9 @@ End Function
 
 Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Object, tableName$ As String)
 
-	print "AddDBItems start"
-
 	itemIndex = 0
-	chunkSize = 500
+'	chunkSize = 500
+	chunkSize = 100
 	remainingItems = insertItems.Count()
 
 	while remainingItems > 0
@@ -941,5 +944,72 @@ Sub UpdateDBStationSchedulesForSingleDay(stationSchedulesForSingleDay As Object)
 	for each stationScheduleForSingleDay in stationSchedulesForSingleDay
 		m.UpdateDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
 	next
+
+End Sub
+
+
+Sub DeleteDBProgramsForStation(stationId As String, scheduleDate As String)
+
+	SQLITE_COMPLETE = 100
+
+    params = { :sid_param: stationId, :sd_param: scheduleDate }
+
+	delete$ = "DELETE FROM ProgramsForStations WHERE StationId =:sid_param AND ScheduleDate =:sd_param;"
+	
+	deleteStatement = m.db.CreateStatement(delete$)
+
+	if type(deleteStatement) <> "roSqliteStatement" then
+        print "DeleteStatement failure - "; delete$ : stop
+	endif
+
+	bindResult = deleteStatement.BindByName(params)
+
+	if not bindResult then
+        print "Bind failure - " : stop
+	endif
+
+	sqlResult = deleteStatement.Run()
+
+	if sqlResult <> SQLITE_COMPLETE
+        print "sqlResult <> SQLITE_COMPLETE"
+	endif
+
+	deleteStatement.Finalise()
+
+End Sub
+
+
+Sub AddDBProgramsForStations(programsForStations)
+
+	columnKeys = []
+	columnKeys.push("stationId")
+	columnKeys.push("scheduleDate")
+	columnKeys.push("programId")
+	columnKeys.push("airDateTime")
+	columnKeys.push("duration")
+	columnKeys.push("md5")
+
+	dbColumnNames = []
+	dbColumnNames.push("StationId")
+	dbColumnNames.push("ScheduleDate")
+	dbColumnNames.push("ProgramId")
+	dbColumnNames.push("AirDateTime")
+	dbColumnNames.push("Duration")
+	dbColumnNames.push("MD5")
+
+	m.AddDBItems(programsForStations, columnKeys, dbColumnNames, "ProgramsForStations")
+
+End Sub
+
+
+Sub AddDBProgramsForStation(stationDatesToReplace As Object, programsForStations As Object)
+
+	' first, remove the station/date data from the db (this is the data that is going to get replaced)
+	for each stationDateToReplace in stationDatesToReplace
+		m.DeleteDBProgramsForStation(stationDateToReplace.stationId, stationDateToReplace.scheduleDate)
+	next
+
+	' next, add new data
+	m.AddDBProgramsForStations(programsForStations)
 
 End Sub
