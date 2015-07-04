@@ -586,19 +586,19 @@ Function GetDBStations() As Object
 End Function
 
 
-Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String, modifiedDate as String, md5 as String)
+'Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String, modifiedDate as String, md5 as String)
+'
+'	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?);"
 
-	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?);"
+'	params = CreateObject("roArray", 4, false)
+'	params[ 0 ] = stationId
+'	params[ 1 ] = scheduleDate
+'	params[ 2 ] = modifiedDate
+'	params[ 3 ] = md5
 
-	params = CreateObject("roArray", 4, false)
-	params[ 0 ] = stationId
-	params[ 1 ] = scheduleDate
-	params[ 2 ] = modifiedDate
-	params[ 3 ] = md5
+'	m.ExecuteDBInsert(insertSQL$, params)
 
-	m.ExecuteDBInsert(insertSQL$, params)
-
-End Sub
+'End Sub
 
 
 Sub GetDBStationSchedulesForSingleDayCallback(resultsData As Object, selectData As Object)
@@ -924,5 +924,22 @@ Sub AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
 	dbColumnNames.push("MD5")
 
 	m.AddDBItems(stationSchedulesForSingleDay, columnKeys, dbColumnNames, "StationSchedulesForSingleDay")
+
+End Sub
+
+
+Sub UpdateDBStationScheduleForSingleDay(stationId As String, scheduleDate As String, modifiedDate As String, md5 As String)
+
+	params = { sid_param: stationId, sd_param: scheduleDate, md_param: modifiedDate, md5_param: md5 }
+    m.db.RunBackground("UPDATE StationSchedulesForSingleDay SET ModifiedDate=:md_param, MD5=:md5_param WHERE StationId=:sid_param AND ScheduleDate=:sd_param;", params)
+
+End Sub
+
+
+Sub UpdateDBStationSchedulesForSingleDay(stationSchedulesForSingleDay As Object)
+
+	for each stationScheduleForSingleDay in stationSchedulesForSingleDay
+		m.UpdateDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
+	next
 
 End Sub

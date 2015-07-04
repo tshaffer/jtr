@@ -3,15 +3,21 @@
 var numDaysEpgData = 2;
 
 var stations = [];
-var scheduleValidityByStationDate = {};
+var scheduleValidityByStationDate = {};     // schedule information for each station/date 
 var scheduleModificationData;
 var programIdsToRetrieve = [];
 
+var stationIdDatesNeedingInserts = {};
+var stationIdDatesNeedingUpdates = {};
+
 function retrieveEpgData() {
 
-    // get station schedules for single day and populate scheduleValidityByStationDate
+    // retrieve epg data for all stations and 'n' days
+    // at end of update, db should be up to date and epg data should be in memory
+
     console.log("retrieveEpgData() invoked");
 
+    // step 1 retrieve users stations
     getStations(retrieveEpgDataStep2);
 }
 
@@ -21,7 +27,8 @@ function retrieveEpgDataStep2() {
     var stationIds = [];
     var dates = [];
 
-    // build initial scheduleValidityByStationDate. That is, add keys, leave values empty
+    // step 2
+    // build initial scheduleValidityByStationDate. That is, add keys, set values to initial /  default settings
     // one entry for each station, date combination
     $.each(stations, function (index, station) {
 
@@ -39,7 +46,7 @@ function retrieveEpgDataStep2() {
             scheduleValidity.scheduleDate = dateVal;
             scheduleValidity.modifiedDate = "";
             scheduleValidity.md5 = "";
-            scheduleValidity.downloadedNeeded = true;
+            scheduleValidity.status = "noData";
             scheduleValidityByStationDate[stationDate] = scheduleValidity;
 
             if (stationIds.length == 0) {
@@ -50,6 +57,7 @@ function retrieveEpgDataStep2() {
         stationIds.push(station.StationId);
     });
 
+    // dump initialized data structure
     //console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
 
     // retrieve last fetched station schedules from db
@@ -61,27 +69,31 @@ function retrieveEpgDataStep2() {
         dataType: "json",
     })
     .done(function (result) {
-        console.log("successfully return from getStationSchedulesForSingleDay");
-        var jtrStationSchedulesForSingleDay = result;
+        console.log("successful return from getStationSchedulesForSingleDay");
+
+        // dump StationSchedulesForSingleDay as retrieved from db
         //console.log(JSON.stringify(result, null, 4));
 
-        //console.log(JSON.stringify(jtrStationSchedulesForSingleDay.stationschedulesforsingleday[0], null, 4));
-
         // fill in scheduleValidityByStationDate with appropriate data from db
+// JTR TODO
 // change return value so that I dont have to use the nonsense on the next line.
-        $.each(jtrStationSchedulesForSingleDay.stationschedulesforsingleday, function (index, jtrStationScheduleForSingleDay) {
+        $.each(result.stationschedulesforsingleday, function (index, jtrStationScheduleForSingleDay) {
             var stationDate = jtrStationScheduleForSingleDay.StationId + "-" + jtrStationScheduleForSingleDay.ScheduleDate;
+
+            // is the station/date retrieved from db in the initialized data structure
+            // it won't be for dates now in the past
             if (stationDate in scheduleValidityByStationDate) {
                 var scheduleValidity = scheduleValidityByStationDate[stationDate];
                 scheduleValidity.modifiedDate = jtrStationScheduleForSingleDay.ModifiedDate;
                 scheduleValidity.md5 = jtrStationScheduleForSingleDay.MD5;
-                scheduleValidity.downloadedNeeded = false;
+                scheduleValidity.status = "dataCurrent";
             }
         });
 
+        // dump StationSchedulesForSingleDay as updated based on db data
         //console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
 
-        // fetch data from Schedules Direct that will indicate the last changed date / information about stations / dates.
+        // fetch data from Schedules Direct that will indicate the last changed date/information for relevant station/dates.
         getSchedulesDirectScheduleModificationData(stationIds, dates, retrieveEpgDataStep3);
     })
     .fail(function () {
@@ -96,11 +108,9 @@ function retrieveEpgDataStep2() {
 
 function retrieveEpgDataStep3() {
 
-    //console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
-
     // for each station/date combination, if it already has data, see if it is current
     $.each(scheduleValidityByStationDate, function (index, scheduleValidity) {
-        if (!scheduleValidity.downloadedNeeded) {
+        if (scheduleValidity.status == "dataCurrent") {
             // find matching record in scheduleModificationData
             var stationId = scheduleValidity.stationId;
             var scheduleDate = scheduleValidity.scheduleDate;
@@ -111,29 +121,49 @@ function retrieveEpgDataStep3() {
                     var scheduleModifiedDataForStationDate = scheduleModifiedDataForStation[scheduleDate];
                     //console.log(JSON.stringify(scheduleModifiedDataForStationDate, null, 4));
                     if (scheduleModifiedDataForStationDate.md5 != scheduleValidity.md5) {
-                        scheduleValidity.downloadedNeeded = true;
+                        scheduleValidity.status = "dataObsolete";
                     }
-                    // TODO - else, also check modified date??
+                    // JTR TODO - else, also check modified date??
                 }
+            }
+            else {
+                console.log("WARNING!!!!!!!!!!!!!!!! - scheduleModificationData missing record for " + stationId + ", " + scheduleDate);
             }
         }
     });
 
+    // dump StationSchedulesForSingleDay after getting updated using last modified data from Schedules Direct
+    //console.log(JSON.stringify(scheduleValidityByStationDate, null, 4));
+
     // at this point, the system knows which station/date records need updates from the service - scheduleValidityByStationDate
-    var stationIdDatesNeedingUpdates = [];
+    // it knows which station/dates have no data vs. which ones need to have their data updated
+
+    // build data structure to pass to SchedulesDirect to retrieve latest stationId/date(s) information
+    // at the same time, capture which stationId/date combinations need to be inserted in the db vs updated in the db
+    stationIdDatesNeedingInserts = {};
+    stationIdDatesNeedingUpdates = {};
+    var stationIdDatesToRetrieve = [];
     var lastStationId = "";
     var stationDates = {};
 
+    // JTR TODO - not all that happy about this code. better way?
     $.each(scheduleValidityByStationDate, function (index, scheduleValidity) {
-        if (scheduleValidity.downloadedNeeded) {
+        if (scheduleValidity.status != "dataCurrent") {
             var stationId = scheduleValidity.stationId;
             var scheduleDate = scheduleValidity.scheduleDate;
+            var stationDateKey = stationId + "-" + scheduleDate;
+            if (scheduleValidity.status == "noData") {
+                stationIdDatesNeedingInserts[stationDateKey] = true;
+            }
+            else {
+                stationIdDatesNeedingUpdates[stationDateKey] = true;
+            }
 
             if (stationId != lastStationId) {
 
                 // capture data before moving to new stationId
                 if (lastStationId != "") {
-                    stationIdDatesNeedingUpdates.push(stationDates);
+                    stationIdDatesToRetrieve.push(stationDates);
                 }
                 lastStationId = stationId;
 
@@ -145,16 +175,20 @@ function retrieveEpgDataStep3() {
         }
     });
 
-    // TODO - check to see if stationIdDatesNeedingUpdates.length > 0 and/or if stationDates.length > 0
-
-    // capture prior data if needed
+    // capture last stationId/date combination if needed
     if (lastStationId != "") {
-        stationIdDatesNeedingUpdates.push(stationDates);
+        stationIdDatesToRetrieve.push(stationDates);
     }
 
+    // JTR TODO - what to do if stationIdDatesToRetrieve is empty; no updates required
+
+    // dump list of stationId/date(s) combinations to retrieve
+    //console.log(JSON.stringify(stationIdDatesToRetrieve, null, 4));
+    //console.log(JSON.stringify(stationIdDatesNeedingInserts, null, 4));
     //console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
 
-    getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, retrieveEpgDataStep4);
+    // at this point, there is a list of stationId/date(s) to retrieve from server as well as which to insert in the db vs. update in the db
+    getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, retrieveEpgDataStep4);
 }
 
 
@@ -227,11 +261,14 @@ function getStations(nextFunction) {
 }
 
 
+// get last modified data for provided stationId/date combinations
+// store result in scheduleModificationData; epg member variable
 function getSchedulesDirectScheduleModificationData(stationIds, dates, nextFunction) {
 
     console.log("getSchedulesDirectScheduleModificationData");
 
-    // same as in getSchedulesDirectProgramSchedules - make common?
+    // JTR TODO
+    // same as in getSchedulesDirectProgramSchedules - make common? is this still true?
     var postData = [];
 
     $.each(stationIds, function (index, stationId) {
@@ -261,7 +298,9 @@ function getSchedulesDirectScheduleModificationData(stationIds, dates, nextFunct
         headers: { "token": schedulesDirectToken }
     })
     .done(function (result) {
-        console.log("done in getSchedulesDirectScheduleModificationData");
+        console.log("successful return in getSchedulesDirectScheduleModificationData");
+
+        // dump schedule modification data results from server call
         //console.log(JSON.stringify(result, null, 4));
 
         scheduleModificationData = result;
@@ -279,13 +318,11 @@ function getSchedulesDirectScheduleModificationData(stationIds, dates, nextFunct
 }
 
 
-function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFunction) {
+function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, nextFunction) {
 
     console.log("getSchedulesDirectProgramSchedules");
 
-    var postDataStr = JSON.stringify(stationIdDatesNeedingUpdates);
-
-    //console.log(postDataStr);
+    var postDataStr = JSON.stringify(stationIdDatesToRetrieve);
 
     var url = "https://json.schedulesdirect.org/20141201/schedules";
 
@@ -298,28 +335,49 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
     })
     .done(function (result) {
         console.log("successful return from json.schedulesdirect.org/20141201/schedules");
+
+        // dump list of updated station/dates from server
         //console.log(JSON.stringify(result, null, 4));
 
-        var jtrStationSchedulesForSingleDay = [];
+        var jtrStationSchedulesForSingleDayToInsert = [];
+        var jtrStationSchedulesForSingleDayToUpdate = [];
 
         var jtrProgramsForStations = [];
         var jtrProgramIdsToRetrieve = {};
 
-        // to do - convert to $.each
+        // JTR TODO - convert to $.each
         for (index in result) {
             //console.log("index=" + index);
             var jtrStationScheduleForSingleDay = {};
             var stationScheduleForSingleDay = result[index];
+
+            // capture data unique to the station/date (independent of programs on for that station/date)
+            // this data will help determine when station/date data (programs) needs updating in the future
             jtrStationScheduleForSingleDay.stationId = stationScheduleForSingleDay.stationID;
             jtrStationScheduleForSingleDay.scheduleDate = stationScheduleForSingleDay.metadata.startDate;
             jtrStationScheduleForSingleDay.modifiedDate = stationScheduleForSingleDay.metadata.modified;
             jtrStationScheduleForSingleDay.md5 = stationScheduleForSingleDay.metadata.md5;
-            jtrStationSchedulesForSingleDay.push(jtrStationScheduleForSingleDay);
 
-            // to do - convert to $.each
-            console.log("stationScheduleForSingleDay.programs.length=" + stationScheduleForSingleDay.programs.length);
+            // for this stationDate, determine whether to perform update or insert
+            var key = jtrStationScheduleForSingleDay.stationId + "-" + jtrStationScheduleForSingleDay.scheduleDate;
+            if (key in stationIdDatesNeedingInserts) {
+                jtrStationSchedulesForSingleDayToInsert.push(jtrStationScheduleForSingleDay);
+            }
+            else if (key in stationIdDatesNeedingUpdates) {
+                jtrStationSchedulesForSingleDayToUpdate.push(jtrStationScheduleForSingleDay);
+            }
+            else {
+                console.log("WARNING!!!!!!!!!!!!!!!!!!!!!!!!!! - key not found in either insert or updates data structure");
+                // JTR TODO - just skip this record?
+                return;
+            }
+
+            // JTR TODO - convert to $.each
+            // capture all the programs for the station/date.
+            // this is supposedly only the program data relevant for this showing. a programId is provided to get the detailed program information
+            // common to all showings of the program
+            //console.log("stationScheduleForSingleDay.programs.length=" + stationScheduleForSingleDay.programs.length);
             for (programIndex in stationScheduleForSingleDay.programs) {
-                //console.log("programIndex=" + programIndex);
                 var program = stationScheduleForSingleDay.programs[programIndex];
                 var jtrProgramForStation = {};
                 jtrProgramForStation.stationId = jtrStationScheduleForSingleDay.stationId;
@@ -330,12 +388,17 @@ function getSchedulesDirectProgramSchedules(stationIdDatesNeedingUpdates, nextFu
                 jtrProgramForStation.md5 = program.md5;
                 jtrProgramsForStations.push(jtrProgramForStation);
 
+                // JTR TODO - is it necessary to retrieve all these programs or might some of the data already be stored and valid?
                 jtrProgramIdsToRetrieve[program.programID] = program.programID;
             }
         }
 
-        var jtrStationSchedulesForSingleDayStr = JSON.stringify(jtrStationSchedulesForSingleDay);
-        bsMessage.PostBSMessage({ command: "addDBStationSchedulesForSingleDay", "schedules": jtrStationSchedulesForSingleDayStr });
+        // insert / update the stationDate schedules in the db
+        var jtrStationSchedulesForSingleDayToInsertStr = JSON.stringify(jtrStationSchedulesForSingleDayToInsert);
+        var jtrStationSchedulesForSingleDayToUpdateStr = JSON.stringify(jtrStationSchedulesForSingleDayToUpdate);
+        bsMessage.PostBSMessage({ command: "addDBStationSchedulesForSingleDay", "schedulesToInsert": jtrStationSchedulesForSingleDayToInsertStr, "schedulesToUpdate": jtrStationSchedulesForSingleDayToUpdateStr });
+
+        return;
 
         //console.log(JSON.stringify(jtrProgramsForStations, null, 4));
 

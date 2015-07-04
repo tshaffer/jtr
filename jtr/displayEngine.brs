@@ -217,12 +217,21 @@ Sub de_HandleHttpEvent(event)
 				else if command$ = "backToTick" then
 					m.BackToTick(int(val(aa.offset)), int(val(aa.duration)), int(val(aa.minutesPerTick)), int(val(aa.numTicks)))
 				else if command$ = "addDBStationSchedulesForSingleDay" then
-					stationSchedulesForSingleDay = parseJSON(aa.schedules)
-					m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
-stop
-					for each stationScheduleForSingleDay in stationSchedulesForSingleDay
-						m.jtr.AddDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
-					next
+					stationSchedulesForSingleDayToInsert = parseJSON(aa.schedulesToInsert)
+					stationSchedulesForSingleDayToUpdate = parseJSON(aa.schedulesToUpdate)
+
+					if stationSchedulesForSingleDayToInsert.Count() > 0 then
+						m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDayToInsert)
+					endif
+
+					if stationSchedulesForSingleDayToUpdate.Count() > 0 then
+						m.jtr.UpdateDBStationSchedulesForSingleDay(stationSchedulesForSingleDayToUpdate)
+					endif
+
+'					m.jtr.AddDBStationSchedulesForSingleDay(stationSchedulesForSingleDay)
+'					for each stationScheduleForSingleDay in stationSchedulesForSingleDay
+'						m.jtr.AddDBStationScheduleForSingleDay(stationScheduleForSingleDay.stationId, stationScheduleForSingleDay.scheduleDate, stationScheduleForSingleDay.modifiedDate, stationScheduleForSingleDay.md5)
+'					next
 				else if command$ = "addDBProgramsForStations" then				
 					programsForStations = parseJSON(aa.programs)
 '					for each programForStation in programsForStations
