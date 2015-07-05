@@ -5,10 +5,13 @@ var numDaysEpgData = 2;
 var stations = [];
 var scheduleValidityByStationDate = {};     // schedule information for each station/date 
 var scheduleModificationData;
-var programIdsToRetrieve = [];
 
 var programsValidity = {};
 var jtrProgramsToRetrieve = {};
+
+var programIdsToRetrieve = [];
+var programIdsNeedingInserts = {};
+var programIdsNeedingUpdates = {};
 
 function retrieveEpgData() {
 
@@ -182,7 +185,7 @@ function retrieveEpgDataStep3() {
     }
 
 
-    // dump list of stationId/date(s) combinations to retrieve
+    // dump list of stationId/date(s) combinations to retrieve and then add/replace in db
     console.log(JSON.stringify(stationIdDatesToRetrieve, null, 4));
     console.log(JSON.stringify(stationIdDatesNeedingInserts, null, 4));
     console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
@@ -191,9 +194,6 @@ function retrieveEpgDataStep3() {
         console.log("All data up to date, return");
         return;
     }
-    console.log("Pending changes, time to write more code");
-    return;
-
     // at this point, there is a list of stationId/date(s) to retrieve from server as well as which to insert in the db vs. update in the db
     getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdDatesNeedingInserts, stationIdDatesNeedingUpdates, retrieveEpgDataStep4);
 }
@@ -477,7 +477,8 @@ function GetProgramsFromDB(nextFunction) {
 
         // dump programs retrieved from db
         //console.log(JSON.stringify(result, null, 4));
-        console.log("number of programs retrieved is " + result.programs.length);
+        console.log("number of programs in database is " + result.programs.length);
+        console.log("number of programs in out of date station/dates is " + Object.keys(programsValidity).length);
 
         // move these programs from the db into an associative array
         var programsInDB = {};
@@ -485,7 +486,11 @@ function GetProgramsFromDB(nextFunction) {
             programsInDB[program.ProgramId] = program;
         });
 
-        // for each program that needs to be retrieved, determine if it's an insert or update by comparing to data in db
+        // determine which programs need to be retrieved from SchedulesDirect and for each, determine if it's an insert or update in the db by comparing to existing data in db
+
+        var numMissing = 0;
+        var numObsolete = 0;
+        var numCurrent = 0;
         for (var programId in programsValidity) {
             if (programsValidity.hasOwnProperty(programId)) {
 
@@ -494,34 +499,46 @@ function GetProgramsFromDB(nextFunction) {
                 if (programId in programsInDB) {
                     var programInDB = programsInDB[programId];
                     if (programInDB.MD5 == programToRetrieve.md5) {
+
                         programToRetrieve.status = "dataCurrent";
+                        numCurrent++;
                     }
                     else {
+                        programIdsToRetrieve.push(programId);
+                        programIdsNeedingUpdates[programId] = programId;
+
                         programToRetrieve.status = "dataObsolete";
+                        numObsolete++;
                     }
                 }
-                //else {
-                //    programToRetrieve.status = "noData";
-                //}
+                else {
+                    programIdsToRetrieve.push(programId);
+                    programIdsNeedingInserts[programId] = programId;
+                    
+                    programToRetrieve.status = "noData";
+                    numMissing++;                    
+                }
             }
         }
 
         // dump updated programValidity
         //console.log(JSON.stringify(programsValidity, null, 4));
 
-        // currently, all programs are obsolete, so all should get inserted
-        programIdsToRetrieve = [];
-        for (var programId in jtrProgramsToRetrieve) {
-            if (jtrProgramsToRetrieve.hasOwnProperty(programId)) {
-                programIdsToRetrieve.push(programId);
-            }
-        }
+        console.log("number of programs current=" + numCurrent);
+        console.log("number of programs obsolete=" + numObsolete);
+        console.log("number of programs missing=" + numMissing);
 
         // dump ids of programs to retrieve from SchedulesDirect
-        //console.log(JSON.stringify(programIdsToRetrieve, null, 4));
+        console.log("programs to retrieve");
+        console.log(JSON.stringify(programIdsToRetrieve, null, 4));
+
+        // dump ids of programs to insert or update in the database
+        console.log("programs to update");
+        console.log(JSON.stringify(programIdsNeedingUpdates, null, 4));
+        console.log("programs to insert");
+        console.log(JSON.stringify(programIdsNeedingInserts, null, 4));
 
         getSchedulesDirectPrograms(nextFunction);
-
     })
     .fail(function () {
         alert("getPrograms failure");
@@ -558,7 +575,57 @@ function getSchedulesDirectPrograms(nextFunction) {
     })
     .done(function (result) {
         console.log("done in getSchedulesDirectPrograms");
+        // dump list of programs retrieved from SchedulesDirect
         //console.log(JSON.stringify(result, null, 4));
+
+        // determine which programs get added to db vs. which are already in db and need to get updated
+        var jtrProgramsToInsert = [];
+        var jtrProgramsToUpdate = [];
+
+        $.each(result, function (index, program) {
+
+            var jtrProgram = {};
+            jtrProgram.programId = program.programID;
+            jtrProgram.title = program.titles[0].title120;
+            jtrProgram.description = "";
+            if ("descriptions" in program) {
+                if ("description100" in program.descriptions) {
+                    jtrProgram.description = program.descriptions.description100[0].description;
+                }
+                else if ("description1000" in program.descriptions) {
+                    jtrProgram.description = program.descriptions.description1000[0].description;
+                }
+            }
+            jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
+            jtrProgram.episodeTitle = valueIfMetadataExists(program, "episodeTitle150");
+            jtrProgram.showType = valueIfMetadataExists(program, "showType");
+            jtrProgram.md5 = valueIfMetadataExists(program, "md5");
+
+            if (program.programID in programIdsNeedingInserts) {
+                jtrProgramsToInsert.push(jtrProgram);
+            }
+            else if (program.programID in programIdsNeedingUpdates) {
+                jtrProgramsToUpdate.push(jtrProgram);
+            }
+            else {
+                console.log("WARNING: retrieved program unaccounted for");
+                return;
+            }
+        });
+
+        // dump list of programs to insert / update in db
+        console.log("programs to insert");
+        console.log(JSON.stringify(jtrProgramsToInsert, null, 4));
+        console.log("programs to update");
+        console.log(JSON.stringify(jtrProgramsToUpdate, null, 4));
+
+        var jtrProgramsToInsertStr = JSON.stringify(jtrProgramsToInsert);
+        var jtrProgramsToUpdateStr = JSON.stringify(jtrProgramsToUpdate);
+        bsMessage.PostBSMessage({ command: "addDBPrograms", "programsToInsert": jtrProgramsToInsertStr, "programsToUpdate": jtrProgramsToUpdateStr });
+
+
+        console.log("Done for now");
+        return;
 
         var jtrPrograms = [];
         var jtrCastMembers = [];

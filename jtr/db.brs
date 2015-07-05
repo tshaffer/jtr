@@ -976,11 +976,6 @@ Function GetDBPrograms() As Object
 	select$ = "SELECT ProgramId, Title, Description, MD5 FROM Programs;"
 	m.ExecuteDBSelect(select$, GetDBProgramsCallback, selectData, invalid)
 
-	' JTR TODO - temporary
-	for each program in selectData.programs
-		program.MD5 = ""
-	next
-
 	return selectData.programs
 
 End Function
@@ -1001,6 +996,23 @@ Sub AddDBPrograms(programs)
 	dbColumnNames.push("MD5")
 
 	m.AddDBItems(programs, columnKeys, dbColumnNames, "Programs")
+
+End Sub
+
+
+Sub UpdateDBProgram(programId As String, title As String, description As String, md5 As String)
+
+	params = { pid_param: programId, t_param: title, d_param: description, md5_param: md5 }
+    m.db.RunBackground("UPDATE Programs SET Title=:t_param, Description=:d_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
+
+End Sub
+
+
+Sub UpdateDBPrograms(programs As Object)
+
+	for each program in programs
+		m.UpdateDBProgram(program.programId, program.title, program.description, program.md5)
+	next
 
 End Sub
 

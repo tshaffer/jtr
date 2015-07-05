@@ -238,9 +238,17 @@ Sub de_HandleHttpEvent(event)
 
 					m.jtr.AddDBProgramsForStation(stationDatesToReplace, programsForStations)
 
-				else if command$ = "addDBPrograms" then				
-					programs = parseJSON(aa.programs)
-					m.jtr.AddDBPrograms(programs)
+				else if command$ = "addDBPrograms" then	
+				
+					programsToInsert = parseJSON(aa.programsToInsert)
+					m.jtr.AddDBPrograms(programsToInsert)
+
+					programsToUpdate = parseJSON(aa.programsToUpdate)
+					m.jtr.UpdateDBPrograms(programsToUpdate)
+								
+					' programs = parseJSON(aa.programs)
+					' m.jtr.AddDBPrograms(programs)
+
 				else if command$ = "addDBProgramCast" then				
 					castMembers = parseJSON(aa.castMembers)
 					for each castMember in castMembers

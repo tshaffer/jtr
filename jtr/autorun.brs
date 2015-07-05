@@ -117,10 +117,11 @@ Function newJTR(msgPort As Object) As Object
 	JTR.DeleteDBProgramsForStation		= DeleteDBProgramsForStation
 	JTR.AddDBProgramsForStations		= AddDBProgramsForStations
 	JTR.GetDBPrograms					= GetDBPrograms
+	JTR.UpdateDBPrograms				= UpdateDBPrograms
+	JTR.UpdateDBProgram					= UpdateDBProgram
 
 	JTR.AddDBItems						= AddDBItems
 	JTR.GenerateSQLInsert				= GenerateSQLInsert
-
 
 	JTR.tsDeletable						= tsDeletable
 
