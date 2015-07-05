@@ -186,9 +186,9 @@ function retrieveEpgDataStep3() {
 
 
     // dump list of stationId/date(s) combinations to retrieve and then add/replace in db
-    console.log(JSON.stringify(stationIdDatesToRetrieve, null, 4));
-    console.log(JSON.stringify(stationIdDatesNeedingInserts, null, 4));
-    console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
+    //console.log(JSON.stringify(stationIdDatesToRetrieve, null, 4));
+    //console.log(JSON.stringify(stationIdDatesNeedingInserts, null, 4));
+    //console.log(JSON.stringify(stationIdDatesNeedingUpdates, null, 4));
 
     if (stationIdDatesToRetrieve.length == 0) {
         console.log("All data up to date, return");
@@ -202,8 +202,6 @@ function retrieveEpgDataStep3() {
 function retrieveEpgDataStep4() {
 
     GetProgramsFromDB(null);
-
-    //getSchedulesDirectPrograms(null);
 }
 
 function getSchedulesDirectToken(nextFunction) {
@@ -424,14 +422,6 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
         var jtrProgramsForStationsStr = JSON.stringify(jtrProgramsForStations);
         bsMessage.PostBSMessage({ command: "addDBProgramsForStations", "station_dates": jtrStationDatesToReplaceStr, "programs": jtrProgramsForStationsStr });
 
-        // generate an array containing the list of programs to retrieve (convert {} to []) - still necessary?
-        //programIdsToRetrieve = [];
-        //for (var programId in jtrProgramsToRetrieve) {
-        //    if (jtrProgramsToRetrieve.hasOwnProperty(programId)) {
-        //        programIdsToRetrieve.push(programId);
-        //    }
-        //}
-
         if (nextFunction != null) {
             nextFunction();
         }
@@ -529,14 +519,14 @@ function GetProgramsFromDB(nextFunction) {
         console.log("number of programs missing=" + numMissing);
 
         // dump ids of programs to retrieve from SchedulesDirect
-        console.log("programs to retrieve");
-        console.log(JSON.stringify(programIdsToRetrieve, null, 4));
+        //console.log("programs to retrieve");
+        //console.log(JSON.stringify(programIdsToRetrieve, null, 4));
 
         // dump ids of programs to insert or update in the database
-        console.log("programs to update");
-        console.log(JSON.stringify(programIdsNeedingUpdates, null, 4));
-        console.log("programs to insert");
-        console.log(JSON.stringify(programIdsNeedingInserts, null, 4));
+        //console.log("programs to update");
+        //console.log(JSON.stringify(programIdsNeedingUpdates, null, 4));
+        //console.log("programs to insert");
+        //console.log(JSON.stringify(programIdsNeedingInserts, null, 4));
 
         getSchedulesDirectPrograms(nextFunction);
     })
@@ -582,52 +572,6 @@ function getSchedulesDirectPrograms(nextFunction) {
         var jtrProgramsToInsert = [];
         var jtrProgramsToUpdate = [];
 
-        $.each(result, function (index, program) {
-
-            var jtrProgram = {};
-            jtrProgram.programId = program.programID;
-            jtrProgram.title = program.titles[0].title120;
-            jtrProgram.description = "";
-            if ("descriptions" in program) {
-                if ("description100" in program.descriptions) {
-                    jtrProgram.description = program.descriptions.description100[0].description;
-                }
-                else if ("description1000" in program.descriptions) {
-                    jtrProgram.description = program.descriptions.description1000[0].description;
-                }
-            }
-            jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
-            jtrProgram.episodeTitle = valueIfMetadataExists(program, "episodeTitle150");
-            jtrProgram.showType = valueIfMetadataExists(program, "showType");
-            jtrProgram.md5 = valueIfMetadataExists(program, "md5");
-
-            if (program.programID in programIdsNeedingInserts) {
-                jtrProgramsToInsert.push(jtrProgram);
-            }
-            else if (program.programID in programIdsNeedingUpdates) {
-                jtrProgramsToUpdate.push(jtrProgram);
-            }
-            else {
-                console.log("WARNING: retrieved program unaccounted for");
-                return;
-            }
-        });
-
-        // dump list of programs to insert / update in db
-        console.log("programs to insert");
-        console.log(JSON.stringify(jtrProgramsToInsert, null, 4));
-        console.log("programs to update");
-        console.log(JSON.stringify(jtrProgramsToUpdate, null, 4));
-
-        var jtrProgramsToInsertStr = JSON.stringify(jtrProgramsToInsert);
-        var jtrProgramsToUpdateStr = JSON.stringify(jtrProgramsToUpdate);
-        bsMessage.PostBSMessage({ command: "addDBPrograms", "programsToInsert": jtrProgramsToInsertStr, "programsToUpdate": jtrProgramsToUpdateStr });
-
-
-        console.log("Done for now");
-        return;
-
-        var jtrPrograms = [];
         var jtrCastMembers = [];
 
         $.each(result, function (index, program) {
@@ -644,13 +588,11 @@ function getSchedulesDirectPrograms(nextFunction) {
                     jtrProgram.description = program.descriptions.description1000[0].description;
                 }
             }
-
             jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
             jtrProgram.episodeTitle = valueIfMetadataExists(program, "episodeTitle150");
             jtrProgram.showType = valueIfMetadataExists(program, "showType");
             jtrProgram.md5 = valueIfMetadataExists(program, "md5");
 
-            jtrProgram.castMembers = [];
             if ("cast" in program) {
                 $.each(program.cast, function (castIndex, castItem) {
                     var castMember = {};
@@ -661,23 +603,37 @@ function getSchedulesDirectPrograms(nextFunction) {
                 });
             }
 
-            jtrPrograms.push(jtrProgram);
+            if (program.programID in programIdsNeedingInserts) {
+                jtrProgramsToInsert.push(jtrProgram);
+            }
+            else if (program.programID in programIdsNeedingUpdates) {
+                jtrProgramsToUpdate.push(jtrProgram);
+            }
+            else {
+                console.log("WARNING: retrieved program unaccounted for");
+                return;
+            }
         });
-        //console.log(JSON.stringify(jtrPrograms, null, 4));
-        //console.log(JSON.stringify(jtrCastMembers, null, 4));
 
-        var jtrProgramsStr = JSON.stringify(jtrPrograms);
-        bsMessage.PostBSMessage({ command: "addDBPrograms", "programs": jtrProgramsStr });
+        // dump list of programs to insert / update in db
+        //console.log("programs to insert");
+        //console.log(JSON.stringify(jtrProgramsToInsert, null, 4));
+        //console.log("programs to update");
+        //console.log(JSON.stringify(jtrProgramsToUpdate, null, 4));
 
-        console.log("All done for now");
-        return;
+        var jtrProgramsToInsertStr = JSON.stringify(jtrProgramsToInsert);
+        var jtrProgramsToUpdateStr = JSON.stringify(jtrProgramsToUpdate);
+        bsMessage.PostBSMessage({ command: "addDBPrograms", "programsToInsert": jtrProgramsToInsertStr, "programsToUpdate": jtrProgramsToUpdateStr });
 
+        // delete all cast records associated with programs getting updated; then add all cast member records
         var jtrCastMembersStr = JSON.stringify(jtrCastMembers);
-        bsMessage.PostBSMessage({ command: "addDBProgramCast", "castMembers": jtrCastMembersStr });
+        bsMessage.PostBSMessage({ command: "addDBProgramCast", "castMembers": jtrCastMembersStr, "programCastsToDelete": jtrProgramsToUpdateStr });
 
         if (nextFunction != null) {
             nextFunction();
         }
+
+        console.log("All DONE");
     })
     .fail(function () {
         alert("getSchedulesDirectPrograms failure");

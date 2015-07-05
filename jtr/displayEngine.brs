@@ -246,14 +246,14 @@ Sub de_HandleHttpEvent(event)
 					programsToUpdate = parseJSON(aa.programsToUpdate)
 					m.jtr.UpdateDBPrograms(programsToUpdate)
 								
-					' programs = parseJSON(aa.programs)
-					' m.jtr.AddDBPrograms(programs)
+				else if command$ = "addDBProgramCast" then
+						
+					programCastsToDelete = parseJSON(aa.programCastsToDelete)
+					programCasts = parseJSON(aa.castMembers)
 
-				else if command$ = "addDBProgramCast" then				
-					castMembers = parseJSON(aa.castMembers)
-					for each castMember in castMembers
-						m.jtr.AddDBCastMember(castMember.programId, castMember.name, castMember.billingOrder)
-					next
+					m.jtr.DeleteDBProgramCasts(programCastsToDelete)
+					m.jtr.AddDBCastMembers(programCasts)
+
 				else if command$ = "remoteCommand" then
 					if aa.remoteCommand = "pause" then
 						m.PausePlayback()

@@ -668,10 +668,6 @@ Sub AddDBCastMember(programId As String, name As String, billingOrder as String)
 End Sub
 
 
-Sub AddDBCastMembers(castMembers As Object)
-End Sub
-
-
 ' NOT IN USE
 Function SanitizeString(s$ As String) As String
 '	' = 39
@@ -925,6 +921,23 @@ Sub DeleteDBProgramsForStation(stationId As String, scheduleDate As String)
 End Sub
 
 
+Sub AddDBCastMembers(castMembers As Object)
+
+	columnKeys = []
+	columnKeys.push("programId")
+	columnKeys.push("name")
+	columnKeys.push("billingOrder")
+
+	dbColumnNames = []
+	dbColumnNames.push("ProgramId")
+	dbColumnNames.push("Name")
+	dbColumnNames.push("BillingOrder")
+
+	m.AddDBItems(castMembers, columnKeys, dbColumnNames, "ProgramCast")
+
+End Sub
+
+
 Sub AddDBProgramsForStations(programsForStations)
 
 	columnKeys = []
@@ -1017,4 +1030,42 @@ Sub UpdateDBPrograms(programs As Object)
 End Sub
 
 
+Sub DeleteDBProgramCast(programId As String)
+
+	SQLITE_COMPLETE = 100
+
+    params = { :pid_param: programId }
+
+	delete$ = "DELETE FROM ProgramCast WHERE ProgramId =:pid_param;"
+	
+	deleteStatement = m.db.CreateStatement(delete$)
+
+	if type(deleteStatement) <> "roSqliteStatement" then
+        print "DeleteStatement failure - "; delete$ : stop
+	endif
+
+	bindResult = deleteStatement.BindByName(params)
+
+	if not bindResult then
+        print "Bind failure - " : stop
+	endif
+
+	sqlResult = deleteStatement.Run()
+
+	if sqlResult <> SQLITE_COMPLETE
+        print "sqlResult <> SQLITE_COMPLETE"
+	endif
+
+	deleteStatement.Finalise()
+
+End Sub
+
+
+Sub DeleteDBProgramCasts(programs As Object)
+
+	for each program in programs
+		m.DeleteDBProgramCast(program.programId)
+	next
+
+End Sub
 
