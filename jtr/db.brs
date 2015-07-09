@@ -27,7 +27,7 @@ Sub OpenDatabase()
 
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
 
-		m.CreateDBTable("CREATE TABLE Stations (Atsc TEXT PRIMARY KEY, CommonName TEXT, Name TEXT, StationId TEXT, CallSign TEXT);")
+		m.CreateDBTable("CREATE TABLE Stations (StationId PRIMARY KEY TEXT, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
 		m.PopulateStationsTable()
 
 		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
@@ -534,16 +534,17 @@ Function tsDeletable(recordingId% As Integer) As Boolean
 End Function
 
 
-Sub AddDBStation(atsc As String, commonName As String, name as String, stationId as String, callSign As String)
+Sub AddDBStation(stationId As String, atscMajor As Integer, atscMinor As Integer, commonName As String, name as String, callSign As String)
 
-	insertSQL$ = "INSERT INTO Stations (Atsc, CommonName, Name, StationId, CallSign) VALUES(?,?,?,?,?);"
+	insertSQL$ = "INSERT INTO Stations (StationId, AtscMajor, AtscMinor, CommonName, Name, CallSign) VALUES(?,?,?,?,?,?);"
 
 	params = CreateObject("roArray", 5, false)
-	params[ 0 ] = atsc
-	params[ 1 ] = commonName
-	params[ 2 ] = name
-	params[ 3 ] = stationId
-	params[ 4 ] = callSign
+	params[ 0 ] = stationId
+	params[ 1 ] = atscMajor
+	params[ 2 ] = atscMinor
+	params[ 3 ] = commonName
+	params[ 4 ] = name
+	params[ 5 ] = callSign
 
 	m.ExecuteDBInsert(insertSQL$, params)
 
@@ -553,16 +554,16 @@ End Sub
 ' hard code for now
 Sub PopulateStationsTable()
 
-	m.AddDBStation("2.1", "KTVU", "KTVUDT (KTVU-DT)", "19571", "KTVUDT")
-	m.AddDBStation("4.1", "KRON", "KRONDT (KRON-DT)", "19573", "KRONDT")
-	m.AddDBStation("5.1", "KPIX", "KPIXDT (KPIX-DT)", "19572", "KPIXDT")
-	m.AddDBStation("7.1", "KGO", "KGODT (KGO-DT)", "19574", "KGODT")
-	m.AddDBStation("9.1", "KQED", "KQEDDT (KQED-DT)", "24344", "KQEDDT")
-	m.AddDBStation("9.2", "KQED-2", "KQEDDT2 (KQED-DT2)", "30507", "KQEDDT2")
-	m.AddDBStation("9.3", "KQED-3", "KQEDDT3 (KQED-DT3)", "35278", "KQEDDT3")
-	m.AddDBStation("11.1", "KNTV", "KNTVDT (KNTV-DT)", "21785", "KNTVDT")
-	m.AddDBStation("36.1", "KICU", "KICUDT (KICU-DT)", "21650", "KICUDT")
-	m.AddDBStation("44.1", "KBCW", "KBCWDT (KBCW-DT)", "19575", "KBCWDT")
+	m.AddDBStation("19571", 2, 1, "KTVU", "KTVUDT (KTVU-DT)", "KTVUDT")
+	m.AddDBStation("19573", 4, 1, "KRON", "KRONDT (KRON-DT)", "19573", "KRONDT")
+	m.AddDBStation("19572", 5, 1, "KPIX", "KPIXDT (KPIX-DT)", "19572", "KPIXDT")
+	m.AddDBStation("19574", 7, 1, "KGO", "KGODT (KGO-DT)", "19574", "KGODT")
+	m.AddDBStation("24344", 9, 1, "KQED", "KQEDDT (KQED-DT)", "24344", "KQEDDT")
+	m.AddDBStation("30507", 9, 2, "KQED-2", "KQEDDT2 (KQED-DT2)", "30507", "KQEDDT2")
+	m.AddDBStation("35278", 9, 3, "KQED-3", "KQEDDT3 (KQED-DT3)", "35278", "KQEDDT3")
+	m.AddDBStation("21785", 11, 1, "KNTV", "KNTVDT (KNTV-DT)", "21785", "KNTVDT")
+	m.AddDBStation("21650", 36, 1, "KICU", "KICUDT (KICU-DT)", "21650", "KICUDT")
+	m.AddDBStation("19575", 44, 1, "KBCW", "KBCWDT (KBCW-DT)", "19575", "KBCWDT")
 
 End Sub
 
@@ -1068,4 +1069,27 @@ Sub DeleteDBProgramCasts(programs As Object)
 	next
 
 End Sub
+
+
+Sub GetDBEpgDataCallback(resultsData As Object, selectData As Object)
+
+	selectData.epgData.push(resultsData)
+
+End Sub
+
+
+Function GetDBEpgData()
+
+	selectData = {}
+	selectData.epgData = []
+
+	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.AirDateTime, Programs.Description from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-05' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.StationId asc;"
+	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
+
+	stop
+
+	return selectData.epgData
+
+End Function
+
 

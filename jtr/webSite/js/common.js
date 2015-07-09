@@ -329,38 +329,24 @@ function updateSettings() {
 
 function initializeChannelGuide() {
 
-    //schedulesDirectToken = "2cfee6843a63122d4c363c1e60f8af49"; // as of 6/27 at 3:21 PM
-
-    getSchedulesDirectToken(retrieveEpgData);
-    //programIdsToRetrieve = [];
-    //programIdsToRetrieve.push("EP009311820138");
-    //programIdsToRetrieve.push("EP009311820139");
-    //programIdsToRetrieve.push("SH004410630000");
-    //programIdsToRetrieve.push("SH015633870000");
-    //getSchedulesDirectToken(getSchedulesDirectPrograms);
-
-    //retrieveEpgData();
-
-    //var token = "43c1aa7031d4b92f198a5d1d8e660961"; // as of 6/21 at 12:10 PM
-    //var token = "3bfee352aced350fa2b56e384caf94e3"; // as of 6/22 at 4:32 PM
-
-    //var programIds = [];
-    //programIds.push("SH000212230000");
-    //programIds.push("SH021831230000");
-    //getSchedulesDirectPrograms(token, programIds)
-
-    //getStations(token);
-
-    // get status of schedules direct server
-    //getSchedulesDirectStatus(token);
-
-    // get the headends for 94022
-    //getSchedulesDirectHeadends(token)
+    //getSchedulesDirectToken(retrieveEpgData);
 }
 
 
 function selectChannelGuide() {
 
+    // get epg from db
+    var url = baseURL + "getEpg";
+    $.get(url, {})
+        .done(function (result) {
+            consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
+        })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        debugger;
+        console.log("getEpg failure");
+    })
+    .always(function () {
+    });
 }
 
 

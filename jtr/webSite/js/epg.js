@@ -221,7 +221,7 @@ function getSchedulesDirectToken(nextFunction) {
     var url = "https://json.schedulesdirect.org/20141201/token";
 
     $.post(url, postDataStr, function (data) {
-        console.log("returned from selectChannelGuide post");
+        console.log("returned from token (get from schedules direct) post");
         console.log(JSON.stringify(data, null, 4));
         //console.log(retVal);
         //console.log(data);

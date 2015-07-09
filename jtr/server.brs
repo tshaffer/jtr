@@ -77,6 +77,10 @@ Sub InitializeServer()
 	m.setSettingsAA =					{ HandleEvent: setSettings, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/setSettings", user_data: m.setSettingsAA })
 				
+	' epg
+	m.getEpgAA =					{ HandleEvent: getEpg, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/getEpg", user_data: m.getEpgAA })
+				
 ' incorporation of site downloader code
     m.siteFilePostedAA = { HandleEvent: siteFilePosted, mVar: m }
     m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.siteFilePostedAA })
@@ -354,40 +358,7 @@ Sub getRecordings(userData as Object, e as Object)
 
 	mVar = userData.mvar
 
-	print "hijack getRecordings for channel guide testing"
-stop
-	url$ = "https://json.schedulesdirect.org/20141201/token"
-
-	mVar.epgUrl = CreateObject( "roUrlTransfer" )
-	mVar.epgUrl.SetTimeout( 30000 )
-	mVar.epgUrl.SetPort( mVar.msgPort )
-	mVar.epgUrl.SetUrl( url$ )
-
-	json = {}
-	json.username = "jtrDev"
-	json.password = "3bacdc30b9598fb498dfefc00b2f2ad52150eef4"
-	paramString$ = FormatJSON(json, 0)
-
-    'var parts = [];
-    'parts.push("lastSelectedShowId" + '=' + recordingId.toString());
-    'var paramString = parts.join('&');
-
-	aa = {}
-	aa.method = "POST"
-	aa.request_body_string = paramString$
-	aa.response_body_string = true
-
-	if not mVar.epgUrl.AsyncMethod( aa ) then
-		stop
-	endif
-
-	return
-
-stop
-
 	print "getRecordings endpoint invoked"
-
-    mVar = userData.mVar
 
 	response = {}
 
@@ -681,6 +652,22 @@ Sub setSettings(userData as Object, e as Object)
 
 	e.SetResponseBodyString("OK")
 	e.SendResponse(200)
+
+End Sub
+
+
+Sub getEpg(userData as Object, e as Object)
+
+	print "getEpg endpoint invoked"
+
+    mVar = userData.mVar
+
+	response = mVar.GetDBEpgData()
+	json = FormatJson(response, 0)
+
+    e.AddResponseHeader("Content-type", "text/json")
+    e.SetResponseBodyString(json)
+    e.SendResponse(200)
 
 End Sub
 

@@ -121,6 +121,7 @@ Function newJTR(msgPort As Object) As Object
 	JTR.UpdateDBProgram					= UpdateDBProgram
 	JTR.DeleteDBProgramCasts			= DeleteDBProgramCasts
 	JTR.DeleteDBProgramCast				= DeleteDBProgramCast
+	JTR.GetDBEpgData					= GetDBEpgData
 
 	JTR.AddDBItems						= AddDBItems
 	JTR.GenerateSQLInsert				= GenerateSQLInsert
