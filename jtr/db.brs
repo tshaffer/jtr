@@ -37,7 +37,7 @@ Sub OpenDatabase()
 		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
 		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
 	
-		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, Description TEXT, MD5 TEXT);")
+		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, Description TEXT, ShowType TEXT, MD5 TEXT);")
 
 		m.CreateDBTable("CREATE TABLE ProgramCast (ProgramId TEXT, Name TEXT, BillingOrder TEXT);")
 
@@ -1003,13 +1003,17 @@ Sub AddDBPrograms(programs)
 	columnKeys = []
 	columnKeys.push("programId")
 	columnKeys.push("title")
+	columnKeys.push("episodeTitle")
 	columnKeys.push("description")
+	columnKeys.push("showType")
 	columnKeys.push("md5")
 
 	dbColumnNames = []
 	dbColumnNames.push("ProgramId")
 	dbColumnNames.push("Title")
+	dbColumnNames.push("EpisodeTitle")
 	dbColumnNames.push("Description")
+	dbColumnNames.push("ShowType")
 	dbColumnNames.push("MD5")
 
 	m.AddDBItems(programs, columnKeys, dbColumnNames, "Programs")
@@ -1086,10 +1090,8 @@ Function GetDBEpgData()
 	selectData = {}
 	selectData.epgData = []
 
-	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, Programs.Description from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-05' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.StationId asc;"
+	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, Programs.EpisodeTitle, Programs.Description, Programs.ShowType from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-05' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
 	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
-
-	stop
 
 	return selectData.epgData
 
