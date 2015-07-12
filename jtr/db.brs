@@ -580,7 +580,8 @@ Function GetDBStations() As Object
 	selectData = {}
 	selectData.stations = []
 
-	select$ = "SELECT Atsc, CommonName, Name, StationId, CallSign FROM Stations;"
+	select$ = "SELECT StationId, AtscMajor, AtscMinor, CommonName, Name, CallSign FROM Stations;"
+
 	m.ExecuteDBSelect(select$, GetDBStationsCallback, selectData, invalid)
 
 	return selectData.stations
@@ -1083,7 +1084,7 @@ Function GetDBEpgData()
 	selectData = {}
 	selectData.epgData = []
 
-	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.AirDateTime, Programs.Description from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-05' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.StationId asc;"
+	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, Programs.Description from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-05' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.StationId asc;"
 	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
 
 	stop

@@ -335,6 +335,9 @@ function initializeChannelGuide() {
 
 function selectChannelGuide() {
 
+    getSchedulesDirectToken(retrieveEpgData);
+    return;
+
     // get epg from db
     var url = baseURL + "getEpg";
     $.get(url, {})
