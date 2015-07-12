@@ -1,6 +1,6 @@
 ﻿var schedulesDirectToken;
 
-var numDaysEpgData = 3;
+var numDaysEpgData = 1;
 
 var stations = [];
 var scheduleValidityByStationDate = {};     // schedule information for each station/date 
@@ -12,6 +12,13 @@ var jtrProgramsToRetrieve = {};
 var programIdsToRetrieve = [];
 var programIdsNeedingInserts = {};
 var programIdsNeedingUpdates = {};
+
+
+function initializeEpgData() {
+
+    getSchedulesDirectToken(retrieveEpgData);
+}
+
 
 function retrieveEpgData() {
 
@@ -360,6 +367,11 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
             var jtrStationScheduleForSingleDay = {};
             var stationScheduleForSingleDay = result[index];
 
+            // check to see whether or not there is valid data
+            if (typeof stationScheduleForSingleDay.code != 'undefined' && stationScheduleForSingleDay.code != 0) {
+                continue;
+            }
+
             // capture data unique to the station/date (independent of programs on for that station/date)
             // this data will help determine when station/date data (programs) needs updating in the future
             jtrStationScheduleForSingleDay.stationId = stationScheduleForSingleDay.stationID;
@@ -399,12 +411,12 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
                 jtrProgramForStation.scheduleDate = jtrStationScheduleForSingleDay.scheduleDate;
                 jtrProgramForStation.programId = program.programID;
                 jtrProgramForStation.airDateTime = program.airDateTime;
-                jtrProgramForStation.duration = program.duration;
+                jtrProgramForStation.duration = program.duration / 60;      // convert from seconds to minutes
                 jtrProgramForStation.md5 = program.md5;
                 jtrProgramsForStations.push(jtrProgramForStation);
 
                 // JTR TODO - is it necessary to retrieve all these programs or might some of the data already be stored and valid?
-                jtrProgramsToRetrieve[program.programID] = program;
+                jtrProgramsToRetrieve[program.programID] = program;     // note - the duration member is still in seconds - is that a problem?
             }
         }
 

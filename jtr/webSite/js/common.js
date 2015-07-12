@@ -327,12 +327,6 @@ function updateSettings() {
 }
 
 
-function initializeChannelGuide() {
-
-    //getSchedulesDirectToken(retrieveEpgData);
-}
-
-
 function selectChannelGuide() {
 
     getSchedulesDirectToken(retrieveEpgData);

@@ -27,10 +27,12 @@ Sub OpenDatabase()
 
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
 
-		m.CreateDBTable("CREATE TABLE Stations (StationId PRIMARY KEY TEXT, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
+'		m.CreateDBTable("CREATE TABLE Stations (StationId PRIMARY KEY TEXT, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
+		m.CreateDBTable("CREATE TABLE Stations (StationId, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
 		m.PopulateStationsTable()
 
-		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
+'		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
+		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT);")
 
 		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
 		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
@@ -555,15 +557,15 @@ End Sub
 Sub PopulateStationsTable()
 
 	m.AddDBStation("19571", 2, 1, "KTVU", "KTVUDT (KTVU-DT)", "KTVUDT")
-	m.AddDBStation("19573", 4, 1, "KRON", "KRONDT (KRON-DT)", "19573", "KRONDT")
-	m.AddDBStation("19572", 5, 1, "KPIX", "KPIXDT (KPIX-DT)", "19572", "KPIXDT")
-	m.AddDBStation("19574", 7, 1, "KGO", "KGODT (KGO-DT)", "19574", "KGODT")
-	m.AddDBStation("24344", 9, 1, "KQED", "KQEDDT (KQED-DT)", "24344", "KQEDDT")
-	m.AddDBStation("30507", 9, 2, "KQED-2", "KQEDDT2 (KQED-DT2)", "30507", "KQEDDT2")
-	m.AddDBStation("35278", 9, 3, "KQED-3", "KQEDDT3 (KQED-DT3)", "35278", "KQEDDT3")
-	m.AddDBStation("21785", 11, 1, "KNTV", "KNTVDT (KNTV-DT)", "21785", "KNTVDT")
-	m.AddDBStation("21650", 36, 1, "KICU", "KICUDT (KICU-DT)", "21650", "KICUDT")
-	m.AddDBStation("19575", 44, 1, "KBCW", "KBCWDT (KBCW-DT)", "19575", "KBCWDT")
+	m.AddDBStation("19573", 4, 1, "KRON", "KRONDT (KRON-DT)", "KRONDT")
+	m.AddDBStation("19572", 5, 1, "KPIX", "KPIXDT (KPIX-DT)", "KPIXDT")
+	m.AddDBStation("19574", 7, 1, "KGO", "KGODT (KGO-DT)", "KGODT")
+	m.AddDBStation("24344", 9, 1, "KQED", "KQEDDT (KQED-DT)", "KQEDDT")
+	m.AddDBStation("30507", 9, 2, "KQED-2", "KQEDDT2 (KQED-DT2)", "KQEDDT2")
+	m.AddDBStation("35278", 9, 3, "KQED-3", "KQEDDT3 (KQED-DT3)", "KQEDDT3")
+	m.AddDBStation("21785", 11, 1, "KNTV", "KNTVDT (KNTV-DT)", "KNTVDT")
+	m.AddDBStation("21650", 36, 1, "KICU", "KICUDT (KICU-DT)", "KICUDT")
+	m.AddDBStation("19575", 44, 1, "KBCW", "KBCWDT (KBCW-DT)", "KBCWDT")
 
 End Sub
 
