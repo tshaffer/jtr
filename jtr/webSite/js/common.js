@@ -329,6 +329,9 @@ function updateSettings() {
 
 function selectChannelGuide() {
 
+    switchToPage("channelGuidePage");
+    return;
+
     // get epg from db
     var url = baseURL + "getEpg";
     $.get(url, {})
@@ -351,6 +354,13 @@ function selectChannelGuide() {
                 var localDate = new Date(sdProgram.AirDateTime);
 
                 dateStr = localDate.getFullYear().toString() + "-" + twoDigitFormat((localDate.getMonth() + 1).toString()) + "-" + twoDigitFormat(localDate.getDate().toString());
+
+                var minutes = localDate.getMinutes();
+
+                if (minutes != 0 && minutes != 30) {
+                    debugger;
+                }
+
                 timeStr = twoDigitFormat(localDate.getHours().toString()) + ":" + twoDigitFormat(localDate.getMinutes().toString());
 
                 if (timeStr != lastTime) {
