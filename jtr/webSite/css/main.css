@@ -1,3 +1,36 @@
+.cgLine {
+    height: 36px;
+    width: 3000px;
+    background-color: coral;
+}
+
+.thirtyMinuteButton {
+display:inline-block;
+min-width: 50px;
+width: 120px;
+padding:5px 10px;
+font-size: 10px;
+height: 24px;
+border-width: 1px;
+}
+
+.sixtyMinuteButton {
+display:inline-block;
+min-width: 50px;
+width: 240px;
+padding:5px 10px;
+font-size: 10px;
+height: 24px;
+}
+
+.thirtyMinuteShow {
+  width: 300px;
+}
+
+.sixtyMinuteShow {
+    width: 600px;
+}
+
 #segmentRecordingsCheckBox {
     margin: 10px 0px 0px 0px;
 }

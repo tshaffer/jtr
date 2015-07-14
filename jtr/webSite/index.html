@@ -26,6 +26,42 @@
     <script src="./js/browser.js"></script>
     <script src="./js/brightSign.js"></script>
     <script src="./js/xml2json.js"></script>
+
+        <script>
+            function myFunction() {
+                var elmnt = document.getElementById("myDIV");
+                elmnt.scrollLeft += 120;
+                //elmnt.scrollTop += 10;
+            }
+
+            function scrollRight() {
+                var elmnt = document.getElementById("myDIV");
+                elmnt.scrollLeft -= 120;
+                //elmnt.scrollTop += 10;
+            }
+        </script>
+        
+    <style>
+        #myDIV {
+            height: 400px;
+            /*width: 500px;*/
+            width: 1200px;
+            overflow: hidden;
+        }
+
+        /*#line1 {
+            height: 36px;
+            width: 3000px;
+            background-color: coral;
+        }
+        #line2 {
+            height: 36px;
+            width: 3000px;
+            background-color: green;
+        }*/
+
+    </style>
+
   </head>
 
   <body>
@@ -235,6 +271,166 @@
 
         <div id="channelGuidePage" style="display: none;">
             <h3>Settings</h3>
+
+            <button onclick="myFunction()">Scroll left</button>
+            <span>&nbsp;</span>
+            <button onclick="scrollRight()">Scroll right</button><br><br>
+
+            <div id="myDIV">
+                <div id="line1" class="cgLine">
+                    <button class="thirtyMinuteButton">The Big Bang Theory</button><!--
+                    --><button class="thirtyMinuteButton">The Simpsons</button><!--
+                    --><button class="thirtyMinuteButton">Modern Family</button><!--
+                    --><button class="thirtyMinuteButton">Parks and Rec</button>
+                    <button class="thirtyMinuteButton">Show 5</button>
+                    <button class="thirtyMinuteButton">Show 6</button>
+                    <button class="thirtyMinuteButton">Show 7</button>
+                    <button class="thirtyMinuteButton">Show 8</button>
+                    <button class="thirtyMinuteButton">Show 9</button>
+                    <button class="thirtyMinuteButton">Show 10</button>
+                    <button class="thirtyMinuteButton">Show 11</button>
+                    <button class="thirtyMinuteButton">Show 12</button>
+                    <button class="thirtyMinuteButton">Show 13</button>
+                    <button class="thirtyMinuteButton">Show 14</button>
+                    <button class="thirtyMinuteButton">Show 15</button>
+                    <button class="thirtyMinuteButton">Show 16</button>
+                    <button class="thirtyMinuteButton">Show 17</button>
+                    <button class="thirtyMinuteButton">Show 18</button>
+                    <button class="thirtyMinuteButton">Show 19</button>
+                    <button class="thirtyMinuteButton">Show 20</button>
+                    <button class="thirtyMinuteButton">Show 21</button>
+                    <button class="thirtyMinuteButton">Show 22</button>
+                    <button class="thirtyMinuteButton">Show 23</button>
+                    <button class="thirtyMinuteButton">Show 24</button>
+                </div>
+                <div id="line2" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line3" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line4" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line5" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line6" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line7" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line8" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line9" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+                <div id="line10" class="cgLine">
+                    <button class="sixtyMinuteButton">Tour de France</button>
+                    <button class="sixtyMinuteButton">60 Minutes</button>
+                    <button class="sixtyMinuteButton">Boston Legal</button>
+                    <button class="sixtyMinuteButton">Masterpiece Mystery</button>
+                    <button class="sixtyMinuteButton">Wimbledon</button>
+                    <button class="sixtyMinuteButton">Hour 6</button>
+                    <button class="sixtyMinuteButton">Hour 7</button>
+                    <button class="sixtyMinuteButton">Hour 8</button>
+                    <button class="sixtyMinuteButton">Hour 9</button>
+                    <button class="sixtyMinuteButton">Hour 10</button>
+                    <button class="sixtyMinuteButton">Hour 11</button>
+                    <button class="sixtyMinuteButton">Hour 12</button>
+                </div>
+            </div>
+
         </div>
 
 
