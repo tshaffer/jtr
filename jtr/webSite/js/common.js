@@ -15,6 +15,8 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
+var epgProgramSchedule = {};
+
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
 }
@@ -329,14 +331,59 @@ function updateSettings() {
 
 function selectChannelGuide() {
 
-    switchToPage("channelGuidePage");
-    return;
+    //switchToPage("channelGuidePage");
+    //return;
+
+    epgProgramSchedule = {};
 
     // get epg from db
     var url = baseURL + "getEpg";
     $.get(url, {})
         .done(function (result) {
             consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
+
+            // for each station, generate an ordered list (by airDateTime) of all shows in the current epg data
+            $.each(result, function (index, sdProgram) {
+
+                // convert to local time zone
+                var localDate = new Date(sdProgram.AirDateTime);
+
+                var dateStr = localDate.getFullYear().toString() + "-" + twoDigitFormat((localDate.getMonth() + 1).toString()) + "-" + twoDigitFormat(localDate.getDate().toString());
+
+                var minutes = localDate.getMinutes();
+
+                //if (minutes != 0 && minutes != 30) {
+                //    debugger;
+                //}
+
+                var timeStr = twoDigitFormat(localDate.getHours().toString()) + ":" + twoDigitFormat(localDate.getMinutes().toString());
+
+                // create program
+                var program = {}
+                program.date = localDate;
+                //program.station = sdProgram.AtscMajor.toString() + "." + sdProgram.AtscMinor.toString();
+                program.title = sdProgram.Title;
+                program.duration = sdProgram.Duration;
+                program.episodeTitle = sdProgram.EpisodeTitle;
+                program.description = sdProgram.Description;
+                program.showType = sdProgram.ShowType;
+
+                // append to program list for  this station (create new record if necessary)
+                var stationId = sdProgram.StationId;
+                if (!(stationId in epgProgramSchedule)) {
+                    var programStationData = {};
+                    programStationData.station = sdProgram.AtscMajor.toString() + "." + sdProgram.AtscMinor.toString();
+                    programStationData.programList = [];
+                    epgProgramSchedule[stationId] = programStationData;
+                }
+
+                var programList = epgProgramSchedule[stationId].programList;
+                programList.push(program);
+            });
+
+            debugger;
+
+            return;
 
             var programsByDate = {};
             var programsOnDateByTimeOfDay = {};

@@ -1,8 +1,26 @@
 .cgLine {
-    height: 36px;
+    /*height: 36px;*/
+    height: 26px;
     width: 3000px;
     background-color: coral;
 }
+
+.timeLine {
+    height: 26px;
+    width: 3000px;
+    background-color: lightblue;
+}
+
+.thirtyMinuteTime {
+    border:solid;
+    width: 120px;
+    border-width: 1px;
+    padding:5px 10px;
+    font-size: 10px;
+    height: 24px;
+    display:inline-block;
+}
+
 
 .thirtyMinuteButton {
 display:inline-block;
