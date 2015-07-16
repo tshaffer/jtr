@@ -5,6 +5,16 @@
     background-color: coral;
 }
 
+.cgStationLine {
+    height: 26px;
+    width: 69px;
+    background-color: lightcyan;
+    font-size: 10px;
+    margin-bottom: 0px;
+    border:solid;
+    border-width: 1px;
+}
+
 .timeLine {
     height: 26px;
     width: 3000px;

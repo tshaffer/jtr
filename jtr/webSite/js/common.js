@@ -332,8 +332,8 @@ function updateSettings() {
 
 function selectChannelGuide() {
 
-    //switchToPage("channelGuidePage");
-    //return;
+    switchToPage("channelGuidePage");
+    return;
 
     epgProgramSchedule = {};
 
