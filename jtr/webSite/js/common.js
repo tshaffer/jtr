@@ -16,6 +16,7 @@ var currentActiveElementId = "#homePage";
 var recordedPageIds = [];
 
 var epgProgramSchedule = {};
+var epgProgramScheduleStartDateTime;
 
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
@@ -336,6 +337,9 @@ function selectChannelGuide() {
 
     epgProgramSchedule = {};
 
+    epgProgramScheduleStartDateTime = new Date();
+    epgProgramScheduleStartDateTime.setFullYear(2100, 0, 0);
+
     // get epg from db
     var url = baseURL + "getEpg";
     $.get(url, {})
@@ -347,6 +351,10 @@ function selectChannelGuide() {
 
                 // convert to local time zone
                 var localDate = new Date(sdProgram.AirDateTime);
+
+                if (localDate < epgProgramScheduleStartDateTime) {
+                    epgProgramScheduleStartDateTime = localDate;
+                }
 
                 var dateStr = localDate.getFullYear().toString() + "-" + twoDigitFormat((localDate.getMonth() + 1).toString()) + "-" + twoDigitFormat(localDate.getDate().toString());
 
@@ -370,6 +378,9 @@ function selectChannelGuide() {
 
                 // append to program list for  this station (create new record if necessary)
                 var stationId = sdProgram.StationId;
+                if (stationId == "undefined") {
+                    debugger;
+                }
                 if (!(stationId in epgProgramSchedule)) {
                     var programStationData = {};
                     programStationData.station = sdProgram.AtscMajor.toString() + "." + sdProgram.AtscMinor.toString();
@@ -381,7 +392,51 @@ function selectChannelGuide() {
                 programList.push(program);
             });
 
-            debugger;
+            // generate data for each time slot in the schedule - indicator of what the first program to display is at any given time slot
+            for (var stationId in epgProgramSchedule) {
+                if (epgProgramSchedule.hasOwnProperty(stationId)) {
+                    var programStationData = epgProgramSchedule[stationId];
+                    var programList = programStationData.programList;
+                    var programIndex = 0;
+
+                    var programSlots = [];
+
+                    var lastProgram = null;
+
+                    for (var slotIndex = 0; slotIndex < 24 * numDaysEpgData; slotIndex++) {
+
+                        var slotTimeOffsetSinceStartOfEpgData = slotIndex * 30;
+
+                        while (true) {
+
+                            var program = programList[programIndex];
+
+                            var programTimeOffsetSinceStartOfEPGData = (program.date - epgProgramScheduleStartDateTime) / 60000; // minutes
+
+                            if (programTimeOffsetSinceStartOfEPGData == slotTimeOffsetSinceStartOfEpgData) {
+                                // program starts at exactly this time slot
+                                programSlots.push(program);
+                                programIndex++;
+                                lastProgram = program;
+                                break;
+                            }
+                            else if (programTimeOffsetSinceStartOfEPGData > slotTimeOffsetSinceStartOfEpgData) {
+                                // program starts at sometime after the current time slot - find an earlier show
+                                programSlots.push(lastProgram);
+                                // leave program index as it is - wait for timeslot to catch up
+                                break;
+                            }
+                            else if (programTimeOffsetSinceStartOfEPGData < slotTimeOffsetSinceStartOfEpgData) {
+                                // program starts at sometime before the current time slot - look for the last show that starts before the current time slot (or == to the current time slot)
+                                programIndex++;
+                                lastProgram = program;
+                            }
+                        }
+                    }
+
+                    programStationData.initialShowsByTimeSlot = programSlots;
+                }
+            }
 
             return;
 
