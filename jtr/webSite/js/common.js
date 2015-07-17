@@ -330,6 +330,16 @@ function updateSettings() {
 }
 
 
+function refreshChannelGuide() {
+
+    $("#line10").empty();
+
+    var toAppend =
+        "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
+    $("#line10").append(toAppend);
+}
+
+
 function selectChannelGuide() {
 
     switchToPage("channelGuidePage");

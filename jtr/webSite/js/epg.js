@@ -16,7 +16,7 @@ var programIdsNeedingUpdates = {};
 
 function initializeEpgData() {
 
-    getSchedulesDirectToken(retrieveEpgData);
+    // getSchedulesDirectToken(retrieveEpgData);
 }
 
 
