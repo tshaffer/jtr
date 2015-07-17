@@ -15,7 +15,7 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
-var epgProgramSchedule = {};
+var epgProgramSchedule = null;
 var epgProgramScheduleStartDateTime;
 
 function addMinutes(date, minutes) {
@@ -340,19 +340,17 @@ function refreshChannelGuide() {
 }
 
 
-function selectChannelGuide() {
+function buildChannelGuideData() {
 
-    switchToPage("channelGuidePage");
-    return;
+    if (epgProgramSchedule == null) {
+        epgProgramSchedule = {};
 
-    epgProgramSchedule = {};
+        epgProgramScheduleStartDateTime = new Date();
+        epgProgramScheduleStartDateTime.setFullYear(2100, 0, 0);
 
-    epgProgramScheduleStartDateTime = new Date();
-    epgProgramScheduleStartDateTime.setFullYear(2100, 0, 0);
-
-    // get epg from db
-    var url = baseURL + "getEpg";
-    $.get(url, {})
+        // get epg from db
+        var url = baseURL + "getEpg";
+        $.get(url, {})
         .done(function (result) {
             consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
 
@@ -447,78 +445,21 @@ function selectChannelGuide() {
                     programStationData.initialShowsByTimeSlot = programSlots;
                 }
             }
-
-            return;
-
-            var programsByDate = {};
-            var programsOnDateByTimeOfDay = {};
-            var programsAtTimeOfDayByStation = {};
-
-            var dateStr = "";
-            var timeStr = "";
-
-            var lastDate = "";
-            var lastTime = "";
-
-            $.each(result, function (index, sdProgram) {
-
-                // convert to local time zone
-                var localDate = new Date(sdProgram.AirDateTime);
-
-                dateStr = localDate.getFullYear().toString() + "-" + twoDigitFormat((localDate.getMonth() + 1).toString()) + "-" + twoDigitFormat(localDate.getDate().toString());
-
-                var minutes = localDate.getMinutes();
-
-                if (minutes != 0 && minutes != 30) {
-                    debugger;
-                }
-
-                timeStr = twoDigitFormat(localDate.getHours().toString()) + ":" + twoDigitFormat(localDate.getMinutes().toString());
-
-                if (timeStr != lastTime) {
-                    // save the data
-                    if (lastTime != "") {
-                        programsOnDateByTimeOfDay[lastTime] = programsAtTimeOfDayByStation;
-                    }
-                    programsAtTimeOfDayByStation = {};
-                    lastTime = timeStr;
-                }
-
-                if (dateStr != lastDate) {
-                    // save the data
-                    if (lastDate != "") {
-                        programsByDate[lastDate] = programsOnDateByTimeOfDay;
-                    }
-                    programsOnDateByTimeOfDay = {};
-                    lastDate = dateStr;
-                }
-
-                // create program
-                var program = {}
-                program.date = localDate;
-                program.station = sdProgram.AtscMajor.toString() + "." + sdProgram.AtscMinor.toString();
-                program.title = sdProgram.Title;
-                program.duration = sdProgram.Duration;
-                program.episodeTitle = sdProgram.EpisodeTitle;
-                program.description = sdProgram.Description;
-                program.showType = sdProgram.ShowType;
-
-                // add program to data structure containing all programs for this time of day (by station)
-                // JTRTODO - array instead of associative array?
-                programsAtTimeOfDayByStation[sdProgram.StationId] = program;
-
-            });
-
-            programsOnDateByTimeOfDay[lastTime] = programsAtTimeOfDayByStation;
-            programsByDate[lastDate] = programsOnDateByTimeOfDay;
-
         })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        debugger;
-        console.log("getEpg failure");
-    })
-    .always(function () {
-    });
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("getEpg failure");
+        })
+        .always(function () {
+        });
+    }
+}
+
+function selectChannelGuide() {
+
+    buildChannelGuideData();
+
+    switchToPage("channelGuidePage");
 }
 
 
