@@ -338,90 +338,83 @@ function refreshChannelGuide() {
     // display channel guide one station at a time, from current time for the duration of the channel guide
     getStations(buildChannelGuideWithStations);
 
-    $("#line10").empty();
+    //$("#line10").empty();
 
-    var toAppend =
-        "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
-    $("#line10").append(toAppend);
+    //var toAppend =
+    //    "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
+    //$("#line10").append(toAppend);
 }
 
 
 function buildChannelGuideWithStations() {
 
     // JTRTODO set constants - some temporary
-    numHoursOfSlots = 6;
+    var hoursToDisplayPerLine = 6;
+    var minutesToDisplayPerLine = hoursToDisplayPerLine * 60;
 
+    // start date/time for channel guide display is current time, rounded down to nearest 30 minutes
     var currentDate = new Date();
-    var minutes = currentDate.getMinutes();
-    var hours = currentDate.getHours();
-
-    // calculate start time
-
-    // round down to nearest 30 minute boundary
-    var startMinute = (parseInt(minutes / 30) * 30) % 60;
-    var startHour = hours;
+    var startMinute = (parseInt(currentDate.getMinutes() / 30) * 30) % 60;
+    var startHour = currentDate.getHours();
     var displayChannelGuideStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
+
+    // get start date/time of data structure containing channel guide data
     var channelGuideDataStructureStartDate = epgProgramScheduleStartDateTime;
 
-    // determine offset from start time (in msec)
+    // time delta between start of channel guide display and start of channel guide data
     var timeDiffInMsec = displayChannelGuideStartDate - channelGuideDataStructureStartDate;
-
     var timeDiffInSeconds = timeDiffInMsec / 1000;
     var timeDiffInMinutes = timeDiffInSeconds / 60;
-    var channelGuideStartOffsetIndex = parseInt(timeDiffInMinutes / 30);
 
-    var currentChannelGuideOffsetIndex = channelGuideStartOffsetIndex;
+    // index into data structure containing show to display based on time offset into channel guide data
+    var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
 
-    debugger;
-
-    // list of stations is in variable 'stations'
     $.each(stations, function (stationIndex, station) {
 
-        // build line of channel guide data for this station
+        // channel guide data for this station
         var programStationData = epgProgramSchedule[station.StationId]
 
         // iterate through initialShowsByTimeSlot to get programs to display
         var programSlots = programStationData.initialShowsByTimeSlot;
         var programList = programStationData.programList;
 
-        var cgProgramLineName = "#cgProgramLine" + stationIndex.toString();
+        var cgProgramLineName = "#cgStation" + stationIndex.toString() + "Data";
 
-
-        // this should be an index into all of the programs for the station
+        // JTRTODO - clean me up immediately
         var showToDisplay = programSlots[currentChannelGuideOffsetIndex];
+        var indexIntoProgramList = showToDisplay.indexIntoProgramList;
 
-        var cssClass = "";
-        var widthSpec = "";
-        var durationInMinutes = Number(showToDisplay.duration);
-        if (durationInMinutes == 30) {
-            cssClass = "'thirtyMinuteButton'";
-            
+        var minutesAlreadyDisplayed = 0;
+        $(cgProgramLineName).empty();
+
+        // first show to display for this station
+        showToDisplay = programList[indexIntoProgramList];
+
+        var toAppend = "";
+        while (minutesAlreadyDisplayed < minutesToDisplayPerLine) {
+
+            var cssClass = "";
+            var widthSpec = "";
+            var durationInMinutes = Number(showToDisplay.duration);
+            if (durationInMinutes == 30) {
+                cssClass = "'thirtyMinuteButton'";
+            }
+            else if (durationInMinutes == 60) {
+                cssClass = "'sixtyMinuteButton'";
+            }
+            else {
+                cssClass = "'variableButton'";
+                var width = (durationInMinutes / 60) * 240;
+                widthSpec = " style='width:" + width.toString() + "px'";
+            }
+            toAppend +=
+                "<button class=" + cssClass + widthSpec + ">" + showToDisplay.title + "</button>";
+
+            minutesAlreadyDisplayed += durationInMinutes;
+            indexIntoProgramList++;
+            showToDisplay = programList[indexIntoProgramList];
         }
-        else if (durationInMinutes == 60) {
-            cssClass = "'sixtyMinuteButton'";
-        }
-        else {
-            cssClass = "'variableButton'";
-            var width = (durationInMinutes / 60) * 240;
-            widthSpec = " style='width:" + width.toString() + "px'";
-        }
-        var toAppend =
-            "<button class=" + cssClass + widthSpec + ">" + showToDisplay.title + "</button>";
-        // "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
-
-        $("#line10").empty();
-        $("#line10").append(toAppend);
-
-        // really wanted to have index into 
-
-        // moving forward
-        //      show starts at showToDisplay.date (or new Date(showToDisplay.date))
-        //      add duration
-        //      get time for next show
-
-        // finishing condition
-        //      new time >= end time
-
+        $(cgProgramLineName).append(toAppend);
     });
 }
 
