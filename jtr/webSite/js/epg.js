@@ -16,7 +16,7 @@ var programIdsNeedingUpdates = {};
 
 function initializeEpgData() {
 
-    // getSchedulesDirectToken(retrieveEpgData);
+     //getSchedulesDirectToken(retrieveEpgData);
 }
 
 
@@ -270,7 +270,7 @@ function getStations(nextFunction) {
         alert("getStations failure");
     })
     .always(function () {
-        alert("getStations complete");
+        //alert("getStations complete");
     });
 }
 

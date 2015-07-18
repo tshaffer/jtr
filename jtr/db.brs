@@ -1090,7 +1090,7 @@ Function GetDBEpgData()
 	selectData = {}
 	selectData.epgData = []
 
-	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, Programs.EpisodeTitle, Programs.Description, Programs.ShowType from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-05' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
+	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, Programs.EpisodeTitle, Programs.Description, Programs.ShowType from ProgramsForStations, Programs, Stations where ScheduleDate >= '2015-07-18' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
 	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
 
 	return selectData.epgData

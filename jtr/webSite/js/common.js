@@ -332,11 +332,97 @@ function updateSettings() {
 
 function refreshChannelGuide() {
 
+    // get current date/time - display channel guide data starting at current date/time
+    var currentDate = new Date();
+
+    // display channel guide one station at a time, from current time for the duration of the channel guide
+    getStations(buildChannelGuideWithStations);
+
     $("#line10").empty();
 
     var toAppend =
         "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
     $("#line10").append(toAppend);
+}
+
+
+function buildChannelGuideWithStations() {
+
+    // JTRTODO set constants - some temporary
+    numHoursOfSlots = 6;
+
+    var currentDate = new Date();
+    var minutes = currentDate.getMinutes();
+    var hours = currentDate.getHours();
+
+    // calculate start time
+
+    // round down to nearest 30 minute boundary
+    var startMinute = (parseInt(minutes / 30) * 30) % 60;
+    var startHour = hours;
+    var displayChannelGuideStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
+    var channelGuideDataStructureStartDate = epgProgramScheduleStartDateTime;
+
+    // determine offset from start time (in msec)
+    var timeDiffInMsec = displayChannelGuideStartDate - channelGuideDataStructureStartDate;
+
+    var timeDiffInSeconds = timeDiffInMsec / 1000;
+    var timeDiffInMinutes = timeDiffInSeconds / 60;
+    var channelGuideStartOffsetIndex = parseInt(timeDiffInMinutes / 30);
+
+    var currentChannelGuideOffsetIndex = channelGuideStartOffsetIndex;
+
+    debugger;
+
+    // list of stations is in variable 'stations'
+    $.each(stations, function (stationIndex, station) {
+
+        // build line of channel guide data for this station
+        var programStationData = epgProgramSchedule[station.StationId]
+
+        // iterate through initialShowsByTimeSlot to get programs to display
+        var programSlots = programStationData.initialShowsByTimeSlot;
+        var programList = programStationData.programList;
+
+        var cgProgramLineName = "#cgProgramLine" + stationIndex.toString();
+
+
+        // this should be an index into all of the programs for the station
+        var showToDisplay = programSlots[currentChannelGuideOffsetIndex];
+
+        var cssClass = "";
+        var widthSpec = "";
+        var durationInMinutes = Number(showToDisplay.duration);
+        if (durationInMinutes == 30) {
+            cssClass = "'thirtyMinuteButton'";
+            
+        }
+        else if (durationInMinutes == 60) {
+            cssClass = "'sixtyMinuteButton'";
+        }
+        else {
+            cssClass = "'variableButton'";
+            var width = (durationInMinutes / 60) * 240;
+            widthSpec = " style='width:" + width.toString() + "px'";
+        }
+        var toAppend =
+            "<button class=" + cssClass + widthSpec + ">" + showToDisplay.title + "</button>";
+        // "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
+
+        $("#line10").empty();
+        $("#line10").append(toAppend);
+
+        // really wanted to have index into 
+
+        // moving forward
+        //      show starts at showToDisplay.date (or new Date(showToDisplay.date))
+        //      add duration
+        //      get time for next show
+
+        // finishing condition
+        //      new time >= end time
+
+    });
 }
 
 
@@ -401,7 +487,8 @@ function buildChannelGuideData() {
             });
 
             // generate data for each time slot in the schedule - indicator of what the first program to display is at any given time slot
-            for (var stationId in epgProgramSchedule) {
+            for (var stationId in epgProgramSchedule)
+            {
                 if (epgProgramSchedule.hasOwnProperty(stationId)) {
                     var programStationData = epgProgramSchedule[stationId];
                     var programList = programStationData.programList;
@@ -423,6 +510,7 @@ function buildChannelGuideData() {
 
                             if (programTimeOffsetSinceStartOfEPGData == slotTimeOffsetSinceStartOfEpgData) {
                                 // program starts at exactly this time slot
+                                program.indexIntoProgramList = programIndex;
                                 programSlots.push(program);
                                 programIndex++;
                                 lastProgram = program;
@@ -430,6 +518,9 @@ function buildChannelGuideData() {
                             }
                             else if (programTimeOffsetSinceStartOfEPGData > slotTimeOffsetSinceStartOfEpgData) {
                                 // program starts at sometime after the current time slot - find an earlier show
+                                if (lastProgram != null) {
+                                    lastProgram.indexIntoProgramList = programIndex - 1;
+                                }
                                 programSlots.push(lastProgram);
                                 // leave program index as it is - wait for timeslot to catch up
                                 break;
@@ -445,6 +536,10 @@ function buildChannelGuideData() {
                     programStationData.initialShowsByTimeSlot = programSlots;
                 }
             }
+
+            switchToPage("channelGuidePage");
+            refreshChannelGuide();
+
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
@@ -453,13 +548,15 @@ function buildChannelGuideData() {
         .always(function () {
         });
     }
+    else {
+        switchToPage("channelGuidePage");
+        refreshChannelGuide();
+    }
 }
 
 function selectChannelGuide() {
 
     buildChannelGuideData();
-
-    switchToPage("channelGuidePage");
 }
 
 
