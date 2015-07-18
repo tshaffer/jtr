@@ -361,6 +361,48 @@ function buildChannelGuideWithStations() {
     // get start date/time of data structure containing channel guide data
     var channelGuideDataStructureStartDate = epgProgramScheduleStartDateTime;
 
+    // show day/date
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+    $("#cgDayDate").text(weekday[displayChannelGuideStartDate.getDay()]  + " " + (displayChannelGuideStartDate.getMonth() + 1).toString() + "/" + displayChannelGuideStartDate.getDate().toString());
+
+    // build timeline
+    var toAppend = "";
+    $("#cgTimeLine").empty();
+    var timeLineCurrentValue = displayChannelGuideStartDate;
+    for (i = 0; i < (hoursToDisplayPerLine * 2) - 1; i++) {
+
+        var hoursLbl = "";
+        var amPm = " am";
+        var hours = timeLineCurrentValue.getHours();
+        if (hours == 0) {
+            hoursLbl = "12";
+        }
+        else if (hours < 12) {
+            hoursLbl = hours.toString();
+        }
+        else if (hours >= 12) {
+            hoursLbl = "12";
+            amPm = "pm";
+        }
+        else {
+            hoursLbl = (hours - 12).toString();
+        }
+
+        var minutesLbl = twoDigitFormat(timeLineCurrentValue.getMinutes().toString());
+
+        var timeLabel = hoursLbl + ":" + minutesLbl + amPm;
+        toAppend += "<span class='thirtyMinuteTime'>" + timeLabel + "</span>";
+        timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
+    }
+    $("#cgTimeLine").append(toAppend);
+
     // time delta between start of channel guide display and start of channel guide data
     var timeDiffInMsec = displayChannelGuideStartDate - channelGuideDataStructureStartDate;
     var timeDiffInSeconds = timeDiffInMsec / 1000;
