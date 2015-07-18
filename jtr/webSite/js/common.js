@@ -361,7 +361,7 @@ function buildChannelGuideWithStations() {
     // get start date/time of data structure containing channel guide data
     var channelGuideDataStructureStartDate = epgProgramScheduleStartDateTime;
 
-    // show day/date
+    // display day/date
     var weekday = new Array(7);
     weekday[0] = "Sun";
     weekday[1] = "Mon";
@@ -372,7 +372,7 @@ function buildChannelGuideWithStations() {
     weekday[6] = "Sat";
     $("#cgDayDate").text(weekday[displayChannelGuideStartDate.getDay()]  + " " + (displayChannelGuideStartDate.getMonth() + 1).toString() + "/" + displayChannelGuideStartDate.getDate().toString());
 
-    // build timeline
+    // display timeline
     var toAppend = "";
     $("#cgTimeLine").empty();
     var timeLineCurrentValue = displayChannelGuideStartDate;
@@ -432,12 +432,22 @@ function buildChannelGuideWithStations() {
         // first show to display for this station
         showToDisplay = programList[indexIntoProgramList];
 
+        // calculate the time delta between the time of the channel guide display start and the start of the first show to display
+        timeDiffInMsec = displayChannelGuideStartDate - new Date(showToDisplay.date);
+        var timeDiffInSeconds = timeDiffInMsec / 1000;
+        var timeDiffInMinutes = timeDiffInSeconds / 60;
+        // subtract this from the first show
+
         var toAppend = "";
         while (minutesAlreadyDisplayed < minutesToDisplayPerLine) {
 
+            var durationInMinutes = Number(showToDisplay.duration);
+            if (toAppend == "") {
+                durationInMinutes -= timeDiffInMinutes;
+            }
+
             var cssClass = "";
             var widthSpec = "";
-            var durationInMinutes = Number(showToDisplay.duration);
             if (durationInMinutes == 30) {
                 cssClass = "'thirtyMinuteButton'";
             }
