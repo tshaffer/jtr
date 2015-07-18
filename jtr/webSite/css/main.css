@@ -40,6 +40,7 @@ height: 24px;
     margin-bottom: 0px;
     border:solid;
     border-width: 1px;
+    text-align: center;
 }
 
 .timeLine {
@@ -56,6 +57,7 @@ height: 24px;
     font-size: 10px;
     height: 24px;
     display:inline-block;
+    text-align: center;
 }
 
 

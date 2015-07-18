@@ -387,18 +387,20 @@ function buildChannelGuideWithStations() {
         else if (hours < 12) {
             hoursLbl = hours.toString();
         }
-        else if (hours >= 12) {
+        else if (hours == 12) {
             hoursLbl = "12";
             amPm = "pm";
         }
         else {
             hoursLbl = (hours - 12).toString();
+            amPm = "pm";
         }
 
         var minutesLbl = twoDigitFormat(timeLineCurrentValue.getMinutes().toString());
 
         var timeLabel = hoursLbl + ":" + minutesLbl + amPm;
         toAppend += "<span class='thirtyMinuteTime'>" + timeLabel + "</span>";
+
         timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
     }
     $("#cgTimeLine").append(toAppend);
@@ -417,16 +419,14 @@ function buildChannelGuideWithStations() {
         var programStationData = epgProgramSchedule[station.StationId]
 
         // iterate through initialShowsByTimeSlot to get programs to display
-        var programSlots = programStationData.initialShowsByTimeSlot;
+        var programSlotIndices = programStationData.initialShowsByTimeSlot;
         var programList = programStationData.programList;
 
-        var cgProgramLineName = "#cgStation" + stationIndex.toString() + "Data";
-
-        // JTRTODO - clean me up immediately
-        var showToDisplay = programSlots[currentChannelGuideOffsetIndex];
-        var indexIntoProgramList = showToDisplay.indexIntoProgramList;
+        var indexIntoProgramList = programSlotIndices[currentChannelGuideOffsetIndex];
 
         var minutesAlreadyDisplayed = 0;
+
+        var cgProgramLineName = "#cgStation" + stationIndex.toString() + "Data";
         $(cgProgramLineName).empty();
 
         // first show to display for this station
@@ -539,7 +539,7 @@ function buildChannelGuideData() {
                     var programList = programStationData.programList;
                     var programIndex = 0;
 
-                    var programSlots = [];
+                    var programSlotIndices = [];
 
                     var lastProgram = null;
 
@@ -555,8 +555,7 @@ function buildChannelGuideData() {
 
                             if (programTimeOffsetSinceStartOfEPGData == slotTimeOffsetSinceStartOfEpgData) {
                                 // program starts at exactly this time slot
-                                program.indexIntoProgramList = programIndex;
-                                programSlots.push(program);
+                                programSlotIndices.push(programIndex);
                                 programIndex++;
                                 lastProgram = program;
                                 break;
@@ -566,7 +565,7 @@ function buildChannelGuideData() {
                                 if (lastProgram != null) {
                                     lastProgram.indexIntoProgramList = programIndex - 1;
                                 }
-                                programSlots.push(lastProgram);
+                                programSlotIndices.push(programIndex - 1);
                                 // leave program index as it is - wait for timeslot to catch up
                                 break;
                             }
@@ -578,7 +577,7 @@ function buildChannelGuideData() {
                         }
                     }
 
-                    programStationData.initialShowsByTimeSlot = programSlots;
+                    programStationData.initialShowsByTimeSlot = programSlotIndices;
                 }
             }
 
