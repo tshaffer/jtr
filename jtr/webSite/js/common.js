@@ -337,12 +337,6 @@ function refreshChannelGuide() {
 
     // display channel guide one station at a time, from current time for the duration of the channel guide
     getStations(buildChannelGuideWithStations);
-
-    //$("#line10").empty();
-
-    //var toAppend =
-    //    "<button class='sixtyMinuteButton'>Pizza</button><button class='variableButton' style='width:180px'>60 Minutes</button><button class='sixtyMinuteButton'>Boston Legal</button><button class='sixtyMinuteButton'>Masterpiece Mystery</button><button class='sixtyMinuteButton'>Wimbledon</button><button class='sixtyMinuteButton'>Hour 6</button>";
-    //$("#line10").append(toAppend);
 }
 
 
@@ -459,17 +453,83 @@ function buildChannelGuideWithStations() {
                 var width = (durationInMinutes / 60) * 240;
                 widthSpec = " style='width:" + width.toString() + "px'";
             }
+            var id = "show-" + station.StationId + "-" + indexIntoProgramList.toString();
             toAppend +=
-                "<button class=" + cssClass + widthSpec + ">" + showToDisplay.title + "</button>";
+                "<button id='" + id + "' class=" + cssClass + widthSpec + ">" + showToDisplay.title + "</button>";
 
             minutesAlreadyDisplayed += durationInMinutes;
             indexIntoProgramList++;
             showToDisplay = programList[indexIntoProgramList];
         }
         $(cgProgramLineName).append(toAppend);
+
+        // setup handlers on children - use for testing on Chrome
+        var buttonsInCGLine = $(cgProgramLineName).children();
+        $.each(buttonsInCGLine, function (buttonIndex, buttonInCGLine) {
+            $(buttonInCGLine).click({ }, navigateButtonTest);
+        });
+
     });
 }
 
+
+function navigateButtonTest() {
+    // 'this' is the button that was pressed
+    console.log("pressed button");
+    navigateChannelGuide(this, "right");
+}
+
+
+// get the index of the button in a row / div
+function getActiveButtonIndex(activeButton, buttonsInRow) {
+
+    var positionOfActiveElement = $(activeButton).position();
+
+    var indexOfActiveButton = -1;
+    $.each(buttonsInRow, function (buttonIndex, buttonInRow) {
+        var buttonPosition = $(buttonInRow).position();
+        if (buttonPosition.left == positionOfActiveElement.left) {
+            indexOfActiveButton = buttonIndex;
+            return false;
+        }
+    });
+    return indexOfActiveButton;
+}
+
+function updateActiveButton(activeButton, newActiveButton) {
+
+    $(activeButton).removeClass("btn-primary");
+    $(activeButton).addClass("btn-secondary");
+
+    $(newActiveButton).removeClass("btn-secondary");
+    $(newActiveButton).addClass("btn-primary");
+
+    $(newActiveButton).focus();
+}
+
+function navigateChannelGuide(activeButton, direction) {
+    // get div for current active button
+    var parentDivOfActiveElement = activeButton.parentElement;
+    var buttonsInRow = $(parentDivOfActiveElement).children();
+    var positionOfActiveElement = $(activeButton).position();      // returns top, left in object
+
+    var indexOfActiveButton = getActiveButtonIndex(activeButton, buttonsInRow);
+    if (indexOfActiveButton >= 0) {
+        if (direction == "right") {
+            var indexOfNewButton = indexOfActiveButton + 1;
+            if (indexOfNewButton < $(buttonsInRow).length) {
+                var newActiveButton = $(buttonsInRow)[indexOfNewButton];
+                updateActiveButton(activeButton, newActiveButton);
+            }
+        }
+        else if (direction == "left") {
+        }
+        else if (direction == "up") {
+        }
+        else if (direction == "down") {
+        }
+    }
+}
 
 function buildChannelGuideData() {
 
