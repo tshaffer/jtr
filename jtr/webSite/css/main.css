@@ -1,5 +1,5 @@
 #myDIV {
-height: 400px;
+/*height: 400px;*/
 width: 1200px;
 overflow: hidden;
 float:left;
@@ -180,8 +180,16 @@ body {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
+    max-width: 1400px;
   }
 }
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1500px;
+  }
+}
+
 .container-narrow > hr {
   margin: 30px 0;
 }
