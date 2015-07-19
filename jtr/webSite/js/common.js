@@ -479,9 +479,16 @@ function buildChannelGuideData() {
         epgProgramScheduleStartDateTime = new Date();
         epgProgramScheduleStartDateTime.setFullYear(2100, 0, 0);
 
+        var startDate = new Date();
+        var year = startDate.getFullYear().toString();
+        var month = (startDate.getMonth() + 1).toString();
+        var dayInMonth = startDate.getDate().toString();
+        var epgStartDate = year + "-" + twoDigitFormat(month) + "-" + twoDigitFormat(dayInMonth);
+
         // get epg from db
         var url = baseURL + "getEpg";
-        $.get(url, {})
+        var epgData = { "startDate": epgStartDate };
+        $.get(url, epgData)
         .done(function (result) {
             consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
 
@@ -543,11 +550,17 @@ function buildChannelGuideData() {
 
                     var lastProgram = null;
 
-                    for (var slotIndex = 0; slotIndex < 24 * numDaysEpgData; slotIndex++) {
+                    for (var slotIndex = 0; slotIndex < 48 * numDaysEpgData; slotIndex++) {
 
                         var slotTimeOffsetSinceStartOfEpgData = slotIndex * 30;
 
                         while (true) {
+
+                            // check for the case where we're at the end of the list of programs - occurs when the last show in the schedule is > 30 minutes
+                            if (programIndex >= programList.length) {
+                                programSlotIndices.push(programIndex - 1);
+                                break;
+                            }
 
                             var program = programList[programIndex];
 

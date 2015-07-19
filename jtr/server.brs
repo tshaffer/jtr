@@ -662,7 +662,8 @@ Sub getEpg(userData as Object, e as Object)
 
     mVar = userData.mVar
 
-	response = mVar.GetDBEpgData()
+	requestParams = e.GetRequestParams()
+	response = mVar.GetDBEpgData(requestParams.startDate)
 	json = FormatJson(response, 0)
 
     e.AddResponseHeader("Content-type", "text/json")
