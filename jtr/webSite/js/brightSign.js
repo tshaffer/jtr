@@ -141,8 +141,6 @@ function initializeBrightSign() {
         consoleLog("unable to create ir_receiver");
     }
 
-    initializeChannelGuide();
-
     if (typeof ir_receiver != 'undefined') {
         ir_receiver.onremotedown = function (e) {
             consoleLog('############ onremotedown: ' + e.irType + " - " + e.code);
