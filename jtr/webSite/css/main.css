@@ -6,15 +6,15 @@ float:left;
 }
 
 #stationLabelDiv {
-width: 69px;
+width: 140px;
 float:left;
 }
 
 .cgStationLine {
-    height: 26px;
-    width: 69px;
+    width: 140px;
+    height: 50px;
     background-color: lightcyan;
-    font-size: 10px;
+    font-size: 16px;
     margin-bottom: 0px;
     border:solid;
     border-width: 1px;
@@ -22,25 +22,38 @@ float:left;
 }
 
 .timeLine {
-    height: 26px;
+    height: 50px;
     width: 3000px;
     background-color: lightblue;
+
+    margin-bottom: 0px;
+    border:solid;
+    border-width: 1px;
 }
 
 .thirtyMinuteTime {
-    border:solid;
-    width: 120px;
-    border-width: 1px;
+    width: 240px;
+    height: 48px;
+    /*border:solid;
+    border-width: 1px;*/
     padding:5px 10px;
-    font-size: 10px;
-    height: 24px;
+    font-size: 16px;
     display:inline-block;
     text-align: center;
+
+    border:solid;
+    /*border-right: 1px;*/
+    border-right-width: 1px;
+    border-left-width: 0px;
+    border-top-width: 0px;
+    border-bottom-width:0px;
+    border-right-color: black;
+    border-left-color: black;
 }
 
 
 .cgLine {
-    height: 26px;
+    height: 50px;
     width: 3000px;
     background-color: coral;
 }
@@ -48,28 +61,29 @@ float:left;
 
 .thirtyMinuteButton {
 display:inline-block;
-min-width: 50px;
-width: 120px;
+width: 240px;
 padding:5px 10px;
-font-size: 10px;
-height: 24px;
-border-width: 1px;
+font-size: 16px;
+height: 48px;
+/*border-width: 1px;*/
+    background-color: lightcyan;
 }
 
 .sixtyMinuteButton {
 display:inline-block;
-min-width: 50px;
-width: 240px;
+width: 480px;
 padding:5px 10px;
-font-size: 10px;
-height: 24px;
+font-size: 16px;
+height: 48px;
+    background-color: lightcyan;
 }
 
 .variableButton {
 display:inline-block;
 padding:5px 10px;
-font-size: 10px;
-height: 24px;
+font-size: 16px;
+height: 48px;
+    background-color: lightcyan;
 }
 
 
