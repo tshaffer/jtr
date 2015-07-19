@@ -1,8 +1,3 @@
-#stationLabelDiv {
-width: 69px;
-float:left;
-}
-
 #myDIV {
 height: 400px;
 width: 1200px;
@@ -10,37 +5,9 @@ overflow: hidden;
 float:left;
 }
 
-.thirtyMinuteButton {
-display:inline-block;
-min-width: 50px;
-width: 120px;
-padding:5px 10px;
-font-size: 10px;
-height: 24px;
-border-width: 1px;
-}
-
-.sixtyMinuteButton {
-display:inline-block;
-min-width: 50px;
-width: 240px;
-padding:5px 10px;
-font-size: 10px;
-height: 24px;
-}
-
-.variableButton {
-display:inline-block;
-padding:5px 10px;
-font-size: 10px;
-height: 24px;
-}
-
-.cgLine {
-    /*height: 36px;*/
-    height: 26px;
-    width: 3000px;
-    background-color: coral;
+#stationLabelDiv {
+width: 69px;
+float:left;
 }
 
 .cgStationLine {
@@ -72,13 +39,39 @@ height: 24px;
 }
 
 
-.thirtyMinuteShow {
-  width: 300px;
+.cgLine {
+    height: 26px;
+    width: 3000px;
+    background-color: coral;
 }
 
-.sixtyMinuteShow {
-    width: 600px;
+
+.thirtyMinuteButton {
+display:inline-block;
+min-width: 50px;
+width: 120px;
+padding:5px 10px;
+font-size: 10px;
+height: 24px;
+border-width: 1px;
 }
+
+.sixtyMinuteButton {
+display:inline-block;
+min-width: 50px;
+width: 240px;
+padding:5px 10px;
+font-size: 10px;
+height: 24px;
+}
+
+.variableButton {
+display:inline-block;
+padding:5px 10px;
+font-size: 10px;
+height: 24px;
+}
+
 
 #segmentRecordingsCheckBox {
     margin: 10px 0px 0px 0px;
