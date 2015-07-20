@@ -407,6 +407,8 @@ function buildChannelGuideWithStations() {
     // index into data structure containing show to display based on time offset into channel guide data
     var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
 
+    firstRow = true;
+
     $.each(stations, function (stationIndex, station) {
 
         // channel guide data for this station
@@ -466,6 +468,11 @@ function buildChannelGuideWithStations() {
         // setup handlers on children - use for testing on Chrome
         var buttonsInCGLine = $(cgProgramLineName).children();
         $.each(buttonsInCGLine, function (buttonIndex, buttonInCGLine) {
+            if (firstRow && buttonIndex == 0) {
+                $(buttonInCGLine).focus();
+                firstRow = false;
+                lastActiveButton = buttonInCGLine;
+            }
             $(buttonInCGLine).click({ }, navigateButtonTest);
         });
 
@@ -476,7 +483,7 @@ function buildChannelGuideWithStations() {
 function navigateButtonTest() {
     // 'this' is the button that was pressed
     console.log("pressed button");
-    navigateChannelGuide(this, "right");
+    navigateChannelGuide(this, "up");
 }
 
 
@@ -496,6 +503,25 @@ function getActiveButtonIndex(activeButton, buttonsInRow) {
     return indexOfActiveButton;
 }
 
+function getActiveRowIndex(activeRow) {
+
+    var rowPosition = $(activeRow).position();
+
+    var cgStationDiv = activeRow.parentElement;
+    var stationDivs = $(cgStationDiv).children();
+    var indexOfActiveRow = -1;
+    $.each(stationDivs, function (stationDivIndex, stationDiv) {
+        if (stationDivIndex > 0) {          // div 0 is the timeline; skip it
+            var stationDivPosition = $(stationDiv).position();
+            if (stationDivPosition.top == rowPosition.top) {
+                indexOfActiveRow = stationDivIndex;
+                return false;
+            }
+        }
+    });
+    return indexOfActiveRow - 1;    // 0 is the first station
+}
+
 function updateActiveButton(activeButton, newActiveButton) {
 
     $(activeButton).removeClass("btn-primary");
@@ -505,9 +531,15 @@ function updateActiveButton(activeButton, newActiveButton) {
     $(newActiveButton).addClass("btn-primary");
 
     $(newActiveButton).focus();
+
+    lastActiveButton = newActiveButton;
 }
 
-function navigateChannelGuide(activeButton, direction) {
+function navigateChannelGuide(direction) {
+
+    var activeButton = lastActiveButton;
+    //var currentElementId = currentElement.id;
+
     // get div for current active button
     var parentDivOfActiveElement = activeButton.parentElement;
     var buttonsInRow = $(parentDivOfActiveElement).children();
@@ -523,10 +555,40 @@ function navigateChannelGuide(activeButton, direction) {
             }
         }
         else if (direction == "left") {
-        }
-        else if (direction == "up") {
+            var indexOfNewButton = indexOfActiveButton - 1;
+            if (indexOfNewButton < $(buttonsInRow).length) {
+                var newActiveButton = $(buttonsInRow)[indexOfNewButton];
+                updateActiveButton(activeButton, newActiveButton);
+            }
         }
         else if (direction == "down") {
+            var xPosition = positionOfActiveElement.left;
+            var activeRowIndex = getActiveRowIndex(parentDivOfActiveElement);
+            if (activeRowIndex < 8) {       //JTRTODO - FIX ME NOW
+
+                // move up one row
+                var newRowIndex = activeRowIndex + 1;
+
+                // find program whose x value is closest to the x value of the last program
+                var stationDivsElement = parentDivOfActiveElement.parentElement;
+                var stationDivs = $(stationDivsElement).children();
+                var newActiveRow = stationDivs[newRowIndex + 1];
+                var programsInStation = $(newActiveRow).children();
+
+                var minDistance = 1920;
+                $.each(programsInStation, function (programInStationIndex, programInStation) {
+                    var programPosition = $(programInStation).position();
+                    var xProgramPosition = programPosition.left;
+                    var distanceFromPreviousProgram = Math.abs(xProgramPosition - xPosition);
+                    if (distanceFromPreviousProgram < minDistance) {
+                        minDistance = distanceFromPreviousProgram;
+                        newActiveProgram = programInStation;
+                    }
+                });
+                updateActiveButton(activeButton, newActiveProgram);
+            }
+        }
+        else if (direction == "up") {
         }
     }
 }
