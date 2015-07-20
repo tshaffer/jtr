@@ -473,17 +473,9 @@ function buildChannelGuideWithStations() {
                 firstRow = false;
                 lastActiveButton = buttonInCGLine;
             }
-            $(buttonInCGLine).click({ }, navigateButtonTest);
         });
 
     });
-}
-
-
-function navigateButtonTest() {
-    // 'this' is the button that was pressed
-    console.log("pressed button");
-    navigateChannelGuide(this, "up");
 }
 
 
@@ -541,13 +533,16 @@ function navigateChannelGuide(direction) {
     //var currentElementId = currentElement.id;
 
     // get div for current active button
-    var parentDivOfActiveElement = activeButton.parentElement;
-    var buttonsInRow = $(parentDivOfActiveElement).children();
-    var positionOfActiveElement = $(activeButton).position();      // returns top, left in object
+    var parentDivOfActiveElement = activeButton.parentElement;          // current row of the channel guide
+    var buttonsInRow = $(parentDivOfActiveElement).children();          // programs in that row
+    var positionOfActiveElement = $(activeButton).position();           // returns members 'top' and 'left'
+    var stationDivsElement = parentDivOfActiveElement.parentElement;    // element representing all rows (why not just use #myDIV)
+    var stationDivs = $(stationDivsElement).children();                 // stations in the channel guide (the rows)
 
     var indexOfActiveButton = getActiveButtonIndex(activeButton, buttonsInRow);
     if (indexOfActiveButton >= 0) {
         if (direction == "right") {
+            // JTRTODO - check for limit on right side; either get more data or stop scrolling at the end
             var indexOfNewButton = indexOfActiveButton + 1;
             if (indexOfNewButton < $(buttonsInRow).length) {
                 var newActiveButton = $(buttonsInRow)[indexOfNewButton];
@@ -555,23 +550,28 @@ function navigateChannelGuide(direction) {
             }
         }
         else if (direction == "left") {
-            var indexOfNewButton = indexOfActiveButton - 1;
-            if (indexOfNewButton < $(buttonsInRow).length) {
-                var newActiveButton = $(buttonsInRow)[indexOfNewButton];
-                updateActiveButton(activeButton, newActiveButton);
+            if (indexOfActiveButton > 0) {
+                var indexOfNewButton = indexOfActiveButton - 1;
+                if (indexOfNewButton < $(buttonsInRow).length) {
+                    var newActiveButton = $(buttonsInRow)[indexOfNewButton];
+                    updateActiveButton(activeButton, newActiveButton);
+                }
             }
         }
-        else if (direction == "down") {
+        else if (direction == "down" || direction == "up") {
             var xPosition = positionOfActiveElement.left;
             var activeRowIndex = getActiveRowIndex(parentDivOfActiveElement);
-            if (activeRowIndex < 8) {       //JTRTODO - FIX ME NOW
+            if ((activeRowIndex < stations.length - 1 && direction == "down")  || (activeRowIndex > 0 && direction == "up")) {
 
-                // move up one row
-                var newRowIndex = activeRowIndex + 1;
+                var newRowIndex;
+                if (direction == "down") {
+                    newRowIndex = activeRowIndex + 1;
+                }
+                else {
+                    newRowIndex = activeRowIndex - 1;
+                }
 
                 // find program whose x value is closest to the x value of the last program
-                var stationDivsElement = parentDivOfActiveElement.parentElement;
-                var stationDivs = $(stationDivsElement).children();
                 var newActiveRow = stationDivs[newRowIndex + 1];
                 var programsInStation = $(newActiveRow).children();
 
@@ -587,8 +587,6 @@ function navigateChannelGuide(direction) {
                 });
                 updateActiveButton(activeButton, newActiveProgram);
             }
-        }
-        else if (direction == "up") {
         }
     }
 }
