@@ -330,17 +330,14 @@ function updateSettings() {
 }
 
 
-function refreshChannelGuide() {
-
-    // get current date/time - display channel guide data starting at current date/time
-    var currentDate = new Date();
+function initiateRenderChannelGuide() {
 
     // display channel guide one station at a time, from current time for the duration of the channel guide
-    getStations(buildChannelGuideWithStations);
+    getStations(renderChannelGuide);
 }
 
 
-function buildChannelGuideWithStations() {
+function renderChannelGuide() {
 
     // JTRTODO set constants - some temporary
     var hoursToDisplayPerLine = 6;
@@ -350,12 +347,12 @@ function buildChannelGuideWithStations() {
     var currentDate = new Date();
     var startMinute = (parseInt(currentDate.getMinutes() / 30) * 30) % 60;
     var startHour = currentDate.getHours();
-    var displayChannelGuideStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
+    var channelGuideDisplayStartDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
 
     // get start date/time of data structure containing channel guide data
-    var channelGuideDataStructureStartDate = epgProgramScheduleStartDateTime;
+    var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
 
-    // display day/date
+    // build and display current day/date in upper left
     var weekday = new Array(7);
     weekday[0] = "Sun";
     weekday[1] = "Mon";
@@ -364,12 +361,12 @@ function buildChannelGuideWithStations() {
     weekday[4] = "Thu";
     weekday[5] = "Fri";
     weekday[6] = "Sat";
-    $("#cgDayDate").text(weekday[displayChannelGuideStartDate.getDay()]  + " " + (displayChannelGuideStartDate.getMonth() + 1).toString() + "/" + displayChannelGuideStartDate.getDate().toString());
+    $("#cgDayDate").text(weekday[channelGuideDisplayStartDateTime.getDay()] + " " + (channelGuideDisplayStartDateTime.getMonth() + 1).toString() + "/" + channelGuideDisplayStartDateTime.getDate().toString());
 
-    // display timeline
+    // build and display timeline
     var toAppend = "";
     $("#cgTimeLine").empty();
-    var timeLineCurrentValue = displayChannelGuideStartDate;
+    var timeLineCurrentValue = channelGuideDisplayStartDateTime;
     for (i = 0; i < (hoursToDisplayPerLine * 2) - 1; i++) {
 
         var hoursLbl = "";
@@ -399,14 +396,15 @@ function buildChannelGuideWithStations() {
     }
     $("#cgTimeLine").append(toAppend);
 
-    // time delta between start of channel guide display and start of channel guide data
-    var timeDiffInMsec = displayChannelGuideStartDate - channelGuideDataStructureStartDate;
+    // time difference between start of channel guide display and start of channel guide data
+    var timeDiffInMsec = channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime;
     var timeDiffInSeconds = timeDiffInMsec / 1000;
     var timeDiffInMinutes = timeDiffInSeconds / 60;
 
-    // index into data structure containing show to display based on time offset into channel guide data
+    // index into the data structure that contains the first show to display in the channel guide based on the time offset into channel guide data
     var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
 
+    // JTRTODO - remove me
     firstRow = true;
 
     $.each(stations, function (stationIndex, station) {
@@ -422,6 +420,7 @@ function buildChannelGuideWithStations() {
 
         var minutesAlreadyDisplayed = 0;
 
+        // build id of div containing the UI elements of the programs for the current station
         var cgProgramLineName = "#cgStation" + stationIndex.toString() + "Data";
         $(cgProgramLineName).empty();
 
@@ -429,15 +428,16 @@ function buildChannelGuideWithStations() {
         showToDisplay = programList[indexIntoProgramList];
 
         // calculate the time delta between the time of the channel guide display start and the start of the first show to display
-        timeDiffInMsec = displayChannelGuideStartDate - new Date(showToDisplay.date);
+        timeDiffInMsec = channelGuideDisplayStartDateTime - new Date(showToDisplay.date);
         var timeDiffInSeconds = timeDiffInMsec / 1000;
         var timeDiffInMinutes = timeDiffInSeconds / 60;
-        // subtract this from the first show
+        // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
 
         var toAppend = "";
         while (minutesAlreadyDisplayed < minutesToDisplayPerLine) {
 
             var durationInMinutes = Number(showToDisplay.duration);
+            // perform reduction for only the first show in case it's already in progress at the beginning of this station's display
             if (toAppend == "") {
                 durationInMinutes -= timeDiffInMinutes;
             }
@@ -465,9 +465,12 @@ function buildChannelGuideWithStations() {
         }
         $(cgProgramLineName).append(toAppend);
 
+        // JTRTODO - setup handlers on children for browser - when user clicks on program to record, etc.
+
         // setup handlers on children - use for testing on Chrome
         var buttonsInCGLine = $(cgProgramLineName).children();
         $.each(buttonsInCGLine, function (buttonIndex, buttonInCGLine) {
+            //$(buttonInCGLine).click({ recordingId: recordingId }, selectProgram);
             if (firstRow && buttonIndex == 0) {
                 $(buttonInCGLine).focus();
                 firstRow = false;
@@ -514,53 +517,106 @@ function getActiveRowIndex(activeRow) {
     return indexOfActiveRow - 1;    // 0 is the first station
 }
 
-function updateActiveButton(activeButton, newActiveButton) {
+function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement) {
 
-    $(activeButton).removeClass("btn-primary");
-    $(activeButton).addClass("btn-secondary");
+    $(activeProgramUIElement).removeClass("btn-primary");
+    $(activeProgramUIElement).addClass("btn-secondary");
 
-    $(newActiveButton).removeClass("btn-secondary");
-    $(newActiveButton).addClass("btn-primary");
+    $(newActiveProgramUIElement).removeClass("btn-secondary");
+    $(newActiveProgramUIElement).addClass("btn-primary");
 
-    $(newActiveButton).focus();
+    $(newActiveProgramUIElement).focus();
 
-    lastActiveButton = newActiveButton;
+    lastActiveButton = newActiveProgramUIElement;
 }
+
+function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
+
+    updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement);
+
+    var programId = $(newActiveProgramUIElement)[0].id;
+    var idParts = programId.split("-");
+    var stationId = idParts[1];
+    var programIndex = idParts[2];
+
+    var programStationData = epgProgramSchedule[stationId];
+    var programList = programStationData.programList;
+    var selectedProgram = programList[programIndex];
+
+    $("#programInfo").empty();
+
+    // program title, episode title, and description
+    var programInfo = selectedProgram.title;
+
+    if (selectedProgram.episodeTitle != "") {
+        programInfo += ", " + selectedProgram.episodeTitle;
+    }
+    if (selectedProgram.description != "") {
+        programInfo += ", " + selectedProgram.description;
+    }
+
+    // day, date, and time
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+    var dayOfWeek = weekday[selectedProgram.date.getDay()];
+    var month = (selectedProgram.date.getMonth() + 1).toString();
+    var date = selectedProgram.date.getDate().toString();
+    var dateTimeInfo = dayOfWeek + " " + month + "/" + date;
+
+    var htmlContent = "<p>";
+    htmlContent += dateTimeInfo;
+    htmlContent += "<br>";
+    htmlContent += programInfo;
+    htmlContent += "</p>";
+
+    $("#programInfo").html(htmlContent);
+
+}
+
 
 function navigateChannelGuide(direction) {
 
-    var activeButton = lastActiveButton;
+    // JTRTODO
+    //          var currentElement = document.activeElement;
+    var activeProgramUIElement = lastActiveButton;
+    // JTRTODO - the following may be necessary for some tbd functionality??
     //var currentElementId = currentElement.id;
 
     // get div for current active button
-    var parentDivOfActiveElement = activeButton.parentElement;          // current row of the channel guide
-    var buttonsInRow = $(parentDivOfActiveElement).children();          // programs in that row
-    var positionOfActiveElement = $(activeButton).position();           // returns members 'top' and 'left'
-    var stationDivsElement = parentDivOfActiveElement.parentElement;    // element representing all rows (why not just use #myDIV)
-    var stationDivs = $(stationDivsElement).children();                 // stations in the channel guide (the rows)
+    var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
+    var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
+    var programUIElementPosition = $(activeProgramUIElement).position();            // returns members 'top' and 'left'
+    var allRowsUIElement = activeStationRowUIElement.parentElement;                 // element representing all rows (why not just use #myDIV)
+    var stationRowsUIElements = $(allRowsUIElement).children();                     // stations in the channel guide (the rows)
 
-    var indexOfActiveButton = getActiveButtonIndex(activeButton, buttonsInRow);
-    if (indexOfActiveButton >= 0) {
+    var indexOfActiveProgramUIElement = getActiveButtonIndex(activeProgramUIElement, programUIElementsInStation);
+    if (indexOfActiveProgramUIElement >= 0) {
         if (direction == "right") {
-            // JTRTODO - check for limit on right side; either get more data or stop scrolling at the end
-            var indexOfNewButton = indexOfActiveButton + 1;
-            if (indexOfNewButton < $(buttonsInRow).length) {
-                var newActiveButton = $(buttonsInRow)[indexOfNewButton];
-                updateActiveButton(activeButton, newActiveButton);
+            // JTRTODO - check for limit on right side; either fetch more epg data or stop scrolling at the end
+            var indexOfNewProgramUIElement = indexOfActiveProgramUIElement + 1;
+            if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
+                var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+                selectProgram(activeProgramUIElement, newActiveProgramUIElement);
             }
         }
         else if (direction == "left") {
-            if (indexOfActiveButton > 0) {
-                var indexOfNewButton = indexOfActiveButton - 1;
-                if (indexOfNewButton < $(buttonsInRow).length) {
-                    var newActiveButton = $(buttonsInRow)[indexOfNewButton];
-                    updateActiveButton(activeButton, newActiveButton);
+            if (indexOfActiveProgramUIElement > 0) {
+                var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
+                if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
+                    var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+                    selectProgram(activeProgramUIElement, newActiveProgramUIElement);
                 }
             }
         }
         else if (direction == "down" || direction == "up") {
-            var xPosition = positionOfActiveElement.left;
-            var activeRowIndex = getActiveRowIndex(parentDivOfActiveElement);
+            var xPosition = programUIElementPosition.left;
+            var activeRowIndex = getActiveRowIndex(activeStationRowUIElement);
             if ((activeRowIndex < stations.length - 1 && direction == "down")  || (activeRowIndex > 0 && direction == "up")) {
 
                 var newRowIndex;
@@ -572,7 +628,7 @@ function navigateChannelGuide(direction) {
                 }
 
                 // find program whose x value is closest to the x value of the last program
-                var newActiveRow = stationDivs[newRowIndex + 1];
+                var newActiveRow = stationRowsUIElements[newRowIndex + 1];
                 var programsInStation = $(newActiveRow).children();
 
                 var minDistance = 1920;
@@ -585,31 +641,33 @@ function navigateChannelGuide(direction) {
                         newActiveProgram = programInStation;
                     }
                 });
-                updateActiveButton(activeButton, newActiveProgram);
+                selectProgram(activeProgramUIElement, newActiveProgram);
             }
         }
     }
 }
 
-function buildChannelGuideData() {
+function displayChannelGuide() {
 
     if (epgProgramSchedule == null) {
+
+        // first time displaying channel guide; retrieve epg data from database
         epgProgramSchedule = {};
 
         epgProgramScheduleStartDateTime = new Date();
         epgProgramScheduleStartDateTime.setFullYear(2100, 0, 0);
 
+        // retrieve data from db starting on today's date
         var startDate = new Date();
         var year = startDate.getFullYear().toString();
         var month = (startDate.getMonth() + 1).toString();
         var dayInMonth = startDate.getDate().toString();
         var epgStartDate = year + "-" + twoDigitFormat(month) + "-" + twoDigitFormat(dayInMonth);
-
-        // get epg from db
         var url = baseURL + "getEpg";
         var epgData = { "startDate": epgStartDate };
         $.get(url, epgData)
         .done(function (result) {
+
             consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
 
             // for each station, generate an ordered list (by airDateTime) of all shows in the current epg data
@@ -618,21 +676,12 @@ function buildChannelGuideData() {
                 // convert to local time zone
                 var localDate = new Date(sdProgram.AirDateTime);
 
+                // capture the earliest date in the epg data (in local time, so may be earlier than date passed to db)
                 if (localDate < epgProgramScheduleStartDateTime) {
                     epgProgramScheduleStartDateTime = localDate;
                 }
 
-                var dateStr = localDate.getFullYear().toString() + "-" + twoDigitFormat((localDate.getMonth() + 1).toString()) + "-" + twoDigitFormat(localDate.getDate().toString());
-
-                var minutes = localDate.getMinutes();
-
-                //if (minutes != 0 && minutes != 30) {
-                //    debugger;
-                //}
-
-                var timeStr = twoDigitFormat(localDate.getHours().toString()) + ":" + twoDigitFormat(localDate.getMinutes().toString());
-
-                // create program
+                // create program from data in db
                 var program = {}
                 program.date = localDate;
                 //program.station = sdProgram.AtscMajor.toString() + "." + sdProgram.AtscMinor.toString();
@@ -642,7 +691,7 @@ function buildChannelGuideData() {
                 program.description = sdProgram.Description;
                 program.showType = sdProgram.ShowType;
 
-                // append to program list for  this station (create new record if necessary)
+                // append to program list for  this station (create new station object if necessary)
                 var stationId = sdProgram.StationId;
                 if (stationId == "undefined") {
                     debugger;
@@ -654,11 +703,12 @@ function buildChannelGuideData() {
                     epgProgramSchedule[stationId] = programStationData;
                 }
 
+                // append program to list of programs for this station
                 var programList = epgProgramSchedule[stationId].programList;
                 programList.push(program);
             });
 
-            // generate data for each time slot in the schedule - indicator of what the first program to display is at any given time slot
+            // generate data for each time slot in the schedule - indicator of the first program to display at any given time slot
             for (var stationId in epgProgramSchedule)
             {
                 if (epgProgramSchedule.hasOwnProperty(stationId)) {
@@ -694,7 +744,7 @@ function buildChannelGuideData() {
                                 break;
                             }
                             else if (programTimeOffsetSinceStartOfEPGData > slotTimeOffsetSinceStartOfEpgData) {
-                                // program starts at sometime after the current time slot - find an earlier show
+                                // this program starts at some time after the current time slot - use prior show when navigating to this timeslot
                                 if (lastProgram != null) {
                                     lastProgram.indexIntoProgramList = programIndex - 1;
                                 }
@@ -703,7 +753,7 @@ function buildChannelGuideData() {
                                 break;
                             }
                             else if (programTimeOffsetSinceStartOfEPGData < slotTimeOffsetSinceStartOfEpgData) {
-                                // program starts at sometime before the current time slot - look for the last show that starts before the current time slot (or == to the current time slot)
+                                // this program starts at sometime before the current time slot - continue to look for the last show that starts before the current time slot (or == to the current time slot)
                                 programIndex++;
                                 lastProgram = program;
                             }
@@ -715,8 +765,7 @@ function buildChannelGuideData() {
             }
 
             switchToPage("channelGuidePage");
-            refreshChannelGuide();
-
+            initiateRenderChannelGuide();
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
@@ -727,13 +776,13 @@ function buildChannelGuideData() {
     }
     else {
         switchToPage("channelGuidePage");
-        refreshChannelGuide();
+        initiateRenderChannelGuide();
     }
 }
 
 function selectChannelGuide() {
 
-    buildChannelGuideData();
+    displayChannelGuide();
 }
 
 
