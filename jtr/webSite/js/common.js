@@ -353,15 +353,9 @@ function renderChannelGuide() {
     var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
 
     // build and display current day/date in upper left
-    var weekday = new Array(7);
-    weekday[0] = "Sun";
-    weekday[1] = "Mon";
-    weekday[2] = "Tue";
-    weekday[3] = "Wed";
-    weekday[4] = "Thu";
-    weekday[5] = "Fri";
-    weekday[6] = "Sat";
-    $("#cgDayDate").text(weekday[channelGuideDisplayStartDateTime.getDay()] + " " + (channelGuideDisplayStartDateTime.getMonth() + 1).toString() + "/" + channelGuideDisplayStartDateTime.getDate().toString());
+    var currentDayDate = dayDate(channelGuideDisplayStartDateTime);
+
+    $("#cgDayDate").text(currentDayDate);
 
     // build and display timeline
     var toAppend = "";
@@ -369,29 +363,9 @@ function renderChannelGuide() {
     var timeLineCurrentValue = channelGuideDisplayStartDateTime;
     for (i = 0; i < (hoursToDisplayPerLine * 2) - 1; i++) {
 
-        var hoursLbl = "";
-        var amPm = " am";
-        var hours = timeLineCurrentValue.getHours();
-        if (hours == 0) {
-            hoursLbl = "12";
-        }
-        else if (hours < 12) {
-            hoursLbl = hours.toString();
-        }
-        else if (hours == 12) {
-            hoursLbl = "12";
-            amPm = "pm";
-        }
-        else {
-            hoursLbl = (hours - 12).toString();
-            amPm = "pm";
-        }
+        var timeLineTime = timeOfDay(timeLineCurrentValue);
 
-        var minutesLbl = twoDigitFormat(timeLineCurrentValue.getMinutes().toString());
-
-        var timeLabel = hoursLbl + ":" + minutesLbl + amPm;
-        toAppend += "<span class='thirtyMinuteTime'>" + timeLabel + "</span>";
-
+        toAppend += "<span class='thirtyMinuteTime'>" + timeLineTime + "</span>";
         timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
     }
     $("#cgTimeLine").append(toAppend);
@@ -556,18 +530,14 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     }
 
     // day, date, and time
-    var weekday = new Array(7);
-    weekday[0] = "Sun";
-    weekday[1] = "Mon";
-    weekday[2] = "Tue";
-    weekday[3] = "Wed";
-    weekday[4] = "Thu";
-    weekday[5] = "Fri";
-    weekday[6] = "Sat";
-    var dayOfWeek = weekday[selectedProgram.date.getDay()];
-    var month = (selectedProgram.date.getMonth() + 1).toString();
-    var date = selectedProgram.date.getDate().toString();
-    var dateTimeInfo = dayOfWeek + " " + month + "/" + date;
+    var programDayDate = dayDate(selectedProgram.date);
+
+    var startTime = timeOfDay(selectedProgram.date);
+
+    var endDate = new Date(selectedProgram.date.getTime() + selectedProgram.duration * 60000);
+    var endTime = timeOfDay(endDate);
+
+    var dateTimeInfo = programDayDate + " " + startTime + " - " + endTime;
 
     var htmlContent = "<p>";
     htmlContent += dateTimeInfo;
@@ -577,6 +547,52 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
 
     $("#programInfo").html(htmlContent);
 
+}
+
+function dayDate(dateTime) {
+    var dayInWeek = dayOfWeek(dateTime);
+    var month = (dateTime.getMonth() + 1).toString();
+    var date = dateTime.getDate().toString();
+
+    return dayInWeek + " " + month + "/" + date;
+}
+
+function dayOfWeek(dateTime) {
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+
+    return weekday[dateTime.getDay()];
+}
+
+function timeOfDay(dateTime) {
+
+    var hoursLbl = "";
+    var amPm = " am";
+    var hours = dateTime.getHours();
+    if (hours == 0) {
+        hoursLbl = "12";
+    }
+    else if (hours < 12) {
+        hoursLbl = hours.toString();
+    }
+    else if (hours == 12) {
+        hoursLbl = "12";
+        amPm = "pm";
+    }
+    else {
+        hoursLbl = (hours - 12).toString();
+        amPm = "pm";
+    }
+
+    var minutesLbl = twoDigitFormat(dateTime.getMinutes().toString());
+
+    return (hoursLbl + ":" + minutesLbl + amPm);
 }
 
 
