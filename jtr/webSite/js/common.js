@@ -426,7 +426,7 @@ function renderChannelGuide() {
             }
             else {
                 cssClass = "'variableButton'";
-                var width = (durationInMinutes / 60) * 240;
+                var width = (durationInMinutes / 60) * 480;
                 widthSpec = " style='width:" + width.toString() + "px'";
             }
             var id = "show-" + station.StationId + "-" + indexIntoProgramList.toString();
