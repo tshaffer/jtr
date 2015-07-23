@@ -452,6 +452,14 @@ function renderChannelGuide() {
             }
         });
 
+        // JTRTODO - change in the future - different algorithm for selecting which program to highlight first
+        //$(lastActiveButton).removeClass("btn-secondary");
+        //$(lastActiveButton).addClass("btn-primary");
+
+        //$(lastActiveButton).focus();
+        selectProgram(null, lastActiveButton);
+
+
     });
 }
 
@@ -493,8 +501,10 @@ function getActiveRowIndex(activeRow) {
 
 function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement) {
 
-    $(activeProgramUIElement).removeClass("btn-primary");
-    $(activeProgramUIElement).addClass("btn-secondary");
+    if (activeProgramUIElement != null) {
+        $(activeProgramUIElement).removeClass("btn-primary");
+        $(activeProgramUIElement).addClass("btn-secondary");
+    }
 
     $(newActiveProgramUIElement).removeClass("btn-secondary");
     $(newActiveProgramUIElement).addClass("btn-primary");
@@ -521,13 +531,16 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
 
     // program title, episode title, and description
     var programInfo = selectedProgram.title;
+    programInfo += "<br>";
 
     if (selectedProgram.episodeTitle != "") {
-        programInfo += ", " + selectedProgram.episodeTitle;
+        programInfo += '"' + selectedProgram.episodeTitle + '"';
     }
+    programInfo += "<br>";
     if (selectedProgram.description != "") {
-        programInfo += ", " + selectedProgram.description;
+        programInfo += selectedProgram.description;
     }
+    programInfo += "<br>";
 
     // day, date, and time
     var programDayDate = dayDate(selectedProgram.date);
@@ -608,7 +621,7 @@ function navigateChannelGuide(direction) {
     var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
     var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
     var programUIElementPosition = $(activeProgramUIElement).position();            // returns members 'top' and 'left'
-    var allRowsUIElement = activeStationRowUIElement.parentElement;                 // element representing all rows (why not just use #myDIV)
+    var allRowsUIElement = activeStationRowUIElement.parentElement;                 // element representing all rows (why not just use #cgData)
     var stationRowsUIElements = $(allRowsUIElement).children();                     // stations in the channel guide (the rows)
 
     var indexOfActiveProgramUIElement = getActiveButtonIndex(activeProgramUIElement, programUIElementsInStation);

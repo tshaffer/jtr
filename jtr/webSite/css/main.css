@@ -1,4 +1,8 @@
-#myDIV {
+#programInfo {
+    font-size: 16px;
+}
+
+#cgData {
 /*height: 400px;*/
 width: 1200px;
 overflow: hidden;

@@ -358,17 +358,13 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stMainMenu;
                 return "TRANSITION";
             case "recorded_shows":
-                // JTR TO DO
-                return "HANDLED";
+                stateData.nextState = this.stateMachine.stRecordedShows;
+                return "TRANSITION";
             case "up":
             case "down":
             case "left":
             case "right":
-                var command = eventData.toLowerCase();
-                consoleLog("currentActiveElementId is " + currentActiveElementId);
-                consoleLog("navigation remote key pressed while recordedShowsPage visible");
-                // JTR TO DO
-                //this.navigateRecordedShowsPage(command)
+                navigateChannelGuide(eventData.toLowerCase());
                 return "HANDLED";
             case "exit":
                 stateData.nextState = this.stateMachine.stNone;
