@@ -59,7 +59,9 @@ overflow: hidden;
 
 .cgLine {
     height: 50px;
-    width: 3000px;
+    /*width: 3000px;*/
+    /*width: 10000px;*/
+    width: 50000px;
     background-color: coral;
 }
 
@@ -77,10 +79,10 @@ max-width: 240px;
 max-height: 48px;
 
 white-space: nowrap;
-width: 100%;                   /* IE6 needs any width */
-overflow: hidden;              /* "overflow" value must be different from  visible"*/ 
--o-text-overflow: ellipsis;    /* Opera < 11*/
-text-overflow:    ellipsis;    /* IE, Safari (WebKit), Opera >= 11, FF > 6 */
+width: 100%;                   
+overflow: hidden;              
+-o-text-overflow: ellipsis;    
+text-overflow:    ellipsis;    
 }
 
 .sixtyMinuteButton {

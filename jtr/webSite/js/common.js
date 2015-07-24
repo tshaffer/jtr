@@ -409,7 +409,8 @@ function renderChannelGuide() {
         // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
 
         var toAppend = "";
-        minutesToDisplayPerLine = 3000;
+        //minutesToDisplayPerLine = 3000;
+        minutesToDisplayPerLine = 1200;
         while (minutesAlreadyDisplayed < minutesToDisplayPerLine) {
 
             try
