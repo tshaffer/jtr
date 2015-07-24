@@ -365,7 +365,8 @@ function renderChannelGuide() {
 
         var timeLineTime = timeOfDay(timeLineCurrentValue);
 
-        toAppend += "<span class='thirtyMinuteTime'>" + timeLineTime + "</span>";
+        //toAppend += "<span class='thirtyMinuteTime'>" + timeLineTime + "</span>";
+        toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
         timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
     }
     $("#cgTimeLine").append(toAppend);
@@ -408,9 +409,17 @@ function renderChannelGuide() {
         // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
 
         var toAppend = "";
+        minutesToDisplayPerLine = 3000;
         while (minutesAlreadyDisplayed < minutesToDisplayPerLine) {
 
-            var durationInMinutes = Number(showToDisplay.duration);
+            try
+            {
+                var durationInMinutes = Number(showToDisplay.duration);
+            }
+            catch (err)
+            {
+                debugger;
+            }
             // perform reduction for only the first show in case it's already in progress at the beginning of this station's display
             if (toAppend == "") {
                 durationInMinutes -= timeDiffInMinutes;
@@ -428,10 +437,12 @@ function renderChannelGuide() {
                 cssClass = "'variableButton'";
                 var width = (durationInMinutes / 60) * 480;
                 widthSpec = " style='width:" + width.toString() + "px'";
+                // JTR TODO - maxWidth
             }
             var id = "show-" + station.StationId + "-" + indexIntoProgramList.toString();
+            var title = showToDisplay.title;
             toAppend +=
-                "<button id='" + id + "' class=" + cssClass + widthSpec + ">" + showToDisplay.title + "</button>";
+                "<button id='" + id + "' class=" + cssClass + widthSpec + ">" + title + "</button>";
 
             minutesAlreadyDisplayed += durationInMinutes;
             indexIntoProgramList++;
