@@ -28,7 +28,8 @@ overflow: hidden;
 
 .timeLine {
     height: 50px;
-    width: 3000px;
+    /*width: 3000px;*/
+    width: 50000px;
     background-color: lightblue;
 
     margin-bottom: 0px;

@@ -339,17 +339,13 @@ function initiateRenderChannelGuide() {
 
 function renderChannelGuide() {
 
-    // JTRTODO set constants - some temporary
-    var hoursToDisplayPerLine = 6;
-    var minutesToDisplayPerLine = hoursToDisplayPerLine * 60;
-
     // start date/time for channel guide display is current time, rounded down to nearest 30 minutes
     var currentDate = new Date();
     var startMinute = (parseInt(currentDate.getMinutes() / 30) * 30) % 60;
     var startHour = currentDate.getHours();
     var channelGuideDisplayStartDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
 
-    // get start date/time of data structure containing channel guide data
+    // start date/time of data structure containing channel guide data
     var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
 
     // build and display current day/date in upper left
@@ -357,30 +353,18 @@ function renderChannelGuide() {
 
     $("#cgDayDate").text(currentDayDate);
 
-    // build and display timeline
-    var toAppend = "";
-    $("#cgTimeLine").empty();
-    var timeLineCurrentValue = channelGuideDisplayStartDateTime;
-    for (i = 0; i < (hoursToDisplayPerLine * 2) - 1; i++) {
-
-        var timeLineTime = timeOfDay(timeLineCurrentValue);
-
-        //toAppend += "<span class='thirtyMinuteTime'>" + timeLineTime + "</span>";
-        toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
-        timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
-    }
-    $("#cgTimeLine").append(toAppend);
-
     // time difference between start of channel guide display and start of channel guide data
     var timeDiffInMsec = channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime;
     var timeDiffInSeconds = timeDiffInMsec / 1000;
     var timeDiffInMinutes = timeDiffInSeconds / 60;
 
-    // index into the data structure that contains the first show to display in the channel guide based on the time offset into channel guide data
+    // index into the data structure (time slots) that contains the first show to display in the channel guide based on the time offset into channel guide data
     var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
 
     // JTRTODO - remove me
     firstRow = true;
+
+    maxMinutesToDislay = 0;
 
     $.each(stations, function (stationIndex, station) {
 
@@ -409,10 +393,8 @@ function renderChannelGuide() {
         // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
 
         var toAppend = "";
-        //minutesToDisplayPerLine = 3000;
-        minutesToDisplayPerLine = 1200;
-        while (minutesAlreadyDisplayed < minutesToDisplayPerLine) {
-
+        minutesToDisplay = 0;
+        while (indexIntoProgramList < programList.length) {
             try
             {
                 var durationInMinutes = Number(showToDisplay.duration);
@@ -425,6 +407,8 @@ function renderChannelGuide() {
             if (toAppend == "") {
                 durationInMinutes -= timeDiffInMinutes;
             }
+
+            minutesToDisplay += durationInMinutes;
 
             var cssClass = "";
             var widthSpec = "";
@@ -451,6 +435,9 @@ function renderChannelGuide() {
         }
         $(cgProgramLineName).append(toAppend);
 
+        if (minutesToDisplay > maxMinutesToDislay) {
+            maxMinutesToDislay = minutesToDisplay;
+        }
         // JTRTODO - setup handlers on children for browser - when user clicks on program to record, etc.
 
         // setup handlers on children - use for testing on Chrome
@@ -470,9 +457,25 @@ function renderChannelGuide() {
 
         //$(lastActiveButton).focus();
         selectProgram(null, lastActiveButton);
-
-
     });
+
+    // build and display timeline
+    var toAppend = "";
+    $("#cgTimeLine").empty();
+    var timeLineCurrentValue = channelGuideDisplayStartDateTime;
+    var minutesDisplayed = 0;
+    while (minutesDisplayed < minutesToDisplay) {
+
+        var timeLineTime = timeOfDay(timeLineCurrentValue);
+
+        //toAppend += "<span class='thirtyMinuteTime'>" + timeLineTime + "</span>";
+        toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
+        timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
+        minutesDisplayed += 30;
+    }
+    $("#cgTimeLine").append(toAppend);
+
+
 }
 
 
