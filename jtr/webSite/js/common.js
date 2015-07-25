@@ -348,11 +348,6 @@ function renderChannelGuide() {
     // start date/time of data structure containing channel guide data
     var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
 
-    // build and display current day/date in upper left
-    var currentDayDate = dayDate(channelGuideDisplayStartDateTime);
-
-    $("#cgDayDate").text(currentDayDate);
-
     // time difference between start of channel guide display and start of channel guide data
     var timeDiffInMsec = channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime;
     var timeDiffInSeconds = timeDiffInMsec / 1000;
@@ -542,6 +537,10 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     var programStationData = epgProgramSchedule[stationId];
     var programList = programStationData.programList;
     var selectedProgram = programList[programIndex];
+
+    // display day/date of selected program in upper left of channel guide
+    var programDayDate = dayDate(selectedProgram.date);
+    $("#cgDayDate").text(programDayDate);
 
     $("#programInfo").empty();
 
