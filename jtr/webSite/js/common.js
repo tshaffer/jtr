@@ -364,7 +364,8 @@ function renderChannelGuide() {
     // JTRTODO - remove me
     firstRow = true;
 
-    maxMinutesToDislay = 0;
+    var maxMinutesToDisplay = 0;
+    var minutesToDisplay;
 
     $.each(stations, function (stationIndex, station) {
 
@@ -435,8 +436,8 @@ function renderChannelGuide() {
         }
         $(cgProgramLineName).append(toAppend);
 
-        if (minutesToDisplay > maxMinutesToDislay) {
-            maxMinutesToDislay = minutesToDisplay;
+        if (minutesToDisplay > maxMinutesToDisplay) {
+            maxMinutesToDisplay = minutesToDisplay;
         }
         // JTRTODO - setup handlers on children for browser - when user clicks on program to record, etc.
 
@@ -464,7 +465,7 @@ function renderChannelGuide() {
     $("#cgTimeLine").empty();
     var timeLineCurrentValue = channelGuideDisplayStartDateTime;
     var minutesDisplayed = 0;
-    while (minutesDisplayed < minutesToDisplay) {
+    while (minutesDisplayed < maxMinutesToDisplay) {
 
         var timeLineTime = timeOfDay(timeLineCurrentValue);
 
