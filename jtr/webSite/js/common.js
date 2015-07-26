@@ -827,7 +827,7 @@ function displayChannelGuide() {
         var keyIdentifier = event.keyIdentifier;
         if (keyIdentifier == "Right" || keyIdentifier == "Left" || keyIdentifier == "Up" || keyIdentifier == "Down") {
             console.log("keyIdentifier " + event.keyIdentifier);
-            console.log("keyCode = " + event.keyCode)
+            // console.log("keyCode = " + event.keyCode)
             navigateChannelGuide(keyIdentifier.toLowerCase());
             return false;
         }
