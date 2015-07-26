@@ -26,21 +26,6 @@
     <script src="./js/browser.js"></script>
     <script src="./js/brightSign.js"></script>
     <script src="./js/xml2json.js"></script>
-
-        <script>
-            function myFunction() {
-                var elmnt = document.getElementById("cgData");
-                elmnt.scrollLeft += 120;
-                //elmnt.scrollTop += 10;
-            }
-
-            function scrollRight() {
-                var elmnt = document.getElementById("cgData");
-                elmnt.scrollLeft -= 120;
-                //elmnt.scrollTop += 10;
-            }
-        </script>
-        
   </head>
 
   <body>
@@ -282,23 +267,6 @@
                 <div id="cgStation8Data" class="cgLine"></div>
                 <div id="cgStation9Data" class="cgLine"></div>
             </div>
-
-            <button onclick="myFunction()">Scroll left</button>
-            <span>&nbsp;</span>
-            <button onclick="scrollRight()">Scroll right</button>
-            <span>&nbsp;</span>
-            <button onclick="refreshChannelGuide()">Refresh</button>
-            <span>&nbsp;</span>
-            <button onclick="navigateChannelGuide('left')">Left</button>
-            <span>&nbsp;</span>
-            <button onclick="navigateChannelGuide('right')">Right</button>
-            <span>&nbsp;</span>
-            <button onclick="navigateChannelGuide('up')">Up</button>
-            <span>&nbsp;</span>
-            <button onclick="navigateChannelGuide('down')">Down</button>
-            <br><br>
-
-
         </div>
 
 
