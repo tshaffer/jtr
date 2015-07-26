@@ -822,6 +822,17 @@ function displayChannelGuide() {
         switchToPage("channelGuidePage");
         initiateRenderChannelGuide();
     }
+        
+    $( "#cgData" ).keydown(function(keyEvent) {
+        var keyIdentifier = event.keyIdentifier;
+        if (keyIdentifier == "Right" || keyIdentifier == "Left" || keyIdentifier == "Up" || keyIdentifier == "Down") {
+            console.log("keyIdentifier " + event.keyIdentifier);
+            console.log("keyCode = " + event.keyCode)
+            navigateChannelGuide(keyIdentifier.toLowerCase());
+            return false;
+        }
+
+    });
 }
 
 function selectChannelGuide() {
@@ -1027,4 +1038,5 @@ $(document).ready(function () {
     else {
         initializeBrightSign();
     }
+
 });
