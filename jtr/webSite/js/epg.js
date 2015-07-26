@@ -412,6 +412,15 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
                 jtrProgramForStation.programId = program.programID;
                 jtrProgramForStation.airDateTime = program.airDateTime;
                 jtrProgramForStation.duration = program.duration / 60;      // convert from seconds to minutes
+                
+                var newShow = boolValueIfMetadataExists(program, "new");
+                if (newShow) {
+                    jtrProgramForStation.newShow = 1;                
+                }
+                else {
+                    jtrProgramForStation.newShow = 0;     
+                }
+                
                 jtrProgramForStation.md5 = program.md5;
                 jtrProgramsForStations.push(jtrProgramForStation);
 
@@ -620,14 +629,6 @@ function getSchedulesDirectPrograms(nextFunction) {
 
             jtrProgram.showType = valueIfMetadataExists(program, "showType");
             
-            var newShow = boolValueIfMetadataExists(program, "newShow");
-            if (newShow) {
-                jtrProgram.newShow = 1;                
-            }
-            else {
-                jtrProgram.newShow = 0;     
-            }
-
             jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
             
             jtrProgram.gracenoteSeasonEpisode = "";

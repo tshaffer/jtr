@@ -35,9 +35,9 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT);")
 
 		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
-		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
+		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, NewShow TEXT, MD5 TEXT);")
 	
-		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, Description TEXT, ShowType TEXT, NewShow TEXT, OriginalAirDate TEXT, GracenoteSeasonEpisode TEXT, MD5 TEXT);")
+		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, Description TEXT, ShowType TEXT, OriginalAirDate TEXT, GracenoteSeasonEpisode TEXT, MD5 TEXT);")
 
 		m.CreateDBTable("CREATE TABLE ProgramCast (ProgramId TEXT, Name TEXT, BillingOrder TEXT);")
 
@@ -952,6 +952,7 @@ Sub AddDBProgramsForStations(programsForStations)
 	columnKeys.push("programId")
 	columnKeys.push("airDateTime")
 	columnKeys.push("duration")
+	columnKeys.push("newShow")
 	columnKeys.push("md5")
 
 	dbColumnNames = []
@@ -960,6 +961,7 @@ Sub AddDBProgramsForStations(programsForStations)
 	dbColumnNames.push("ProgramId")
 	dbColumnNames.push("AirDateTime")
 	dbColumnNames.push("Duration")
+	dbColumnNames.push("NewShow")
 	dbColumnNames.push("MD5")
 
 	m.AddDBItems(programsForStations, columnKeys, dbColumnNames, "ProgramsForStations")
@@ -1008,7 +1010,6 @@ Sub AddDBPrograms(programs)
 	columnKeys.push("episodeTitle")
 	columnKeys.push("description")
 	columnKeys.push("showType")
-	columnKeys.push("newShow")
 	columnKeys.push("originalAirDate")
 	columnKeys.push("gracenoteSeasonEpisode")
 	columnKeys.push("md5")
@@ -1019,7 +1020,6 @@ Sub AddDBPrograms(programs)
 	dbColumnNames.push("EpisodeTitle")
 	dbColumnNames.push("Description")
 	dbColumnNames.push("ShowType")
-	dbColumnNames.push("NewShow")
 	dbColumnNames.push("OriginalAirDate")
 	dbColumnNames.push("GracenoteSeasonEpisode")
 	dbColumnNames.push("MD5")
@@ -1029,10 +1029,10 @@ Sub AddDBPrograms(programs)
 End Sub
 
 
-Sub UpdateDBProgram(programId As String, title As String, description As String, showType As String, newShow As Integer, originalAirDate As String, graceNoteSeasonEpisode As String, md5 As String)
+Sub UpdateDBProgram(programId As String, title As String, description As String, showType As String, originalAirDate As String, graceNoteSeasonEpisode As String, md5 As String)
 
-	params = { pid_param: programId, t_param: title, d_param: description, s_param: showType, n_param: newShow, o_param: originalAirDate, g_param:  graceNoteSeasonEpisode, md5_param: md5 }
-    m.db.RunBackground("UPDATE Programs SET Title=:t_param, Description=:d_param, ShowType=:s_param, NewShow=:n_param, OriginalAirDate=:o_param, GraceNoteSeasonEpisode=:g_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
+	params = { pid_param: programId, t_param: title, d_param: description, s_param: showType, o_param: originalAirDate, g_param:  graceNoteSeasonEpisode, md5_param: md5 }
+    m.db.RunBackground("UPDATE Programs SET Title=:t_param, Description=:d_param, ShowType=:s_param, OriginalAirDate=:o_param, GraceNoteSeasonEpisode=:g_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
 
 End Sub
 
@@ -1040,7 +1040,7 @@ End Sub
 Sub UpdateDBPrograms(programs As Object)
 
 	for each program in programs
-		m.UpdateDBProgram(program.programId, program.title, program.description, program.showType, program.newShow, program.originalAirDate, program.graceNoteSeasonEpisode, program.md5)
+		m.UpdateDBProgram(program.programId, program.title, program.description, program.showType, program.originalAirDate, program.graceNoteSeasonEpisode, program.md5)
 	next
 
 End Sub
