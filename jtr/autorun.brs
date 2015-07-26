@@ -122,7 +122,9 @@ Function newJTR(msgPort As Object) As Object
 	JTR.DeleteDBProgramCasts			= DeleteDBProgramCasts
 	JTR.DeleteDBProgramCast				= DeleteDBProgramCast
 	JTR.GetDBEpgData					= GetDBEpgData
-
+	JTR.GetDBLastChannelGuideSelection	= GetDBLastChannelGuideSelection
+	JTR.UpdateDBLastChannelGuideSelection	= UpdateDBLastChannelGuideSelection
+	
 	JTR.AddDBItems						= AddDBItems
 	JTR.GenerateSQLInsert				= GenerateSQLInsert
 

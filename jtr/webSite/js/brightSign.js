@@ -203,7 +203,7 @@ function initializeBrightSign() {
                 consoleLog("baseURL from BrightSign message is: " + baseURL);
 
                 // temporary location
-                initializeEpgData();
+                // initializeEpgData();
 
                 // post message indicating that initialization is complete ??
                 event["EventType"] = "READY";

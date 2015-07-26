@@ -37,10 +37,12 @@ Sub OpenDatabase()
 		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
 		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, MD5 TEXT);")
 	
-		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, Description TEXT, ShowType TEXT, MD5 TEXT);")
+		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, Description TEXT, ShowType TEXT, NewShow TEXT, OriginalAirDate TEXT, GracenoteSeasonEpisode TEXT, MD5 TEXT);")
 
 		m.CreateDBTable("CREATE TABLE ProgramCast (ProgramId TEXT, Name TEXT, BillingOrder TEXT);")
 
+		m.CreateDBTable("CREATE TABLE LastChannelGuideSelection (StationId TEXT, Date TEXT);")
+		
 	endif
 
 End Sub
@@ -1006,6 +1008,9 @@ Sub AddDBPrograms(programs)
 	columnKeys.push("episodeTitle")
 	columnKeys.push("description")
 	columnKeys.push("showType")
+	columnKeys.push("newShow")
+	columnKeys.push("originalAirDate")
+	columnKeys.push("gracenoteSeasonEpisode")
 	columnKeys.push("md5")
 
 	dbColumnNames = []
@@ -1014,6 +1019,9 @@ Sub AddDBPrograms(programs)
 	dbColumnNames.push("EpisodeTitle")
 	dbColumnNames.push("Description")
 	dbColumnNames.push("ShowType")
+	dbColumnNames.push("NewShow")
+	dbColumnNames.push("OriginalAirDate")
+	dbColumnNames.push("GracenoteSeasonEpisode")
 	dbColumnNames.push("MD5")
 
 	m.AddDBItems(programs, columnKeys, dbColumnNames, "Programs")
@@ -1021,10 +1029,10 @@ Sub AddDBPrograms(programs)
 End Sub
 
 
-Sub UpdateDBProgram(programId As String, title As String, description As String, md5 As String)
+Sub UpdateDBProgram(programId As String, title As String, description As String, showType As String, newShow As Integer, originalAirDate As String, graceNoteSeasonEpisode As String, md5 As String)
 
-	params = { pid_param: programId, t_param: title, d_param: description, md5_param: md5 }
-    m.db.RunBackground("UPDATE Programs SET Title=:t_param, Description=:d_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
+	params = { pid_param: programId, t_param: title, d_param: description, s_param: showType, n_param: newShow, o_param: originalAirDate, g_param:  graceNoteSeasonEpisode, md5_param: md5 }
+    m.db.RunBackground("UPDATE Programs SET Title=:t_param, Description=:d_param, ShowType=:s_param, NewShow=:n_param, OriginalAirDate=:o_param, GraceNoteSeasonEpisode=:g_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
 
 End Sub
 
@@ -1032,7 +1040,7 @@ End Sub
 Sub UpdateDBPrograms(programs As Object)
 
 	for each program in programs
-		m.UpdateDBProgram(program.programId, program.title, program.description, program.md5)
+		m.UpdateDBProgram(program.programId, program.title, program.description, program.showType, program.newShow, program.originalAirDate, program.graceNoteSeasonEpisode, program.md5)
 	next
 
 End Sub
@@ -1097,4 +1105,31 @@ Function GetDBEpgData(startDate$ As String)
 
 End Function
 
+ 
+Sub GetDBLastChannelGuideSelectionCallback(resultsData As Object, selectData As Object)
 
+	selectData.stationId$ = resultsData["StationId"]
+	selectData.date$ = resultsData["Date"]
+	
+End Sub
+
+
+Function GetDBLastChannelGuideSelection() As Object
+
+	selectData = {}
+	selectData.stationId$ = ""
+	selectData.date$ = ""
+	
+	select$ = "SELECT LastChannelGuideSelection.StationId, LastChannelGuideSelection.Date FROM LastChannelGuideSelection;"
+	m.ExecuteDBSelect(select$, GetDBLastSelectedShowIdCallback, selectData, invalid)
+
+	return selectData.lastSelectedShowId$
+
+End Function
+
+
+Sub UpdateDBLastChannelGuideSelection(stationId$ As String, date$ As String)
+
+	m.db.RunBackground("UPDATE LastChannelGuideSelection SET StationId='" + stationId$ + ", Date=" + date$ + "';", {})
+
+End Sub

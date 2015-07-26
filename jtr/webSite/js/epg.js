@@ -560,6 +560,16 @@ function valueIfMetadataExists(program, metadata) {
     return "";
 }
 
+
+function boolValueIfMetadataExists(program, metadata) {
+
+    if (metadata in program) {
+        return program[metadata];
+    }
+    return false;
+}
+
+
 function getSchedulesDirectPrograms(nextFunction) {
 
     console.log("getSchedulesDirectPrograms");
@@ -591,18 +601,43 @@ function getSchedulesDirectPrograms(nextFunction) {
             var jtrProgram = {};
             jtrProgram.programId = program.programID;
             jtrProgram.title = program.titles[0].title120;
+            jtrProgram.episodeTitle = valueIfMetadataExists(program, "episodeTitle150");
             jtrProgram.description = "";
             if ("descriptions" in program) {
-                if ("description100" in program.descriptions) {
-                    jtrProgram.description = program.descriptions.description100[0].description;
-                }
-                else if ("description1000" in program.descriptions) {
+                // if ("description100" in program.descriptions) {
+                //     jtrProgram.description = program.descriptions.description100[0].description;
+                // }
+                // else if ("description1000" in program.descriptions) {
+                //     jtrProgram.description = program.descriptions.description1000[0].description;
+                // }
+                if ("description1000" in program.descriptions) {
                     jtrProgram.description = program.descriptions.description1000[0].description;
                 }
+                else if ("description100" in program.descriptions) {
+                    jtrProgram.description = program.descriptions.description100[0].description;
+                }
             }
-            jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
-            jtrProgram.episodeTitle = valueIfMetadataExists(program, "episodeTitle150");
+
             jtrProgram.showType = valueIfMetadataExists(program, "showType");
+            
+            var newShow = boolValueIfMetadataExists(program, "newShow");
+            if (newShow) {
+                jtrProgram.newShow = 1;                
+            }
+            else {
+                jtrProgram.newShow = 0;     
+            }
+
+            jtrProgram.originalAirDate = valueIfMetadataExists(program, "originalAirDate");
+            
+            jtrProgram.gracenoteSeasonEpisode = "";
+            if ("metadata" in program) {
+                if ("Gracenote" in program.metadata[0]) {
+                    if (("season" in program.metadata[0].Gracenote) && ("episode" in program.metadata[0].Gracenote)) {
+                        jtrProgram.gracenoteSeasonEpisode = "Season " + program.metadata[0].Gracenote.season.toString() + ", " + "Episode " + program.metadata[0].Gracenote.episode.toString();
+                    }
+                }
+            }
             jtrProgram.md5 = valueIfMetadataExists(program, "md5");
 
             if ("cast" in program) {

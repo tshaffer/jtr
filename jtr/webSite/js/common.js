@@ -836,6 +836,8 @@ function displayChannelGuide() {
 
 function selectChannelGuide() {
 
+    initializeEpgData();
+    
     displayChannelGuide();
 }
 
