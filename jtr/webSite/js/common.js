@@ -567,11 +567,9 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     
     var episodeInfo = "";
     if (selectedProgram.showType == "Series" && selectedProgram.newShow == 0) {
-        if (selectedProgram.originalAirDate == "") {
-            episodeInfo = "Repeat";
-        }                
-        else {
-            episodeInfo = "Original air date was: " + selectedProgram.originalAirDate;
+        episodeInfo = "Rerun.";
+        if (selectedProgram.originalAirDate != "") {
+            episodeInfo += " The original air date was " + selectedProgram.originalAirDate;
             if (selectedProgram.gracenoteSeasonEpisode != "") {
                 episodeInfo += ", " + selectedProgram.gracenoteSeasonEpisode;
             }
