@@ -544,7 +544,15 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
 
     $("#programInfo").empty();
 
-    // program title, episode title, and description
+     // day, date, and time
+    var startTime = timeOfDay(selectedProgram.date);
+
+    var endDate = new Date(selectedProgram.date.getTime() + selectedProgram.duration * 60000);
+    var endTime = timeOfDay(endDate);
+
+    var dateTimeInfo = programDayDate + " " + startTime + " - " + endTime;
+
+   // program title, episode title, and description, and episode info
     var programInfo = selectedProgram.title;
     programInfo += "<br>";
 
@@ -556,16 +564,20 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
         programInfo += selectedProgram.description;
     }
     programInfo += "<br>";
-
-    // day, date, and time
-    var programDayDate = dayDate(selectedProgram.date);
-
-    var startTime = timeOfDay(selectedProgram.date);
-
-    var endDate = new Date(selectedProgram.date.getTime() + selectedProgram.duration * 60000);
-    var endTime = timeOfDay(endDate);
-
-    var dateTimeInfo = programDayDate + " " + startTime + " - " + endTime;
+    
+    var episodeInfo = "";
+    if (selectedProgram.showType == "Series" && selectedProgram.newShow == 0) {
+        if (selectedProgram.originalAirDate == "") {
+            episodeInfo = "Repeat";
+        }                
+        else {
+            episodeInfo = "Original air date was: " + selectedProgram.originalAirDate;
+            if (selectedProgram.gracenoteSeasonEpisode != "") {
+                episodeInfo += ", " + selectedProgram.gracenoteSeasonEpisode;
+            }
+        }
+    }
+    programInfo += episodeInfo + "<br>";
 
     var htmlContent = "<p>";
     htmlContent += dateTimeInfo;
@@ -735,6 +747,25 @@ function displayChannelGuide() {
                 program.description = sdProgram.Description;
                 program.showType = sdProgram.ShowType;
 
+                if (sdProgram.NewShow == undefined) {
+                    program.newShow = 1;
+                }
+                else {
+                    program.newShow = sdProgram.NewShow;
+                }
+                if (sdProgram.OriginalAirDate == undefined) {
+                    program.originalAirDate = "";
+                }
+                else {
+                    program.originalAirDate = sdProgram.OriginalAirDate;
+                }
+                if (sdProgram.GracenoteSeasonEpisode == undefined) {
+                    program.gracenoteSeasonEpisode = "";
+                }
+                else {
+                    program.gracenoteSeasonEpisode = sdProgram.GracenoteSeasonEpisode;
+                }
+                
                 // append to program list for  this station (create new station object if necessary)
                 var stationId = sdProgram.StationId;
                 if (stationId == "undefined") {
