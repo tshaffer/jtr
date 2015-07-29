@@ -645,7 +645,8 @@ function getSchedulesDirectPrograms(nextFunction) {
                 $.each(program.cast, function (castIndex, castItem) {
                     var castMember = {};
                     castMember.programId = program.programID;
-                    castMember.name = castItem.name;
+                    // castMember.name = castItem.name;
+                    castMember.name = castItem.billingOrder + castItem.name;
                     castMember.billingOrder = castItem.billingOrder;
                     jtrCastMembers.push(castMember);
                 });

@@ -958,19 +958,6 @@ Sub GetDBEpgDataCallback(resultsData As Object, selectData As Object)
 End Sub
 
 
-Function GetDBEpgData(startDate$ As String)
-
-	selectData = {}
-	selectData.epgData = []
-
-	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode from ProgramsForStations, Programs, Stations where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"	
-	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
-
-	return selectData.epgData
-
-End Function
-
- 
 Sub GetDBLastChannelGuideSelectionCallback(resultsData As Object, selectData As Object)
 
 	selectData.stationId$ = resultsData["StationId"]
@@ -998,3 +985,16 @@ Sub UpdateDBLastChannelGuideSelection(stationId$ As String, date$ As String)
 	m.db.RunBackground("UPDATE LastChannelGuideSelection SET StationId='" + stationId$ + ", Date=" + date$ + "';", {})
 
 End Sub
+
+
+Function GetDBEpgData(startDate$ As String)
+
+	selectData = {}
+	selectData.epgData = []
+
+	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY ProgramsForStations.ProgramId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"	
+	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
+
+	return selectData.epgData
+
+End Function

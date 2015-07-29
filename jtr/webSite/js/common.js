@@ -565,6 +565,8 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     }
     programInfo += "<br>";
     
+    programInfo += selectedProgram.castMembers + "<br>";
+    
     var episodeInfo = "";
     if (selectedProgram.showType == "Series" && selectedProgram.newShow == 0) {
         episodeInfo = "Rerun.";
@@ -763,6 +765,20 @@ function displayChannelGuide() {
                 else {
                     program.gracenoteSeasonEpisode = sdProgram.GracenoteSeasonEpisode;
                 }
+                
+                var aggregatedCastMembers = sdProgram.CastMembers;
+                var castMembersArray = aggregatedCastMembers.split(',');
+                var castMembers = "";
+                $.each(castMembersArray, function (index, castMemberEntry) {
+                    if (index > 0) {
+                        castMembers += ", ";
+                    }
+                    castMembers += castMemberEntry.substring(2);
+                });
+                if (castMembers != "") {
+                    console.log(castMembers);
+                }
+                program.castMembers = castMembers;
                 
                 // append to program list for  this station (create new station object if necessary)
                 var stationId = sdProgram.StationId;
