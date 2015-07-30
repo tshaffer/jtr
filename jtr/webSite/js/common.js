@@ -565,7 +565,10 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     }
     programInfo += "<br>";
     
-    programInfo += selectedProgram.castMembers + "<br>";
+    if (selectedProgram.castMembers != 'none') {
+        programInfo += selectedProgram.castMembers;        
+    }
+    programInfo += "<br>";        
     
     var episodeInfo = "";
     if (selectedProgram.showType == "Series" && selectedProgram.newShow == 0) {

@@ -651,6 +651,14 @@ function getSchedulesDirectPrograms(nextFunction) {
                     jtrCastMembers.push(castMember);
                 });
             }
+            else
+            {
+                    var castMember = {};
+                    castMember.programId = program.programID;
+                    castMember.name = "01none";
+                    castMember.billingOrder = "01";
+                    jtrCastMembers.push(castMember);
+            }
 
             if (program.programID in programIdsNeedingInserts) {
                 jtrProgramsToInsert.push(jtrProgram);
