@@ -1,6 +1,8 @@
 var epgProgramSchedule = null;
 var epgProgramScheduleStartDateTime;
 
+var channelGuideDisplayStartDateTime;
+
 function initiateRenderChannelGuide() {
 
     // display channel guide one station at a time, from current time for the duration of the channel guide
@@ -14,7 +16,14 @@ function renderChannelGuide() {
     var currentDate = new Date();
     var startMinute = (parseInt(currentDate.getMinutes() / 30) * 30) % 60;
     var startHour = currentDate.getHours();
-    var channelGuideDisplayStartDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
+
+    channelGuideDisplayStartDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
+
+    renderChannelGuideAtDateTime();
+}
+
+// draw the channel guide, starting at channelGuideDisplayStartDateTime
+function renderChannelGuideAtDateTime() {
 
     // start date/time of data structure containing channel guide data
     var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
@@ -307,6 +316,26 @@ function timeOfDay(dateTime) {
     var minutesLbl = twoDigitFormat(dateTime.getMinutes().toString());
 
     return (hoursLbl + ":" + minutesLbl + amPm);
+}
+
+
+function navigateForwardOneScreen() {
+
+    var isVisible = true;
+
+    var cgDataWidth = $("#cgData").width()
+
+    var timeLineIndex = 0;
+    while (isVisible) {
+        var $elem = $("#cgTimeLine").children()[timeLineIndex];
+        var elemLeft = $elem.offsetLeft;
+        isVisible = elemLeft < cgDataWidth;
+        timeLineIndex++;
+    }
+
+    // item at timeLineIndex is not visible; when navigating in this direction, make it the first one visible
+    channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
+    renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
 }
 
 
