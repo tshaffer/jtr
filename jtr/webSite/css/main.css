@@ -3,8 +3,7 @@
 }
 
 #cgData {
-/*height: 400px;*/
-width: 1200px;
+width: 1440px;      /* number of 30 minute blocks displayed is this number / .thirtyMinuteButton.width */
 overflow: hidden;
 float:left;
 font-size: 14px;
@@ -14,6 +13,20 @@ font-size: 14px;
 width: 140px;
 float:left;
 overflow: hidden;
+}
+
+#cgBackward {
+float:left; 
+font-size: 10px; 
+height: 525px;
+line-height: 525px;
+}
+
+#cgForward {
+float:left; 
+font-size: 10px; 
+height: 525px;
+line-height: 525px;
 }
 
 .cgStationLine {
@@ -213,13 +226,14 @@ body {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    max-width: 1400px;
+    max-width: 1500px;
   }
 }
 
 @media (min-width: 1200px) {
   .container {
-    width: 1500px;
+    width: 1900px;
+    max-width: 1900px;
   }
 }
 

@@ -778,9 +778,9 @@ function displayChannelGuide() {
                     }
                     castMembers += castMemberEntry.substring(2);
                 });
-                if (castMembers != "") {
-                    console.log(castMembers);
-                }
+                // if (castMembers != "") {
+                //     console.log(castMembers);
+                // }
                 program.castMembers = castMembers;
                 
                 // append to program list for  this station (create new station object if necessary)
