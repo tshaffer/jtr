@@ -132,7 +132,7 @@ function renderChannelGuideAtDateTime() {
         //$(lastActiveButton).addClass("btn-primary");
 
         //$(lastActiveButton).focus();
-        selectProgram(null, lastActiveButton);
+        selectProgram(null, lastActiveButton, 0);
     });
 
     // build and display timeline
@@ -190,7 +190,11 @@ function getActiveRowIndex(activeRow) {
     return indexOfActiveRow - 1;    // 0 is the first station
 }
 
-function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement) {
+// direction
+//      -1 = left
+//      0 = no direction
+//      1 = right
+function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement, direction) {
 
     if (activeProgramUIElement != null) {
         $(activeProgramUIElement).removeClass("btn-primary");
@@ -217,8 +221,10 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
         // on right or on left??
         var currentOffsetLeft = $("#cgData").scrollLeft();
         // JTRTODO - hardcoded value
-        var newOffsetLeft = currentOffsetLeft + 240;
-        $("#cgData").scrollLeft(newOffsetLeft)
+        if (direction != 0) {
+            var newOffsetLeft = currentOffsetLeft + (direction * 240);
+            $("#cgData").scrollLeft(newOffsetLeft)
+        }
     }
 
     $(newActiveProgramUIElement).focus();
@@ -226,9 +232,9 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
     lastActiveButton = newActiveProgramUIElement;
 }
 
-function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
+function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direction) {
 
-    updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement);
+    updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement, direction);
 
     var programId = $(newActiveProgramUIElement)[0].id;
     var idParts = programId.split("-");
@@ -437,6 +443,21 @@ function isElementFullyVisible(element) {
 }
 
 
+function isProgramStartVisible(element) {
+
+    var cgLeft = $("#cgData").offset().left;
+    var elementLeft = $(element).offset().left;
+    if (elementLeft < cgLeft) return false;
+
+    var cgWidth = $("#cgData").width();
+    var elementWidth = $(element).width();
+
+    if (elementLeft > (cgLeft + cgWidth)) return false;
+
+    return true;
+}
+
+
 function isProgramEndVisible(element) {
 
     var cgLeft = $("#cgData").offset().left;
@@ -469,19 +490,18 @@ function navigateChannelGuide(direction) {
     if (indexOfActiveProgramUIElement >= 0) {
         if (direction == "right") {
 
-            //var programIsFullyVisible = isElementFullyVisible(activeProgramUIElement);
-            var programIsFullyVisible = isProgramEndVisible(activeProgramUIElement);
-            // if the current program's end is fully visible, display the next program
-            if (programIsFullyVisible) {
+            var programEndIsVisible = isProgramEndVisible(activeProgramUIElement);
+
+            // if the end of the current program is fully visible, display the next program
+            if (programEndIsVisible) {
                 var indexOfNewProgramUIElement = indexOfActiveProgramUIElement + 1;
                 if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
                     var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
-                    selectProgram(activeProgramUIElement, newActiveProgramUIElement);
+                    selectProgram(activeProgramUIElement, newActiveProgramUIElement, 1);
                 }
             }
 
-            // OBSOLETE if the current program is not fully visible, move forward by 30 minutes
-            // if the current program's end point is not fully visible, move forward by 30 minutes.
+            // else if the current program's end point is not visible, move forward by 30 minutes.
             else {
                 var currentOffsetLeft = $("#cgData").scrollLeft();
                 // JTRTODO - hardcoded value
@@ -492,12 +512,26 @@ function navigateChannelGuide(direction) {
             // JTRTODO - check for limit on right side; either fetch more epg data or stop scrolling at the end
         }
         else if (direction == "left") {
-            if (indexOfActiveProgramUIElement > 0) {
-                var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
-                if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
-                    var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
-                    selectProgram(activeProgramUIElement, newActiveProgramUIElement);
+
+            var programStartIsVisible = isProgramStartVisible(activeProgramUIElement);
+
+            // if the start of the current program is fully visible, display the prior program
+            if (programStartIsVisible) {
+                if (indexOfActiveProgramUIElement > 0) {
+                    var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
+                    if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
+                        var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+                        selectProgram(activeProgramUIElement, newActiveProgramUIElement, -1);
+                    }
                 }
+            }
+
+            // else if the current program's start point is not visible, move backward by 30 minutes.
+            else {
+                var currentOffsetLeft = $("#cgData").scrollLeft();
+                // JTRTODO - hardcoded value
+                var newOffsetLeft = currentOffsetLeft - 240;
+                $("#cgData").scrollLeft(newOffsetLeft)
             }
         }
         else if (direction == "down" || direction == "up") {
@@ -527,7 +561,7 @@ function navigateChannelGuide(direction) {
                         newActiveProgram = programInStation;
                     }
                 });
-                selectProgram(activeProgramUIElement, newActiveProgram);
+                selectProgram(activeProgramUIElement, newActiveProgram, 0);
             }
         }
     }
@@ -705,7 +739,6 @@ function displayChannelGuide() {
     $( "#cgData" ).keydown(function(keyEvent) {
         var keyIdentifier = event.keyIdentifier;
         if (keyIdentifier == "Right" || keyIdentifier == "Left" || keyIdentifier == "Up" || keyIdentifier == "Down") {
-            console.log("keyIdentifier " + event.keyIdentifier);
             navigateChannelGuide(keyIdentifier.toLowerCase());
             return false;
         }
