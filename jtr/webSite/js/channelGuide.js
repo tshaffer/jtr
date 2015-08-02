@@ -204,7 +204,22 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
     //      if it's currently visible, don't scroll at all
     //      if not scroll by one 30 minutes slot to make it visible
 
-    //$("#cgData").scrollLeft(1000)
+    // to choose whether to scroll to the right or the left, need to know if scrolling to the left or the right.
+    // the reason this is required is that it's possible to have a show where it is longer than the width of the channel guide, and
+    // the current active time doesn't include either the beginning or end of the show
+    //      change the signature of this function
+    // however, this function is also called when not scrolling (on initial display for example). In this case, is it correct to not
+    // scroll at all? just let the chips fall where they may? I think so.
+
+    var newActiveProgramUIElementVisible = isElementPartiallyVisible(newActiveProgramUIElement);
+    if (!newActiveProgramUIElementVisible) {
+        // new active element not visible at all, make it visible by scrolling 30 minutes to the left or right
+        // on right or on left??
+        var currentOffsetLeft = $("#cgData").scrollLeft();
+        // JTRTODO - hardcoded value
+        var newOffsetLeft = currentOffsetLeft + 240;
+        $("#cgData").scrollLeft(newOffsetLeft)
+    }
 
     $(newActiveProgramUIElement).focus();
 
@@ -224,6 +239,9 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     var programList = programStationData.programList;
     var selectedProgram = programList[programIndex];
 
+    // display title (prominently)
+    $("#cgProgramName").text(selectedProgram.title);
+
     // display day/date of selected program in upper left of channel guide
     var programDayDate = dayDate(selectedProgram.date);
     $("#cgDayDate").text(programDayDate);
@@ -239,9 +257,10 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
     var dateTimeInfo = programDayDate + " " + startTime + " - " + endTime;
 
    // program title, episode title, and description, and episode info
-    var programInfo = selectedProgram.title;
-    programInfo += "<br>";
+    //var programInfo = selectedProgram.title;
+    //programInfo += "<br>";
 
+    var programInfo = "";
     if (selectedProgram.episodeTitle != "") {
         programInfo += '"' + selectedProgram.episodeTitle + '"';
     }
@@ -386,6 +405,51 @@ function navigateForwardOneScreen() {
 }
 
 
+function isElementPartiallyVisible(element) {
+
+    var cgLeft = $("#cgData").offset().left;
+    var cgWidth = $("#cgData").width();
+    var cgRight = cgLeft + cgWidth - 1;
+
+    var elementLeft = $(element).offset().left;
+    var elementWidth = $(element).width();
+    var elementRight = elementLeft + elementWidth - 1;
+
+    if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
+
+    if (elementRight >= cgLeft && elementRight < cgRight) return true;
+
+    return false;
+}
+
+function isElementFullyVisible(element) {
+
+    var cgLeft = $("#cgData").offset().left;
+    var elementLeft = $(element).offset().left;
+    if (elementLeft < cgLeft) return false;
+
+    var cgWidth = $("#cgData").width();
+    var elementWidth = $(element).width();
+
+    if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
+
+    return true;
+}
+
+
+function isProgramEndVisible(element) {
+
+    var cgLeft = $("#cgData").offset().left;
+    var elementLeft = $(element).offset().left;
+
+    var cgWidth = $("#cgData").width();
+    var elementWidth = $(element).width();
+
+    if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
+
+    return true;
+}
+
 function navigateChannelGuide(direction) {
 
     // JTRTODO
@@ -404,12 +468,28 @@ function navigateChannelGuide(direction) {
     var indexOfActiveProgramUIElement = getActiveButtonIndex(activeProgramUIElement, programUIElementsInStation);
     if (indexOfActiveProgramUIElement >= 0) {
         if (direction == "right") {
-            // JTRTODO - check for limit on right side; either fetch more epg data or stop scrolling at the end
-            var indexOfNewProgramUIElement = indexOfActiveProgramUIElement + 1;
-            if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
-                var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
-                selectProgram(activeProgramUIElement, newActiveProgramUIElement);
+
+            //var programIsFullyVisible = isElementFullyVisible(activeProgramUIElement);
+            var programIsFullyVisible = isProgramEndVisible(activeProgramUIElement);
+            // if the current program's end is fully visible, display the next program
+            if (programIsFullyVisible) {
+                var indexOfNewProgramUIElement = indexOfActiveProgramUIElement + 1;
+                if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
+                    var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+                    selectProgram(activeProgramUIElement, newActiveProgramUIElement);
+                }
             }
+
+            // OBSOLETE if the current program is not fully visible, move forward by 30 minutes
+            // if the current program's end point is not fully visible, move forward by 30 minutes.
+            else {
+                var currentOffsetLeft = $("#cgData").scrollLeft();
+                // JTRTODO - hardcoded value
+                var newOffsetLeft = currentOffsetLeft + 240;
+                $("#cgData").scrollLeft(newOffsetLeft)
+            }
+
+            // JTRTODO - check for limit on right side; either fetch more epg data or stop scrolling at the end
         }
         else if (direction == "left") {
             if (indexOfActiveProgramUIElement > 0) {
