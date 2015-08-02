@@ -429,6 +429,20 @@ function navigateBackwardOneScreen() {
     //renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
 }
 
+
+function navigateBackwardOneDay() {
+
+    // scroll right by one day
+    var currentOffsetLeft = $("#cgData").scrollLeft();
+    // JTRTODO
+    // 48 time slots * 240 pixels (width) per timeslot
+    var newOffsetLeft = currentOffsetLeft - (48 * 240);
+    $("#cgData").scrollLeft(newOffsetLeft)
+
+    selectProgramAtCurrentOffset();
+}
+
+
 function getIndexOfFirstInvisibleTime() {
 
     var isVisible = true;
@@ -460,6 +474,18 @@ function navigateForwardOneScreen() {
     // JTRTODO
     // 6 time slots * 240 pixels (width) per timeslot
     var newOffsetLeft = currentOffsetLeft + (6 * 240);
+    $("#cgData").scrollLeft(newOffsetLeft)
+
+    selectProgramAtCurrentOffset();
+}
+
+function navigateForwardOneDay() {
+
+    // scroll left by one day
+    var currentOffsetLeft = $("#cgData").scrollLeft();
+    // JTRTODO
+    // 48 time slots * 240 pixels (width) per timeslot
+    var newOffsetLeft = currentOffsetLeft + (48 * 240);
     $("#cgData").scrollLeft(newOffsetLeft)
 
     selectProgramAtCurrentOffset();
