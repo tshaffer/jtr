@@ -200,6 +200,12 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
     $(newActiveProgramUIElement).removeClass("btn-secondary");
     $(newActiveProgramUIElement).addClass("btn-primary");
 
+    // position cgData to make selected element visible in the proper location
+    //      if it's currently visible, don't scroll at all
+    //      if not scroll by one 30 minutes slot to make it visible
+
+    //$("#cgData").scrollLeft(1000)
+
     $(newActiveProgramUIElement).focus();
 
     lastActiveButton = newActiveProgramUIElement;
@@ -319,7 +325,39 @@ function timeOfDay(dateTime) {
 }
 
 
-function navigateForwardOneScreen() {
+function getIndexOfFirstVisibleTime() {
+
+    var isVisible = false;
+
+    var cgDataWidth = $("#cgData").width()
+
+    var timeLineIndex = 0;
+    while (!isVisible) {
+        var $elem = $("#cgTimeLine").children()[timeLineIndex];
+        var elemLeft = $elem.offsetLeft;
+        isVisible = elemLeft < cgDataWidth;
+        timeLineIndex++;
+    }
+
+    return timeLineIndex;
+}
+
+
+function navigateBackwardOneScreen() {
+
+    // get index of first visible item; display the channel guide one screen back
+
+    var timeLineIndex = getIndexOfFirstVisibleTime();
+
+    // JTR TODO - replace by proper calculation
+    timeLineIndex -= 6;
+    if (timeLineIndex < 0) timeLineIndex = 0;
+
+    channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
+    renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
+}
+
+function getIndexOfFirstInvisibleTime() {
 
     var isVisible = true;
 
@@ -332,6 +370,15 @@ function navigateForwardOneScreen() {
         isVisible = elemLeft < cgDataWidth;
         timeLineIndex++;
     }
+
+    return timeLineIndex;
+}
+
+function navigateForwardOneScreen() {
+
+    // get index of first item that's not visible; display the channel guide starting at that time
+
+    var timeLineIndex = getIndexOfFirstInvisibleTime();
 
     // item at timeLineIndex is not visible; when navigating in this direction, make it the first one visible
     channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
@@ -473,10 +520,14 @@ function displayChannelGuide() {
                 var castMembersArray = aggregatedCastMembers.split(',');
                 var castMembers = "";
                 $.each(castMembersArray, function (index, castMemberEntry) {
-                    if (index > 0) {
-                        castMembers += ", ";
+                    // JTRTODO - probably needs something more sophisticated and thought through for small devices
+                    // limit number of cast members due to screen size
+                    if (index < 11) {
+                        if (index > 0) {
+                            castMembers += ", ";
+                        }
+                        castMembers += castMemberEntry.substring(2);
                     }
-                    castMembers += castMemberEntry.substring(2);
                 });
                 // if (castMembers != "") {
                 //     console.log(castMembers);
