@@ -207,14 +207,6 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
     // position cgData to make selected element visible in the proper location
     //      if it's currently visible, don't scroll at all
     //      if not scroll by one 30 minutes slot to make it visible
-
-    // to choose whether to scroll to the right or the left, need to know if scrolling to the left or the right.
-    // the reason this is required is that it's possible to have a show where it is longer than the width of the channel guide, and
-    // the current active time doesn't include either the beginning or end of the show
-    //      change the signature of this function
-    // however, this function is also called when not scrolling (on initial display for example). In this case, is it correct to not
-    // scroll at all? just let the chips fall where they may? I think so.
-
     var newActiveProgramUIElementVisible = isElementPartiallyVisible(newActiveProgramUIElement);
     if (!newActiveProgramUIElementVisible) {
         // new active element not visible at all, make it visible by scrolling 30 minutes to the left or right
@@ -224,6 +216,9 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
         if (direction != 0) {
             var newOffsetLeft = currentOffsetLeft + (direction * 240);
             $("#cgData").scrollLeft(newOffsetLeft)
+        }
+        else {
+            makeItemVisible(newActiveProgramUIElement);
         }
     }
 
@@ -408,6 +403,27 @@ function navigateForwardOneScreen() {
     // item at timeLineIndex is not visible; when navigating in this direction, make it the first one visible
     channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
     renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
+}
+
+
+function makeItemVisible(element) {
+
+    var cgLeft = $("#cgData").offset().left;
+    var cgWidth = $("#cgData").width();
+    var cgRight = cgLeft + cgWidth - 1;
+
+    var elementLeft = $(element).offset().left;
+
+    if (elementLeft < cgLeft) {
+
+        var distanceFromLeft = cgLeft - elementLeft;
+
+        // scroll to the right by this amount
+        var currentOffsetLeft = $("#cgData").scrollLeft();
+        // JTRTODO - hardcoded value
+        var newOffsetLeft = currentOffsetLeft - distanceFromLeft;
+        $("#cgData").scrollLeft(newOffsetLeft)
+    }
 }
 
 
