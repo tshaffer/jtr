@@ -399,16 +399,34 @@ function getIndexOfFirstVisibleTime() {
 
 function navigateBackwardOneScreen() {
 
-    // get index of first visible item; display the channel guide one screen back
+    var activeProgramUIElement = lastActiveButton;
 
-    var timeLineIndex = getIndexOfFirstVisibleTime();
+    // algorithm
+    // scroll left by one screenful
+    // figure out the new active program and highlight it
+    //      get the timeslot of the first visible time
+    //      get the program associated with that time slot (for the current station)
+    //      select that program
 
-    // JTR TODO - replace by proper calculation
-    timeLineIndex -= 6;
-    if (timeLineIndex < 0) timeLineIndex = 0;
+    // scroll left by one screenful
+    var currentOffsetLeft = $("#cgData").scrollLeft();
+    // JTRTODO
+    // 6 time slots * 240 pixels (width) per timeslot
+    var newOffsetLeft = currentOffsetLeft - (6 * 240);
+    $("#cgData").scrollLeft(newOffsetLeft)
 
-    channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
-    renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
+    selectProgramAtCurrentOffset();
+
+    //// get index of first visible item; display the channel guide one screen back
+
+    //var timeLineIndex = getIndexOfFirstVisibleTime();
+
+    //// JTR TODO - replace by proper calculation
+    //timeLineIndex -= 6;
+    //if (timeLineIndex < 0) timeLineIndex = 0;
+
+    //channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
+    //renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
 }
 
 function getIndexOfFirstInvisibleTime() {
@@ -430,8 +448,6 @@ function getIndexOfFirstInvisibleTime() {
 
 function navigateForwardOneScreen() {
 
-    var activeProgramUIElement = lastActiveButton;
-
     // algorithm
     // scroll left by one screenful
     // figure out the new active program and highlight it
@@ -445,6 +461,13 @@ function navigateForwardOneScreen() {
     // 6 time slots * 240 pixels (width) per timeslot
     var newOffsetLeft = currentOffsetLeft + (6 * 240);
     $("#cgData").scrollLeft(newOffsetLeft)
+
+    selectProgramAtCurrentOffset();
+}
+
+function selectProgramAtCurrentOffset() {
+
+    var activeProgramUIElement = lastActiveButton;
 
     // get the timeslot of the first visible time
     var firstVisibleTimeIndex = getIndexOfFirstVisibleTime();
@@ -486,12 +509,9 @@ function navigateForwardOneScreen() {
     var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
     var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
 
-    //var airDateTime = addMinutes(channelGuideDisplayStartDateTime, firstVisibleTimeIndex * 30);
-    //debugger;
     $.each(programUIElementsInStation, function (buttonIndex, programUIElementInStation) {
         var programInStationId = programUIElementInStation.id;
         var programInStationIdParts = programInStationId.split("-");
-        //var stationId = idParts[1];
         var programInStationProgramIndex = programInStationIdParts[2];
         if (programInStationProgramIndex == indexIntoProgramList) {
             newActiveProgramUIElement = programUIElementInStation;
