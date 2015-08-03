@@ -86,16 +86,16 @@ function renderChannelGuideAtDateTime() {
 
             minutesToDisplay += durationInMinutes;
 
-            var cssClass = "";
+            var cssClasses = "";
             var widthSpec = "";
             if (durationInMinutes == 30) {
-                cssClass = "'thirtyMinuteButton'";
+                cssClasses = "'btn-secondary thirtyMinuteButton'";
             }
             else if (durationInMinutes == 60) {
-                cssClass = "'sixtyMinuteButton'";
+                cssClasses = "'btn-secondary sixtyMinuteButton'";
             }
             else {
-                cssClass = "'variableButton'";
+                cssClasses = "'btn-secondary variableButton'";
                 var width = (durationInMinutes / 60) * 480;
                 widthSpec = " style='width:" + width.toString() + "px'";
                 // JTR TODO - maxWidth
@@ -103,7 +103,8 @@ function renderChannelGuideAtDateTime() {
             var id = "show-" + station.StationId + "-" + indexIntoProgramList.toString();
             var title = showToDisplay.title;
             toAppend +=
-                "<button id='" + id + "' class=" + cssClass + widthSpec + ">" + title + "</button>";
+                //"<button id='" + id + "' class=btn-secondary " + cssClass + widthSpec + ">" + title + "</button>";
+                "<button id='" + id + "' class=" + cssClasses + widthSpec + ">" + title + "</button>";
 
             minutesAlreadyDisplayed += durationInMinutes;
             indexIntoProgramList++;
