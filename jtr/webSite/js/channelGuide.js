@@ -265,8 +265,8 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
         programInfo += '"' + selectedProgram.episodeTitle + '"';
     }
     programInfo += "<br>";
-    if (selectedProgram.description != "") {
-        programInfo += selectedProgram.description;
+    if (selectedProgram.shortDescription != "") {
+        programInfo += selectedProgram.shortDescription;
     }
     programInfo += "<br>";
     
@@ -280,8 +280,8 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
         episodeInfo = "Rerun.";
         if (selectedProgram.originalAirDate != "") {
             episodeInfo += " The original air date was " + selectedProgram.originalAirDate;
-            if (selectedProgram.gracenoteSeasonEpisode != "") {
-                episodeInfo += ", " + selectedProgram.gracenoteSeasonEpisode;
+            if (selectedProgram.seasonEpisode != "") {
+                episodeInfo += ", " + selectedProgram.seasonEpisode;
             }
         }
     }
@@ -768,7 +768,8 @@ function displayChannelGuide() {
                 program.title = sdProgram.Title;
                 program.duration = sdProgram.Duration;
                 program.episodeTitle = sdProgram.EpisodeTitle;
-                program.description = sdProgram.Description;
+                program.shortDescription = sdProgram.ShortDescription;
+                program.longDescription = sdProgram.LongDescription;
                 program.showType = sdProgram.ShowType;
 
                 if (sdProgram.NewShow == undefined) {
@@ -783,13 +784,19 @@ function displayChannelGuide() {
                 else {
                     program.originalAirDate = sdProgram.OriginalAirDate;
                 }
-                if (sdProgram.GracenoteSeasonEpisode == undefined) {
-                    program.gracenoteSeasonEpisode = "";
+                if (sdProgram.SeasonEpisode == undefined) {
+                    program.seasonEpisode = "";
                 }
                 else {
-                    program.gracenoteSeasonEpisode = sdProgram.GracenoteSeasonEpisode;
+                    program.seasonEpisode = sdProgram.seasonEpisode;
                 }
                 
+                program.movieYear = sdProgram.movieYear;
+                program.movieRating = sdProgram.movieRating;
+                program.movieMinRating = sdProgram.movieMinRating;
+                program.movieMaxRating = sdProgram.movieMaxRating;
+                program.movieRatingIncrement = sdProgram.movieRatingIncrement;
+
                 var aggregatedCastMembers = sdProgram.CastMembers;
                 var castMembersArray = aggregatedCastMembers.split(',');
                 var castMembers = "";
@@ -908,7 +915,7 @@ function displayChannelGuide() {
 
 function selectChannelGuide() {
 
-    // initializeEpgData();
+    //initializeEpgData();
     
     displayChannelGuide();
 }
