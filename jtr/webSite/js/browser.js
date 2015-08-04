@@ -52,7 +52,6 @@ function remoteRecord() {
     console.log("remoteRecord invoked");
 }
 
-
 function recordNow() {
 
     // load settings from db if not previously loaded
@@ -208,3 +207,27 @@ function streamSelectedShow(event) {
         alert("Unable to stream this recording.");
     }
 }
+
+
+// channel guide handlers
+function selectChannelGuide() {
+    ChannelGuideSingleton.getInstance().selectChannelGuide();
+}
+
+function navigateBackwardOneScreen() {
+    ChannelGuideSingleton.getInstance().navigateBackwardOneScreen();
+}
+
+function navigateBackwardOneDay() {
+    ChannelGuideSingleton.getInstance().navigateBackwardOneDay();
+}
+
+function navigateForwardOneScreen() {
+    ChannelGuideSingleton.getInstance().navigateForwardOneScreen();
+}
+
+function navigateForwardOneDay() {
+    ChannelGuideSingleton.getInstance().navigateForwardOneDay();
+}
+
+

@@ -37,7 +37,7 @@ Sub OpenDatabase()
 		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
 		m.CreateDBTable("CREATE TABLE ProgramsForStations (StationId TEXT, ScheduleDate TEXT, ProgramId TEXT, AirDateTime TEXT, Duration TEXT, NewShow TEXT, MD5 TEXT);")
 	
-		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, Description TEXT, ShowType TEXT, OriginalAirDate TEXT, GracenoteSeasonEpisode TEXT, MD5 TEXT);")
+		m.CreateDBTable("CREATE TABLE Programs (ProgramId TEXT, Title TEXT, EpisodeTitle TEXT, ShortDescription TEXT, LongDescription TEXT, ShowType TEXT, OriginalAirDate TEXT, SeasonEpisode TEXT, MD5 TEXT, MovieYear TEXT, MovieRating TEXT, MovieMinRating TEXT, MovieMaxRating TEXT, MovieRatingIncrement TEXT);")
 
 		m.CreateDBTable("CREATE TABLE ProgramCast (ProgramId TEXT, Name TEXT, BillingOrder TEXT);")
 
@@ -699,7 +699,8 @@ Sub AddDBItems(insertItems As Object, columnKeys As Object, dbColumnNames As Obj
 
 	itemIndex = 0
 '	chunkSize = 500
-	chunkSize = 100
+'	chunkSize = 100
+	chunkSize = 50
 	remainingItems = insertItems.Count()
 
 	while remainingItems > 0
@@ -859,7 +860,7 @@ Function GetDBPrograms() As Object
 	selectData = {}
 	selectData.programs = []
 
-	select$ = "SELECT ProgramId, Title, Description, MD5 FROM Programs;"
+	select$ = "SELECT ProgramId, Title, MD5 FROM Programs;"
 	m.ExecuteDBSelect(select$, GetDBProgramsCallback, selectData, invalid)
 
 	return selectData.programs
@@ -873,31 +874,44 @@ Sub AddDBPrograms(programs)
 	columnKeys.push("programId")
 	columnKeys.push("title")
 	columnKeys.push("episodeTitle")
-	columnKeys.push("description")
+	columnKeys.push("shortDescription")
+	columnKeys.push("longDescription")
 	columnKeys.push("showType")
 	columnKeys.push("originalAirDate")
-	columnKeys.push("gracenoteSeasonEpisode")
+	columnKeys.push("seasonEpisode")
 	columnKeys.push("md5")
+	columnKeys.push("movieYear")
+	columnKeys.push("movieRating")
+	columnKeys.push("movieMinRating")
+	columnKeys.push("movieMaxRating")
+	columnKeys.push("movieRatingIncrement")
 
 	dbColumnNames = []
 	dbColumnNames.push("ProgramId")
 	dbColumnNames.push("Title")
 	dbColumnNames.push("EpisodeTitle")
-	dbColumnNames.push("Description")
+	dbColumnNames.push("ShortDescription")
+	dbColumnNames.push("LongDescription")
 	dbColumnNames.push("ShowType")
 	dbColumnNames.push("OriginalAirDate")
-	dbColumnNames.push("GracenoteSeasonEpisode")
+	dbColumnNames.push("SeasonEpisode")
 	dbColumnNames.push("MD5")
+	dbColumnNames.push("MovieYear")
+	dbColumnNames.push("MovieRating")
+	dbColumnNames.push("MovieMinRating")
+	dbColumnNames.push("MovieMaxRating")
+	dbColumnNames.push("MovieRatingIncrement")
 
 	m.AddDBItems(programs, columnKeys, dbColumnNames, "Programs")
 
 End Sub
 
 
-Sub UpdateDBProgram(programId As String, title As String, description As String, showType As String, originalAirDate As String, graceNoteSeasonEpisode As String, md5 As String)
+' JTR TODO - no movie information can be updated currently
+Sub UpdateDBProgram(programId As String, title As String, shortDescription As String, longDescription As String, showType As String, originalAirDate As String, seasonEpisode As String, md5 As String)
 
-	params = { pid_param: programId, t_param: title, d_param: description, s_param: showType, o_param: originalAirDate, g_param:  graceNoteSeasonEpisode, md5_param: md5 }
-    m.db.RunBackground("UPDATE Programs SET Title=:t_param, Description=:d_param, ShowType=:s_param, OriginalAirDate=:o_param, GraceNoteSeasonEpisode=:g_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
+	params = { pid_param: programId, t_param: title, sd_param: shortDescription, ld_param: longDescription, s_param: showType, o_param: originalAirDate, g_param:  seasonEpisode, md5_param: md5 }
+    m.db.RunBackground("UPDATE Programs SET Title=:t_param, ShortDescription=:sd_param, LongDescription=:ld_param, ShowType=:s_param, OriginalAirDate=:o_param, SeasonEpisode=:g_param, MD5=:md5_param WHERE ProgramId=:pid_param;", params)
 
 End Sub
 
@@ -905,7 +919,7 @@ End Sub
 Sub UpdateDBPrograms(programs As Object)
 
 	for each program in programs
-		m.UpdateDBProgram(program.programId, program.title, program.description, program.showType, program.originalAirDate, program.graceNoteSeasonEpisode, program.md5)
+		m.UpdateDBProgram(program.programId, program.title, program.shortDescription, program.longDescription, program.showType, program.originalAirDate, program.seasonEpisode, program.md5)
 	next
 
 End Sub
@@ -992,9 +1006,8 @@ Function GetDBEpgData(startDate$ As String)
 	selectData = {}
 	selectData.epgData = []
 
-'	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY ProgramsForStations.ProgramId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"	
-	
-	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode, ProgramsForStations.ProgramId order by ProgramsForStations.StationId, ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
+'	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY ProgramsForStations.ProgramId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"		
+	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.ShortDescription, Programs.LongDescription, Programs.ShowType, Programs.OriginalAirDate, Programs.SeasonEpisode, Programs.MovieYear, Programs.MovieRating, Programs.MovieMinRating, Programs.MovieMaxRating, Programs.MovieRatingIncrement, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.ShortDescription, Programs.LongDescription, Programs.ShowType, Programs.OriginalAirDate, Programs.SeasonEpisode, ProgramsForStations.ProgramId order by ProgramsForStations.StationId, ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
 
 	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
 

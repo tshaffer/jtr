@@ -1,5 +1,71 @@
-#programInfo {
-    font-size: 16px;
+#cgProgramName {
+    font-size: 30px;
+    background-color: blue;
+    color: white;
+    margin-bottom: 0px;
+}
+
+#cgDateTimeInfo{
+    font-size: 24px;
+    background-color: blue;
+    color: white;
+}
+
+#cgEpisodeTitle{
+    font-size: 24px;
+    background-color: blue;
+    color: white;
+}
+
+#cgDescription{
+    font-size: 24px;
+    background-color: blue;
+    color: white;
+
+/*max-width: 1780px;*/
+max-width: 1870px;
+white-space: nowrap;
+width: 100%;                   
+overflow: hidden;              
+-o-text-overflow: ellipsis;    
+text-overflow:    ellipsis;    
+}
+
+#cgCastMembers{
+    font-size: 24px;
+    background-color: blue;
+    color: white;
+
+/*max-width: 1780px;*/
+max-width: 1870px;
+white-space: nowrap;
+width: 100%;                   
+overflow: hidden;              
+-o-text-overflow: ellipsis;    
+text-overflow:    ellipsis;    
+}
+
+#episodeInfo{
+    font-size: 24px;
+    background-color: blue;
+    color: white;
+}
+
+#stationLabelDiv {
+width: 140px;
+float:left;
+overflow: hidden;
+}
+
+.cgStationLine {
+    width: 140px;
+    height: 50px;
+    background-color: lightcyan;
+    font-size: 18px;
+    margin-bottom: 0px;
+    border:solid;
+    border-width: 1px;
+    text-align: center;
 }
 
 #cgData {
@@ -7,12 +73,6 @@ width: 1440px;      /* number of 30 minute blocks displayed is this number / .th
 overflow: hidden;
 float:left;
 font-size: 14px;
-}
-
-#stationLabelDiv {
-width: 140px;
-float:left;
-overflow: hidden;
 }
 
 #cgBackward {
@@ -29,22 +89,11 @@ height: 525px;
 line-height: 525px;
 }
 
-.cgStationLine {
-    width: 140px;
-    height: 50px;
-    background-color: lightcyan;
-    font-size: 16px;
-    margin-bottom: 0px;
-    border:solid;
-    border-width: 1px;
-    text-align: center;
-}
-
 .timeLine {
     height: 50px;
-    /*width: 3000px;*/
     width: 50000px;
     background-color: lightblue;
+        font-size: 24px;
 
     margin-bottom: 0px;
     border:solid;
@@ -57,7 +106,7 @@ line-height: 525px;
     /*border:solid;
     border-width: 1px;*/
     padding:5px 10px;
-    font-size: 16px;
+    font-size: 24px;
     display:inline-block;
     text-align: center;
 
@@ -76,8 +125,6 @@ line-height: 525px;
 
 .cgLine {
     height: 50px;
-    /*width: 3000px;*/
-    /*width: 10000px;*/
     width: 50000px;
     background-color: coral;
 }
@@ -87,11 +134,9 @@ line-height: 525px;
 display:inline-block;
 width: 240px;
 padding:5px 10px;
-font-size: 16px;
+font-size: 24px;
 height: 48px;
-/*border-width: 1px;*/
-    background-color: lightcyan;
-/*overflow: hidden;*/               /* didn't work  */
+background-color: lightcyan;
 max-width: 240px;
 max-height: 48px;
 
@@ -106,7 +151,7 @@ text-overflow:    ellipsis;
 display:inline-block;
 width: 480px;
 padding:5px 10px;
-font-size: 16px;
+font-size: 24px;
 height: 48px;
     background-color: lightcyan;
 max-width: 480px;
@@ -121,8 +166,9 @@ text-overflow:    ellipsis;    /* IE, Safari (WebKit), Opera >= 11, FF > 6 */
 
 .variableButton {
 display:inline-block;
-padding:5px 10px;
-font-size: 16px;
+/*padding:5px 10px;*/
+padding:0px 0px;
+font-size: 24px;
 height: 48px;
     background-color: lightcyan;
 max-height: 48px;
@@ -211,6 +257,7 @@ th.recorded {
 
 /* Space out content a bit */
 body {
+    margin: 40px;       /* JTR TO DO */
   padding-top: 20px;
   padding-bottom: 20px;
 
@@ -234,8 +281,8 @@ body {
 
 @media (min-width: 1200px) {
   .container {
-    width: 1900px;
-    max-width: 1900px;
+    width: 1800px;
+    max-width: 1800px;
   }
 }
 

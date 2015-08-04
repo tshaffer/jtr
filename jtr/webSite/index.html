@@ -15,6 +15,7 @@
     <link href="./css/styles.css" rel="stylesheet">
     <script src="./js/jquery-2.1.1.min.js"></script>
     <script src="./bootstrap/js/bootstrap.js"></script>
+    <script src="./js/date.js"></script>
     <script src="./js/remote.js"></script>
     <script src="./js/hsm.js"></script>
     <script src="./js/tune.js"></script>
@@ -236,10 +237,11 @@
 
         <div id="channelGuidePage" style="display: none;">
             <h3 id="cgProgramName"></h3>
-
-            <div id="programInfo">
-
-            </div>
+            <div id="cgDateTimeInfo"></div>
+            <div id="cgEpisodeTitle"></div>
+            <div id="cgDescription"></div>
+            <div id="cgCastMembers"></div>
+            <div id="episodeInfo"></div>
 
             <div id="cgBackward">
                 <button type='button' class='btn btn-default' onclick="navigateBackwardOneDay()" aria-label='Left Align'><span class='glyphicon glyphicon-step-backward' aria-hidden='true'></span></button>
@@ -280,7 +282,6 @@
             </div>
 
         </div>
-
 
     </div> <!-- /container -->
 
