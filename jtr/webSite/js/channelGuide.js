@@ -788,7 +788,7 @@ function displayChannelGuide() {
                     program.seasonEpisode = "";
                 }
                 else {
-                    program.seasonEpisode = sdProgram.seasonEpisode;
+                    program.seasonEpisode = sdProgram.SeasonEpisode;
                 }
                 
                 program.movieYear = sdProgram.movieYear;
