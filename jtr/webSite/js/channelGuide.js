@@ -260,20 +260,20 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
     //var programInfo = selectedProgram.title;
     //programInfo += "<br>";
 
-    var programInfo = "";
-    if (selectedProgram.episodeTitle != "") {
-        programInfo += '"' + selectedProgram.episodeTitle + '"';
-    }
-    programInfo += "<br>";
-    if (selectedProgram.shortDescription != "") {
-        programInfo += selectedProgram.shortDescription;
-    }
-    programInfo += "<br>";
+    //var programInfo = "";
+    //if (selectedProgram.episodeTitle != "") {
+    //    programInfo += '"' + selectedProgram.episodeTitle + '"';
+    //}
+    //programInfo += "<br>";
+    //if (selectedProgram.shortDescription != "") {
+    //    programInfo += selectedProgram.shortDescription;
+    //}
+    //programInfo += "<br>";
     
-    if (selectedProgram.castMembers != 'none') {
-        programInfo += selectedProgram.castMembers;        
-    }
-    programInfo += "<br>";        
+    //if (selectedProgram.castMembers != 'none') {
+    //    programInfo += selectedProgram.castMembers;        
+    //}
+    //programInfo += "<br>";        
     
     var episodeInfo = "";
     if (selectedProgram.showType == "Series" && selectedProgram.newShow == 0) {
@@ -285,15 +285,21 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
             }
         }
     }
-    programInfo += episodeInfo + "<br>";
+    //programInfo += episodeInfo + "<br>";
 
-    var htmlContent = "<p>";
-    htmlContent += dateTimeInfo;
-    htmlContent += "<br>";
-    htmlContent += programInfo;
-    htmlContent += "</p>";
+    //var htmlContent = "<p>";
+    //htmlContent += dateTimeInfo;
+    //htmlContent += "<br>";
+    //htmlContent += programInfo;
+    //htmlContent += "</p>";
 
-    $("#programInfo").html(htmlContent);
+    //$("#programInfo").html(htmlContent);
+
+    $("#cgDateTimeInfo").text(dateTimeInfo)
+    $("#cgEpisodeTitle").text(selectedProgram.episodeTitle)
+    $("#cgDescription").text(selectedProgram.shortDescription)
+    $("#cgCastMembers").text(selectedProgram.castMembers)
+    $("#episodeInfo").text(episodeInfo)
 
 }
 
