@@ -295,12 +295,47 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
 
     //$("#programInfo").html(htmlContent);
 
-    $("#cgDateTimeInfo").text(dateTimeInfo)
-    $("#cgEpisodeTitle").text(selectedProgram.episodeTitle)
-    $("#cgDescription").text(selectedProgram.shortDescription)
-    $("#cgCastMembers").text(selectedProgram.castMembers)
-    $("#episodeInfo").text(episodeInfo)
+    $("#cgDateTimeInfo").html(dateTimeInfo)
 
+    var episodeTitle = selectedProgram.episodeTitle;
+    if (episodeTitle == "") {
+        episodeTitle = "<br/>";
+    }
+    $("#cgEpisodeTitle").html(episodeTitle)
+
+    var programDescription = selectedProgram.longDescription;
+    if (programDescription == "") {
+        programDescription = selectedProgram.shortDescription;
+    }
+    if (programDescription == "") {
+        programDescription = "<br/>";
+    }
+    $("#cgDescription").html(programDescription)
+
+    var castMembers = selectedProgram.castMembers;
+    if (castMembers == "") {
+        castMembers = "<br/>";
+    }
+    $("#cgCastMembers").html(castMembers)
+
+    if (episodeInfo == "") {
+        episodeInfo = "<br/>";
+    }
+    $("#episodeInfo").html(episodeInfo)
+
+    //$("#cgDateTimeInfo").text(dateTimeInfo)
+
+    //$("#cgEpisodeTitle").text(selectedProgram.episodeTitle)
+
+    //var programDescription = selectedProgram.longDescription;
+    //if (programDescription == "") {
+    //    programDescription = selectedProgram.shortDescription;
+    //}
+    //$("#cgDescription").text(programDescription)
+
+    //$("#cgCastMembers").text(selectedProgram.castMembers)
+
+    //$("#episodeInfo").text(episodeInfo)
 }
 
 function dayDate(dateTime) {
