@@ -4,6 +4,8 @@ var epgProgramScheduleStartDateTime;
 var channelGuideDisplayStartDateTime;
 var channelGuideDisplayCurrentDateTime;
 
+var _currentStationIndex;
+
 function selectChannelGuide() {
 
     //initializeEpgData();
@@ -357,8 +359,11 @@ function renderChannelGuideAtDateTime() {
         //$(lastActiveButton).addClass("btn-primary");
 
         //$(lastActiveButton).focus();
+        // JTRTODO - shouldn't this be outside of the loop
         selectProgram(null, lastActiveButton, 0);
     });
+
+    _currentStationIndex = 0;
 
     // build and display timeline
     var toAppend = "";
@@ -402,23 +407,22 @@ function scrollToTime(newScrollToTime) {
 
 function selectProgramAtTimeOnStation(selectProgramTime, stationIndex, currentUIElement) {
 
+    _currentStationIndex = stationIndex;
+
     var slotIndex = getSlotIndex(selectProgramTime);
 
-    //var programId = currentUIElement.id;
-    //var idParts = programId.split("-");
-    //var stationId = idParts[1];
     var station = stations[stationIndex];
     var stationId = station.StationId;
     var programStationData = epgProgramSchedule[stationId]
 
     var buttonIndex = programStationData.programUIElementIndices[slotIndex];
 
-    // get the array of buttons for the stationId
+    // get the array of program buttons for this station
     var cgProgramsInStationRowElement = "#cgStation" + stationIndex.toString() + "Data";
     var programUIElementsInStation = $(cgProgramsInStationRowElement).children();       // programs in that row
+
     var nextActiveUIElement = programUIElementsInStation[buttonIndex];
 
-    //selectProgram(activeProgramUIElement, nextActiveUIElement, direction)
     selectProgram(currentUIElement, nextActiveUIElement, 0)
 }
 
@@ -438,30 +442,26 @@ function getActiveButtonIndex(activeButton, buttonsInRow) {
     return indexOfActiveButton;
 }
 
-function getActiveRowIndex(activeRow) {
+//function getActiveRowIndex(activeRow) {
 
-    var rowPosition = $(activeRow).position();
+//    var rowPosition = $(activeRow).position();
 
-    var cgStationDiv = activeRow.parentElement;
-    var stationDivs = $(cgStationDiv).children();
-    var indexOfActiveRow = -1;
-    $.each(stationDivs, function (stationDivIndex, stationDiv) {
-        if (stationDivIndex > 0) {          // div 0 is the timeline; skip it
-            var stationDivPosition = $(stationDiv).position();
-            if (stationDivPosition.top == rowPosition.top) {
-                indexOfActiveRow = stationDivIndex;
-                return false;
-            }
-        }
-    });
-    return indexOfActiveRow - 1;    // 0 is the first station
-}
+//    var cgStationDiv = activeRow.parentElement;
+//    var stationDivs = $(cgStationDiv).children();
+//    var indexOfActiveRow = -1;
+//    $.each(stationDivs, function (stationDivIndex, stationDiv) {
+//        if (stationDivIndex > 0) {          // div 0 is the timeline; skip it
+//            var stationDivPosition = $(stationDiv).position();
+//            if (stationDivPosition.top == rowPosition.top) {
+//                indexOfActiveRow = stationDivIndex;
+//                return false;
+//            }
+//        }
+//    });
+//    return indexOfActiveRow - 1;    // 0 is the first station
+//}
 
-// direction
-//      -1 = left
-//      0 = no direction
-//      1 = right
-function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement, direction) {
+function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement) {
 
     if (activeProgramUIElement != null) {
         $(activeProgramUIElement).removeClass("btn-primary");
@@ -476,11 +476,10 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
     lastActiveButton = newActiveProgramUIElement;
 }
 
-function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direction) {
 
-    updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement, direction);
-
-    var programId = $(newActiveProgramUIElement)[0].id;
+function updateProgramInfo(programUIElement) {
+   
+    var programId = $(programUIElement)[0].id;
     var idParts = programId.split("-");
     var stationId = idParts[1];
     var programIndex = idParts[2];
@@ -498,7 +497,7 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
 
     $("#programInfo").empty();
 
-     // day, date, and time
+    // day, date, and time
     var startTime = timeOfDay(selectedProgram.date);
 
     var endDate = new Date(selectedProgram.date.getTime() + selectedProgram.duration * 60000);
@@ -544,6 +543,14 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement, direct
         episodeInfo = "<br/>";
     }
     $("#episodeInfo").html(episodeInfo)
+}
+
+function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
+
+    updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement);
+
+    updateProgramInfo(newActiveProgramUIElement)
+
 }
 
 function dayDate(dateTime) {
@@ -593,60 +600,6 @@ function timeOfDay(dateTime) {
 }
 
 
-function getIndexOfFirstVisibleTime() {
-
-    //var cgLeft = $("#cgData").offset().left;
-    //var cgWidth = $("#cgData").width();
-    //var cgRight = cgLeft + cgWidth - 1;
-
-    //var elementLeft = $(element).offset().left;
-    //var elementWidth = $(element).width();
-    //var elementRight = elementLeft + elementWidth - 1;
-
-    //if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
-
-    //if (elementRight >= cgLeft && elementRight < cgRight) return true;
-
-    var isVisible = false;
-
-    var cgLeft = $("#cgData").offset().left;
-    //var cgWidth = $("#cgData").width();
-    //var cgRight = cgLeft + cgWidth - 1;
-
-    var timeLineIndex = 0;
-    while (!isVisible) {
-        var element = $("#cgTimeLine").children()[timeLineIndex];
-
-        var elementLeft = $(element).offset().left;
-
-        isVisible = elementLeft >= cgLeft;
-
-        if (!isVisible) {
-            timeLineIndex++;
-        }
-        //var elementWidth = $(element).width();
-        //var elementRight = elementLeft + elementWidth - 1;
-
-        //if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
-
-        //if (elementRight >= cgLeft && elementRight < cgRight) return true;
-    }
-
-    //var cgDataWidth = $("#cgData").width()
-    //var cgDataLeft = $("#cgData").offset().left;
-
-    //var timeLineIndex = 0;
-    //while (!isVisible) {
-    //    var $elem = $("#cgTimeLine").children()[timeLineIndex];
-    //    var elemLeft = $elem.offsetLeft;
-    //    isVisible = elemLeft >= cgDataLeft;
-    //    timeLineIndex++;
-    //}
-
-    return timeLineIndex;
-}
-
-
 function navigateBackwardOneScreen() {
 
     // 6 slots * 30 minutes / slot * time conversion
@@ -659,15 +612,15 @@ function navigateBackwardOneScreen() {
     var idParts = programId.split("-");
     var stationId = idParts[1];
 
-    var currentStationIndex = -1;
-    $.each(stations, function (stationIndex, station) {
-        if (stationId == station.StationId) {
-            currentStationIndex = stationIndex;
-            return false;
-        }
-    });
+    //var currentStationIndex = -1;
+    //$.each(stations, function (stationIndex, station) {
+    //    if (stationId == station.StationId) {
+    //        currentStationIndex = stationIndex;
+    //        return false;
+    //    }
+    //});
 
-    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
 }
 
 
@@ -682,15 +635,15 @@ function navigateBackwardOneDay() {
     var idParts = programId.split("-");
     var stationId = idParts[1];
 
-    var currentStationIndex = -1;
-    $.each(stations, function (stationIndex, station) {
-        if (stationId == station.StationId) {
-            currentStationIndex = stationIndex;
-            return false;
-        }
-    });
+    //var currentStationIndex = -1;
+    //$.each(stations, function (stationIndex, station) {
+    //    if (stationId == station.StationId) {
+    //        currentStationIndex = stationIndex;
+    //        return false;
+    //    }
+    //});
 
-    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
 }
 
 
@@ -706,15 +659,15 @@ function navigateForwardOneScreen() {
     var idParts = programId.split("-");
     var stationId = idParts[1];
 
-    var currentStationIndex = -1;
-    $.each(stations, function (stationIndex, station) {
-        if (stationId == station.StationId) {
-            currentStationIndex = stationIndex;
-            return false;
-        }
-    });
+    //var currentStationIndex = -1;
+    //$.each(stations, function (stationIndex, station) {
+    //    if (stationId == station.StationId) {
+    //        currentStationIndex = stationIndex;
+    //        return false;
+    //    }
+    //});
 
-    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
 }
 
 function navigateForwardOneDay() {
@@ -729,15 +682,15 @@ function navigateForwardOneDay() {
     var idParts = programId.split("-");
     var stationId = idParts[1];
 
-    var currentStationIndex = -1;
-    $.each(stations, function (stationIndex, station) {
-        if (stationId == station.StationId) {
-            currentStationIndex = stationIndex;
-            return false;
-        }
-    });
+    //var currentStationIndex = -1;
+    //$.each(stations, function (stationIndex, station) {
+    //    if (stationId == station.StationId) {
+    //        currentStationIndex = stationIndex;
+    //        return false;
+    //    }
+    //});
 
-    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
 }
 
 function isProgramStartVisible(element) {
@@ -762,9 +715,11 @@ function isProgramEndVisible(element) {
     var elementLeft = $(element).offset().left;
 
     var cgWidth = $("#cgData").width();
-    var elementWidth = $(element).width();
+    //var elementWidth = $(element).width();
+    var elementWidth = element.offsetWidth;
 
     if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
+    if ((elementLeft + elementWidth) <= cgLeft) return false;
 
     return true;
 }
@@ -844,7 +799,8 @@ function navigateChannelGuide(direction) {
         }
         else if (direction == "down" || direction == "up") {
             var xPosition = programUIElementPosition.left;
-            var activeRowIndex = getActiveRowIndex(activeStationRowUIElement);
+            //var activeRowIndex = getActiveRowIndex(activeStationRowUIElement);
+            var activeRowIndex = _currentStationIndex;
             if ((activeRowIndex < stations.length - 1 && direction == "down")  || (activeRowIndex > 0 && direction == "up")) {
 
                 var newRowIndex;
@@ -990,6 +946,60 @@ function navigateChannelGuide(direction) {
 //    if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
 
 //    return true;
+//}
+
+
+//function getIndexOfFirstVisibleTime() {
+
+//    //var cgLeft = $("#cgData").offset().left;
+//    //var cgWidth = $("#cgData").width();
+//    //var cgRight = cgLeft + cgWidth - 1;
+
+//    //var elementLeft = $(element).offset().left;
+//    //var elementWidth = $(element).width();
+//    //var elementRight = elementLeft + elementWidth - 1;
+
+//    //if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
+
+//    //if (elementRight >= cgLeft && elementRight < cgRight) return true;
+
+//    var isVisible = false;
+
+//    var cgLeft = $("#cgData").offset().left;
+//    //var cgWidth = $("#cgData").width();
+//    //var cgRight = cgLeft + cgWidth - 1;
+
+//    var timeLineIndex = 0;
+//    while (!isVisible) {
+//        var element = $("#cgTimeLine").children()[timeLineIndex];
+
+//        var elementLeft = $(element).offset().left;
+
+//        isVisible = elementLeft >= cgLeft;
+
+//        if (!isVisible) {
+//            timeLineIndex++;
+//        }
+//        //var elementWidth = $(element).width();
+//        //var elementRight = elementLeft + elementWidth - 1;
+
+//        //if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
+
+//        //if (elementRight >= cgLeft && elementRight < cgRight) return true;
+//    }
+
+//    //var cgDataWidth = $("#cgData").width()
+//    //var cgDataLeft = $("#cgData").offset().left;
+
+//    //var timeLineIndex = 0;
+//    //while (!isVisible) {
+//    //    var $elem = $("#cgTimeLine").children()[timeLineIndex];
+//    //    var elemLeft = $elem.offsetLeft;
+//    //    isVisible = elemLeft >= cgDataLeft;
+//    //    timeLineIndex++;
+//    //}
+
+//    return timeLineIndex;
 //}
 
 
