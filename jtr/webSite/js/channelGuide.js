@@ -686,42 +686,6 @@ function navigateBackwardOneScreen() {
     });
 
     selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
-    //selectProgramAtTime(activeProgramUIElement, newScrollToTime);
-    return;
-
-
-
-
-
-
-    var activeProgramUIElement = lastActiveButton;
-
-    // algorithm
-    // scroll left by one screenful
-    // figure out the new active program and highlight it
-    //      get the timeslot of the first visible time
-    //      get the program associated with that time slot (for the current station)
-    //      select that program
-
-    // scroll left by one screenful
-    var currentOffsetLeft = $("#cgData").scrollLeft();
-    // JTRTODO
-    // 6 time slots * 240 pixels (width) per timeslot
-    var newOffsetLeft = currentOffsetLeft - (6 * 240);
-    $("#cgData").scrollLeft(newOffsetLeft)
-
-    selectProgramAtCurrentOffset();
-
-    //// get index of first visible item; display the channel guide one screen back
-
-    //var timeLineIndex = getIndexOfFirstVisibleTime();
-
-    //// JTR TODO - replace by proper calculation
-    //timeLineIndex -= 6;
-    //if (timeLineIndex < 0) timeLineIndex = 0;
-
-    //channelGuideDisplayStartDateTime = new Date(channelGuideDisplayStartDateTime.getTime() + ((timeLineIndex * 30) * 60000));
-    //renderChannelGuideAtDateTime(channelGuideDisplayStartDateTime);
 }
 
 
@@ -745,27 +709,6 @@ function navigateBackwardOneDay() {
     });
 
     selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
-    return;
-
-
-    // 6 slots (3 hours) * 30 minutes / slot * time conversion
-    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (48 * 30 * 60000));
-    scrollToTime(newScrollToTime)
-
-    var activeProgramUIElement = lastActiveButton;
-
-    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
-    return;
-
-
-    // scroll right by one day
-    var currentOffsetLeft = $("#cgData").scrollLeft();
-    // JTRTODO
-    // 48 time slots * 240 pixels (width) per timeslot
-    var newOffsetLeft = currentOffsetLeft - (48 * 240);
-    $("#cgData").scrollLeft(newOffsetLeft)
-
-    selectProgramAtCurrentOffset();
 }
 
 
@@ -807,32 +750,6 @@ function navigateForwardOneScreen() {
     });
 
     selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
-    return;
-
-    // 6 slots * 30 minutes / slot * time conversion
-    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 30 * 60000);
-    scrollToTime(newScrollToTime)
-
-    var activeProgramUIElement = lastActiveButton;
-
-    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
-    return;
-
-    // algorithm
-    // scroll left by one screenful
-    // figure out the new active program and highlight it
-    //      get the timeslot of the first visible time
-    //      get the program associated with that time slot (for the current station)
-    //      select that program
-
-    // scroll left by one screenful
-    var currentOffsetLeft = $("#cgData").scrollLeft();
-    // JTRTODO
-    // 6 time slots * 240 pixels (width) per timeslot
-    var newOffsetLeft = currentOffsetLeft + (6 * 240);
-    $("#cgData").scrollLeft(newOffsetLeft)
-
-    selectProgramAtCurrentOffset();
 }
 
 function navigateForwardOneDay() {
@@ -856,29 +773,6 @@ function navigateForwardOneDay() {
     });
 
     selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
-    return;
-
-
-
-
-    // 6 slots (3 hours) * 30 minutes / slot * time conversion
-    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 48 * 30 * 60000);
-    scrollToTime(newScrollToTime)
-
-    var activeProgramUIElement = lastActiveButton;
-
-    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
-    return;
-
-    // get the current 
-    // scroll left by one day
-    var currentOffsetLeft = $("#cgData").scrollLeft();
-    // JTRTODO
-    // 48 time slots * 240 pixels (width) per timeslot
-    var newOffsetLeft = currentOffsetLeft + (48 * 240);
-    $("#cgData").scrollLeft(newOffsetLeft)
-
-    selectProgramAtCurrentOffset();
 }
 
 function selectProgramAtCurrentOffset() {
@@ -1146,24 +1040,6 @@ function navigateChannelGuide(direction) {
                 }
 
                 selectProgramAtTimeOnStation(selectProgramTime, newRowIndex, activeProgramUIElement);
-                return;
-
-
-                // find program whose x value is closest to the x value of the last program
-                var newActiveRow = stationRowsUIElements[newRowIndex + 1];
-                var programsInStation = $(newActiveRow).children();
-
-                var minDistance = 1920;
-                $.each(programsInStation, function (programInStationIndex, programInStation) {
-                    var programPosition = $(programInStation).position();
-                    var xProgramPosition = programPosition.left;
-                    var distanceFromPreviousProgram = Math.abs(xProgramPosition - xPosition);
-                    if (distanceFromPreviousProgram < minDistance) {
-                        minDistance = distanceFromPreviousProgram;
-                        newActiveProgram = programInStation;
-                    }
-                });
-                selectProgram(activeProgramUIElement, newActiveProgram, 0);
             }
         }
     }
