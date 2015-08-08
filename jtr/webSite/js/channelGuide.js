@@ -265,11 +265,18 @@ function renderChannelGuideAtDateTime() {
         var timeDiffInMinutes = timeDiffInSeconds / 60;
         // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
 
-        // create programUIElementSlotIndices, populate with initial value
+        programStationData.programUIElementIndices = [];
+
+        //var uiElementIndex = 0;
+        //var programUIElementIndex = 0;
+       
+        var slotIndex = 0;
+        var uiElementCount = 0;
 
         var toAppend = "";
         minutesToDisplay = 0;
         while (indexIntoProgramList < programList.length) {
+
             try
             {
                 var durationInMinutes = Number(showToDisplay.duration);
@@ -305,17 +312,29 @@ function renderChannelGuideAtDateTime() {
                 //"<button id='" + id + "' class=btn-secondary " + cssClass + widthSpec + ">" + title + "</button>";
                 "<button id='" + id + "' class=" + cssClasses + widthSpec + ">" + title + "</button>";
 
+            var programStartTime = minutesAlreadyDisplayed;                     // offset in minutes
+            var programEndTime = minutesAlreadyDisplayed + durationInMinutes;   // offset in minutes
+            var slotTime = slotIndex * 30;
+            while (programStartTime <= slotTime && slotTime < programEndTime) {
+                programStationData.programUIElementIndices[slotIndex] = uiElementCount;
+                slotIndex++;
+                slotTime = slotIndex * 30;
+            }
+
             minutesAlreadyDisplayed += durationInMinutes;
             indexIntoProgramList++;
             showToDisplay = programList[indexIntoProgramList];
 
-            // add new value(s) to programUIElementSlotIndices
+            uiElementCount++;
 
+            //// add new value(s) to programUIElementSlotIndices
+            //while (durationInMinutes > 0) {
+            //    programStationData.programUIElementIndices[programUIElementIndex++] = uiElementIndex;
+            //    durationInMinutes -= 30;
+            //}
+            //uiElementIndex++;
         }
         $(cgProgramLineName).append(toAppend);
-
-        // or maybe it's not until here that I can add new value(s) to programUIElementSlotIndices
-        // or maybe they're not programUIElements but indices that will point into the div that contains the buttons
 
         if (minutesToDisplay > maxMinutesToDisplay) {
             maxMinutesToDisplay = minutesToDisplay;
@@ -359,15 +378,20 @@ function renderChannelGuideAtDateTime() {
 }
 
 
-function scrollToTime(newScrollToTime) {
+function getSlotIndex(dateTime) {
 
     // compute the time difference between the new time and where the channel guide data begins (and could be displayed)
-    var timeDiffInMsec = newScrollToTime.getTime() - channelGuideDisplayStartDateTime.getTime();      
+    var timeDiffInMsec = dateTime.getTime() - channelGuideDisplayStartDateTime.getTime();
     var timeDiffInSeconds = timeDiffInMsec / 1000;
     var timeDiffInMinutes = timeDiffInSeconds / 60;
 
     // compute number of 30 minute slots to scroll
-    var slotsToScroll = timeDiffInMinutes / 30;
+    return timeDiffInMinutes / 30;
+}
+
+function scrollToTime(newScrollToTime) {
+
+    var slotsToScroll = getSlotIndex(newScrollToTime);
 
     // how many pixels
     // JTRTODO hard coded
@@ -376,7 +400,25 @@ function scrollToTime(newScrollToTime) {
     channelGuideDisplayCurrentDateTime = newScrollToTime;
 }
 
-function selectProgramAtTime(selectProgramTime) {
+function selectProgramAtTime(currentUIElement, selectProgramTime) {
+
+    var slotIndex = getSlotIndex(selectProgramTime);
+
+    var programId = currentUIElement.id;
+    var idParts = programId.split("-");
+    var stationId = idParts[1];
+    var programStationData = epgProgramSchedule[stationId]
+
+    var buttonIndex = programStationData.programUIElementIndices[slotIndex];
+
+    // get the array of buttons for the current row
+    var activeStationRowUIElement = currentUIElement.parentElement;           // current row of the channel guide
+    var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
+
+    var nextActiveUIElement = programUIElementsInStation[buttonIndex];
+
+    //selectProgram(activeProgramUIElement, nextActiveUIElement, direction)
+    selectProgram(currentUIElement, nextActiveUIElement, 0)
 }
 
 // get the index of the button in a row / div
@@ -691,6 +733,10 @@ function navigateForwardOneScreen() {
     // 6 slots * 30 minutes / slot * time conversion
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 30 * 60000);
     scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
     return;
 
     // algorithm
@@ -808,7 +854,9 @@ function isElementPartiallyVisible(element) {
     var cgRight = cgLeft + cgWidth - 1;
 
     var elementLeft = $(element).offset().left;
-    var elementWidth = $(element).width();
+    //var elementWidth = $(element).width();
+    var elementWidth = element.offsetWidth;
+
     var elementRight = elementLeft + elementWidth - 1;
 
     if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
