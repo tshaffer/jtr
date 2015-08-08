@@ -3,6 +3,7 @@ var epgProgramScheduleStartDateTime;
 
 var channelGuideDisplayStartDateTime;
 var channelGuideDisplayCurrentDateTime;
+var channelGuideDisplayCurrrentEndDateTime;
 
 var _currentStationIndex;
 
@@ -217,6 +218,7 @@ function renderChannelGuide() {
     channelGuideDisplayStartDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
 
     channelGuideDisplayCurrentDateTime = channelGuideDisplayStartDateTime;
+    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 60 * 60000);
 
     renderChannelGuideAtDateTime();
 }
@@ -403,6 +405,7 @@ function scrollToTime(newScrollToTime) {
     $("#cgData").scrollLeft(slotsToScroll * 240)
 
     channelGuideDisplayCurrentDateTime = newScrollToTime;
+    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 60 * 60000);
 }
 
 function selectProgramAtTimeOnStation(selectProgramTime, stationIndex, currentUIElement) {
@@ -441,25 +444,6 @@ function getActiveButtonIndex(activeButton, buttonsInRow) {
     });
     return indexOfActiveButton;
 }
-
-//function getActiveRowIndex(activeRow) {
-
-//    var rowPosition = $(activeRow).position();
-
-//    var cgStationDiv = activeRow.parentElement;
-//    var stationDivs = $(cgStationDiv).children();
-//    var indexOfActiveRow = -1;
-//    $.each(stationDivs, function (stationDivIndex, stationDiv) {
-//        if (stationDivIndex > 0) {          // div 0 is the timeline; skip it
-//            var stationDivPosition = $(stationDiv).position();
-//            if (stationDivPosition.top == rowPosition.top) {
-//                indexOfActiveRow = stationDivIndex;
-//                return false;
-//            }
-//        }
-//    });
-//    return indexOfActiveRow - 1;    // 0 is the first station
-//}
 
 function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUIElement) {
 
@@ -606,21 +590,7 @@ function navigateBackwardOneScreen() {
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (6 * 30 * 60000));
     scrollToTime(newScrollToTime)
 
-    var activeProgramUIElement = lastActiveButton;
-
-    var programId = activeProgramUIElement.id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
-
-    //var currentStationIndex = -1;
-    //$.each(stations, function (stationIndex, station) {
-    //    if (stationId == station.StationId) {
-    //        currentStationIndex = stationIndex;
-    //        return false;
-    //    }
-    //});
-
-    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, lastActiveButton);
 }
 
 
@@ -629,21 +599,7 @@ function navigateBackwardOneDay() {
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (48 * 30 * 60000));
     scrollToTime(newScrollToTime)
 
-    var activeProgramUIElement = lastActiveButton;
-
-    var programId = activeProgramUIElement.id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
-
-    //var currentStationIndex = -1;
-    //$.each(stations, function (stationIndex, station) {
-    //    if (stationId == station.StationId) {
-    //        currentStationIndex = stationIndex;
-    //        return false;
-    //    }
-    //});
-
-    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, lastActiveButton);
 }
 
 
@@ -653,21 +609,7 @@ function navigateForwardOneScreen() {
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + (6 * 30 * 60000));
     scrollToTime(newScrollToTime)
 
-    var activeProgramUIElement = lastActiveButton;
-
-    var programId = activeProgramUIElement.id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
-
-    //var currentStationIndex = -1;
-    //$.each(stations, function (stationIndex, station) {
-    //    if (stationId == station.StationId) {
-    //        currentStationIndex = stationIndex;
-    //        return false;
-    //    }
-    //});
-
-    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, lastActiveButton);
 }
 
 function navigateForwardOneDay() {
@@ -676,52 +618,65 @@ function navigateForwardOneDay() {
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + (48 * 30 * 60000));
     scrollToTime(newScrollToTime)
 
-    var activeProgramUIElement = lastActiveButton;
+    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, lastActiveButton);
+}
 
-    var programId = activeProgramUIElement.id;
+
+function getProgramFromUIElement(element) {
+
+    var programId = $(element)[0].id;
     var idParts = programId.split("-");
     var stationId = idParts[1];
-
-    //var currentStationIndex = -1;
-    //$.each(stations, function (stationIndex, station) {
-    //    if (stationId == station.StationId) {
-    //        currentStationIndex = stationIndex;
-    //        return false;
-    //    }
-    //});
-
-    selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, activeProgramUIElement);
+    var programIndex = idParts[2];
+    var programStationData = epgProgramSchedule[stationId];
+    var programList = programStationData.programList;
+    var selectedProgram = programList[programIndex];
+    return selectedProgram;
 }
 
 function isProgramStartVisible(element) {
 
-    var cgLeft = $("#cgData").offset().left;
-    var elementLeft = $(element).offset().left;
-    if (elementLeft < cgLeft) return false;
+    var program = getProgramFromUIElement(element);
+    var programDate = program.date;
 
-    var cgWidth = $("#cgData").width();
-    //var elementWidth = $(element).width();
-    var elementWidth = element.offsetWidth;
+    if ( (channelGuideDisplayCurrentDateTime <= programDate) && (programDate < channelGuideDisplayCurrrentEndDateTime) ) return true;
+    return false;
 
-    if (elementLeft >= (cgLeft + cgWidth)) return false;
+    //var cgLeft = $("#cgData").offset().left;
+    //var elementLeft = $(element).offset().left;
+    //if (elementLeft < cgLeft) return false;
 
-    return true;
+    //var cgWidth = $("#cgData").width();
+    ////var elementWidth = $(element).width();
+    //var elementWidth = element.offsetWidth;
+
+    //if (elementLeft >= (cgLeft + cgWidth)) return false;
+
+    //return true;
 }
 
 
 function isProgramEndVisible(element) {
 
-    var cgLeft = $("#cgData").offset().left;
-    var elementLeft = $(element).offset().left;
+    var program = getProgramFromUIElement(element);
+    var programStartDateTime = program.date;
+    var programEndDateTime = new Date(programStartDateTime.getTime() + program.duration * 60000);
 
-    var cgWidth = $("#cgData").width();
-    //var elementWidth = $(element).width();
-    var elementWidth = element.offsetWidth;
-
-    if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
-    if ((elementLeft + elementWidth) <= cgLeft) return false;
+    if (programEndDateTime > channelGuideDisplayCurrrentEndDateTime) return false;
+    if (programEndDateTime <= channelGuideDisplayCurrentDateTime) return false;
 
     return true;
+
+    //var cgLeft = $("#cgData").offset().left;
+    //var elementLeft = $(element).offset().left;
+
+    //var cgWidth = $("#cgData").width();
+    //var elementWidth = element.offsetWidth;
+
+    //if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
+    //if ((elementLeft + elementWidth) <= cgLeft) return false;
+
+    //return true;
 }
 
 function navigateChannelGuide(direction) {
@@ -1000,6 +955,25 @@ function navigateChannelGuide(direction) {
 //    //}
 
 //    return timeLineIndex;
+//}
+
+//function getActiveRowIndex(activeRow) {
+
+//    var rowPosition = $(activeRow).position();
+
+//    var cgStationDiv = activeRow.parentElement;
+//    var stationDivs = $(cgStationDiv).children();
+//    var indexOfActiveRow = -1;
+//    $.each(stationDivs, function (stationDivIndex, stationDiv) {
+//        if (stationDivIndex > 0) {          // div 0 is the timeline; skip it
+//            var stationDivPosition = $(stationDiv).position();
+//            if (stationDivPosition.top == rowPosition.top) {
+//                indexOfActiveRow = stationDivIndex;
+//                return false;
+//            }
+//        }
+//    });
+//    return indexOfActiveRow - 1;    // 0 is the first station
 //}
 
 
