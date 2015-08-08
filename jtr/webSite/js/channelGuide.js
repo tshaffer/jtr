@@ -901,7 +901,8 @@ function isElementFullyVisible(element) {
     if (elementLeft < cgLeft) return false;
 
     var cgWidth = $("#cgData").width();
-    var elementWidth = $(element).width();
+    //var elementWidth = $(element).width();
+    var elementWidth = element.offsetWidth;
 
     if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
 
@@ -916,9 +917,10 @@ function isProgramStartVisible(element) {
     if (elementLeft < cgLeft) return false;
 
     var cgWidth = $("#cgData").width();
-    var elementWidth = $(element).width();
+    //var elementWidth = $(element).width();
+    var elementWidth = element.offsetWidth;
 
-    if (elementLeft > (cgLeft + cgWidth)) return false;
+    if (elementLeft >= (cgLeft + cgWidth)) return false;
 
     return true;
 }
@@ -958,21 +960,26 @@ function navigateChannelGuide(direction) {
 
             var programEndIsVisible = isProgramEndVisible(activeProgramUIElement);
 
-            // if the end of the current program is fully visible, display the next program
+            // if the end of the current program is fully visible, go to the next program
+            // if the start of the next program is not visible, scroll to the left by 30 minutes
+            // select the next program
             if (programEndIsVisible) {
                 var indexOfNewProgramUIElement = indexOfActiveProgramUIElement + 1;
                 if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
                     var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+                    var programStartIsVisible = isProgramStartVisible(newActiveProgramUIElement);
+                    if (!programStartIsVisible) {
+                        newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 1 * 30 * 60000);
+                        scrollToTime(newScrollToTime);
+                    }
                     selectProgram(activeProgramUIElement, newActiveProgramUIElement, 1);
                 }
             }
 
             // else if the current program's end point is not visible, move forward by 30 minutes.
             else {
-                var currentOffsetLeft = $("#cgData").scrollLeft();
-                // JTRTODO - hardcoded value
-                var newOffsetLeft = currentOffsetLeft + 240;
-                $("#cgData").scrollLeft(newOffsetLeft)
+                newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 1 * 30 * 60000);
+                scrollToTime(newScrollToTime);
             }
 
             // JTRTODO - check for limit on right side; either fetch more epg data or stop scrolling at the end
@@ -981,23 +988,43 @@ function navigateChannelGuide(direction) {
 
             var programStartIsVisible = isProgramStartVisible(activeProgramUIElement);
 
-            // if the start of the current program is fully visible, display the prior program
+            // if the start of the current program is fully visible, go to the prior program
+            // if the end of the prior program is not visible, scroll to the right by 30 minutes
+            // select the prior program
             if (programStartIsVisible) {
                 if (indexOfActiveProgramUIElement > 0) {
                     var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
                     if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
                         var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+                        var programEndIsVisible = isProgramEndVisible(newActiveProgramUIElement);
+                        if (!programEndIsVisible) {
+                            newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - 1 * 30 * 60000);
+                            scrollToTime(newScrollToTime);
+                        }
                         selectProgram(activeProgramUIElement, newActiveProgramUIElement, -1);
                     }
                 }
             }
 
+            //// if the start of the current program is fully visible, display the prior program
+            //if (programStartIsVisible) {
+            //    if (indexOfActiveProgramUIElement > 0) {
+            //        var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
+            //        if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
+            //            var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
+            //            selectProgram(activeProgramUIElement, newActiveProgramUIElement, -1);
+            //        }
+            //    }
+            //}
+
             // else if the current program's start point is not visible, move backward by 30 minutes.
             else {
-                var currentOffsetLeft = $("#cgData").scrollLeft();
-                // JTRTODO - hardcoded value
-                var newOffsetLeft = currentOffsetLeft - 240;
-                $("#cgData").scrollLeft(newOffsetLeft)
+                newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - 1 * 30 * 60000);
+                scrollToTime(newScrollToTime);
+                //var currentOffsetLeft = $("#cgData").scrollLeft();
+                //// JTRTODO - hardcoded value
+                //var newOffsetLeft = currentOffsetLeft - 240;
+                //$("#cgData").scrollLeft(newOffsetLeft)
             }
         }
         else if (direction == "down" || direction == "up") {
