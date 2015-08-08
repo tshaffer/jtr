@@ -471,24 +471,6 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
     $(newActiveProgramUIElement).removeClass("btn-secondary");
     $(newActiveProgramUIElement).addClass("btn-primary");
 
-    // position cgData to make selected element visible in the proper location
-    //      if it's currently visible, don't scroll at all
-    //      if not scroll by one 30 minutes slot to make it visible
-    var newActiveProgramUIElementVisible = isElementPartiallyVisible(newActiveProgramUIElement);
-    if (!newActiveProgramUIElementVisible) {
-        // new active element not visible at all, make it visible by scrolling 30 minutes to the left or right
-        // on right or on left??
-        var currentOffsetLeft = $("#cgData").scrollLeft();
-        // JTRTODO - hardcoded value
-        if (direction != 0) {
-            var newOffsetLeft = currentOffsetLeft + (direction * 240);
-            $("#cgData").scrollLeft(newOffsetLeft)
-        }
-        else {
-            makeItemVisible(newActiveProgramUIElement);
-        }
-    }
-
     $(newActiveProgramUIElement).focus();
 
     lastActiveButton = newActiveProgramUIElement;
@@ -712,23 +694,6 @@ function navigateBackwardOneDay() {
 }
 
 
-function getIndexOfFirstInvisibleTime() {
-
-    var isVisible = true;
-
-    var cgDataWidth = $("#cgData").width()
-
-    var timeLineIndex = 0;
-    while (isVisible) {
-        var $elem = $("#cgTimeLine").children()[timeLineIndex];
-        var elemLeft = $elem.offsetLeft;
-        isVisible = elemLeft < cgDataWidth;
-        timeLineIndex++;
-    }
-
-    return timeLineIndex;
-}
-
 function navigateForwardOneScreen() {
 
     // 6 slots * 30 minutes / slot * time conversion
@@ -774,120 +739,6 @@ function navigateForwardOneDay() {
 
     selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
 }
-
-function selectProgramAtCurrentOffset() {
-
-    var activeProgramUIElement = lastActiveButton;
-
-    // get the timeslot of the first visible time
-    var firstVisibleTimeIndex = getIndexOfFirstVisibleTime();
-
-    // get the program associated with that time slot (for the current station)
-
-    // start date/time of data structure containing channel guide data
-    var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
-
-    // time difference between start of channel guide display and start of channel guide data
-    var timeDiffInMsec = channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime;
-    var timeDiffInSeconds = timeDiffInMsec / 1000;
-    var timeDiffInMinutes = timeDiffInSeconds / 60;
-
-    // add in the delta for the current screen
-    timeDiffInMinutes += firstVisibleTimeIndex * 30;
-
-    // index into the data structure (time slots) that contains the first show to display in the channel guide based on the time offset into channel guide data
-    var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
-
-    var programId = $(activeProgramUIElement)[0].id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
-    var programIndex = idParts[2];
-
-    var newActiveProgramUIElement = activeProgramUIElement;
-
-    // channel guide data for this station
-    var programStationData = epgProgramSchedule[stationId]
-
-    // index into initialShowsByTimeSlot to get programs to display
-    var programSlotIndices = programStationData.initialShowsByTimeSlot;
-    var programList = programStationData.programList;
-
-    var indexIntoProgramList = programSlotIndices[currentChannelGuideOffsetIndex];
-    var newActiveProgram = programList[indexIntoProgramList];
-
-    // get UI element that matches the newActiveProgram
-    var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
-    var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
-
-    $.each(programUIElementsInStation, function (buttonIndex, programUIElementInStation) {
-        var programInStationId = programUIElementInStation.id;
-        var programInStationIdParts = programInStationId.split("-");
-        var programInStationProgramIndex = programInStationIdParts[2];
-        if (programInStationProgramIndex == indexIntoProgramList) {
-            newActiveProgramUIElement = programUIElementInStation;
-            return false;
-        }
-    });
-
-    selectProgram(activeProgramUIElement, newActiveProgramUIElement, 1);
-}
-
-
-function makeItemVisible(element) {
-
-    var cgLeft = $("#cgData").offset().left;
-    var cgWidth = $("#cgData").width();
-    var cgRight = cgLeft + cgWidth - 1;
-
-    var elementLeft = $(element).offset().left;
-
-    if (elementLeft < cgLeft) {
-
-        var distanceFromLeft = cgLeft - elementLeft;
-
-        // scroll to the right by this amount
-        var currentOffsetLeft = $("#cgData").scrollLeft();
-        // JTRTODO - hardcoded value
-        var newOffsetLeft = currentOffsetLeft - distanceFromLeft;
-        $("#cgData").scrollLeft(newOffsetLeft)
-    }
-}
-
-
-function isElementPartiallyVisible(element) {
-
-    var cgLeft = $("#cgData").offset().left;
-    var cgWidth = $("#cgData").width();
-    var cgRight = cgLeft + cgWidth - 1;
-
-    var elementLeft = $(element).offset().left;
-    //var elementWidth = $(element).width();
-    var elementWidth = element.offsetWidth;
-
-    var elementRight = elementLeft + elementWidth - 1;
-
-    if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
-
-    if (elementRight >= cgLeft && elementRight < cgRight) return true;
-
-    return false;
-}
-
-function isElementFullyVisible(element) {
-
-    var cgLeft = $("#cgData").offset().left;
-    var elementLeft = $(element).offset().left;
-    if (elementLeft < cgLeft) return false;
-
-    var cgWidth = $("#cgData").width();
-    //var elementWidth = $(element).width();
-    var elementWidth = element.offsetWidth;
-
-    if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
-
-    return true;
-}
-
 
 function isProgramStartVisible(element) {
 
@@ -985,25 +836,10 @@ function navigateChannelGuide(direction) {
                 }
             }
 
-            //// if the start of the current program is fully visible, display the prior program
-            //if (programStartIsVisible) {
-            //    if (indexOfActiveProgramUIElement > 0) {
-            //        var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
-            //        if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
-            //            var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
-            //            selectProgram(activeProgramUIElement, newActiveProgramUIElement, -1);
-            //        }
-            //    }
-            //}
-
             // else if the current program's start point is not visible, move backward by 30 minutes.
             else {
                 newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - 1 * 30 * 60000);
                 scrollToTime(newScrollToTime);
-                //var currentOffsetLeft = $("#cgData").scrollLeft();
-                //// JTRTODO - hardcoded value
-                //var newOffsetLeft = currentOffsetLeft - 240;
-                //$("#cgData").scrollLeft(newOffsetLeft)
             }
         }
         else if (direction == "down" || direction == "up") {
@@ -1044,4 +880,116 @@ function navigateChannelGuide(direction) {
         }
     }
 }
+
+// OBSOLETE??
+//function getIndexOfFirstInvisibleTime() {
+
+//    var isVisible = true;
+
+//    var cgDataWidth = $("#cgData").width()
+
+//    var timeLineIndex = 0;
+//    while (isVisible) {
+//        var $elem = $("#cgTimeLine").children()[timeLineIndex];
+//        var elemLeft = $elem.offsetLeft;
+//        isVisible = elemLeft < cgDataWidth;
+//        timeLineIndex++;
+//    }
+
+//    return timeLineIndex;
+//}
+
+//function selectProgramAtCurrentOffset() {
+
+//    var activeProgramUIElement = lastActiveButton;
+
+//    // get the timeslot of the first visible time
+//    var firstVisibleTimeIndex = getIndexOfFirstVisibleTime();
+
+//    // get the program associated with that time slot (for the current station)
+
+//    // start date/time of data structure containing channel guide data
+//    var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
+
+//    // time difference between start of channel guide display and start of channel guide data
+//    var timeDiffInMsec = channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime;
+//    var timeDiffInSeconds = timeDiffInMsec / 1000;
+//    var timeDiffInMinutes = timeDiffInSeconds / 60;
+
+//    // add in the delta for the current screen
+//    timeDiffInMinutes += firstVisibleTimeIndex * 30;
+
+//    // index into the data structure (time slots) that contains the first show to display in the channel guide based on the time offset into channel guide data
+//    var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
+
+//    var programId = $(activeProgramUIElement)[0].id;
+//    var idParts = programId.split("-");
+//    var stationId = idParts[1];
+//    var programIndex = idParts[2];
+
+//    var newActiveProgramUIElement = activeProgramUIElement;
+
+//    // channel guide data for this station
+//    var programStationData = epgProgramSchedule[stationId]
+
+//    // index into initialShowsByTimeSlot to get programs to display
+//    var programSlotIndices = programStationData.initialShowsByTimeSlot;
+//    var programList = programStationData.programList;
+
+//    var indexIntoProgramList = programSlotIndices[currentChannelGuideOffsetIndex];
+//    var newActiveProgram = programList[indexIntoProgramList];
+
+//    // get UI element that matches the newActiveProgram
+//    var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
+//    var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
+
+//    $.each(programUIElementsInStation, function (buttonIndex, programUIElementInStation) {
+//        var programInStationId = programUIElementInStation.id;
+//        var programInStationIdParts = programInStationId.split("-");
+//        var programInStationProgramIndex = programInStationIdParts[2];
+//        if (programInStationProgramIndex == indexIntoProgramList) {
+//            newActiveProgramUIElement = programUIElementInStation;
+//            return false;
+//        }
+//    });
+
+//    selectProgram(activeProgramUIElement, newActiveProgramUIElement, 1);
+//}
+
+
+//function isElementPartiallyVisible(element) {
+
+//    var cgLeft = $("#cgData").offset().left;
+//    var cgWidth = $("#cgData").width();
+//    var cgRight = cgLeft + cgWidth - 1;
+
+//    var elementLeft = $(element).offset().left;
+//    //var elementWidth = $(element).width();
+//    var elementWidth = element.offsetWidth;
+
+//    var elementRight = elementLeft + elementWidth - 1;
+
+//    if (elementLeft >= cgLeft && elementLeft < cgRight) return true;
+
+//    if (elementRight >= cgLeft && elementRight < cgRight) return true;
+
+//    return false;
+//}
+
+
+//function isElementFullyVisible(element) {
+
+//    var cgLeft = $("#cgData").offset().left;
+//    var elementLeft = $(element).offset().left;
+//    if (elementLeft < cgLeft) return false;
+
+//    var cgWidth = $("#cgData").width();
+//    //var elementWidth = $(element).width();
+//    var elementWidth = element.offsetWidth;
+
+//    if ((elementLeft + elementWidth) > (cgLeft + cgWidth)) return false;
+
+//    return true;
+//}
+
 
