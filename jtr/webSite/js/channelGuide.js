@@ -400,21 +400,22 @@ function scrollToTime(newScrollToTime) {
     channelGuideDisplayCurrentDateTime = newScrollToTime;
 }
 
-function selectProgramAtTime(currentUIElement, selectProgramTime) {
+function selectProgramAtTimeOnStation(selectProgramTime, stationIndex, currentUIElement) {
 
     var slotIndex = getSlotIndex(selectProgramTime);
 
-    var programId = currentUIElement.id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
+    //var programId = currentUIElement.id;
+    //var idParts = programId.split("-");
+    //var stationId = idParts[1];
+    var station = stations[stationIndex];
+    var stationId = station.StationId;
     var programStationData = epgProgramSchedule[stationId]
 
     var buttonIndex = programStationData.programUIElementIndices[slotIndex];
 
-    // get the array of buttons for the current row
-    var activeStationRowUIElement = currentUIElement.parentElement;           // current row of the channel guide
-    var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
-
+    // get the array of buttons for the stationId
+    var cgProgramsInStationRowElement = "#cgStation" + stationIndex.toString() + "Data";
+    var programUIElementsInStation = $(cgProgramsInStationRowElement).children();       // programs in that row
     var nextActiveUIElement = programUIElementsInStation[buttonIndex];
 
     //selectProgram(activeProgramUIElement, nextActiveUIElement, direction)
@@ -672,8 +673,26 @@ function navigateBackwardOneScreen() {
 
     var activeProgramUIElement = lastActiveButton;
 
-    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
+    var programId = activeProgramUIElement.id;
+    var idParts = programId.split("-");
+    var stationId = idParts[1];
+
+    var currentStationIndex = -1;
+    $.each(stations, function (stationIndex, station) {
+        if (stationId == station.StationId) {
+            currentStationIndex = stationIndex;
+            return false;
+        }
+    });
+
+    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    //selectProgramAtTime(activeProgramUIElement, newScrollToTime);
     return;
+
+
+
+
+
 
     var activeProgramUIElement = lastActiveButton;
 
@@ -707,6 +726,27 @@ function navigateBackwardOneScreen() {
 
 
 function navigateBackwardOneDay() {
+
+    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (48 * 30 * 60000));
+    scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    var programId = activeProgramUIElement.id;
+    var idParts = programId.split("-");
+    var stationId = idParts[1];
+
+    var currentStationIndex = -1;
+    $.each(stations, function (stationIndex, station) {
+        if (stationId == station.StationId) {
+            currentStationIndex = stationIndex;
+            return false;
+        }
+    });
+
+    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    return;
+
 
     // 6 slots (3 hours) * 30 minutes / slot * time conversion
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (48 * 30 * 60000));
@@ -749,6 +789,27 @@ function getIndexOfFirstInvisibleTime() {
 function navigateForwardOneScreen() {
 
     // 6 slots * 30 minutes / slot * time conversion
+    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + (6 * 30 * 60000));
+    scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    var programId = activeProgramUIElement.id;
+    var idParts = programId.split("-");
+    var stationId = idParts[1];
+
+    var currentStationIndex = -1;
+    $.each(stations, function (stationIndex, station) {
+        if (stationId == station.StationId) {
+            currentStationIndex = stationIndex;
+            return false;
+        }
+    });
+
+    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    return;
+
+    // 6 slots * 30 minutes / slot * time conversion
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 30 * 60000);
     scrollToTime(newScrollToTime)
 
@@ -775,6 +836,30 @@ function navigateForwardOneScreen() {
 }
 
 function navigateForwardOneDay() {
+
+    // 6 slots * 30 minutes / slot * time conversion
+    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + (48 * 30 * 60000));
+    scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    var programId = activeProgramUIElement.id;
+    var idParts = programId.split("-");
+    var stationId = idParts[1];
+
+    var currentStationIndex = -1;
+    $.each(stations, function (stationIndex, station) {
+        if (stationId == station.StationId) {
+            currentStationIndex = stationIndex;
+            return false;
+        }
+    });
+
+    selectProgramAtTimeOnStation(newScrollToTime, currentStationIndex, activeProgramUIElement);
+    return;
+
+
+
 
     // 6 slots (3 hours) * 30 minutes / slot * time conversion
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 48 * 30 * 60000);
@@ -1039,6 +1124,30 @@ function navigateChannelGuide(direction) {
                 else {
                     newRowIndex = activeRowIndex - 1;
                 }
+
+                // when moving up/down, don't scroll
+                // select the program at the same time
+                // if that program's start is visible, the selectProgramTime is the start time of the current selected program
+                // if it's not visible, the selectProgramTime is the current start of display of the channel guide
+                var selectProgramTime;
+                var programStartIsVisible = isProgramStartVisible(activeProgramUIElement);
+                if (programStartIsVisible) {
+                    var programId = activeProgramUIElement.id;
+                    var idParts = programId.split("-");
+                    var stationId = idParts[1];
+                    var programIndex = idParts[2];
+
+                    var programStationData = epgProgramSchedule[stationId];
+                    var programList = programStationData.programList;
+                    selectProgramTime = programList[programIndex].date;
+                }
+                else {
+                    selectProgramTime = channelGuideDisplayCurrentDateTime;
+                }
+
+                selectProgramAtTimeOnStation(selectProgramTime, newRowIndex, activeProgramUIElement);
+                return;
+
 
                 // find program whose x value is closest to the x value of the last program
                 var newActiveRow = stationRowsUIElements[newRowIndex + 1];
