@@ -666,6 +666,15 @@ function getIndexOfFirstVisibleTime() {
 
 function navigateBackwardOneScreen() {
 
+    // 6 slots * 30 minutes / slot * time conversion
+    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (6 * 30 * 60000));
+    scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
+    return;
+
     var activeProgramUIElement = lastActiveButton;
 
     // algorithm
@@ -699,6 +708,16 @@ function navigateBackwardOneScreen() {
 
 function navigateBackwardOneDay() {
 
+    // 6 slots (3 hours) * 30 minutes / slot * time conversion
+    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (48 * 30 * 60000));
+    scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
+    return;
+
+
     // scroll right by one day
     var currentOffsetLeft = $("#cgData").scrollLeft();
     // JTRTODO
@@ -729,7 +748,6 @@ function getIndexOfFirstInvisibleTime() {
 
 function navigateForwardOneScreen() {
 
-    // test
     // 6 slots * 30 minutes / slot * time conversion
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 30 * 60000);
     scrollToTime(newScrollToTime)
@@ -758,6 +776,16 @@ function navigateForwardOneScreen() {
 
 function navigateForwardOneDay() {
 
+    // 6 slots (3 hours) * 30 minutes / slot * time conversion
+    newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 48 * 30 * 60000);
+    scrollToTime(newScrollToTime)
+
+    var activeProgramUIElement = lastActiveButton;
+
+    selectProgramAtTime(activeProgramUIElement, newScrollToTime);
+    return;
+
+    // get the current 
     // scroll left by one day
     var currentOffsetLeft = $("#cgData").scrollLeft();
     // JTRTODO
