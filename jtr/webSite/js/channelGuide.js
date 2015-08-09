@@ -53,7 +53,6 @@ function displayChannelGuide() {
                 // create program from data in db
                 var program = {}
                 program.date = localDate;
-                //program.station = sdProgram.AtscMajor.toString() + "." + sdProgram.AtscMinor.toString();
                 program.title = sdProgram.Title;
                 program.duration = sdProgram.Duration;
                 program.episodeTitle = sdProgram.EpisodeTitle;
@@ -99,9 +98,6 @@ function displayChannelGuide() {
                         castMembers += castMemberEntry.substring(2);
                     }
                 });
-                // if (castMembers != "") {
-                //     console.log(castMembers);
-                // }
                 program.castMembers = castMembers;
 
                 // append to program list for  this station (create new station object if necessary)
@@ -272,9 +268,6 @@ function renderChannelGuideAtDateTime() {
 
         programStationData.programUIElementIndices = [];
 
-        //var uiElementIndex = 0;
-        //var programUIElementIndex = 0;
-       
         var slotIndex = 0;
         var uiElementCount = 0;
 
@@ -282,14 +275,8 @@ function renderChannelGuideAtDateTime() {
         minutesToDisplay = 0;
         while (indexIntoProgramList < programList.length) {
 
-            try
-            {
-                var durationInMinutes = Number(showToDisplay.duration);
-            }
-            catch (err)
-            {
-                debugger;
-            }
+            var durationInMinutes = Number(showToDisplay.duration);
+
             // perform reduction for only the first show in case it's already in progress at the beginning of this station's display
             if (toAppend == "") {
                 durationInMinutes -= timeDiffInMinutes;
@@ -314,7 +301,6 @@ function renderChannelGuideAtDateTime() {
             var id = "show-" + station.StationId + "-" + indexIntoProgramList.toString();
             var title = showToDisplay.title;
             toAppend +=
-                //"<button id='" + id + "' class=btn-secondary " + cssClass + widthSpec + ">" + title + "</button>";
                 "<button id='" + id + "' class=" + cssClasses + widthSpec + ">" + title + "</button>";
 
             var programStartTime = minutesAlreadyDisplayed;                     // offset in minutes
@@ -331,13 +317,6 @@ function renderChannelGuideAtDateTime() {
             showToDisplay = programList[indexIntoProgramList];
 
             uiElementCount++;
-
-            //// add new value(s) to programUIElementSlotIndices
-            //while (durationInMinutes > 0) {
-            //    programStationData.programUIElementIndices[programUIElementIndex++] = uiElementIndex;
-            //    durationInMinutes -= 30;
-            //}
-            //uiElementIndex++;
         }
         $(cgProgramLineName).append(toAppend);
 
@@ -658,9 +637,6 @@ function navigateChannelGuide(direction) {
     // get div for current active button
     var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
     var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
-    var programUIElementPosition = $(activeProgramUIElement).position();            // returns members 'top' and 'left'
-    var allRowsUIElement = activeStationRowUIElement.parentElement;                 // element representing all rows (JTRTODO - why not just use #cgData)
-    var stationRowsUIElements = $(allRowsUIElement).children();                     // stations in the channel guide (the rows)
 
     var indexOfActiveProgramUIElement = getActiveButtonIndex(activeProgramUIElement, programUIElementsInStation);
     if (indexOfActiveProgramUIElement >= 0) {
@@ -721,8 +697,6 @@ function navigateChannelGuide(direction) {
             }
         }
         else if (direction == "down" || direction == "up") {
-            var xPosition = programUIElementPosition.left;
-            //var activeRowIndex = getActiveRowIndex(activeStationRowUIElement);
             var activeRowIndex = _currentStationIndex;
             if ((activeRowIndex < stations.length - 1 && direction == "down")  || (activeRowIndex > 0 && direction == "up")) {
 
