@@ -2,8 +2,9 @@ var epgProgramSchedule = null;
 var epgProgramScheduleStartDateTime;
 
 var channelGuideDisplayStartDateTime;
+var channelGuideDisplayEndDateTime;
 var channelGuideDisplayCurrentDateTime;
-var channelGuideDisplayCurrrentEndDateTime;
+var channelGuideDisplayCurrentEndDateTime;
 
 var _currentSelectedProgramButton;
 var _currentStationIndex;
@@ -22,23 +23,6 @@ function selectChannelGuide() {
 
         // first time displaying channel guide; retrieve epg data from database
         epgProgramSchedule = {};
-
-        //var oldDate = true;
-        //if (oldDate) {
-        //    epgProgramScheduleStartDateTime = new Date();
-        //    epgProgramScheduleStartDateTime.setFullYear(2100, 0, 0);
-
-        //    var startDate = new Date();
-        //    var year = startDate.getFullYear().toString();
-        //    var month = (startDate.getMonth() + 1).toString();
-        //    var dayInMonth = startDate.getDate().toString();
-        //    var epgStartDate = year + "-" + twoDigitFormat(month) + "-" + twoDigitFormat(dayInMonth);   // "2015-08-09"
-        //}
-        //else {
-        //    epgProgramScheduleStartDateTime = Date.today().set({ year: 2100, month: 0, day: 1, hour: 0 });
-        //    var epgStartDate = Date.now();
-        //    epgStartDate.toString("yyyy-MM-dd");
-        //}
 
         epgProgramScheduleStartDateTime = Date.today().set({ year: 2100, month: 0, day: 1, hour: 0 });
 
@@ -230,7 +214,7 @@ function renderChannelGuide() {
 
     channelGuideDisplayCurrentDateTime = new Date(channelGuideDisplayStartDateTime);
     //channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 3 * 60 * 60000);
-    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime).addHours(3);
+    channelGuideDisplayCurrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime).addHours(3);
 
     renderChannelGuideAtDateTime();
 }
@@ -368,6 +352,8 @@ function renderChannelGuideAtDateTime() {
         timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
         minutesDisplayed += 30;
     }
+    channelGuideDisplayEndDateTime = timeLineCurrentValue;
+
     $("#cgTimeLine").append(toAppend);
 }
 
@@ -390,8 +376,7 @@ function scrollToTime(newScrollToTime) {
     $("#cgData").scrollLeft(slotsToScroll * widthOfThirtyMinutes)
 
     channelGuideDisplayCurrentDateTime = newScrollToTime;
-    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime).addHours(3);
-    //channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 3 * 60 * 60000);
+    channelGuideDisplayCurrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime).addHours(3);
 }
 
 function selectProgramAtTimeOnStation(selectProgramTime, stationIndex, currentUIElement) {
@@ -525,52 +510,11 @@ function selectProgram(activeProgramUIElement, newActiveProgramUIElement) {
 
 }
 
-//"Sun 8/9"
 function dayDate(dateTime) {
     return dateTime.toString("ddd M/d");
-    //var dayInWeek = dayOfWeek(dateTime);
-    //var month = (dateTime.getMonth() + 1).toString();
-    //var date = dateTime.getDate().toString();
-
-    //return dayInWeek + " " + month + "/" + date;
 }
 
-//function dayOfWeek(dateTime) {
-//    var weekday = new Array(7);
-//    weekday[0] = "Sun";
-//    weekday[1] = "Mon";
-//    weekday[2] = "Tue";
-//    weekday[3] = "Wed";
-//    weekday[4] = "Thu";
-//    weekday[5] = "Fri";
-//    weekday[6] = "Sat";
-
-//    return weekday[dateTime.getDay()];
-//}
-
 function timeOfDay(dateTime) {
-
-    //var hoursLbl = "";
-    //var amPm = " am";
-    //var hours = dateTime.getHours();
-    //if (hours == 0) {
-    //    hoursLbl = "12";
-    //}
-    //else if (hours < 12) {
-    //    hoursLbl = hours.toString();
-    //}
-    //else if (hours == 12) {
-    //    hoursLbl = "12";
-    //    amPm = "pm";
-    //}
-    //else {
-    //    hoursLbl = (hours - 12).toString();
-    //    amPm = "pm";
-    //}
-
-    //var minutesLbl = twoDigitFormat(dateTime.getMinutes().toString());
-
-    //return (hoursLbl + ":" + minutesLbl + amPm);
     return dateTime.toString("h:mmtt").toLowerCase();
 }
 
@@ -578,8 +522,11 @@ function timeOfDay(dateTime) {
 function navigateBackwardOneScreen() {
 
     // 6 slots * 30 minutes / slot * time conversion
-    //newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (6 * 30 * 60000));
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addHours(-3);
+    if (newScrollToTime < channelGuideDisplayStartDateTime) {
+        newScrollToTime = new Date(channelGuideDisplayStartDateTime);
+    }
+
     scrollToTime(newScrollToTime)
 
     selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, _currentSelectedProgramButton);
@@ -588,8 +535,10 @@ function navigateBackwardOneScreen() {
 
 function navigateBackwardOneDay() {
 
-    //newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - (48 * 30 * 60000));
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addHours(-24);
+    if (newScrollToTime < channelGuideDisplayStartDateTime) {
+        newScrollToTime = new Date(channelGuideDisplayStartDateTime);
+    }
     scrollToTime(newScrollToTime)
 
     selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, _currentSelectedProgramButton);
@@ -598,9 +547,11 @@ function navigateBackwardOneDay() {
 
 function navigateForwardOneScreen() {
 
-    // 6 slots * 30 minutes / slot * time conversion
-    //newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + (6 * 30 * 60000));
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addHours(3);
+    var proposedEndTime = new Date(newScrollToTime).addHours(3);
+    if (proposedEndTime > channelGuideDisplayEndDateTime) {
+        newScrollToTime = new Date(channelGuideDisplayEndDateTime).addHours(-3);
+    }
     scrollToTime(newScrollToTime)
 
     selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, _currentSelectedProgramButton);
@@ -608,9 +559,11 @@ function navigateForwardOneScreen() {
 
 function navigateForwardOneDay() {
 
-    // 6 slots * 30 minutes / slot * time conversion
-    //newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + (48 * 30 * 60000));
     newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addHours(24);
+    var proposedEndTime = new Date(newScrollToTime).addHours(3);
+    if (proposedEndTime > channelGuideDisplayEndDateTime) {
+        newScrollToTime = new Date(channelGuideDisplayEndDateTime).addHours(-3);
+    }
     scrollToTime(newScrollToTime)
 
     selectProgramAtTimeOnStation(newScrollToTime, _currentStationIndex, _currentSelectedProgramButton);
@@ -634,7 +587,8 @@ function isProgramStartVisible(element) {
     var program = getProgramFromUIElement(element);
     var programDate = program.date;
 
-    if ( (channelGuideDisplayCurrentDateTime <= programDate) && (programDate < channelGuideDisplayCurrrentEndDateTime) ) return true;
+    if ((channelGuideDisplayCurrentDateTime <= programDate) && (programDate < channelGuideDisplayCurrentEndDateTime)) return true;
+
     return false;
 }
 
@@ -645,7 +599,7 @@ function isProgramEndVisible(element) {
     var programStartDateTime = program.date;
     var programEndDateTime = new Date(programStartDateTime.getTime() + program.duration * 60000);
 
-    if (programEndDateTime > channelGuideDisplayCurrrentEndDateTime) return false;
+    if (programEndDateTime > channelGuideDisplayCurrentEndDateTime) return false;
     if (programEndDateTime <= channelGuideDisplayCurrentDateTime) return false;
 
     return true;
@@ -674,7 +628,7 @@ function navigateChannelGuide(direction) {
                     var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
                     var programStartIsVisible = isProgramStartVisible(newActiveProgramUIElement);
                     if (!programStartIsVisible) {
-                        newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 1 * 30 * 60000);
+                        newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(30);
                         scrollToTime(newScrollToTime);
                     }
                     selectProgram(activeProgramUIElement, newActiveProgramUIElement, 1);
@@ -683,7 +637,13 @@ function navigateChannelGuide(direction) {
 
             // else if the current program's end point is not visible, move forward by 30 minutes.
             else {
-                newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 1 * 30 * 60000);
+                //newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 1 * 30 * 60000);
+                newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(30);
+                var proposedEndTime = new Date(newScrollToTime).addHours(3);
+                if (proposedEndTime > channelGuideDisplayEndDateTime) {
+                    newScrollToTime = new Date(channelGuideDisplayEndDateTime).addHours(-3);
+                }
+
                 scrollToTime(newScrollToTime);
             }
 
@@ -703,7 +663,7 @@ function navigateChannelGuide(direction) {
                         var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
                         var programEndIsVisible = isProgramEndVisible(newActiveProgramUIElement);
                         if (!programEndIsVisible) {
-                            newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - 1 * 30 * 60000);
+                            newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(-30);
                             scrollToTime(newScrollToTime);
                         }
                         selectProgram(activeProgramUIElement, newActiveProgramUIElement, -1);
@@ -713,7 +673,12 @@ function navigateChannelGuide(direction) {
 
             // else if the current program's start point is not visible, move backward by 30 minutes.
             else {
-                newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() - 1 * 30 * 60000);
+                newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(-30);
+
+                if (newScrollToTime < channelGuideDisplayStartDateTime) {
+                    newScrollToTime = new Date(channelGuideDisplayStartDateTime);
+                }
+
                 scrollToTime(newScrollToTime);
             }
         }
