@@ -8,15 +8,15 @@ var channelGuideDisplayCurrrentEndDateTime;
 var _currentSelectedProgramButton;
 var _currentStationIndex;
 
+var widthOfThirtyMinutes = 240;
+
+function msecToMinutes(msec) {
+    return msec / 60000;
+}
+
 function selectChannelGuide() {
 
     //initializeEpgData();
-
-    displayChannelGuide();
-}
-
-
-function displayChannelGuide() {
 
     if (epgProgramSchedule == null) {
 
@@ -215,7 +215,7 @@ function renderChannelGuide() {
     channelGuideDisplayStartDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), startHour, startMinute, 0, 0);
 
     channelGuideDisplayCurrentDateTime = channelGuideDisplayStartDateTime;
-    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 60 * 60000);
+    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 3 * 60 * 60000);
 
     renderChannelGuideAtDateTime();
 }
@@ -227,9 +227,7 @@ function renderChannelGuideAtDateTime() {
     var channelGuideDataStructureStartDateTime = epgProgramScheduleStartDateTime;
 
     // time difference between start of channel guide display and start of channel guide data
-    var timeDiffInMsec = channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime;
-    var timeDiffInSeconds = timeDiffInMsec / 1000;
-    var timeDiffInMinutes = timeDiffInSeconds / 60;
+    var timeDiffInMinutes = msecToMinutes(channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime);
 
     // index into the data structure (time slots) that contains the first show to display in the channel guide based on the time offset into channel guide data
     var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
@@ -350,7 +348,6 @@ function renderChannelGuideAtDateTime() {
 
         var timeLineTime = timeOfDay(timeLineCurrentValue);
 
-        //toAppend += "<span class='thirtyMinuteTime'>" + timeLineTime + "</span>";
         toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
         timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
         minutesDisplayed += 30;
@@ -362,9 +359,7 @@ function renderChannelGuideAtDateTime() {
 function getSlotIndex(dateTime) {
 
     // compute the time difference between the new time and where the channel guide data begins (and could be displayed)
-    var timeDiffInMsec = dateTime.getTime() - channelGuideDisplayStartDateTime.getTime();
-    var timeDiffInSeconds = timeDiffInMsec / 1000;
-    var timeDiffInMinutes = timeDiffInSeconds / 60;
+    var timeDiffInMinutes = msecToMinutes(dateTime.getTime() - channelGuideDisplayStartDateTime.getTime());
 
     // compute number of 30 minute slots to scroll
     return timeDiffInMinutes / 30;
@@ -376,10 +371,10 @@ function scrollToTime(newScrollToTime) {
 
     // how many pixels
     // JTRTODO hard coded
-    $("#cgData").scrollLeft(slotsToScroll * 240)
+    $("#cgData").scrollLeft(slotsToScroll * widthOfThirtyMinutes)
 
     channelGuideDisplayCurrentDateTime = newScrollToTime;
-    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 6 * 60 * 60000);
+    channelGuideDisplayCurrrentEndDateTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 3 * 60 * 60000);
 }
 
 function selectProgramAtTimeOnStation(selectProgramTime, stationIndex, currentUIElement) {
