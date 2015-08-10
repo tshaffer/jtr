@@ -455,9 +455,7 @@ function updateProgramInfo(programUIElement) {
     // day, date, and time
     var startTime = timeOfDay(selectedProgram.date);
 
-    //var endDate = new Date(selectedProgram.date.getTime() + selectedProgram.duration * 60000);
-    var endDate = new Date(selectedProgram.date.getTime());
-    endDate.addMinutes(selectedProgram.duration);
+    var endDate = new Date(selectedProgram.date.getTime()).addMinutes(selectedProgram.duration);
     var endTime = timeOfDay(endDate);
 
     var dateTimeInfo = programDayDate + " " + startTime + " - " + endTime;
@@ -515,7 +513,14 @@ function dayDate(dateTime) {
 }
 
 function timeOfDay(dateTime) {
-    return dateTime.toString("h:mmtt").toLowerCase();
+    //return dateTime.toString("h:mmtt").toLowerCase();
+
+    // hack to work around apparent date.js bug where hour shows up as 0 inappropriately
+    var hour = dateTime.toString("h");
+    if (hour == "0") {
+        hour = "12";
+    }
+    return hour + dateTime.toString(":mmtt").toLowerCase();
 }
 
 
