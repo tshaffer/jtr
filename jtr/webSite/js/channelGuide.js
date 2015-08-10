@@ -364,7 +364,7 @@ function getSlotIndex(dateTime) {
     var timeDiffInMinutes = msecToMinutes(dateTime.getTime() - channelGuideDisplayStartDateTime.getTime());
 
     // compute number of 30 minute slots to scroll
-    return timeDiffInMinutes / 30;
+    return parseInt(timeDiffInMinutes / 30);
 }
 
 function scrollToTime(newScrollToTime) {
