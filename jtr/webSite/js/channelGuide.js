@@ -338,6 +338,27 @@ function renderChannelGuideAtDateTime() {
     channelGuideDisplayEndDateTime = timeLineCurrentValue;
 
     $("#cgTimeLine").append(toAppend);
+
+
+    $("#cgData").click(function (event) {
+        var buttonClicked = event.target;
+        if (event.target.id != "") {
+            // presence of an id means that it's not a timeline button
+            var programInfo = parseProgramId($(event.target)[0]);
+            var programStationData = epgProgramSchedule[programInfo.stationId];
+            var programList = programStationData.programList;
+            selectProgramTime = programList[programInfo.programIndex].date;
+
+            // JTRTODO - linear search
+            // get stationIndex
+            $.each(stations, function (stationIndex, station) {
+                if (station.StationId == programInfo.stationId) {
+                    selectProgramAtTimeOnStation(selectProgramTime, stationIndex, _currentSelectedProgramButton);
+                    return false;
+                }
+            });
+        }
+    });
 }
 
 
@@ -347,7 +368,11 @@ function getSlotIndex(dateTime) {
     var timeDiffInMinutes = msecToMinutes(dateTime.getTime() - channelGuideDisplayStartDateTime.getTime());
 
     // compute number of 30 minute slots to scroll
-    return parseInt(timeDiffInMinutes / 30);
+    var slotIndex = parseInt(timeDiffInMinutes / 30);
+    if (slotIndex < 0) {
+        slotIndex = 0;
+    }
+    return slotIndex;
 }
 
 function scrollToTime(newScrollToTime) {
