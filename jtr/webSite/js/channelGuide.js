@@ -603,37 +603,34 @@ function isProgramEndVisible(element) {
 
 function navigateChannelGuide(direction) {
 
-    var activeProgramUIElement = _currentSelectedProgramButton;
-
     // get div for current active button
-    var activeStationRowUIElement = activeProgramUIElement.parentElement;           // current row of the channel guide
+    var activeStationRowUIElement = _currentSelectedProgramButton.parentElement;           // current row of the channel guide
     var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
 
-    var indexOfActiveProgramUIElement = getActiveButtonIndex(activeProgramUIElement, programUIElementsInStation);
-    if (indexOfActiveProgramUIElement >= 0) {
+    var indexOfSelectedProgramElement = getActiveButtonIndex(_currentSelectedProgramButton, programUIElementsInStation);
+    if (indexOfSelectedProgramElement >= 0) {
         if (direction == "right") {
 
-            var programEndIsVisible = isProgramEndVisible(activeProgramUIElement);
+            var programEndIsVisible = isProgramEndVisible(_currentSelectedProgramButton);
 
             // if the end of the current program is fully visible, go to the next program
             // if the start of the next program is not visible, scroll to the left by 30 minutes
             // select the next program
             if (programEndIsVisible) {
-                var indexOfNewProgramUIElement = indexOfActiveProgramUIElement + 1;
-                if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
-                    var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
-                    var programStartIsVisible = isProgramStartVisible(newActiveProgramUIElement);
+                var indexOfNewProgramElement = indexOfSelectedProgramElement + 1;
+                if (indexOfNewProgramElement < $(programUIElementsInStation).length) {
+                    var newProgramElement = $(programUIElementsInStation)[indexOfNewProgramElement];
+                    var programStartIsVisible = isProgramStartVisible(newProgramElement);
                     if (!programStartIsVisible) {
                         newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(30);
                         scrollToTime(newScrollToTime);
                     }
-                    selectProgram(activeProgramUIElement, newActiveProgramUIElement, 1);
+                    selectProgram(_currentSelectedProgramButton, newProgramElement, 1);
                 }
             }
 
             // else if the current program's end point is not visible, move forward by 30 minutes.
             else {
-                //newScrollToTime = new Date(channelGuideDisplayCurrentDateTime.getTime() + 1 * 30 * 60000);
                 newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(30);
                 var proposedEndTime = new Date(newScrollToTime).addHours(3);
                 if (proposedEndTime > channelGuideDisplayEndDateTime) {
@@ -647,22 +644,22 @@ function navigateChannelGuide(direction) {
         }
         else if (direction == "left") {
 
-            var programStartIsVisible = isProgramStartVisible(activeProgramUIElement);
+            var programStartIsVisible = isProgramStartVisible(_currentSelectedProgramButton);
 
             // if the start of the current program is fully visible, go to the prior program
             // if the end of the prior program is not visible, scroll to the right by 30 minutes
             // select the prior program
             if (programStartIsVisible) {
-                if (indexOfActiveProgramUIElement > 0) {
-                    var indexOfNewProgramUIElement = indexOfActiveProgramUIElement - 1;
-                    if (indexOfNewProgramUIElement < $(programUIElementsInStation).length) {
-                        var newActiveProgramUIElement = $(programUIElementsInStation)[indexOfNewProgramUIElement];
-                        var programEndIsVisible = isProgramEndVisible(newActiveProgramUIElement);
+                if (indexOfSelectedProgramElement > 0) {
+                    var indexOfNewProgramElement = indexOfSelectedProgramElement - 1;
+                    if (indexOfNewProgramElement < $(programUIElementsInStation).length) {
+                        var newProgramElement = $(programUIElementsInStation)[indexOfNewProgramElement];
+                        var programEndIsVisible = isProgramEndVisible(newProgramElement);
                         if (!programEndIsVisible) {
                             newScrollToTime = new Date(channelGuideDisplayCurrentDateTime).addMinutes(-30);
                             scrollToTime(newScrollToTime);
                         }
-                        selectProgram(activeProgramUIElement, newActiveProgramUIElement, -1);
+                        selectProgram(_currentSelectedProgramButton, newProgramElement, -1);
                     }
                 }
             }
@@ -679,15 +676,14 @@ function navigateChannelGuide(direction) {
             }
         }
         else if (direction == "down" || direction == "up") {
-            var activeRowIndex = _currentStationIndex;
-            if ((activeRowIndex < stations.length - 1 && direction == "down")  || (activeRowIndex > 0 && direction == "up")) {
+            if ((_currentStationIndex < stations.length - 1 && direction == "down") || (_currentStationIndex > 0 && direction == "up")) {
 
                 var newRowIndex;
                 if (direction == "down") {
-                    newRowIndex = activeRowIndex + 1;
+                    newRowIndex = _currentStationIndex + 1;
                 }
                 else {
-                    newRowIndex = activeRowIndex - 1;
+                    newRowIndex = _currentStationIndex - 1;
                 }
 
                 // when moving up/down, don't scroll
@@ -695,9 +691,9 @@ function navigateChannelGuide(direction) {
                 // if that program's start is visible, the selectProgramTime is the start time of the current selected program
                 // if it's not visible, the selectProgramTime is the current start of display of the channel guide
                 var selectProgramTime;
-                var programStartIsVisible = isProgramStartVisible(activeProgramUIElement);
+                var programStartIsVisible = isProgramStartVisible(_currentSelectedProgramButton);
                 if (programStartIsVisible) {
-                    var programInfo = parseProgramId(activeProgramUIElement);
+                    var programInfo = parseProgramId(_currentSelectedProgramButton);
 
                     var programStationData = epgProgramSchedule[programInfo.stationId];
                     var programList = programStationData.programList;
@@ -707,7 +703,7 @@ function navigateChannelGuide(direction) {
                     selectProgramTime = channelGuideDisplayCurrentDateTime;
                 }
 
-                selectProgramAtTimeOnStation(selectProgramTime, newRowIndex, activeProgramUIElement);
+                selectProgramAtTimeOnStation(selectProgramTime, newRowIndex, _currentSelectedProgramButton);
             }
         }
     }
