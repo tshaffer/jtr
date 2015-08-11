@@ -1,4 +1,5 @@
 #cgProgramName {
+    font-size: 28px;
     background-color: blue;
     color: white;
     margin-bottom: 0px;
@@ -21,7 +22,8 @@
     background-color: blue;
     color: white;
 
-max-width: 1780px;
+/*max-width: 1780px;*/
+max-width: 1870px;
 white-space: nowrap;
 width: 100%;                   
 overflow: hidden;              
@@ -34,7 +36,8 @@ text-overflow:    ellipsis;
     background-color: blue;
     color: white;
 
-max-width: 1780px;
+/*max-width: 1780px;*/
+max-width: 1870px;
 white-space: nowrap;
 width: 100%;                   
 overflow: hidden;              

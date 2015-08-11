@@ -86,14 +86,10 @@ function selectChannelGuide() {
                 var castMembersArray = aggregatedCastMembers.split(',');
                 var castMembers = "";
                 $.each(castMembersArray, function (index, castMemberEntry) {
-                    // JTRTODO - probably needs something more sophisticated and thought through for small devices
-                    // limit number of cast members due to screen size
-                    if (index < 11) {
-                        if (index > 0) {
-                            castMembers += ", ";
-                        }
-                        castMembers += castMemberEntry.substring(2);
+                    if (index > 0) {
+                        castMembers += ", ";
                     }
+                    castMembers += castMemberEntry.substring(2);
                 });
                 program.castMembers = castMembers;
 
@@ -258,11 +254,8 @@ function renderChannelGuideAtDateTime() {
         showToDisplay = programList[indexIntoProgramList];
 
         // calculate the time delta between the time of the channel guide display start and the start of the first show to display
-        timeDiffInMinutes = msecToMinutes(channelGuideDisplayStartDateTime - new Date(showToDisplay.date));
-        //timeDiffInMsec = channelGuideDisplayStartDateTime - new Date(showToDisplay.date);
-        //var timeDiffInSeconds = timeDiffInMsec / 1000;
-        //var timeDiffInMinutes = timeDiffInSeconds / 60;
         // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
+        timeDiffInMinutes = msecToMinutes(channelGuideDisplayStartDateTime - new Date(showToDisplay.date));
 
         programStationData.programUIElementIndices = [];
 
@@ -322,19 +315,9 @@ function renderChannelGuideAtDateTime() {
             maxMinutesToDisplay = minutesToDisplay;
         }
         // JTRTODO - setup handlers on children for browser - when user clicks on program to record, etc.
-
-        // setup handlers on children - use for testing on Chrome
-        var buttonsInCGLine = $(cgProgramLineName).children();
-        $.each(buttonsInCGLine, function (buttonIndex, buttonInCGLine) {
-            //$(buttonInCGLine).click({ recordingId: recordingId }, selectProgram);
-            if (firstRow && buttonIndex == 0) {
-                $(buttonInCGLine).focus();
-                firstRow = false;
-                _currentSelectedProgramButton = buttonInCGLine;
-            }
-        });
     });
 
+    _currentSelectedProgramButton = $("#cgStation0Data").children()[0];
     selectProgram(null, _currentSelectedProgramButton, 0);
 
     _currentStationIndex = 0;
@@ -432,16 +415,26 @@ function updateActiveProgramUIElement(activeProgramUIElement, newActiveProgramUI
 }
 
 
+function parseProgramId(programElement)
+{
+    var programInfo = {};
+
+    var programId = programElement.id;
+    var idParts = programId.split("-");
+    programInfo.stationId = idParts[1];
+    programInfo.programIndex = idParts[2];
+
+    return programInfo;
+}
+
+
 function updateProgramInfo(programUIElement) {
    
-    var programId = $(programUIElement)[0].id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
-    var programIndex = idParts[2];
+    var programInfo = parseProgramId($(programUIElement)[0]);
 
-    var programStationData = epgProgramSchedule[stationId];
+    var programStationData = epgProgramSchedule[programInfo.stationId];
     var programList = programStationData.programList;
-    var selectedProgram = programList[programIndex];
+    var selectedProgram = programList[programInfo.programIndex];
 
     // display title (prominently)
     $("#cgProgramName").text(selectedProgram.title);
@@ -462,9 +455,9 @@ function updateProgramInfo(programUIElement) {
 
     var episodeInfo = "";
     if (selectedProgram.showType == "Series" && selectedProgram.newShow == 0) {
-        episodeInfo = "Rerun.";
+        episodeInfo = "Rerun";
         if (selectedProgram.originalAirDate != "") {
-            episodeInfo += " The original air date was " + selectedProgram.originalAirDate;
+            episodeInfo += ": original air date was " + selectedProgram.originalAirDate;
             if (selectedProgram.seasonEpisode != "") {
                 episodeInfo += ", " + selectedProgram.seasonEpisode;
             }
@@ -577,13 +570,11 @@ function navigateForwardOneDay() {
 
 function getProgramFromUIElement(element) {
 
-    var programId = $(element)[0].id;
-    var idParts = programId.split("-");
-    var stationId = idParts[1];
-    var programIndex = idParts[2];
-    var programStationData = epgProgramSchedule[stationId];
+    var programInfo = parseProgramId($(element)[0]);
+
+    var programStationData = epgProgramSchedule[programInfo.stationId];
     var programList = programStationData.programList;
-    var selectedProgram = programList[programIndex];
+    var selectedProgram = programList[programInfo.programIndex];
     return selectedProgram;
 }
 
@@ -706,14 +697,11 @@ function navigateChannelGuide(direction) {
                 var selectProgramTime;
                 var programStartIsVisible = isProgramStartVisible(activeProgramUIElement);
                 if (programStartIsVisible) {
-                    var programId = activeProgramUIElement.id;
-                    var idParts = programId.split("-");
-                    var stationId = idParts[1];
-                    var programIndex = idParts[2];
+                    var programInfo = parseProgramId(activeProgramUIElement);
 
-                    var programStationData = epgProgramSchedule[stationId];
+                    var programStationData = epgProgramSchedule[programInfo.stationId];
                     var programList = programStationData.programList;
-                    selectProgramTime = programList[programIndex].date;
+                    selectProgramTime = programList[programInfo.programIndex].date;
                 }
                 else {
                     selectProgramTime = channelGuideDisplayCurrentDateTime;
