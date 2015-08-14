@@ -33,7 +33,6 @@
     this.stChannelGuide = new HState(this, "ChannelGuide");
     this.stChannelGuide.HStateEventHandler = this.STChannelGuideEventHandler;
     this.stChannelGuide.superState = this.stUIScreen;
-    //this.stChannelGuide.navigateChannelGuidePage = this.navigateChannelGuidePage;
     
     this.topState = this.stTop;
 }
@@ -342,7 +341,7 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
 
-        selectChannelGuide();
+        ChannelGuideSingleton.getInstance().selectChannelGuide();
 
         return "HANDLED";
     }
@@ -364,7 +363,7 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
             case "down":
             case "left":
             case "right":
-                navigateChannelGuide(eventData.toLowerCase());
+                ChannelGuideSingleton.getInstance().navigateChannelGuide(eventData.toLowerCase());
                 return "HANDLED";
             case "exit":
                 stateData.nextState = this.stateMachine.stNone;
