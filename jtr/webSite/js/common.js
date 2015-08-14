@@ -23,6 +23,14 @@ function addMilliseconds(date, milliseconds) {
     return new Date(date.getTime() + milliseconds);
 }
 
+function msecToMinutes(msec) {
+    return msec / 60000;
+}
+
+function minutesToMsec(minutes) {
+    return minutes * 60000;
+}
+
 function switchToPage(newPage) {
 
     var newPageId = "#" + newPage;

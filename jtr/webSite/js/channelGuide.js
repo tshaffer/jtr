@@ -30,13 +30,10 @@ function ChannelGuide() {
     this._currentSelectedProgramButton;
     this._currentStationIndex;
 
-    this.widthOfThirtyMinutes = 240;
+    this.widthOfThirtyMinutes = 240;    // pixels
+    this.channelGuideHoursDisplayed = 3;
 }
 
-
-function msecToMinutes(msec) {
-    return msec / 60000;
-}
 
 ChannelGuide.prototype.selectChannelGuide = function() {
 
@@ -146,9 +143,10 @@ ChannelGuide.prototype.selectChannelGuide = function() {
 
                     var lastProgram = null;
 
+                    // 48 slots per day as each slot is 1/2 hour
                     for (var slotIndex = 0; slotIndex < 48 * numDaysEpgData; slotIndex++) {
 
-                        var slotTimeOffsetSinceStartOfEpgData = slotIndex * 30;
+                        var slotTimeOffsetSinceStartOfEpgData = slotIndex * 30;     // offset in minutes
 
                         while (true) {
 
@@ -160,7 +158,7 @@ ChannelGuide.prototype.selectChannelGuide = function() {
 
                             var program = programList[programIndex];
 
-                            var programTimeOffsetSinceStartOfEPGData = (program.date - self.epgProgramScheduleStartDateTime) / 60000; // minutes
+                            var programTimeOffsetSinceStartOfEPGData = msecToMinutes(program.date - self.epgProgramScheduleStartDateTime);
 
                             if (programTimeOffsetSinceStartOfEPGData == slotTimeOffsetSinceStartOfEpgData) {
                                 // program starts at exactly this time slot
@@ -309,9 +307,8 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
             }
             else {
                 cssClasses = "'btn-secondary variableButton'";
-                var width = (durationInMinutes / 60) * 480;
+                var width = (durationInMinutes / 30) * self.widthOfThirtyMinutes;
                 widthSpec = " style='width:" + width.toString() + "px'";
-                // JTR TODO - maxWidth
             }
             var id = "show-" + station.StationId + "-" + indexIntoProgramList.toString();
             var title = showToDisplay.title;
@@ -356,7 +353,7 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
         var timeLineTime = timeOfDay(timeLineCurrentValue);
 
         toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
-        timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + 30 * 60000);
+        timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + minutesToMsec(30));
         minutesDisplayed += 30;
     }
     this.channelGuideDisplayEndDateTime = timeLineCurrentValue;
@@ -403,12 +400,10 @@ ChannelGuide.prototype.scrollToTime = function(newScrollToTime) {
 
     var slotsToScroll = this.getSlotIndex(newScrollToTime);
 
-    // how many pixels
-    // JTRTODO hard coded
     $("#cgData").scrollLeft(slotsToScroll * this.widthOfThirtyMinutes)
 
     this.channelGuideDisplayCurrentDateTime = newScrollToTime;
-    this.channelGuideDisplayCurrentEndDateTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(3);
+    this.channelGuideDisplayCurrentEndDateTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(this.channelGuideHoursDisplayed);
 }
 
 ChannelGuide.prototype.selectProgramAtTimeOnStation = function(selectProgramTime, stationIndex, currentUIElement) {
@@ -569,8 +564,7 @@ function timeOfDay(dateTime) {
 
 ChannelGuide.prototype.navigateBackwardOneScreen = function () {
 
-    // 6 slots * 30 minutes / slot * time conversion
-    newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(-3);
+    newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(-this.channelGuideHoursDisplayed);
     if (newScrollToTime < this.channelGuideDisplayStartDateTime) {
         newScrollToTime = new Date(this.channelGuideDisplayStartDateTime);
     }
@@ -595,10 +589,10 @@ ChannelGuide.prototype.navigateBackwardOneDay = function () {
 
 ChannelGuide.prototype.navigateForwardOneScreen = function () {
 
-    newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(3);
-    var proposedEndTime = new Date(newScrollToTime).addHours(3);
+    newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(this.channelGuideHoursDisplayed);
+    var proposedEndTime = new Date(newScrollToTime).addHours(this.channelGuideHoursDisplayed);
     if (proposedEndTime > this.channelGuideDisplayEndDateTime) {
-        newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-3);
+        newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-this.channelGuideHoursDisplayed);
     }
     this.scrollToTime(newScrollToTime)
 
@@ -608,9 +602,9 @@ ChannelGuide.prototype.navigateForwardOneScreen = function () {
 ChannelGuide.prototype.navigateForwardOneDay = function () {
 
     newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(24);
-    var proposedEndTime = new Date(newScrollToTime).addHours(3);
+    var proposedEndTime = new Date(newScrollToTime).addHours(this.channelGuideHoursDisplayed);
     if (proposedEndTime > this.channelGuideDisplayEndDateTime) {
-        newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-3);
+        newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-this.channelGuideHoursDisplayed);
     }
     this.scrollToTime(newScrollToTime)
 
@@ -654,7 +648,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
 
     // get div for current active button
     var activeStationRowUIElement = this._currentSelectedProgramButton.parentElement;           // current row of the channel guide
-    var programUIElementsInStation = $(activeStationRowUIElement).children();       // programs in that row
+    var programUIElementsInStation = $(activeStationRowUIElement).children();                   // programs in that row
 
     var indexOfSelectedProgramElement = this.getActiveButtonIndex(this._currentSelectedProgramButton, programUIElementsInStation);
     if (indexOfSelectedProgramElement >= 0) {
@@ -681,9 +675,9 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                 // else if the current program's end point is not visible, move forward by 30 minutes.
             else {
                 newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addMinutes(30);
-                var proposedEndTime = new Date(newScrollToTime).addHours(3);
+                var proposedEndTime = new Date(newScrollToTime).addHours(channelGuideHoursDisplayed);
                 if (proposedEndTime > this.channelGuideDisplayEndDateTime) {
-                    newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-3);
+                    newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-channelGuideHoursDisplayed);
                 }
 
                 this.scrollToTime(newScrollToTime);
