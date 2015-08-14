@@ -69,6 +69,45 @@ function selectRecordedShows() {
 }
 
 
+function selectChannelGuide() {
+    ChannelGuideSingleton.getInstance().selectChannelGuide();
+}
+
+function navigateBackwardOneScreen() {
+    ChannelGuideSingleton.getInstance().navigateBackwardOneScreen();
+}
+
+function navigateBackwardOneDay() {
+    ChannelGuideSingleton.getInstance().navigateBackwardOneDay();
+}
+
+function navigateForwardOneScreen() {
+    ChannelGuideSingleton.getInstance().navigateForwardOneScreen();
+}
+
+function navigateForwardOneDay() {
+    ChannelGuideSingleton.getInstance().navigateForwardOneDay();
+}
+
+//var ChannelGuideSingleton = (function () {
+//    var channelGuideInstance;
+
+//    function createChannelGuideInstance() {
+//        var cgInstance = new ChannelGuide();
+//        return cgInstance;
+//    }
+
+//    return {
+//        getInstance: function () {
+//            if (!channelGuideInstance) {
+//                channelGuideInstance = createChannelGuideInstance();
+//            }
+//            return channelGuideInstance;
+//        }
+//    };
+//})();
+
+
 function getRecordedShows() {
 
     console.log("getRecordedShows() invoked");
