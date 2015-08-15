@@ -35,6 +35,14 @@ function ChannelGuide() {
 }
 
 
+ChannelGuide.prototype.getSelectedProgram = function () {
+
+    var programInfo = this.parseProgramId(this._currentSelectedProgramButton);
+    var programStationData = this.epgProgramSchedule[programInfo.stationId];
+    var programList = programStationData.programList;
+    return programList[programInfo.programIndex];
+}
+
 ChannelGuide.prototype.selectChannelGuide = function() {
 
     //initializeEpgData();
@@ -461,11 +469,11 @@ ChannelGuide.prototype.updateActiveProgramUIElement = function(activeProgramUIEl
 }
 
 
-ChannelGuide.prototype.parseProgramId = function (programElement) {
+ChannelGuide.prototype.parseProgramId = function (programUIElement) {
 
         var programInfo = {};
 
-        var programId = programElement.id;
+        var programId = programUIElement.id;
         var idParts = programId.split("-");
         programInfo.stationId = idParts[1];
         programInfo.programIndex = idParts[2];

@@ -152,7 +152,8 @@ uiEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, 
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
 
-        eraseUI();
+        // don't want to do this for the channel guide
+        //eraseUI();
 
         return "HANDLED";
     }
@@ -369,6 +370,13 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stNone;
                 return "TRANSITION";
             case "select":
+                //var title = event["Title"];
+                //var recordingId = event["RecordingId"];
+                //displayDeleteShowDlg(title, recordingId);
+                displayCGProgramDlg();
+                stateData.nextState = this.stateMachine.stShowingModalDlg;
+                return "TRANSITION";
+
                 //var currentElement = document.activeElement;
                 //var currentElementId = currentElement.id;
                 //consoleLog("active recorded shows page item is " + currentElementId);

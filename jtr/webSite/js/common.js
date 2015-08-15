@@ -475,6 +475,32 @@ function getShowDescription(showId) {
     // body...
 }
 
+
+function displayCGProgramDlg() {
+
+    consoleLog("displayCGProgramDlg() invoked");
+
+    var selectedProgram = ChannelGuideSingleton.getInstance().getSelectedProgram();
+
+    var options = {
+        "backdrop": "true"
+    }
+    $('#cgProgramDlg').modal(options);
+    $('#cgProgramDlgShowTitle').html(selectedProgram.title);
+
+    modalDialogDisplayed = true;
+    selectedCGProgramDlgElement = "#cgProgramRecord";
+    //unselectedCGProgramDlgElement = "#cgProgramDlgClose";
+
+    // when dialog is displayed, highlight Record, unhighlight Close
+    $(selectedCGProgramDlgElement).removeClass("btn-secondary");
+    $(selectedCGProgramDlgElement).addClass("btn-primary");
+
+    //$(unselectedCGProgramDlgElement).removeClass("btn-primary");
+    //$(unselectedCGProgramDlgElement).addClass("btn-secondary");
+}
+
+
 function eraseUI() {
     $("#ipAddress").css("display", "none");
     $(currentActiveElementId).css("display", "none");
