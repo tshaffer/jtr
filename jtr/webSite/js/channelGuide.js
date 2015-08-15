@@ -338,6 +338,8 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
         // JTRTODO - setup handlers on children for browser - when user clicks on program to record, etc.
     });
 
+    this.updateTextAlignment();
+
     this._currentSelectedProgramButton = $("#cgStation0Data").children()[0];
     this.selectProgram(null, this._currentSelectedProgramButton, 0);
 
@@ -570,6 +572,7 @@ ChannelGuide.prototype.navigateBackwardOneScreen = function () {
     }
 
     this.scrollToTime(newScrollToTime)
+    this.updateTextAlignment();
 
     this.selectProgramAtTimeOnStation(newScrollToTime, this._currentStationIndex, this._currentSelectedProgramButton);
 }
@@ -582,6 +585,7 @@ ChannelGuide.prototype.navigateBackwardOneDay = function () {
         newScrollToTime = new Date(this.channelGuideDisplayStartDateTime);
     }
     this.scrollToTime(newScrollToTime)
+    this.updateTextAlignment();
 
     this.selectProgramAtTimeOnStation(newScrollToTime, this._currentStationIndex, this._currentSelectedProgramButton);
 }
@@ -595,6 +599,7 @@ ChannelGuide.prototype.navigateForwardOneScreen = function () {
         newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-this.channelGuideHoursDisplayed);
     }
     this.scrollToTime(newScrollToTime)
+    this.updateTextAlignment();
 
     this.selectProgramAtTimeOnStation(newScrollToTime, this._currentStationIndex, this._currentSelectedProgramButton);
 }
@@ -607,6 +612,7 @@ ChannelGuide.prototype.navigateForwardOneDay = function () {
         newScrollToTime = new Date(this.channelGuideDisplayEndDateTime).addHours(-this.channelGuideHoursDisplayed);
     }
     this.scrollToTime(newScrollToTime)
+    this.updateTextAlignment();
 
     this.selectProgramAtTimeOnStation(newScrollToTime, this._currentStationIndex, this._currentSelectedProgramButton);
 }
@@ -668,6 +674,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                         newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addMinutes(30);
                         this.scrollToTime(newScrollToTime);
                     }
+                    this.updateTextAlignment();
                     this.selectProgram(this._currentSelectedProgramButton, newProgramElement, 1);
                 }
             }
@@ -681,6 +688,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                 }
 
                 this.scrollToTime(newScrollToTime);
+                this.updateTextAlignment();
             }
 
             // JTRTODO - check for limit on right side; either fetch more epg data or stop scrolling at the end
@@ -703,6 +711,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                             this.scrollToTime(newScrollToTime);
                         }
                         this.selectProgram(this._currentSelectedProgramButton, newProgramElement, -1);
+                        this.updateTextAlignment();
                     }
                 }
             }
@@ -716,6 +725,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                 }
 
                 this.scrollToTime(newScrollToTime);
+                this.updateTextAlignment();
             }
         }
         else if (direction == "down" || direction == "up") {
@@ -747,7 +757,36 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                 }
 
                 this.selectProgramAtTimeOnStation(selectProgramTime, newRowIndex, this._currentSelectedProgramButton);
+                this.updateTextAlignment();
             }
         }
     }
 }
+
+
+ChannelGuide.prototype.updateTextAlignment = function () {
+
+    var self = this;
+
+    $.each(stations, function (stationIndex, station) {
+        var cgProgramLineName = "#cgStation" + stationIndex.toString() + "Data";
+        var cgProgramsOnStation = $(cgProgramLineName).children();
+        $.each(cgProgramsOnStation, function (buttonIndex, cgProgramButton) {
+            var programStartIsVisible = self.isProgramStartVisible(cgProgramButton);
+            var programEndIsVisible = self.isProgramEndVisible(cgProgramButton);
+            if (programStartIsVisible && programEndIsVisible) {
+                $(cgProgramButton).css('text-align', 'center');
+            }
+            else if (programStartIsVisible) {
+                $(cgProgramButton).css('text-align', 'left');
+            }
+            else if (programEndIsVisible) {
+                $(cgProgramButton).css('text-align', 'right');
+            }
+            else {
+                $(cgProgramButton).css('text-align', 'center');
+            }
+        });
+    });
+}
+
