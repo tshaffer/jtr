@@ -15,6 +15,9 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
+var cgProgramDlgSelectedIndex;
+var cgProgramDlgElements = [];
+
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
 }
@@ -476,9 +479,47 @@ function getShowDescription(showId) {
 }
 
 
+function updateCGProgramDlgSelection() {
+
+    for (i = 0; i < cgProgramDlgElements.length; i++) {
+        $(cgProgramDlgElements[i]).removeClass("btn-primary");
+        $(cgProgramDlgElements[i]).addClass("btn-secondary");
+    }
+
+    $(cgProgramDlgElements[cgProgramDlgSelectedIndex]).removeClass("btn-secondary");
+    $(cgProgramDlgElements[cgProgramDlgSelectedIndex]).addClass("btn-primary");
+}
+
+
+function cgProgramDlgUp() {
+
+    if (cgProgramDlgSelectedIndex > 0) {
+
+        cgProgramDlgSelectedIndex--;
+        updateCGProgramDlgSelection();
+    }
+}
+
+
+function cgProgramDlgDown() {
+    if (cgProgramDlgSelectedIndex < cgProgramDlgElements.length - 1) {
+
+        cgProgramDlgSelectedIndex++;
+        updateCGProgramDlgSelection();
+    }
+}
+
+
 function displayCGProgramDlg() {
 
     consoleLog("displayCGProgramDlg() invoked");
+
+    if (cgProgramDlgElements.length == 0) {
+        cgProgramDlgSelectedIndex = 0;
+        cgProgramDlgElements.push("#cgProgramRecord");
+        cgProgramDlgElements.push("#cgProgramTune");
+        cgProgramDlgElements.push("#cgProgramClose");
+    }
 
     var selectedProgram = ChannelGuideSingleton.getInstance().getSelectedProgram();
 
@@ -488,16 +529,19 @@ function displayCGProgramDlg() {
     $('#cgProgramDlg').modal(options);
     $('#cgProgramDlgShowTitle').html(selectedProgram.title);
 
-    modalDialogDisplayed = true;
-    selectedCGProgramDlgElement = "#cgProgramRecord";
-    //unselectedCGProgramDlgElement = "#cgProgramDlgClose";
+    // highlight first button; unhighlight other buttons
+    $(cgProgramDlgElements[0]).removeClass("btn-secondary");
+    $(cgProgramDlgElements[0]).addClass("btn-primary");
 
-    // when dialog is displayed, highlight Record, unhighlight Close
-    $(selectedCGProgramDlgElement).removeClass("btn-secondary");
-    $(selectedCGProgramDlgElement).addClass("btn-primary");
+    for (i = 1; i < cgProgramDlgElements.length; i++) {
+        $(cgProgramDlgElements[i]).removeClass("btn-primary");
+        $(cgProgramDlgElements[i]).addClass("btn-secondary");
+    }
+}
 
-    //$(unselectedCGProgramDlgElement).removeClass("btn-primary");
-    //$(unselectedCGProgramDlgElement).addClass("btn-secondary");
+
+function cgProgramDlgCloseInvoked() {
+    $('#cgProgramDlg').modal('hide');
 }
 
 

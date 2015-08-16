@@ -24,6 +24,10 @@
     this.stShowingModalDlg.HStateEventHandler = this.STShowingModalDlgEventHandler;
     this.stShowingModalDlg.superState = this.stTop;
 
+    this.stShowingCGProgramModalDlg = new HState(this, "ShowingCGProgramModalDlg");
+    this.stShowingCGProgramModalDlg.HStateEventHandler = this.STShowingCGProgramModalDlgEventHandler;
+    this.stShowingCGProgramModalDlg.superState = this.stTop;
+
     this.stRecordedShows = new HState(this, "RecordedShows");
     this.stRecordedShows.HStateEventHandler = this.STRecordedShowsEventHandler;
     this.stRecordedShows.superState = this.stUIScreen;
@@ -145,6 +149,64 @@ uiEngineStateMachine.prototype.STUIScreenEventHandler = function (event, stateDa
 
 
 
+uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function (event, stateData) {
+
+    stateData.nextState = null;
+
+    if (event["EventType"] == "ENTRY_SIGNAL") {
+        consoleLog(this.id + ": entry signal");
+
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "EXIT_SIGNAL") {
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "REMOTE") {
+        var eventData = event["EventData"]
+        consoleLog(this.id + ": remote command input: " + eventData);
+
+        switch (eventData.toLowerCase()) {
+            case "up":
+                cgProgramDlgUp();
+                return "HANDLED";
+            case "down":
+                cgProgramDlgDown();
+                return "HANDLED";
+            case "select":
+                consoleLog("enter key invoked while cg modal dialog displayed");
+                //stateData.nextState = this.stateMachine.stRecordedShows;
+                //return "TRANSITION";
+                return "HANDLED";
+
+            case "exit":
+                cgProgramDlgCloseInvoked();
+                stateData.nextState = this.stateMachine.stChannelGuide;
+                return "TRANSITION";
+
+            // swallow the following keys so that they're not used by displayEngine
+            case "left":
+            case "right":
+            case "play":
+            case "pause":
+            case "ff":
+            case "fastforward":
+            case "rw":
+            case "rewind":
+            case "jump":
+            case "instant_replay":
+            case "quick_skip":
+            case "progress_bar":
+            case "clock":
+                return "HANDLED";
+
+        }
+    }
+
+    stateData.nextState = this.superState;
+    return "SUPER";
+}
+
+
 uiEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, stateData) {
 
     stateData.nextState = null;
@@ -152,8 +214,7 @@ uiEngineStateMachine.prototype.STShowingModalDlgEventHandler = function (event, 
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
 
-        // don't want to do this for the channel guide
-        //eraseUI();
+        eraseUI();
 
         return "HANDLED";
     }
@@ -370,41 +431,9 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stNone;
                 return "TRANSITION";
             case "select":
-                //var title = event["Title"];
-                //var recordingId = event["RecordingId"];
-                //displayDeleteShowDlg(title, recordingId);
                 displayCGProgramDlg();
-                stateData.nextState = this.stateMachine.stShowingModalDlg;
+                stateData.nextState = this.stateMachine.stShowingCGProgramModalDlg;
                 return "TRANSITION";
-
-                //var currentElement = document.activeElement;
-                //var currentElementId = currentElement.id;
-                //consoleLog("active recorded shows page item is " + currentElementId);
-
-                //var action = this.getAction(currentElementId);
-                //if (action != "") {
-                //    var recordingId = currentElementId.substring(action.length);
-                //    switch (action) {
-                //        case "recording":
-                //            consoleLog({ command: "debugPrint", "debugMessage": "STRecordedShowsEventHandler: PLAY_RECORDED_SHOW, recordingId=" + recordingId });
-                //            if (recordingId in _currentRecordings) {
-
-                //                var event = {};
-                //                event["EventType"] = "PLAY_RECORDED_SHOW";
-                //                event["EventData"] = recordingId;
-                //                postMessage(event);
-
-                //                stateData.nextState = this.stateMachine.stNone;
-                //                return "TRANSITION"
-                //            }
-                //            break;
-                //        case "delete":
-                //            executeDeleteSelectedShow(recordingId);
-                //            getRecordedShows();
-                //            break;
-                //    }
-                //}
-                return "HANDLED";
         }
     }
 
