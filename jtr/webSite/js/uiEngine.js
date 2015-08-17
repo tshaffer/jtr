@@ -173,11 +173,9 @@ uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function
                 cgProgramDlgDown();
                 return "HANDLED";
             case "select":
-                consoleLog("enter key invoked while cg modal dialog displayed");
-                //stateData.nextState = this.stateMachine.stRecordedShows;
-                //return "TRANSITION";
-                return "HANDLED";
-
+                cgSelectEventHandler();
+                stateData.nextState = this.stateMachine.stChannelGuide;
+                return "TRANSITION";
             case "exit":
                 cgProgramDlgCloseInvoked();
                 stateData.nextState = this.stateMachine.stChannelGuide;

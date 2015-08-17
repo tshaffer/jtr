@@ -15,8 +15,13 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
+var cgSelectedStationId;
+var cgSelectedProgram;
 var cgProgramDlgSelectedIndex;
-var cgProgramDlgElements = [];
+
+var cgProgramDlgElements = ["#cgProgramRecord", "#cgProgramTune", "#cgProgramClose"];
+var cgProgramDlgHandlers = [cgRecordSelectedProgram, cgTune, cgModalClose];
+
 
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
@@ -491,6 +496,27 @@ function updateCGProgramDlgSelection() {
 }
 
 
+function cgRecordSelectedProgram() {
+}
+
+
+function cgTune() {
+    var stationName = getStationFromId(cgSelectedStationId);
+    tuneChannel(stationName, true);
+}
+
+
+function cgModalClose() {
+    // don't need to do anything other than close the dialog
+}
+
+
+function cgSelectEventHandler() {
+    cgProgramDlgHandlers[cgProgramDlgSelectedIndex]();
+    cgProgramDlgCloseInvoked();
+}
+
+
 function cgProgramDlgUp() {
 
     if (cgProgramDlgSelectedIndex > 0) {
@@ -514,20 +540,17 @@ function displayCGProgramDlg() {
 
     consoleLog("displayCGProgramDlg() invoked");
 
-    if (cgProgramDlgElements.length == 0) {
-        cgProgramDlgSelectedIndex = 0;
-        cgProgramDlgElements.push("#cgProgramRecord");
-        cgProgramDlgElements.push("#cgProgramTune");
-        cgProgramDlgElements.push("#cgProgramClose");
-    }
+    cgProgramDlgSelectedIndex = 0;
 
-    var selectedProgram = ChannelGuideSingleton.getInstance().getSelectedProgram();
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
 
     var options = {
         "backdrop": "true"
     }
     $('#cgProgramDlg').modal(options);
-    $('#cgProgramDlgShowTitle').html(selectedProgram.title);
+    $('#cgProgramDlgShowTitle').html(cgSelectedProgram.title);
 
     // highlight first button; unhighlight other buttons
     $(cgProgramDlgElements[0]).removeClass("btn-secondary");

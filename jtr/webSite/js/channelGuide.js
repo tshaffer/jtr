@@ -35,12 +35,16 @@ function ChannelGuide() {
 }
 
 
-ChannelGuide.prototype.getSelectedProgram = function () {
+ChannelGuide.prototype.getSelectedStationAndProgram = function () {
 
     var programInfo = this.parseProgramId(this._currentSelectedProgramButton);
     var programStationData = this.epgProgramSchedule[programInfo.stationId];
     var programList = programStationData.programList;
-    return programList[programInfo.programIndex];
+
+    var programData = {};
+    programData.stationId = programInfo.stationId;
+    programData.program = programList[programInfo.programIndex];
+    return programData;
 }
 
 ChannelGuide.prototype.selectChannelGuide = function() {
@@ -798,3 +802,18 @@ ChannelGuide.prototype.updateTextAlignment = function () {
     });
 }
 
+
+function getStationFromId(stationId) {
+
+    var selectedStation = "";
+
+    // get stationIndex
+    $.each(stations, function (stationIndex, station) {
+        if (station.StationId == stationId) {
+            selectedStation = station.AtscMajor + "." + station.AtscMinor;
+            return false;
+        }
+    });
+
+    return selectedStation;
+}
