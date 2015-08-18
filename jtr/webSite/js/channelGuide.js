@@ -389,6 +389,9 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
             $.each(stations, function (stationIndex, station) {
                 if (station.StationId == programInfo.stationId) {
                     self.selectProgramAtTimeOnStation(self.selectProgramTime, stationIndex, self._currentSelectedProgramButton);
+
+                    displayCGProgramDlg();
+
                     return false;
                 }
             });

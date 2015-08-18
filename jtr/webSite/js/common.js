@@ -497,12 +497,28 @@ function updateCGProgramDlgSelection() {
 
 
 function cgRecordSelectedProgram() {
+
+    var event = {};
+    event["EventType"] = "SET_MANUAL_RECORD";
+    event["DateTime"] = cgSelectedProgram.date;
+    event["Title"] = cgSelectedProgram.title;
+    event["Duration"] = cgSelectedProgram.duration;
+    event["InputSource"] = "tuner";
+
+    var stationName = getStationFromId(cgSelectedStationId);
+    tuneChannel(stationName, true);
+    event["Channel"] = stationName;
+
+    event["RecordingBitRate"] = _settings.recordingBitRate;
+    event["SegmentRecording"] = _settings.segmentRecordings;
+    postMessage(event);
 }
 
 
 function cgTune() {
     var stationName = getStationFromId(cgSelectedStationId);
     tuneChannel(stationName, true);
+    alert("tuned to " + stationName);
 }
 
 
@@ -511,6 +527,7 @@ function cgModalClose() {
 }
 
 
+// brightsign.js only?
 function cgSelectEventHandler() {
     cgProgramDlgHandlers[cgProgramDlgSelectedIndex]();
     cgProgramDlgCloseInvoked();
@@ -560,6 +577,37 @@ function displayCGProgramDlg() {
         $(cgProgramDlgElements[i]).removeClass("btn-primary");
         $(cgProgramDlgElements[i]).addClass("btn-secondary");
     }
+
+    // browser event handlers - browser.js
+    //for (i = 0; i < cgProgramDlgElements.length; i++) {
+    //    var foo = cgProgramDlgHandlers[i];
+    //    var foo2 = cgProgramDlgElements[i];
+    //    $(foo2).click(function () {
+    //        foo();
+    //    });
+
+        //$(cgProgramDlgElements[i]).click(function () {
+        //    //cgProgramDlgHandlers[i]();
+        //    foo();
+        //    cgProgramDlgCloseInvoked();
+        //});
+
+        //click(cgProgramDlgHandlers[i]);
+    //}
+
+    // trying to make this data driven as above didn't work.
+    $("#cgProgramRecord").click(function () {
+        cgRecordSelectedProgram();
+    });
+
+    $("#cgProgramTune").click(function () {
+        cgTune();
+    });
+
+    $("#cgProgramClose").click(function () {
+        //cgModalClose();
+        cgProgramDlgCloseInvoked();
+    });
 }
 
 
