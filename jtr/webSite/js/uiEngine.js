@@ -174,7 +174,8 @@ uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function
                 return "HANDLED";
             case "select":
                 cgSelectEventHandler();
-                stateData.nextState = this.stateMachine.stChannelGuide;
+                stateData.nextState = this.stateMachine.stNone;
+                //stateData.nextState = this.stateMachine.stChannelGuide;
                 return "TRANSITION";
             case "exit":
                 cgProgramDlgCloseInvoked();

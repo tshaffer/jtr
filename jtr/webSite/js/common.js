@@ -506,7 +506,10 @@ function cgRecordSelectedProgram() {
     event["InputSource"] = "tuner";
 
     var stationName = getStationFromId(cgSelectedStationId);
-    tuneChannel(stationName, true);
+
+    stationName = stationName.replace(".1", "");
+    stationName = stationName.replace(".", "-");
+
     event["Channel"] = stationName;
 
     event["RecordingBitRate"] = _settings.recordingBitRate;
@@ -517,6 +520,10 @@ function cgRecordSelectedProgram() {
 
 function cgTune() {
     var stationName = getStationFromId(cgSelectedStationId);
+
+    stationName = stationName.replace(".1", "");
+    stationName = stationName.replace(".", "-");
+
     tuneChannel(stationName, true);
     alert("tuned to " + stationName);
 }
