@@ -515,6 +515,8 @@ function cgRecordSelectedProgram() {
     event["RecordingBitRate"] = _settings.recordingBitRate;
     event["SegmentRecording"] = _settings.segmentRecordings;
     postMessage(event);
+
+    return "record";
 }
 
 
@@ -526,18 +528,22 @@ function cgTune() {
 
     tuneChannel(stationName, true);
     alert("tuned to " + stationName);
+
+    return "tune";
 }
 
 
 function cgModalClose() {
     // don't need to do anything other than close the dialog
+    return "close";
 }
 
 
 // brightsign.js only?
 function cgSelectEventHandler() {
-    cgProgramDlgHandlers[cgProgramDlgSelectedIndex]();
+    var functionInvoked = cgProgramDlgHandlers[cgProgramDlgSelectedIndex]();
     cgProgramDlgCloseInvoked();
+    return functionInvoked;
 }
 
 

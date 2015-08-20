@@ -173,10 +173,25 @@ uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function
                 cgProgramDlgDown();
                 return "HANDLED";
             case "select":
-                cgSelectEventHandler();
-                stateData.nextState = this.stateMachine.stNone;
-                //stateData.nextState = this.stateMachine.stChannelGuide;
-                return "TRANSITION";
+                functionInvoked = cgSelectEventHandler();
+
+                switch (functionInvoked) {
+                    case "record":
+                        // mark the recorded show?
+                        // just return to channel guide
+                        stateData.nextState = this.stateMachine.stChannelGuide;
+                        return "TRANSITION";
+                    case "tune":
+                        var event = {};
+                        event["EventType"] = "TUNE_LIVE_VIDEO";
+                        postMessage(event);
+
+                        stateData.nextState = this.stateMachine.stNone;
+                        return "TRANSITION";
+                    case "close":
+                        stateData.nextState = this.stateMachine.stChannelGuide;
+                        return "TRANSITION";
+                }
             case "exit":
                 cgProgramDlgCloseInvoked();
                 stateData.nextState = this.stateMachine.stChannelGuide;
