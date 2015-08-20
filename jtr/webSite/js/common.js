@@ -498,6 +498,11 @@ function updateCGProgramDlgSelection() {
 
 function cgRecordSelectedProgram() {
 
+    // redundant in some cases (when selected from pop up); not when record button pressed
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
+
     var event = {};
     event["EventType"] = "SET_MANUAL_RECORD";
     event["DateTime"] = cgSelectedProgram.date;

@@ -26,6 +26,8 @@ function SonyCommand(remoteCode) {
         remoteCommand = "SELECT"				// SELECT
     else if (remoteCode == 163141)
         remoteCommand = "MENU"					// MENU
+    else if (remoteCode == 163157)
+        remoteCommand = "GUIDE"			        // GUIDE
     else if (remoteCode == 163085)
         remoteCommand = "EXIT"					// EXIT = List
     else if (remoteCode == 163098)
@@ -38,6 +40,8 @@ function SonyCommand(remoteCode) {
         remoteCommand = "RW"					// RW
     else if (remoteCode == 163139)
         remoteCommand = "STOP"					// STOP
+    else if (remoteCode == 163152)
+        remoteCommand = "RECORD"                // RECORD
     else if (remoteCode == 163160)
         remoteCommand = "QUICK_SKIP"			// QUICK_SKIP = OPTIONS
     else if (remoteCode == 163154)
@@ -120,7 +124,7 @@ function SeikiCommand(remoteCode)
     else if (remoteCode == 163143) 
         remoteCommand = "JUMP"					// JUMP = P.Mode
     else if (remoteCode == 163157) 
-        remoteCommand = "PLAY_ICON"			    // PLAY_ICON = C
+        remoteCommand = "GUIDE"			        // GUIDE = C
     else if (remoteCode == 163136) 
         remoteCommand = "PROGRESS_BAR"			// PROGRESS_BAR = B
     else if (remoteCode == 163089)

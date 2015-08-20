@@ -87,6 +87,9 @@ uiEngineStateMachine.prototype.STNoneEventHandler = function (event, stateData) 
             case "menu":
                 stateData.nextState = this.stateMachine.stMainMenu;
                 return "TRANSITION";
+            case "guide":
+                stateData.nextState = this.stateMachine.stChannelGuide;
+                return "TRANSITION";
             case "recorded_shows":
                 stateData.nextState = this.stateMachine.stRecordedShows;
                 return "TRANSITION";
@@ -342,6 +345,9 @@ uiEngineStateMachine.prototype.STMainMenuEventHandler = function (event, stateDa
         switch (eventData.toLowerCase()) {
             case "menu":
                 return "HANDLED";
+            case "guide":
+                stateData.nextState = this.stateMachine.stChannelGuide;
+                return "TRANSITION";
             case "recorded_shows":
                 stateData.nextState = this.stateMachine.stRecordedShows;
                 return "TRANSITION";
@@ -435,6 +441,11 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
             case "recorded_shows":
                 stateData.nextState = this.stateMachine.stRecordedShows;
                 return "TRANSITION";
+            case "guide":
+                //stateData.nextState = this.stateMachine.stChannelGuide;
+                //return "TRANSITION";
+                // ????
+                return "HANDLED";
             case "up":
             case "down":
             case "left":
@@ -448,6 +459,10 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
                 displayCGProgramDlg();
                 stateData.nextState = this.stateMachine.stShowingCGProgramModalDlg;
                 return "TRANSITION";
+            case "record":
+                // give feedback?
+                cgRecordSelectedProgram();
+                return "HANDLED";
         }
     }
 
@@ -476,6 +491,9 @@ uiEngineStateMachine.prototype.STRecordedShowsEventHandler = function (event, st
         switch (eventData.toLowerCase()) {
             case "menu":
                 stateData.nextState = this.stateMachine.stMainMenu;
+                return "TRANSITION";
+            case "guide":
+                stateData.nextState = this.stateMachine.stChannelGuide;
                 return "TRANSITION";
             case "recorded_shows":
                 return "HANDLED";
