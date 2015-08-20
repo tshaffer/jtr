@@ -512,7 +512,6 @@ function cgRecordSelectedProgram() {
 
     var stationName = getStationFromId(cgSelectedStationId);
 
-    stationName = stationName.replace(".1", "");
     stationName = stationName.replace(".", "-");
 
     event["Channel"] = stationName;
@@ -528,7 +527,6 @@ function cgRecordSelectedProgram() {
 function cgTune() {
     var stationName = getStationFromId(cgSelectedStationId);
 
-    stationName = stationName.replace(".1", "");
     stationName = stationName.replace(".", "-");
 
     tuneChannel(stationName, true);
