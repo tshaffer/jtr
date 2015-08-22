@@ -352,11 +352,6 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
 
     this.updateTextAlignment();
 
-    this._currentSelectedProgramButton = $("#cgStation0Data").children()[0];
-    this.selectProgram(null, this._currentSelectedProgramButton, 0);
-
-    this._currentStationIndex = 0;
-
     // build and display timeline
     var toAppend = "";
     $("#cgTimeLine").empty();
@@ -397,6 +392,28 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
             });
         }
     });
+
+    var url = baseURL + "lastTunedChannel";
+
+    var thisObj = this;
+    $.get(url)
+        .done(function (result) {
+            consoleLog("lastTunedChannel successfully retrieved");
+            var stationNumber = result;
+            var stationIndex = thisObj.getStationIndexFromName(stationNumber)
+            var stationRow = $("#cgData").children()[stationIndex + 1];
+            thisObj._currentSelectedProgramButton = $(stationRow).children()[0];
+            thisObj.selectProgram(null, thisObj._currentSelectedProgramButton, 0);
+            thisObj._currentStationIndex = stationIndex;
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            consoleLog("lastTunedChannel failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
+
 }
 
 
@@ -820,3 +837,43 @@ function getStationFromId(stationId) {
 
     return selectedStation;
 }
+
+
+ChannelGuide.prototype.getStationIndexFromName = function(stationNumber) {
+
+    var stationIndex = -1;
+
+    // JOEL - HELP!!
+    var self = this;
+
+    // hack
+    targetStationNumber = stationNumber;
+
+    $.each(stations, function (index, station) {
+        if (stationNumbersEqual(targetStationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
+            stationIndex = index;
+            return false;
+        }
+        console.log("hello");
+    });
+
+    return stationIndex;
+}
+
+function stationNumbersEqual(stationNumber1, stationNumber2) {
+
+    if (stationNumber1 == stationNumber2) return true;
+
+    stationNumber1 = standardizeStationNumber(stationNumber1);
+    stationNumber2 = standardizeStationNumber(stationNumber2);
+    return (stationNumber1 == stationNumber2);
+}
+
+function standardizeStationNumber(stationNumber) {
+    stationNumber = stationNumber.replace(".1", "");
+    stationNumber = stationNumber.replace("-1", "");
+    stationNumber = stationNumber.replace("-", ".");
+
+    return stationNumber;
+}
+
