@@ -321,6 +321,12 @@ End Function
 
 Sub SetDBLastTunedChannel(channel$ As String)
 
+'	insertSQL$ = "INSERT INTO LastTunedChannel (Channel) VALUES(:channel_param);"
+
+'	params = { channel_param: channel$ }
+
+'	m.ExecuteDBInsert(insertSQL$, params)
+
     m.db.RunBackground("UPDATE LastTunedChannel SET Channel='" + channel$ + "';", {})
 
 End Sub
