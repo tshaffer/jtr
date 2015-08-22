@@ -452,6 +452,18 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
             case "right":
                 ChannelGuideSingleton.getInstance().navigateChannelGuide(eventData.toLowerCase());
                 return "HANDLED";
+            case "highest_speed_rw":
+                ChannelGuideSingleton.getInstance().navigateBackwardOneDay();
+                return "HANDLED";
+            case "prev":
+                ChannelGuideSingleton.getInstance().navigateBackwardOneScreen();
+                return "HANDLED";
+            case "next":
+                ChannelGuideSingleton.getInstance().navigateForwardOneScreen();
+                return "HANDLED";
+            case "highest_speed_fw":
+                ChannelGuideSingleton.getInstance().navigateForwardOneDay();
+                return "HANDLED";
             case "exit":
                 stateData.nextState = this.stateMachine.stNone;
                 return "TRANSITION";

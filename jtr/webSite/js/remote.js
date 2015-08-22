@@ -56,6 +56,10 @@ function SonyCommand(remoteCode) {
         remoteCommand = "HIGHEST_SPEED_FW"		// ->->| = CH LIST
     else if (remoteCode == 163096)
         remoteCommand = "HIGHEST_SPEED_RW"		// |<-<- ADD ERASE
+    else if (remoteCode == 163092)
+        remoteCommand = "NEXT"		            // :-> = FAV+
+    else if (remoteCode == 163093)
+        remoteCommand = "PREV"		            // <-: = FAV-
     else if (remoteCode == 163072)
         remoteCommand = "0";
     else if (remoteCode == 163073)
