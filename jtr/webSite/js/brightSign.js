@@ -202,12 +202,10 @@ function initializeBrightSign() {
                 baseURL = "http://" + brightSignIPAddress + ":8080/";
                 consoleLog("baseURL from BrightSign message is: " + baseURL);
 
-                // temporary location
+                // temporary location - JTRTODO
                 initializeEpgData();
 
-                // post message indicating that initialization is complete ??
-                event["EventType"] = "READY";
-                postMessage(event);
+                retrieveSettings(indicateReady);
                 break;
             case "remoteCommand":
                 var event = {};
@@ -266,4 +264,11 @@ function initializeBrightSign() {
                 break;
         }
     }
+}
+
+function indicateReady() {
+
+    // post message indicating that initialization is complete ??
+    event["EventType"] = "READY";
+    postMessage(event);
 }
