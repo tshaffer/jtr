@@ -98,8 +98,10 @@ Function newJTR(msgPort As Object) As Object
 	JTR.UpdateHLSSegmentationComplete	= UpdateHLSSegmentationComplete
 	JTR.GetDBLastTunedChannel			= GetDBLastTunedChannel
 	JTR.SetDBLastTunedChannel			= SetDBLastTunedChannel
+	JTR.InitializeDBLastTunedChannel	= InitializeDBLastTunedChannel
 	JTR.GetDBSettings					= GetDBSettings
 	JTR.SetDBSettings					= SetDBSettings
+	JTR.InitializeDBSettings			= InitializeDBSettings
 	JTR.AddDBStation					= AddDBStation
 	JTR.PopulateStationsTable			= PopulateStationsTable
 	JTR.GetDBStations					= GetDBStations

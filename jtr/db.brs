@@ -14,7 +14,6 @@ Sub OpenDatabase()
 		if not ok then stop
 
 		m.CreateDBTable("CREATE TABLE SchemaVersion (Version TEXT);")
-
 		m.SetDBVersion(m.dbSchemaVersion$)
 
 		m.CreateDBTable("CREATE TABLE Recordings (RecordingId INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDateTime TEXT, Duration INT, FileName TEXT, LastViewedPosition INT, TranscodeComplete INT, HLSSegmentationComplete INT, HLSUrl TEXT);")
@@ -22,10 +21,12 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE ScheduledRecordings (Id INTEGER PRIMARY KEY AUTOINCREMENT, DateTime INT, Title TEXT, Duration INT, InputSource TEXT, Channel TEXT, RecordingBitRate INT, SegmentRecording INT);")
 
 		m.CreateDBTable("CREATE TABLE Settings (RecordingBitRate INT, SegmentRecordings INT);")
-
+		m.InitializeDBSettings()
+		
 		m.CreateDBTable("CREATE TABLE LastSelectedShow (Id TEXT);")
 
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
+		m.InitializeDBLastTunedChannel()
 
 '		m.CreateDBTable("CREATE TABLE Stations (StationId PRIMARY KEY TEXT, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
 		m.CreateDBTable("CREATE TABLE Stations (StationId, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
@@ -321,16 +322,18 @@ End Function
 
 Sub SetDBLastTunedChannel(channel$ As String)
 
-'	insertSQL$ = "INSERT INTO LastTunedChannel (Channel) VALUES(:channel_param);"
-
-'	params = { channel_param: channel$ }
-
-'	m.ExecuteDBInsert(insertSQL$, params)
-
     m.db.RunBackground("UPDATE LastTunedChannel SET Channel='" + channel$ + "';", {})
 
 End Sub
 
+
+Sub InitializeDBLastTunedChannel()
+
+	insertSQL$ = "INSERT INTO LastTunedChannel (Channel) VALUES(:channel_param);"
+	params = { channel_param: "2" }
+	m.ExecuteDBInsert(insertSQL$, params)
+
+End Sub
 
 
 Sub GetDBLastSelectedShowIdCallback(resultsData As Object, selectData As Object)
@@ -445,6 +448,19 @@ End Function
 Sub SetDBSettings(recordingBitRate As Integer, segmentRecordings As Integer)
 
 	m.db.RunBackground("UPDATE Settings SET RecordingBitRate=" + stri(recordingBitRate) + ", SegmentRecordings=" + stri(segmentRecordings) + ";", {})
+
+End Sub
+
+
+Sub InitializeDBSettings()
+
+	insertSQL$ = "INSERT INTO Settings (RecordingBitRate, SegmentRecordings) VALUES(?,?);"
+
+	params = CreateObject("roArray", 7, false)
+	params[ 0 ] = 10
+	params[ 1 ] = 0
+
+	m.ExecuteDBInsert(insertSQL$, params)
 
 End Sub
 
