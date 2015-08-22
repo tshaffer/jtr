@@ -290,9 +290,16 @@ recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecon
     consoleLog("startRecordingTimer - start timer: millisecondsUntilRecording=" + millisecondsUntilRecording);
     var thisObj = this;
     // when timeout occurs, setup variables and send message indicating a transition to recording state
+
+    console.log("startTimer at: ");
+    printNow();
+
     timerVar = setTimeout(function ()
     {
         consoleLog("startRecordingTimer: timeout");
+
+        console.log("startRecordingTimer timeout at: ");
+        printNow();
 
         thisObj.stateMachine.recordingTitle = title;
         thisObj.stateMachine.recordingDuration = duration;
@@ -330,6 +337,9 @@ recordingEngineStateMachine.prototype.startRecording = function (title, duration
 
 recordingEngineStateMachine.prototype.executeStartRecording = function (title, duration, recordingBitRate, segmentRecording) {
 
+    // subtract 4 seconds from duration
+    duration -= 4000;
+
     bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": duration, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording });
     this.addRecordingEndTimer(duration, title, new Date(), duration);
     displayUserMessage("Recording started: " + title);
@@ -343,6 +353,9 @@ recordingEngineStateMachine.prototype.addRecordingEndTimer = function (durationI
     var thisObj = this;
     endOfRecordingTimer = setTimeout(function () {
         consoleLog("addRecordingEndTimer - endOfRecordingTimer triggered");
+        console.log("endOfRecordingTimer triggered at: ");
+        printNow();
+
         thisObj.endRecording(title, dateTime, duration);
     }, durationInMilliseconds);
 }
@@ -399,3 +412,15 @@ recordingEngineStateMachine.prototype.deleteScheduledRecording = function (sched
         });
 }
 
+
+function printNow() {
+    var currentdate = new Date();
+    var datetime =    currentdate.getDate() + "/"
+                    + (currentdate.getMonth() + 1) + "/"
+                    + currentdate.getFullYear() + " @ "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds() + ":"
+                    + currentdate.getMilliseconds();
+    console.log("current dateTime is " + datetime);
+}
