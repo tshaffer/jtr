@@ -118,6 +118,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
                             thisThisObj.stateMachine.recordingChannel = scheduledRecording.Channel;
                             thisThisObj.stateMachine.recordingBitRate = scheduledRecording.RecordingBitRate;
                             thisThisObj.stateMachine.recordingSegment = scheduledRecording.SegmentRecording;
+
                             postMessage(event);
                         }
                     }
@@ -152,7 +153,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
         return "TRANSITION";
     }
     else if (event["EventType"] == "SET_MANUAL_RECORD") {
-        return this.handleSetManualRecord(event, true);
+        return this.handleSetManualRecord(event, stateData, true);
     }
 
     stateData.nextState = this.superState;
@@ -160,7 +161,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
 }
 
 
-recordingEngineStateMachine.prototype.handleSetManualRecord = function (event, idle) {
+recordingEngineStateMachine.prototype.handleSetManualRecord = function (event, stateData, idle) {
 
     var dateTime = event["DateTime"];
     var title = event["Title"];
@@ -232,7 +233,7 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
         return "TRANSITION";
     }
     else if (event["EventType"] == "SET_MANUAL_RECORD") {
-        return this.handleSetManualRecord(event, false);
+        return this.handleSetManualRecord(event, stateData, false);
     }
 
     stateData.nextState = this.superState;
