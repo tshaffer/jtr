@@ -841,20 +841,20 @@ function getStationFromId(stationId) {
 
 ChannelGuide.prototype.getStationIndexFromName = function(stationNumber) {
 
+    var stationIndex = looper.call(this, stationNumber);
+    return stationIndex;
+}
+
+
+function looper(stationNumber) {
+
     var stationIndex = -1;
 
-    // JOEL - HELP!!
-    var self = this;
-
-    // hack
-    targetStationNumber = stationNumber;
-
     $.each(stations, function (index, station) {
-        if (stationNumbersEqual(targetStationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
+        if (stationNumbersEqual(stationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
             stationIndex = index;
             return false;
         }
-        console.log("hello");
     });
 
     return stationIndex;
