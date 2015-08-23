@@ -20,18 +20,20 @@ var ChannelGuideSingleton = (function () {
 function ChannelGuide() {
 
     this.epgProgramSchedule = null;
-    this.epgProgramScheduleStartDateTime;
+    this.epgProgramScheduleStartDateTime = null;
 
-    this.channelGuideDisplayStartDateTime;
-    this.channelGuideDisplayEndDateTime;
-    this.channelGuideDisplayCurrentDateTime;
-    this.channelGuideDisplayCurrentEndDateTime;
+    this.channelGuideDisplayStartDateTime = null;
+    this.channelGuideDisplayEndDateTime = null;
+    this.channelGuideDisplayCurrentDateTime = null;
+    this.channelGuideDisplayCurrentEndDateTime = null;
 
-    this._currentSelectedProgramButton;
-    this._currentStationIndex;
+    this._currentSelectedProgramButton = null;
+    this._currentStationIndex = null;
 
     this.widthOfThirtyMinutes = 240;    // pixels
     this.channelGuideHoursDisplayed = 3;
+
+    this.resetSelectedProgram = true;
 }
 
 
@@ -50,6 +52,12 @@ ChannelGuide.prototype.getSelectedStationAndProgram = function () {
 ChannelGuide.prototype.selectChannelGuide = function() {
 
     //initializeEpgData();
+
+    // if returning from pop up modal, just re-select the last program and return
+    if (!this.resetSelectedProgram) {
+        this.selectProgram(null, this._currentSelectedProgramButton);
+        return;
+    }
 
     var self = this;
 
@@ -413,7 +421,6 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
         .always(function () {
             //alert("recording transmission finished");
         });
-
 }
 
 
@@ -458,7 +465,7 @@ ChannelGuide.prototype.selectProgramAtTimeOnStation = function(selectProgramTime
 
     var nextActiveUIElement = programUIElementsInStation[buttonIndex];
 
-    this.selectProgram(currentUIElement, nextActiveUIElement, 0)
+    this.selectProgram(currentUIElement, nextActiveUIElement);
 }
 
 // get the index of the button in a row / div
@@ -707,7 +714,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                         this.scrollToTime(newScrollToTime);
                     }
                     this.updateTextAlignment();
-                    this.selectProgram(this._currentSelectedProgramButton, newProgramElement, 1);
+                    this.selectProgram(this._currentSelectedProgramButton, newProgramElement);
                 }
             }
 
@@ -742,7 +749,7 @@ ChannelGuide.prototype.navigateChannelGuide = function (direction) {
                             newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addMinutes(-30);
                             this.scrollToTime(newScrollToTime);
                         }
-                        this.selectProgram(this._currentSelectedProgramButton, newProgramElement, -1);
+                        this.selectProgram(this._currentSelectedProgramButton, newProgramElement);
                         this.updateTextAlignment();
                     }
                 }

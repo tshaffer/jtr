@@ -182,6 +182,7 @@ uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function
                     case "record":
                         // mark the recorded show?
                         // just return to channel guide
+                        ChannelGuideSingleton.getInstance().resetSelectedProgram = false;
                         stateData.nextState = this.stateMachine.stChannelGuide;
                         return "TRANSITION";
                     case "tune":
@@ -192,11 +193,13 @@ uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function
                         stateData.nextState = this.stateMachine.stNone;
                         return "TRANSITION";
                     case "close":
+                        ChannelGuideSingleton.getInstance().resetSelectedProgram = false;
                         stateData.nextState = this.stateMachine.stChannelGuide;
                         return "TRANSITION";
                 }
             case "exit":
                 cgProgramDlgCloseInvoked();
+                ChannelGuideSingleton.getInstance().resetSelectedProgram = false;
                 stateData.nextState = this.stateMachine.stChannelGuide;
                 return "TRANSITION";
 
@@ -429,6 +432,7 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
         consoleLog(this.id + ": exit signal");
+        ChannelGuideSingleton.getInstance().resetSelectedProgram = true;
     }
     else if (event["EventType"] == "REMOTE") {
         var eventData = event["EventData"]
