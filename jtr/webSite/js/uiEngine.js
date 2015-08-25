@@ -525,6 +525,9 @@ uiEngineStateMachine.prototype.STRecordedShowsEventHandler = function (event, st
             case "exit":
                 stateData.nextState = this.stateMachine.stNone;
                 return "TRANSITION";
+            case "guide":
+                stateData.nextState = this.stateMachine.stChannelGuide;
+                return "TRANSITION";
             case "select":
                 var currentElement = document.activeElement;
                 var currentElementId = currentElement.id;
