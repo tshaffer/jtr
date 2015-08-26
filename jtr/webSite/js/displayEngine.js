@@ -2,6 +2,13 @@
 
     HSM.call(this); //call super constructor.
 
+    this.playIconDisplayTime = 1500;
+    this.miscIconDisplayTime = 1000;
+    this.ffCount = 1;
+    this.maxFFCount = 4;        // JTR TODO - here or in .brs?
+    this.rwCount = 1;
+    this.maxRWCount = 4;
+
     this.InitialPseudoStateHandler = this.InitializeDisplayEngineHSM;
 
     this.stTop = new HState(this, "Top");
@@ -93,6 +100,7 @@ displayEngineStateMachine.prototype.STIdleEventHandler = function (event, stateD
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
         this.playSelectedShow(recordingId);
+        TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
@@ -420,6 +428,7 @@ displayEngineStateMachine.prototype.STLiveVideoEventHandler = function (event, s
         consoleLog({ command: "debugPrint", "debugMessage": "STLiveVideoEventHandler: play recorded show" });
         var recordingId = event["EventData"];
         this.playSelectedShow(recordingId);
+        TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
@@ -583,6 +592,8 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
 
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
+        this.stateMachine.ffCount = 1;
+        this.stateMachine.rwCount = 1;
         return "HANDLED";
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
@@ -604,20 +615,25 @@ displayEngineStateMachine.prototype.STPlayingEventHandler = function (event, sta
         switch (eventData.toLowerCase()) {
             case "pause":
                 executeRemoteCommand("pause");
+                TransportIconSingleton.getInstance().displayIcon(null, "pause");
                 stateData.nextState = this.stateMachine.stPaused
                 return "TRANSITION";
             case "ff":
             case "fastforward":
+                TransportIconSingleton.getInstance().displayIcon(null, "ff");
                 stateData.nextState = this.stateMachine.stFastForwarding
                 return "TRANSITION";
             case "rw":
             case "rewind":
+                TransportIconSingleton.getInstance().displayIcon(null, "rw");
                 stateData.nextState = this.stateMachine.stRewinding
                 return "TRANSITION";
             case "instant_replay":
+                TransportIconSingleton.getInstance().displayIcon(null, "instantReplay", this.stateMachine.miscIconDisplayTime);
                 executeRemoteCommand("instantReplay");
                 return "HANDLED";
             case "quick_skip":
+                TransportIconSingleton.getInstance().displayIcon(null, "quickSkip", this.stateMachine.miscIconDisplayTime);
                 executeRemoteCommand("quickSkip");
                 return "HANDLED";
             case "stop":
@@ -669,6 +685,8 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
 
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
+        this.stateMachine.ffCount = 1;
+        this.stateMachine.rwCount = 1;
         return "HANDLED";
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
@@ -677,6 +695,7 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
         this.playSelectedShow(recordingId);
+        TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
@@ -692,13 +711,16 @@ displayEngineStateMachine.prototype.STPausedEventHandler = function (event, stat
             case "pause":
             case "play":
                 executeRemoteCommand("play");
+                TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
                 stateData.nextState = this.stateMachine.stPlaying
                 return "TRANSITION";
             case "quick_skip":
                 executeRemoteCommand("quickSkip");
+                TransportIconSingleton.getInstance().displayIcon(null, "quickSkip", this.stateMachine.miscIconDisplayTime);
                 return "HANDLED";
             case "instant_replay":
                 executeRemoteCommand("instantReplay");
+                TransportIconSingleton.getInstance().displayIcon(null, "instantReplay", this.stateMachine.miscIconDisplayTime);
                 return "HANDLED";
         }
     }
@@ -726,6 +748,7 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
         this.playSelectedShow(recordingId);
+        TransportIconSingleton.getInstance().displayIcon(null, "quickSkip", this.stateMachine.miscIconDisplayTime);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
@@ -742,15 +765,26 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
         switch (eventData.toLowerCase()) {
             case "play":
                 executeRemoteCommand("play");
+                TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
                 stateData.nextState = this.stateMachine.stPlaying;
                 return "TRANSITION";
             case "pause":
                 executeRemoteCommand("pause");
+                TransportIconSingleton.getInstance().displayIcon(null, "pause");
                 stateData.nextState = this.stateMachine.stPaused;
                 return "TRANSITION";
             case "ff":
             case "fastforward":
                 executeRemoteCommand("nextFastForward");
+                this.stateMachine.ffCount++;
+                if (this.stateMachine.ffCount > this.stateMachine.maxFFCount) {
+                    this.stateMachine.ffCount = 1;
+                }
+                var prefix = null;
+                if (this.stateMachine.ffCount > 1) {
+                    prefix = this.stateMachine.ffCount.toString();
+                }
+                TransportIconSingleton.getInstance().displayIcon(prefix, "ff");
                 return "HANDLED"
             case "instant_replay":
                 // TODO
@@ -765,6 +799,7 @@ displayEngineStateMachine.prototype.STFastForwardingEventHandler = function (eve
 
                 consoleLog("STFastForwardingEventHandler: QUICK_SKIP received.");
                 bsMessage.PostBSMessage({ command: "forwardToTick", "offset": this.stateMachine.currentOffset, "duration": this.stateMachine.recordingDuration, "numTicks": this.stateMachine.numTicks, "minutesPerTick": this.stateMachine.minutesPerTick });
+                TransportIconSingleton.getInstance().displayIcon(null, "quickSkip", this.stateMachine.miscIconDisplayTime);
                 return "HANDLED";
             case "menu":
                 // TODO
@@ -794,6 +829,7 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
     else if (event["EventType"] == "PLAY_RECORDED_SHOW") {
         var recordingId = event["EventData"];
         this.playSelectedShow(recordingId);
+        TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
         stateData.nextState = this.stateMachine.stPlaying
         return "TRANSITION"
     }
@@ -810,18 +846,30 @@ displayEngineStateMachine.prototype.STRewindingEventHandler = function (event, s
         switch (eventData.toLowerCase()) {
             case "play":
                 executeRemoteCommand("play");
+                TransportIconSingleton.getInstance().displayIcon(null, "play", this.stateMachine.playIconDisplayTime);
                 stateData.nextState = this.stateMachine.stPlaying;
                 return "TRANSITION";
             case "pause":
                 executeRemoteCommand("pause");
+                TransportIconSingleton.getInstance().displayIcon(null, "pause");
                 stateData.nextState = this.stateMachine.stPaused
                 return "TRANSITION";
             case "rw":
             case "rewind":
                 executeRemoteCommand("nextRewind");
+                this.stateMachine.rwCount++;
+                if (this.stateMachine.rwCount > this.stateMachine.maxRWCount) {
+                    this.stateMachine.rwCount = 1;
+                }
+                var prefix = null;
+                if (this.stateMachine.rwCount > 1) {
+                    prefix = this.stateMachine.rwCount.toString();
+                }
+                TransportIconSingleton.getInstance().displayIcon(prefix, "rw");
                 return "HANDLED"
             case "instant_replay":
                 bsMessage.PostBSMessage({ command: "backToTick", "offset": this.stateMachine.currentOffset, "duration": this.stateMachine.recordingDuration, "numTicks": this.stateMachine.numTicks, "minutesPerTick": this.stateMachine.minutesPerTick });
+                TransportIconSingleton.getInstance().displayIcon(null, "instantReplay", this.stateMachine.miscIconDisplayTime);
                 return "HANDLED";
             case "quick_skip":
                 // TODO

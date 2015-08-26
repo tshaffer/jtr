@@ -2,6 +2,8 @@
 
     HSM.call(this); //call super constructor.
 
+    this.recordIconDisplayTime = 1500;
+
     this.InitialPseudoStateHandler = this.InitializeUIEngineHSM;
 
     this.stTop = new HState(this, "Top");
@@ -70,6 +72,7 @@ uiEngineStateMachine.prototype.STNoneEventHandler = function (event, stateData) 
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
         consoleLog(this.id + ": exit signal");
+        TransportIconSingleton.getInstance().eraseIcon();
         return "HANDLED";
     }
     else if (event["EventType"] == "DISPLAY_DELETE_SHOW_DLG") {
@@ -490,7 +493,7 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stShowingCGProgramModalDlg;
                 return "TRANSITION";
             case "record":
-                // give feedback?
+                TransportIconSingleton.getInstance().displayIcon(null, "record", this.stateMachine.recordIconDisplayTime);
                 cgRecordSelectedProgram();
                 return "HANDLED";
         }

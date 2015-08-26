@@ -21,6 +21,7 @@
     <script src="./js/tune.js"></script>
     <script src="./js/epg.js"></script>
     <script src="./js/recordingEngine.js"></script>
+    <script src="./js/transportIcon.js"></script>
     <script src="./js/displayEngine.js"></script>
     <script src="./js/uiEngine.js"></script>
     <script src="./js/channelGuide.js"></script>
@@ -72,7 +73,12 @@
     </div>
         
     <div id="videoPlayer">
-      <div id="videoControlRegion"></div>
+      <div id="videoControlRegion">
+        <button type='button' id="transportIconButton" class='btn btn-default recorded-shows-icon transportIcon' aria-label='Left Align'>
+            <span id="transportPrefix"></span>
+            <span id="transportIconSpan" class='glyphicon glyphicon-play' aria-hidden='true'></span>
+        </button>
+      </div>
     </div>
 
     <div id="cont" class="container">
