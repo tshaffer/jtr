@@ -186,10 +186,6 @@ uiEngineStateMachine.prototype.STShowingCGProgramModalDlgEventHandler = function
                         stateData.nextState = this.stateMachine.stChannelGuide;
                         return "TRANSITION";
                     case "tune":
-                        var event = {};
-                        event["EventType"] = "TUNE_LIVE_VIDEO";
-                        postMessage(event);
-
                         stateData.nextState = this.stateMachine.stNone;
                         return "TRANSITION";
                     case "close":
@@ -386,6 +382,24 @@ uiEngineStateMachine.prototype.STMainMenuEventHandler = function (event, stateDa
                         var event = {};
                         event["EventType"] = "TUNE_LIVE_VIDEO";
                         postMessage(event);
+
+                        // after the device transitions to live video, it will get the last tuned channel and tune to it
+                        var url = baseURL + "lastTunedChannel";
+                        $.get(url)
+                            .done(function (result) {
+                                consoleLog("lastTunedChannel successfully retrieved");
+                                var event = {};
+                                event["EventType"] = "TUNE_LIVE_VIDEO_CHANNEL";
+                                event["EnteredChannel"] = result;
+                                postMessage(event);
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                debugger;
+                                consoleLog("lastTunedChannel failure");
+                            })
+                            .always(function () {
+                                //alert("recording transmission finished");
+                            });
 
                         stateData.nextState = this.stateMachine.stNone;
                         return "TRANSITION";

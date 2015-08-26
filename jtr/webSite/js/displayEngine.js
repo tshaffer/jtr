@@ -403,26 +403,12 @@ displayEngineStateMachine.prototype.STLiveVideoEventHandler = function (event, s
         this.channelDisplayTimer = null;
 
         bsMessage.PostBSMessage({ command: "tuneLiveVideo" });
-
-        // get last tuned channel and tune to it
-        var url = baseURL + "lastTunedChannel";
-
-        var thisObj = this;
-        $.get(url)
-            .done(function (result) {
-                consoleLog("lastTunedChannel successfully retrieved");
-                thisObj.enteredChannel = result;
-                thisObj.tuneLiveVideoChannel(false);
-                thisObj.displayChannel(thisObj.lastTunedChannel.toString());
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                debugger;
-                consoleLog("lastTunedChannel failure");
-            })
-            .always(function () {
-                //alert("recording transmission finished");
-            });
-
+        return "HANDLED";
+    }
+    else if (event["EventType"] == "TUNE_LIVE_VIDEO_CHANNEL") {
+        this.enteredChannel = event["EnteredChannel"];
+        this.tuneLiveVideoChannel(true);
+        this.displayChannel(this.lastTunedChannel.toString());
         return "HANDLED";
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
@@ -553,6 +539,7 @@ displayEngineStateMachine.prototype.startChannelDisplayTimer = function () {
 
 displayEngineStateMachine.prototype.getChannelIdFromChannel = function (channel) {
 
+    channel = standardizeStationNumber2(channel);
     for (i = 0; i < this.tunerChannels.length; i++) {
         if (this.tunerChannels[i] == channel) return i;
     }

@@ -884,3 +884,11 @@ function standardizeStationNumber(stationNumber) {
     return stationNumber;
 }
 
+function standardizeStationNumber2(stationNumber) {
+    stationNumber = stationNumber.replace(".1", "");
+    stationNumber = stationNumber.replace("-1", "");
+    stationNumber = stationNumber.replace(".", "-");
+
+    return stationNumber;
+}
+

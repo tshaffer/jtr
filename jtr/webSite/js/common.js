@@ -525,12 +525,18 @@ function cgRecordSelectedProgram() {
 
 
 function cgTune() {
+
+    // enter live video
+    var event = {};
+    event["EventType"] = "TUNE_LIVE_VIDEO";
+    postMessage(event);
+
+    // tune to selected channel
     var stationName = getStationFromId(cgSelectedStationId);
-
     stationName = stationName.replace(".", "-");
-
-    tuneChannel(stationName, true);
-    alert("tuned to " + stationName);
+    event["EventType"] = "TUNE_LIVE_VIDEO_CHANNEL";
+    event["EnteredChannel"] = stationName;
+    postMessage(event);
 
     return "tune";
 }
