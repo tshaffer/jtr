@@ -70,11 +70,12 @@ function executeRecordNow() {
     var duration = $("#recordNowDuration").val();
     var inputSource = $("input:radio[name=recordNowInputSource]:checked").val();
     var channel = $("#recordNowChannel").val();
+    var showType = "";
 
     var title = getRecordingTitle("#recordNowTitle", currentDate, inputSource, channel);
 
     var aUrl = baseURL + "browserCommand";
-    var commandData = { "command": "recordNow", "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings };
+    var commandData = { "command": "recordNow", "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "showType": showType };
     console.log(commandData);
 
     $.get(aUrl, commandData)
@@ -116,6 +117,7 @@ function executeCreateManualRecording() {
     var duration = $("#manualRecordDuration").val();
     var inputSource = $("input:radio[name=manualRecordInputSource]:checked").val();
     var channel = $("#manualRecordChannel").val();
+    var showType = "";
 
     // check to see if recording is in the past
     var dtEndOfRecording = addMinutes(dateObj, duration);
@@ -129,7 +131,7 @@ function executeCreateManualRecording() {
 
     var title = getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
     var aUrl = baseURL + "browserCommand";
-    var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings };
+    var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "showType": showType };
     console.log(commandData);
 
     $.get(aUrl, commandData)

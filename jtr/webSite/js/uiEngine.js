@@ -489,7 +489,7 @@ uiEngineStateMachine.prototype.STChannelGuideEventHandler = function (event, sta
                 stateData.nextState = this.stateMachine.stNone;
                 return "TRANSITION";
             case "select":
-                displayCGProgramDlg();
+                displayCGPopUp();
                 stateData.nextState = this.stateMachine.stShowingCGProgramModalDlg;
                 return "TRANSITION";
             case "record":

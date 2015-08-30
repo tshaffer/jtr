@@ -92,6 +92,7 @@ ChannelGuide.prototype.selectChannelGuide = function() {
                 // create program from data in db
                 var program = {}
                 program.date = localDate;
+                program.endDateTime = sdProgram.endDateTime;
                 program.title = sdProgram.Title;
                 program.duration = sdProgram.Duration;
                 program.episodeTitle = sdProgram.EpisodeTitle;
@@ -393,7 +394,7 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
                 if (station.StationId == programInfo.stationId) {
                     self.selectProgramAtTimeOnStation(self.selectProgramTime, stationIndex, self._currentSelectedProgramButton);
 
-                    displayCGProgramDlg();
+                    displayCGPopUp();
 
                     return false;
                 }
@@ -848,8 +849,19 @@ function getStationFromId(stationId) {
 
 ChannelGuide.prototype.getStationIndexFromName = function(stationNumber) {
 
-    var stationIndex = looper.call(this, stationNumber);
+    var stationIndex = -1;
+
+    $.each(stations, function (index, station) {
+        if (stationNumbersEqual(stationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
+            stationIndex = index;
+            return false;
+        }
+    });
+
     return stationIndex;
+
+    //var stationIndex = looper.call(this, stationNumber);
+    //return stationIndex;
 }
 
 

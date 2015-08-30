@@ -111,6 +111,14 @@ function executeDeleteSelectedShow(recordingId) {
 
 function initializeBrightSign() {
 
+    // ir receiver
+    try {
+        ir_receiver = new BSIRReceiver("Iguana", "NEC");
+    }
+    catch (err) {
+        consoleLog("********************************************************************* UNABLE TO CREATE IR_RECEIVER ***************************** ");
+    }
+
     var lastRemoteEventTime = 0;
 
     // Create displayEngine state machine
@@ -131,15 +139,6 @@ function initializeBrightSign() {
 
     registerStateMachine(recordingEngineHSM);
     recordingEngineHSM.Initialize();
-
-    // ir receiver
-    try
-    {
-        ir_receiver = new BSIRReceiver("Iguana", "NEC");
-    }
-    catch (err) {
-        consoleLog("unable to create ir_receiver");
-    }
 
     if (typeof ir_receiver != 'undefined') {
         ir_receiver.onremotedown = function (e) {
@@ -239,10 +238,11 @@ function initializeBrightSign() {
                 event["Channel"] = message.channel;
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
+                event["ShowType"] = message.showType;
                 postMessage(event);
                 break;
             case "manualRecord":
-                event["EventType"] = "SET_MANUAL_RECORD";
+                event["EventType"] = "ADD_RECORD";
                 event["DateTime"] = message.dateTime;
                 event["Title"] = message.title;
                 event["Duration"] = message.duration;
@@ -250,6 +250,7 @@ function initializeBrightSign() {
                 event["Channel"] = message.channel;
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
+                event["ShowType"] = message.showType;
                 postMessage(event);
                 break;
             case "updateProgressBar":

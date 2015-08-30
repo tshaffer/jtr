@@ -15,13 +15,25 @@ var currentActiveElementId = "#homePage";
 
 var recordedPageIds = [];
 
+var cgPopupId = "";
+var cgPopupTitle = "";
+var cgPopupElements;
+var cgPopupHandlers;
+
+var cgRecordEpisodeId;
+var cgRecordSeriesId;
+var cgTuneEpisodeId;
+var cgCloseEpisodeId;
+
 var cgSelectedStationId;
 var cgSelectedProgram;
-var cgProgramDlgSelectedIndex;
+var cgPopupSelectedIndex;
 
-var cgProgramDlgElements = ["#cgProgramRecord", "#cgProgramTune", "#cgProgramClose"];
-var cgProgramDlgHandlers = [cgRecordSelectedProgram, cgTune, cgModalClose];
+var cgPopupEpisodeElements = ["#cgProgramRecord", "#cgProgramTune", "#cgProgramClose"];
+var cgPopupEpisodeHandlers = [cgRecordSelectedProgram, cgTune, cgModalClose];
 
+var cgPopupSeriesElements = ["#cgEpisodeRecord", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"];
+var cgPopupSeriesHandlers = [cgRecordSelectedProgram, cgRecordSelectedSeries, cgTune, cgModalClose];
 
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
@@ -484,46 +496,6 @@ function getShowDescription(showId) {
 }
 
 
-function updateCGProgramDlgSelection() {
-
-    for (i = 0; i < cgProgramDlgElements.length; i++) {
-        $(cgProgramDlgElements[i]).removeClass("btn-primary");
-        $(cgProgramDlgElements[i]).addClass("btn-secondary");
-    }
-
-    $(cgProgramDlgElements[cgProgramDlgSelectedIndex]).removeClass("btn-secondary");
-    $(cgProgramDlgElements[cgProgramDlgSelectedIndex]).addClass("btn-primary");
-}
-
-
-function cgRecordSelectedProgram() {
-
-    // redundant in some cases (when selected from pop up); not when record button pressed
-    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-    cgSelectedProgram = programData.program;
-    cgSelectedStationId = programData.stationId;
-
-    var event = {};
-    event["EventType"] = "SET_MANUAL_RECORD";
-    event["DateTime"] = cgSelectedProgram.date;
-    event["Title"] = cgSelectedProgram.title;
-    event["Duration"] = cgSelectedProgram.duration;
-    event["InputSource"] = "tuner";
-
-    var stationName = getStationFromId(cgSelectedStationId);
-
-    stationName = stationName.replace(".", "-");
-
-    event["Channel"] = stationName;
-
-    event["RecordingBitRate"] = _settings.recordingBitRate;
-    event["SegmentRecording"] = _settings.segmentRecordings;
-    postMessage(event);
-
-    return "record";
-}
-
-
 function cgTune() {
 
     // enter live video
@@ -542,6 +514,154 @@ function cgTune() {
 }
 
 
+function updateCGProgramDlgSelection() {
+
+    for (i = 0; i < cgPopupElements.length; i++) {
+        $(cgPopupElements[i]).removeClass("btn-primary");
+        $(cgPopupElements[i]).addClass("btn-secondary");
+    }
+
+    $(cgPopupElements[cgPopupSelectedIndex]).removeClass("btn-secondary");
+    $(cgPopupElements[cgPopupSelectedIndex]).addClass("btn-primary");
+}
+
+
+function cgRecordProgram(showType) {
+    // redundant in some cases (when selected from pop up); not when record button pressed
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
+
+    var event = {};
+    event["EventType"] = "ADD_RECORD";
+    event["DateTime"] = cgSelectedProgram.date;
+    event["Title"] = cgSelectedProgram.title;
+    event["Duration"] = cgSelectedProgram.duration;
+    event["ShowType"] = showType;
+    event["InputSource"] = "tuner";
+
+    var stationName = getStationFromId(cgSelectedStationId);
+
+    stationName = stationName.replace(".", "-");
+
+    event["Channel"] = stationName;
+
+    event["RecordingBitRate"] = _settings.recordingBitRate;
+    event["SegmentRecording"] = _settings.segmentRecordings;
+
+    postMessage(event);
+
+    return "record";
+}
+
+
+function cgRecordSelectedProgram() {
+
+    // redundant in some cases (when selected from pop up); not when record button pressed
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
+
+    if (cgSelectedProgram.showType == "Series") {
+        return cgRecordProgram("");
+    }
+    else {
+        return cgRecordProgram("cgSelectedProgram.showType");
+    }
+}
+
+
+function cgRecordSelectedSeries() {
+    return cgRecordProgram("Series");
+}
+
+
+function displayCGPopUp() {
+
+    consoleLog("displayCGPopUp() invoked");
+
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
+
+
+    if (cgSelectedProgram.showType == "Series") {
+        cgPopupId = '#cgSeriesDlg';
+        cgPopupTitle = '#cgSeriesDlgShowTitle';
+        cgPopupElements = cgPopupSeriesElements;
+        cgPopupHandlers = cgPopupSeriesHandlers;
+
+        cgRecordEpisodeId = "#cgEpisodeRecord";
+        cgRecordSeriesId = "#cgSeriesRecord";
+        cgTuneEpisodeId = "#cgSeriesTune";
+        cgCloseEpisodeId = "cgSeriesClose";
+    }
+    else {
+        cgPopupId = '#cgProgramDlg';
+        cgPopupTitle = '#cgProgramDlgShowTitle';
+        cgPopupElements = cgPopupEpisodeElements;
+        cgPopupHandlers = cgPopupEpisodeHandlers;
+
+        cgRecordEpisodeId = "#cgProgramRecord";
+        cgTuneEpisodeId = "#cgProgramTune";
+        cgCloseEpisodeId = "cgProgramClose";
+    }
+
+    cgPopupSelectedIndex = 0;
+
+    var options = {
+        "backdrop": "true"
+    }
+    $(cgPopupId).modal(options);
+    $(cgPopupTitle).html(cgSelectedProgram.title);
+
+    // highlight first button; unhighlight other buttons
+    $(cgPopupElements[0]).removeClass("btn-secondary");
+    $(cgPopupElements[0]).addClass("btn-primary");
+
+    for (i = 1; i < cgPopupElements.length; i++) {
+        $(cgPopupElements[i]).removeClass("btn-primary");
+        $(cgPopupElements[i]).addClass("btn-secondary");
+    }
+
+    // browser event handlers - browser.js
+    //for (i = 0; i < cgPopupEpisodeElements.length; i++) {
+    //    var foo = cgPopupEpisodeHandlers[i];
+    //    var foo2 = cgPopupEpisodeElements[i];
+    //    $(foo2).click(function () {
+    //        foo();
+    //    });
+
+    //$(cgPopupEpisodeElements[i]).click(function () {
+    //    //cgPopupEpisodeHandlers[i]();
+    //    foo();
+    //    cgProgramDlgCloseInvoked();
+    //});
+
+    //click(cgPopupEpisodeHandlers[i]);
+    //}
+
+    // trying to make this data driven as above didn't work.
+    $(cgRecordEpisodeId).click(function () {
+        cgRecordSelectedProgram();
+    });
+
+    $(cgRecordSeriesId).click(function () {
+        cgRecordSelectedSeries();
+    });
+
+    $(cgTuneEpisodeId).click(function () {
+        cgTune();
+    });
+
+    $(cgCloseEpisodeId).click(function () {
+        //cgModalClose();
+        cgProgramDlgCloseInvoked();
+    });
+}
+
+
+
 function cgModalClose() {
     // don't need to do anything other than close the dialog
     return "close";
@@ -550,7 +670,7 @@ function cgModalClose() {
 
 // brightsign.js only?
 function cgSelectEventHandler() {
-    var functionInvoked = cgProgramDlgHandlers[cgProgramDlgSelectedIndex]();
+    var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
     cgProgramDlgCloseInvoked();
     return functionInvoked;
 }
@@ -558,83 +678,25 @@ function cgSelectEventHandler() {
 
 function cgProgramDlgUp() {
 
-    if (cgProgramDlgSelectedIndex > 0) {
+    if (cgPopupSelectedIndex > 0) {
 
-        cgProgramDlgSelectedIndex--;
+        cgPopupSelectedIndex--;
         updateCGProgramDlgSelection();
     }
 }
 
 
 function cgProgramDlgDown() {
-    if (cgProgramDlgSelectedIndex < cgProgramDlgElements.length - 1) {
+    if (cgPopupSelectedIndex < cgPopupElements.length - 1) {
 
-        cgProgramDlgSelectedIndex++;
+        cgPopupSelectedIndex++;
         updateCGProgramDlgSelection();
     }
 }
 
 
-function displayCGProgramDlg() {
-
-    consoleLog("displayCGProgramDlg() invoked");
-
-    cgProgramDlgSelectedIndex = 0;
-
-    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-    cgSelectedProgram = programData.program;
-    cgSelectedStationId = programData.stationId;
-
-    var options = {
-        "backdrop": "true"
-    }
-    $('#cgProgramDlg').modal(options);
-    $('#cgProgramDlgShowTitle').html(cgSelectedProgram.title);
-
-    // highlight first button; unhighlight other buttons
-    $(cgProgramDlgElements[0]).removeClass("btn-secondary");
-    $(cgProgramDlgElements[0]).addClass("btn-primary");
-
-    for (i = 1; i < cgProgramDlgElements.length; i++) {
-        $(cgProgramDlgElements[i]).removeClass("btn-primary");
-        $(cgProgramDlgElements[i]).addClass("btn-secondary");
-    }
-
-    // browser event handlers - browser.js
-    //for (i = 0; i < cgProgramDlgElements.length; i++) {
-    //    var foo = cgProgramDlgHandlers[i];
-    //    var foo2 = cgProgramDlgElements[i];
-    //    $(foo2).click(function () {
-    //        foo();
-    //    });
-
-        //$(cgProgramDlgElements[i]).click(function () {
-        //    //cgProgramDlgHandlers[i]();
-        //    foo();
-        //    cgProgramDlgCloseInvoked();
-        //});
-
-        //click(cgProgramDlgHandlers[i]);
-    //}
-
-    // trying to make this data driven as above didn't work.
-    $("#cgProgramRecord").click(function () {
-        cgRecordSelectedProgram();
-    });
-
-    $("#cgProgramTune").click(function () {
-        cgTune();
-    });
-
-    $("#cgProgramClose").click(function () {
-        //cgModalClose();
-        cgProgramDlgCloseInvoked();
-    });
-}
-
-
 function cgProgramDlgCloseInvoked() {
-    $('#cgProgramDlg').modal('hide');
+    $(cgPopupId).modal('hide');
 }
 
 
@@ -676,7 +738,7 @@ $(document).ready(function () {
     if (userAgent.indexOf("BrightSign") >= 0) {
         clientType = "BrightSign"
     }
-    else if (userAgent.indexOf("iPad")) {
+    else if (userAgent.indexOf("iPad") >= 0) {
         clientType = "iPad"
     }
 
@@ -690,6 +752,8 @@ $(document).ready(function () {
     if (clientType != "BrightSign") {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
+
+        //baseURL = "http://10.10.212.44:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

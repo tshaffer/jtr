@@ -411,6 +411,9 @@ function getSchedulesDirectProgramSchedules(stationIdDatesToRetrieve, stationIdD
                 jtrProgramForStation.scheduleDate = jtrStationScheduleForSingleDay.scheduleDate;
                 jtrProgramForStation.programId = program.programID;
                 jtrProgramForStation.airDateTime = program.airDateTime;
+                var endDateTime = new Date(program.airDateTime);
+                endDateTime.setSeconds(endDateTime.getSeconds() + program.duration);
+                jtrProgramForStation.endDateTime = endDateTime.toISOString();
                 jtrProgramForStation.duration = program.duration / 60;      // convert from seconds to minutes
                 
                 var newShow = boolValueIfMetadataExists(program, "new");
