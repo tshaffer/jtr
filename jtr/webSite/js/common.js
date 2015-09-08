@@ -566,7 +566,7 @@ function cgRecordSelectedProgram() {
         return cgRecordProgram("");
     }
     else {
-        return cgRecordProgram("cgSelectedProgram.showType");
+        return cgRecordProgram(cgSelectedProgram.showType);
     }
 }
 
