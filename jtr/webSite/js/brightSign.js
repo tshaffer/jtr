@@ -230,6 +230,18 @@ function initializeBrightSign() {
                 event["EventData"] = msg.data[name];
                 postMessage(event);
                 break;
+            case "addRecord":
+                event["EventType"] = "ADD_RECORD";
+                event["DateTime"] = message.dateTime;
+                event["Title"] = message.title;
+                event["Duration"] = message.duration;
+                event["ShowType"] = message.showType;
+                event["InputSource"] = message.inputSource;
+                event["Channel"] = message.channel;
+                event["RecordingBitRate"] = message.recordingBitRate;
+                event["SegmentRecording"] = message.segmentRecording;
+                postMessage(event);
+                break;
             case "recordNow":
                 event["EventType"] = "RECORD_NOW";
                 event["Title"] = message.title;
@@ -251,6 +263,16 @@ function initializeBrightSign() {
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
                 event["ShowType"] = message.showType;
+                postMessage(event);
+                break;
+            case "tuneLiveVideoChannel":
+                // first tune to live video
+                event["EventType"] = "TUNE_LIVE_VIDEO";
+                postMessage(event);
+                // next, tune to the channel
+                event = {};
+                event["EventType"] = "TUNE_LIVE_VIDEO_CHANNEL";
+                event["EnteredChannel"] = message.stationName;
                 postMessage(event);
                 break;
             case "updateProgressBar":

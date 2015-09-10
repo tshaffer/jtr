@@ -514,6 +514,29 @@ function cgTune() {
 }
 
 
+function cgTuneFromClient() {
+
+    var stationName = getStationFromId(cgSelectedStationId);
+    stationName = stationName.replace(".", "-");
+
+    var aUrl = baseURL + "browserCommand";
+    var commandData = { "command": "tuneLiveVideoChannel", "enteredChannel": stationName };
+    console.log(commandData);
+
+    $.get(aUrl, commandData)
+        .done(function (result) {
+            console.log("browserCommand successfully sent");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("browserCommand failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
+}
+
+
 function updateCGProgramDlgSelection() {
 
     for (i = 0; i < cgPopupElements.length; i++) {
@@ -576,6 +599,56 @@ function cgRecordSelectedSeries() {
 }
 
 
+function cgRecordProgramFromClient(showType) {
+
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
+
+    var stationName = getStationFromId(cgSelectedStationId);
+    stationName = stationName.replace(".", "-");
+
+    var aUrl = baseURL + "browserCommand";
+    var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration, "showType": showType,
+        "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings };
+    console.log(commandData);
+
+    $.get(aUrl, commandData)
+        .done(function (result) {
+            console.log("browserCommand successfully sent");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("browserCommand failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
+}
+
+
+function cgRecordSelectedProgramFromClient() {
+
+    // redundant in some cases (when selected from pop up); not when record button pressed
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    cgSelectedStationId = programData.stationId;
+
+    if (cgSelectedProgram.showType == "Series") {
+        return cgRecordProgramFromClient("");
+    }
+    else {
+        return cgRecordProgramFromClient(cgSelectedProgram.showType);
+    }
+}
+
+
+function cgRecordSelectedSeriesFromClient() {
+
+    return cgRecordProgramFromClient("Series");
+}
+
+
 function displayCGPopUp() {
 
     consoleLog("displayCGPopUp() invoked");
@@ -583,7 +656,6 @@ function displayCGPopUp() {
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
     cgSelectedStationId = programData.stationId;
-
 
     if (cgSelectedProgram.showType == "Series") {
         cgPopupId = '#cgSeriesDlg';
@@ -594,7 +666,7 @@ function displayCGPopUp() {
         cgRecordEpisodeId = "#cgEpisodeRecord";
         cgRecordSeriesId = "#cgSeriesRecord";
         cgTuneEpisodeId = "#cgSeriesTune";
-        cgCloseEpisodeId = "cgSeriesClose";
+        cgCloseEpisodeId = "#cgSeriesClose";
     }
     else {
         cgPopupId = '#cgProgramDlg';
@@ -603,9 +675,37 @@ function displayCGPopUp() {
         cgPopupHandlers = cgPopupEpisodeHandlers;
 
         cgRecordEpisodeId = "#cgProgramRecord";
+        cgRecordSeriesId = null;
         cgTuneEpisodeId = "#cgProgramTune";
-        cgCloseEpisodeId = "cgProgramClose";
+        cgCloseEpisodeId = "#cgProgramClose";
     }
+
+    // setup handlers for browser
+    $(cgRecordEpisodeId).off();
+    $(cgRecordEpisodeId).click(function (event) {
+        cgRecordSelectedProgramFromClient();
+        cgProgramDlgCloseInvoked();
+        ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+    });
+    if (cgRecordSeriesId) {
+        $(cgRecordSeriesId).off();
+        $(cgRecordSeriesId).click(function (event) {
+            cgRecordSelectedSeriesFromClient();
+            cgProgramDlgCloseInvoked();
+            ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+        });
+    }
+    $(cgTuneEpisodeId).off();
+    $(cgTuneEpisodeId).click(function (event) {
+        cgTuneFromClient();
+        cgProgramDlgCloseInvoked();
+        ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+    });
+    $(cgCloseEpisodeId).off();
+    $(cgCloseEpisodeId).click(function (event) {
+        cgProgramDlgCloseInvoked();
+        ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+    });
 
     cgPopupSelectedIndex = 0;
 
@@ -624,7 +724,22 @@ function displayCGPopUp() {
         $(cgPopupElements[i]).addClass("btn-secondary");
     }
 
-    // browser event handlers - browser.js
+    $(cgPopupId).off("keydown");
+    $(cgPopupId).keydown(function (keyEvent) {
+        var keyIdentifier = event.keyIdentifier;
+        console.log("Key " + keyIdentifier.toString() + "pressed")
+        if (keyIdentifier == "Up") {
+            cgProgramDlgUp();
+        }
+        else if (keyIdentifier == "Down") {
+            cgProgramDlgDown();
+        }
+        else if (keyIdentifier == "Enter") {
+            var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
+            cgProgramDlgCloseInvoked();
+        }
+    });
+    // browser event handlers - browser.js - this approach didn't work - why?
     //for (i = 0; i < cgPopupEpisodeElements.length; i++) {
     //    var foo = cgPopupEpisodeHandlers[i];
     //    var foo2 = cgPopupEpisodeElements[i];
@@ -640,24 +755,6 @@ function displayCGPopUp() {
 
     //click(cgPopupEpisodeHandlers[i]);
     //}
-
-    // trying to make this data driven as above didn't work.
-    $(cgRecordEpisodeId).click(function () {
-        cgRecordSelectedProgram();
-    });
-
-    $(cgRecordSeriesId).click(function () {
-        cgRecordSelectedSeries();
-    });
-
-    $(cgTuneEpisodeId).click(function () {
-        cgTune();
-    });
-
-    $(cgCloseEpisodeId).click(function () {
-        //cgModalClose();
-        cgProgramDlgCloseInvoked();
-    });
 }
 
 
@@ -754,6 +851,7 @@ $(document).ready(function () {
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
         //baseURL = "http://10.10.212.44:8080/";
+        baseURL = "http://192.168.2.17:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

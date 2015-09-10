@@ -49,6 +49,12 @@ ChannelGuide.prototype.getSelectedStationAndProgram = function () {
     return programData;
 }
 
+
+ChannelGuide.prototype.reselectCurrentProgram = function() {
+    this.selectProgram(null, this._currentSelectedProgramButton);
+}
+
+
 ChannelGuide.prototype.selectChannelGuide = function() {
 
     //initializeEpgData();
@@ -230,7 +236,10 @@ ChannelGuide.prototype.selectChannelGuide = function() {
             self.navigateChannelGuide(keyIdentifier.toLowerCase());
             return false;
         }
-
+        else if (keyIdentifier == "Enter") {
+            displayCGPopUp();
+            return false;
+        }
     });
 }
 
@@ -356,7 +365,6 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
         if (minutesToDisplay > maxMinutesToDisplay) {
             maxMinutesToDisplay = minutesToDisplay;
         }
-        // JTRTODO - setup handlers on children for browser - when user clicks on program to record, etc.
     });
 
     this.updateTextAlignment();
@@ -378,7 +386,7 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
 
     $("#cgTimeLine").append(toAppend);
 
-
+    // setup handlers on children for browser - when user clicks on program to record, etc.
     $("#cgData").click(function (event) {
         var buttonClicked = event.target;
         if (event.target.id != "") {
