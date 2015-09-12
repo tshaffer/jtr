@@ -363,21 +363,109 @@ function selectToDoList() {
 
 
 function getToDoList() {
-    var aUrl = baseURL + "toDoList";
+
+    console.log("getToDoList() invoked");
+
+    var aUrl = baseURL + "getToDoList";
 
     $.ajax({
         type: "GET",
-        url: aUrl
-    })
-    .done(function (result) {
-        var toAppend = "";
+        url: aUrl,
+        dataType: "json",
+        success: function (toDoList) {
 
-        for (i = 0; i < result.length; i++) {
-            toAppend += "<tr id=\"toDoListRow" + i + " \"><td>date to record</td><td>title</td></tr>";
+            // toDoList is the array of scheduled recordings
+
+            console.log("getToDoList success");
+
+            // display scheduled recordings
+            var toAppend = "";
+
+            $("#toDoListTableBody").empty();
+
+            $.each(toDoList, function(index, scheduledRecording) {
+               toAppend += addScheduledRecordingShowLine(scheduledRecording);
+            });
+
+            $("#toDoListTableBody").append(toAppend);
+
+            // add button handlers for each scheduled recording - note, the handlers need to be added after the html has been added!!
+            $.each(toDoList, function(index, scheduledRecording) {
+                // TBD
+            });
         }
-        $("#recordedShowsTableBody").append(toAppend);
     });
 }
+
+function addScheduledRecordingShowLine(scheduledRecording) {
+
+    /*
+    DayOfWeek
+    Date
+    Time
+    Channel
+    Station Name
+    Title
+     */
+
+    var weekday = new Array(7);
+    weekday[0] = "Sun";
+    weekday[1] = "Mon";
+    weekday[2] = "Tue";
+    weekday[3] = "Wed";
+    weekday[4] = "Thu";
+    weekday[5] = "Fri";
+    weekday[6] = "Sat";
+
+    var date = new Date(scheduledRecording.DateTime);
+
+    var dayOfWeek = weekday[date.getDay()];
+    var monthDay = (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
+    var timeOfDay = date.getHours().toString() + ":" + date.getMinutes().toString();
+    var channel = scheduledRecording.Channel;
+    var stationName = "TBD";
+    var title = scheduledRecording.Title;
+
+    var toAppend =
+        "<td>" + dayOfWeek + "</td>" +
+        "<td>" + monthDay + "</td>" +
+        "<td>" + timeOfDay + "</td>" +
+        "<td>" + channel + "</td>" +
+        "<td>" + stationName + "</td>" +
+        "<td>" + title + "</td>";
+
+    return toAppend;
+
+    //var dt = jtrRecording.StartDateTime;
+    //var n = dt.indexOf(".");
+    //var formattedDayDate;
+    //if (n >= 0) {
+    //    var dtCompatible = dt.substring(0, n);
+    //    var date = new Date(dtCompatible);
+    //    formattedDayDate = weekday[date.getDay()] + " " + (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
+    //}
+    //else {
+    //    formattedDayDate = "poop";
+    //}
+    //
+    //var lastViewedPositionInMinutes = Math.floor(jtrRecording.LastViewedPosition / 60);
+    //var position = lastViewedPositionInMinutes.toString() + " of " + jtrRecording.Duration.toString() + " minutes";
+    //
+    //var toAppend =
+    //    "<tr>" +
+    //    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='recording" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-play' aria-hidden='true'></span></button></td>" +
+    //    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+    //    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='repeat" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-repeat' aria-hidden='true'></span></button></td>" +
+    //    "<td><button type='button' class='btn btn-default recorded-shows-icon streamIcon' id='stream" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-random' aria-hidden='true'></span></button></td>" +
+    //    "<td><a class='downloadIcon' id='download' href='" + jtrRecording.path + "' download='" + jtrRecording.Title + "'><span class='glyphicon glyphicon-cloud-download' aria-hidden='true'></span></a></td>" +
+    //    "<td>" + jtrRecording.Title + "</td>" +
+    //    "<td>" + formattedDayDate + "</td>" +
+    //    "<td><button type='button' class='btn btn-default recorded-shows-icon' id='info" + jtrRecording.RecordingId.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></button></td>" +
+    //    "<td>" + position + "</td>";
+
+    return toAppend;
+}
+
 
 
 function selectLiveVideo() {

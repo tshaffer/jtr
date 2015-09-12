@@ -211,6 +211,20 @@ recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, id
         Promise.all(promises).then(function() {
             console.log("all promises completed");
 
+            // send updated toDoList to server
+            var url = baseURL + "setToDoList";
+            var toDoListData = {
+                "toDoList": JSON.stringify(self.toDoList)
+            };
+            $.get(
+                url,
+                toDoListData
+            ).done(function(result) {
+                    consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX setToDoList success ************************************");
+                }, function () {
+                    reject();
+                });
+
             if (nextFunction != null) {
                 nextFunction.call(self, idle);
             }
