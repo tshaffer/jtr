@@ -272,7 +272,7 @@ function initializeBrightSign() {
                 // next, tune to the channel
                 event = {};
                 event["EventType"] = "TUNE_LIVE_VIDEO_CHANNEL";
-                event["EnteredChannel"] = message.stationName;
+                event["EnteredChannel"] = message.enteredChannel;
                 postMessage(event);
                 break;
             case "updateProgressBar":
