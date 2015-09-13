@@ -81,15 +81,15 @@ Function newJTR(msgPort As Object) As Object
 	JTR.SetDBVersion					= SetDBVersion
 	JTR.ExecuteDBInsert					= ExecuteDBInsert
 	JTR.ExecuteDBSelect					= ExecuteDBSelect
-	JTR.AddDBScheduledSingleRecording	= AddDBScheduledSingleRecording
+	JTR.AddDBScheduledRecording			= AddDBScheduledRecording
 	JTR.AddDBScheduledSeriesRecording	= AddDBScheduledSeriesRecording
+	JTR.GetDBLastScheduledRecordingRowId= GetDBLastScheduledRecordingRowId
 	JTR.GetDBLastScheduledRecordingId	= GetDBLastScheduledRecordingId
-	JTR.GetDBLastScheduledSingleRecordingId = GetDBLastScheduledSingleRecordingId
 	JTR.GetDBLastScheduledSeriesRecordingId = GetDBLastScheduledSeriesRecordingId
+	JTR.DeleteDBScheduledRecordingRow	= DeleteDBScheduledRecordingRow
 	JTR.DeleteDBScheduledRecording		= DeleteDBScheduledRecording
-	JTR.DeleteDBScheduledSingleRecording= DeleteDBScheduledSingleRecording
 	JTR.DeleteDBScheduledSeriesRecording= DeleteDBScheduledSeriesRecording
-	JTR.GetDBScheduledSingleRecordings	= GetDBScheduledSingleRecordings
+	JTR.GetDBScheduledRecordings		= GetDBScheduledRecordings
 	JTR.GetDBScheduledSeriesRecordings	= GetDBScheduledSeriesRecordings
 	JTR.AddDBRecording					= AddDBRecording
 	JTR.DeleteDBRecording				= DeleteDBRecording
@@ -133,6 +133,8 @@ Function newJTR(msgPort As Object) As Object
 	
 	JTR.AddDBItems						= AddDBItems
 	JTR.GenerateSQLInsert				= GenerateSQLInsert
+
+	JTR.deleteScheduledRecordingRow		= deleteScheduledRecordingRow
 
 	JTR.tsDeletable						= tsDeletable
 

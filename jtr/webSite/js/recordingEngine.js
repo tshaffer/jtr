@@ -99,7 +99,7 @@ recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, id
     // single recordings
     var p1 = new Promise(function(resolve, reject) {
 
-        var aUrl = baseURL + "getScheduledSingleRecordings";
+        var aUrl = baseURL + "getScheduledRecordings";
 
         var currentDateTimeIso = new Date().toISOString();
         var currentDateTime = { "currentDateTime": currentDateTimeIso };
@@ -222,7 +222,7 @@ recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, id
             ).done(function(result) {
                     consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX setToDoList success ************************************");
                 }, function () {
-                    reject();
+                    //reject();
                 });
 
             if (nextFunction != null) {
@@ -365,22 +365,22 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
 }
 
 
-recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, showType, idle) {
+recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, showType, recordingType, idle) {
 
     var aUrl;
     var recordingData;
     var recordingEngineIdle = idle;
 
-    if (showType == "Series") {
+    if (recordingType == "series") {
         aUrl = baseURL + "addScheduledSeriesRecording";
-        recordingData = { "title": title, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "maxRecordings": 5, "recordReruns": 1 };
+        recordingData = { "title": title, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "maxRecordings": 5, "recordReruns": 1, "recordingType": "series" };
     }
     else {
         var dtStartOfRecording = new Date(dateTime);
         var isoDateTime = dtStartOfRecording.toISOString();
 
-        aUrl = baseURL + "addScheduledSingleRecording";
-        recordingData = { "dateTime": isoDateTime, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType };
+        aUrl = baseURL + "addScheduledRecording";
+        recordingData = { "dateTime": isoDateTime, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "recordingType": "single" };
     }
 
     var self = this;
@@ -423,6 +423,7 @@ recordingEngineStateMachine.prototype.handleAddRecord = function (event, stateDa
     var recordingBitRate = event["RecordingBitRate"];
     var segmentRecording = event["SegmentRecording"];
     var showType = event["ShowType"];
+    var recordingType = event["RecordingType"];
 
     // ignore manual recordings that are in the past
     var durationInMilliseconds = minutesToMsec(Number(durationInMinutes));
@@ -434,7 +435,7 @@ recordingEngineStateMachine.prototype.handleAddRecord = function (event, stateDa
     }
 
     // add the recording to the db
-    this.addToDB(dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, showType, idle);
+    this.addToDB(dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, showType, recordingType, idle);
 
     // JTRTODO - better done here if promises meet their promise
     // add the recording to the toDoList - if system is idle, invoke checkForPendingRecord next
@@ -593,7 +594,7 @@ recordingEngineStateMachine.prototype.deleteScheduledRecording = function (sched
         aUrl = baseURL + "deleteScheduledSeriesRecording";
     }
     else {
-        aUrl = baseURL + "deleteScheduledSingleRecording";
+        aUrl = baseURL + "deleteScheduledRecording";
     }
 
     var recordingId = { "id": scheduledRecordingId };
