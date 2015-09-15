@@ -306,6 +306,10 @@ recordingEngineStateMachine.prototype.STRecordingControllerEventHandler = functi
     else if (event["EventType"] == "EXIT_SIGNAL") {
         consoleLog(this.id + ": exit signal");
     }
+    else if (event["EventType"] == "EPG_DB_UPDATES_COMPLETE") {
+        console.log("EPG_DB_UPDATES_COMPLETE received.")
+        updateScheduledRecordings();
+    }
 
     stateData.nextState = this.superState;
     return "SUPER";

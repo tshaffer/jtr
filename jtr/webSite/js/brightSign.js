@@ -286,6 +286,10 @@ function initializeBrightSign() {
                 event["EventType"] = "MEDIA_END";
                 postMessage(event);
                 break;
+            case "epgDBUpdatesComplete":
+                event["EventType"] = "EPG_DB_UPDATES_COMPLETE";
+                postMessage(event);
+                break;
         }
     }
 }

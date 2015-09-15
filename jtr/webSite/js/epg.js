@@ -1,6 +1,6 @@
 ﻿var schedulesDirectToken;
 
-var numDaysEpgData = 1;
+var numDaysEpgData = 2;
 
 var stations = [];
 var scheduleValidityByStationDate = {};     // schedule information for each station/date 
@@ -13,6 +13,7 @@ var programIdsToRetrieve = [];
 var programIdsNeedingInserts = {};
 var programIdsNeedingUpdates = {};
 
+var stationIdDates = [];
 var stationIdDatesNeedingInserts = {};
 var stationIdDatesNeedingUpdates = {};
 
@@ -721,7 +722,6 @@ function getSchedulesDirectPrograms(nextFunction) {
             //}
 
             // for each added station/date combination, update the to do list based on the added data
-            var stationIdDates = [];
             for (var stationIdDateNeedingInsert in stationIdDatesNeedingInserts) {
                 if (stationIdDatesNeedingInserts.hasOwnProperty(stationIdDateNeedingInsert)) {
                     var parts = stationIdDateNeedingInsert.split("-");
@@ -746,106 +746,9 @@ function getSchedulesDirectPrograms(nextFunction) {
                 }
             }
 
-            debugger;
-
-            // get series recordings
-            var getScheduledSeriesRecordingsPromise = new Promise(function(resolve, reject) {
-
-                var aUrl = baseURL + "getScheduledSeriesRecordings";
-
-                $.get(
-                    aUrl
-                ).then(function (result) {
-                        resolve(result.scheduledrecordings);
-                    });
-            });
-
-            getScheduledSeriesRecordingsPromise.then(function(scheduledSeriesRecordings) {
-
-                console.log("getScheduledSeriesRecordingsPromise resolved");
-
-                var epgStartDate = Date.now().toISOString();
-
-                $.each(scheduledSeriesRecordings, function (index, scheduledSeriesRecording) {
-
-                    // for this scheduledSeriesRecording, see if there is any new schedule data for the station associated with this series recording
-                    var atsc = scheduledSeriesRecording.Channel.split("-");
-                    var atscMajor = atsc[0];
-                    var atscMinor = atsc[1];
-
-                    for (var i = 0; i < stationIdDates.length; i++) {
-                        var stationIdDate = stationIdDates[i];
-                        if (atscMajor == stationIdDate.atscMajor && atscMinor == stationIdDate.atscMinor) {
-                            // retrieves instances of this program on the appropriate date
-                            var url = baseURL + "getEpgMatchingProgramsOnDate";
-                            var getEpgMatchingProgramsDataOnDate = {
-                                "date": stationIdDate.date,
-                                "title": scheduledSeriesRecording.Title,
-                                "atscMajor": atscMajor,
-                                "atscMinor": atscMinor
-                            };
-
-                            $.get(url, getEpgMatchingProgramsDataOnDate)
-                                .done(function (result) {
-                                    console.log("getEpgMatchingProgramsDataOnDate successfully received");
-
-                                    for (var j = 0; j < result.length; j++) {
-                                        // make a copy of scheduledSeriesRecording to get a unique object
-                                        var sdProgram = result[j];
-                                        scheduledEpisode = {};
-                                        scheduledEpisode.Channel = scheduledSeriesRecording.Channel;
-                                        scheduledEpisode.DateTime = new Date(sdProgram.AirDateTime);
-                                        scheduledEpisode.EndDateTime = new Date(sdProgram.EndDateTime);
-                                        scheduledEpisode.Duration = sdProgram.Duration;
-                                        scheduledEpisode.InputSource = scheduledSeriesRecording.InputSource;
-                                        scheduledEpisode.RecordingBitRate = scheduledSeriesRecording.RecordingBitRate;
-                                        scheduledEpisode.SegmentRecording = scheduledSeriesRecording.SegmentRecording;
-                                        scheduledEpisode.ShowType = scheduledSeriesRecording.ShowType;
-                                        scheduledEpisode.Title = scheduledSeriesRecording.Title;
-
-                                        // add scheduledEpisode to scheduledRecordings
-                                        aUrl = baseURL + "addScheduledRecording";
-                                        var isoDateTime = scheduledEpisode.DateTime.toISOString();
-                                        recordingData = {
-                                            "dateTime": isoDateTime,
-                                            "title": scheduledEpisode.Title,
-                                            "duration": scheduledEpisode.Duration,
-                                            "inputSource": scheduledEpisode.InputSource,
-                                            "channel": scheduledEpisode.Channel,
-                                            "recordingBitRate": scheduledEpisode.RecordingBitRate,
-                                            "segmentRecording": scheduledEpisode.SegmentRecording,
-                                            "showType": scheduledEpisode.ShowType,
-                                            "recordingType": "single"
-                                        };
-                                        $.get(aUrl, recordingData)
-                                            .done(function (result) {
-                                                consoleLog("addScheduledRecording successfully sent");
-                                            })
-                                            .fail(function (jqXHR, textStatus, errorThrown) {
-                                                debugger;
-                                                consoleLog("addScheduledRecording failure");
-                                            })
-                                            .always(function () {
-                                                //alert("recording transmission finished");
-                                            });
-                                    }
-                                })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    debugger;
-                                    console.log("getEpgMatchingProgramsDataOnDate failure");
-                                })
-                                .always(function () {
-                                    //alert("recording transmission finished");
-                                });
-                        }
-                    }
-                });
-
-            }, function() {
-                console.log("error");
-            });
-
             console.log("All DONE");
+
+            bsMessage.PostBSMessage({ command: "epgUpdatesComplete" });
         })
         .fail(function () {
             alert("getSchedulesDirectPrograms failure");
@@ -856,6 +759,107 @@ function getSchedulesDirectPrograms(nextFunction) {
 }
 
 
+function updateScheduledRecordings() {
+
+    // get series recordings
+    var getScheduledSeriesRecordingsPromise = new Promise(function(resolve, reject) {
+
+        var aUrl = baseURL + "getScheduledSeriesRecordings";
+
+        $.get(
+            aUrl
+        ).then(function (result) {
+                resolve(result.scheduledrecordings);
+            });
+    });
+
+    getScheduledSeriesRecordingsPromise.then(function(scheduledSeriesRecordings) {
+
+        console.log("getScheduledSeriesRecordingsPromise resolved");
+
+        var epgStartDate = Date.now().toISOString();
+
+        $.each(scheduledSeriesRecordings, function (index, scheduledSeriesRecording) {
+
+            // for this scheduledSeriesRecording, see if there is any new schedule data for the station associated with this series recording
+            var atsc = scheduledSeriesRecording.Channel.split("-");
+            var atscMajor = atsc[0];
+            var atscMinor = atsc[1];
+
+            for (var i = 0; i < stationIdDates.length; i++) {
+                var stationIdDate = stationIdDates[i];
+                if (atscMajor == stationIdDate.atscMajor && atscMinor == stationIdDate.atscMinor) {
+                    // retrieves instances of this program on the appropriate date
+                    var url = baseURL + "getEpgMatchingProgramsOnDate";
+                    var getEpgMatchingProgramsDataOnDate = {
+                        "date": stationIdDate.date,
+                        "title": scheduledSeriesRecording.Title,
+                        "atscMajor": atscMajor,
+                        "atscMinor": atscMinor
+                    };
+
+                    $.get(url, getEpgMatchingProgramsDataOnDate)
+                        .done(function (result) {
+                            console.log("getEpgMatchingProgramsDataOnDate successfully received");
+
+                            for (var j = 0; j < result.length; j++) {
+                                // make a copy of scheduledSeriesRecording to get a unique object
+                                var sdProgram = result[j];
+                                scheduledEpisode = {};
+                                scheduledEpisode.Channel = scheduledSeriesRecording.Channel;
+                                scheduledEpisode.DateTime = new Date(sdProgram.AirDateTime);
+                                scheduledEpisode.EndDateTime = new Date(sdProgram.EndDateTime);
+                                scheduledEpisode.Duration = sdProgram.Duration;
+                                scheduledEpisode.InputSource = scheduledSeriesRecording.InputSource;
+                                scheduledEpisode.RecordingBitRate = scheduledSeriesRecording.RecordingBitRate;
+                                scheduledEpisode.SegmentRecording = scheduledSeriesRecording.SegmentRecording;
+                                scheduledEpisode.ShowType = scheduledSeriesRecording.ShowType;
+                                scheduledEpisode.Title = scheduledSeriesRecording.Title;
+
+                                // add scheduledEpisode to scheduledRecordings
+                                aUrl = baseURL + "addScheduledRecording";
+                                var isoDateTime = scheduledEpisode.DateTime.toISOString();
+                                recordingData = {
+                                    "dateTime": isoDateTime,
+                                    "title": scheduledEpisode.Title,
+                                    "duration": scheduledEpisode.Duration,
+                                    "inputSource": scheduledEpisode.InputSource,
+                                    "channel": scheduledEpisode.Channel,
+                                    "recordingBitRate": scheduledEpisode.RecordingBitRate,
+                                    "segmentRecording": scheduledEpisode.SegmentRecording,
+                                    "showType": scheduledEpisode.ShowType,
+                                    "recordingType": "single"
+                                };
+                                $.get(aUrl, recordingData)
+                                    .done(function (result) {
+                                        consoleLog("addScheduledRecording successfully sent");
+                                    })
+                                    .fail(function (jqXHR, textStatus, errorThrown) {
+                                        debugger;
+                                        consoleLog("addScheduledRecording failure");
+                                    })
+                                    .always(function () {
+                                        //alert("recording transmission finished");
+                                    });
+                            }
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            debugger;
+                            console.log("getEpgMatchingProgramsDataOnDate failure");
+                        })
+                        .always(function () {
+                            //alert("recording transmission finished");
+                        });
+                }
+            }
+        });
+
+    }, function() {
+        console.log("error");
+    });
+
+
+}
 // get last modified data for provided stationId/date combinations
 // store result in scheduleModificationData; epg member variable
 
