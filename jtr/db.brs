@@ -1123,3 +1123,17 @@ Function GetDBEpgMatchingPrograms(startDate$ As String, title$ As string, atscMa
 	return selectData.epgMatchingPrograms
 
 End Function
+
+
+Function GetDBEpgMatchingProgramsOnDate(date$ As String, title$ As string, atscMajor$ As String, atscMinor$ As String)
+
+	selectData = {}
+	selectData.epgMatchingPrograms = []
+
+	select$ = "SELECT ProgramsForStations.AirDateTime, ProgramsForStations.EndDateTime, ProgramsForStations.Duration FROM Programs, ProgramsForStations, Stations WHERE ProgramsForStations.ScheduleDate = '" + date$ + "' AND Programs.Title='" + title$ + "' AND Programs.ProgramId=ProgramsForStations.ProgramId AND Stations.AtscMajor='" + atscMajor$ + "' AND Stations.AtscMinor='" + atscMinor$ + "' AND Stations.StationId==ProgramsForStations.StationId order by ProgramsForStations.AirDateTime;"
+
+	m.ExecuteDBSelect(select$, GetDBEpgMatchingProgramsCallback, selectData, invalid)
+
+	return selectData.epgMatchingPrograms
+
+End Function

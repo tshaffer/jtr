@@ -105,6 +105,10 @@ Sub InitializeServer()
 	m.getEpgMatchingProgramsAA =	{ HandleEvent: getEpgMatchingPrograms, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getEpgMatchingPrograms", user_data: m.getEpgMatchingProgramsAA })
 	
+	' epgMatchingProgramsOnDate
+	m.getEpgMatchingProgramsOnDateAA =	{ HandleEvent: getEpgMatchingProgramsOnDate, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/getEpgMatchingProgramsOnDate", user_data: m.getEpgMatchingProgramsOnDateAA })
+
 ' incorporation of site downloader code
     m.siteFilePostedAA = { HandleEvent: siteFilePosted, mVar: m }
     m.localServer.AddPostToFile({ url_path: "/UploadFile", destination_directory: GetDefaultDrive(), user_data: m.siteFilePostedAA })
@@ -840,6 +844,24 @@ Sub getEpgMatchingPrograms(userData as Object, e as Object)
 
 	requestParams = e.GetRequestParams()
 	response = mVar.GetDBEpgMatchingPrograms(requestParams.startDate, requestParams.title, requestParams.atscMajor, requestParams.atscMinor)
+	json = FormatJson(response, 0)
+
+    e.AddResponseHeader("Content-type", "text/json")
+    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
+    e.SetResponseBodyString(json)
+    e.SendResponse(200)
+
+End Sub
+
+
+Sub getEpgMatchingProgramsOnDate(userData as Object, e as Object)
+
+	print "getEpgMatchingProgramsOnDate endpoint invoked"
+
+    mVar = userData.mVar
+
+	requestParams = e.GetRequestParams()
+	response = mVar.GetDBEpgMatchingProgramsOnDate(requestParams.date, requestParams.title, requestParams.atscMajor, requestParams.atscMinor)
 	json = FormatJson(response, 0)
 
     e.AddResponseHeader("Content-type", "text/json")
