@@ -363,6 +363,10 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
     else if (event["EventType"] == "ADD_RECORD") {
         return this.handleAddRecord(event, stateData, true);
     }
+    else if (event["EventType"] == "SCHEDULED_RECORDINGS_UPDATED") {
+        console.log("SCHEDULED_RECORDINGS_UPDATED received.");
+        debugger;
+    }
 
     stateData.nextState = this.superState;
     return "SUPER";
