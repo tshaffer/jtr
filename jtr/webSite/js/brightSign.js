@@ -202,7 +202,7 @@ function initializeBrightSign() {
                 consoleLog("baseURL from BrightSign message is: " + baseURL);
 
                 // temporary location - JTRTODO
-                //initializeEpgData();
+                initializeEpgData();
 
                 retrieveSettings(indicateReady);
                 break;
@@ -213,7 +213,7 @@ function initializeBrightSign() {
                 postMessage(event);
                 break;
             case "recordings":
-                initializeEpgData();
+                //initializeEpgData();
                 var recordings = JSON.parse(message.value);
                 var jtrRecordings = recordings.recordings;
                 _currentRecordings = {};

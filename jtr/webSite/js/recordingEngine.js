@@ -80,6 +80,162 @@ recordingEngineStateMachine.prototype.msUntilRecordingStarts = function (dateTim
 }
 
 
+//recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, idle) {
+//
+//    var self = this;
+//
+//    // build initial toDoList
+//    // get scheduled recordings from db
+//    // for each scheduled recording that is a series, query the epg db to find all programs that have the
+//    //      same series name and channel
+//
+//    this.toDoList = [];
+//
+//    // save all promises so that their completion can be tracked
+//    var promises = [];
+//
+//    // get scheduled recordings from db
+//
+//    // single recordings
+//    var p1 = new Promise(function(resolve, reject) {
+//
+//        var aUrl = baseURL + "getScheduledRecordings";
+//
+//        var currentDateTimeIso = new Date().toISOString();
+//        var currentDateTime = { "currentDateTime": currentDateTimeIso };
+//
+//        $.get(
+//            aUrl,
+//            currentDateTime
+//        ).then(function (result) {
+//                $.each(result.scheduledrecordings, function (index, scheduledRecording) {
+//                    // convert from string object (as stored by db) back into Date object
+//                    scheduledRecording.DateTime = new Date(scheduledRecording.DateTime);
+//                    self.toDoList.push(scheduledRecording);
+//                });
+//                resolve();
+//            }, function () {
+//                reject();
+//            });
+//    });
+//
+//    p1.then(function() {
+//        console.log("p1 resolved");
+//    }, function() {
+//        console.log("p1 error");
+//    });
+//
+//    promises.push(p1);
+//
+//    var p2 = new Promise(function(resolve, reject) {
+//
+//        var aUrl = baseURL + "getScheduledSeriesRecordings";
+//
+//        $.get(
+//            aUrl
+//        ).then(function (result) {
+//                resolve(result.scheduledrecordings);
+//            });
+//    });
+//
+//    p2.then(function(scheduledRecordings) {
+//
+//        console.log("p2 resolved");
+//
+//        var epgStartDate = Date.now().toISOString();
+//
+//        $.each(scheduledRecordings, function (index, scheduledRecording) {
+//
+//            promises.push(new Promise(function(resolve, reject) {
+//
+//                // get matching programs from epg data
+//                var atsc = scheduledRecording.Channel.split("-");
+//                var getEpgMatchingProgramsData = {
+//                    "startDate": epgStartDate,
+//                    "title": scheduledRecording.Title,
+//                    "atscMajor": atsc[0],
+//                    "atscMinor": atsc[1]
+//                };
+//
+//                var url = baseURL + "getEpgMatchingPrograms";
+//                $.get(
+//                    url,
+//                    getEpgMatchingProgramsData
+//                ).then(function(result) {
+//                        consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpgMatchingPrograms success ************************************");
+//
+//                        // add each matching program to toDoList
+//                        $.each(result, function (index, sdProgram) {
+//
+//                            // make a copy of scheduledRecording to get a unique object
+//                            scheduledEpisode = {};
+//                            scheduledEpisode.Channel = scheduledRecording.Channel;
+//                            scheduledEpisode.DateTime = new Date(sdProgram.AirDateTime);
+//                            scheduledEpisode.EndDateTime = new Date(sdProgram.EndDateTime);
+//                            scheduledEpisode.Duration = sdProgram.Duration;
+//                            scheduledEpisode.InputSource = scheduledRecording.InputSource;
+//                            scheduledEpisode.RecordingBitRate = scheduledRecording.RecordingBitRate;
+//                            scheduledEpisode.SegmentRecording = scheduledRecording.SegmentRecording;
+//                            scheduledEpisode.ShowType = scheduledRecording.ShowType;
+//                            scheduledEpisode.Title = scheduledRecording.Title;
+//                            self.toDoList.push(scheduledEpisode);
+//
+//                            self.toDoList.sort(function (a, b) {
+//                                var aStr = a.DateTime.toISOString();
+//                                var bStr = b.DateTime.toISOString();
+//                                if (aStr > bStr) {
+//                                    return 1;
+//                                }
+//                                else if (aStr < bStr) {
+//                                    return -1;
+//                                }
+//                                else {
+//                                    return 0;
+//                                }
+//                            });
+//                        });
+//
+//                        resolve();
+//                    }, function () {
+//                        reject();
+//                    });
+//            }));
+//
+//            promises[index].then(function() {
+//                console.log("resolved");
+//            }, function() {
+//                console.log("error");
+//            });
+//        });
+//
+//        Promise.all(promises).then(function() {
+//            console.log("all promises completed");
+//
+//            // send updated toDoList to server
+//            var url = baseURL + "setToDoList";
+//            var toDoListData = {
+//                "toDoList": JSON.stringify(self.toDoList)
+//            };
+//            $.get(
+//                url,
+//                toDoListData
+//            ).done(function(result) {
+//                    consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX setToDoList success ************************************");
+//                }, function () {
+//                    //reject();
+//                });
+//
+//            if (nextFunction != null) {
+//                nextFunction.call(self, idle);
+//            }
+//        });
+//
+//    }, function() {
+//        console.log("error");
+//    });
+//}
+//
+
 recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, idle) {
 
     var self = this;
@@ -95,9 +251,7 @@ recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, id
     var promises = [];
 
     // get scheduled recordings from db
-
-    // single recordings
-    var p1 = new Promise(function(resolve, reject) {
+    var getScheduledRecordingsPromise = new Promise(function(resolve, reject) {
 
         var aUrl = baseURL + "getScheduledRecordings";
 
@@ -108,130 +262,56 @@ recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, id
             aUrl,
             currentDateTime
         ).then(function (result) {
-            $.each(result.scheduledrecordings, function (index, scheduledRecording) {
-                // convert from string object (as stored by db) back into Date object
-                scheduledRecording.DateTime = new Date(scheduledRecording.DateTime);
-                self.toDoList.push(scheduledRecording);
-            });
-            resolve();
-        }, function () {
-            reject();
-        });
-    });
-
-    p1.then(function() {
-        console.log("p1 resolved");
-    }, function() {
-        console.log("p1 error");
-    });
-
-    promises.push(p1);
-
-    var p2 = new Promise(function(resolve, reject) {
-
-        var aUrl = baseURL + "getScheduledSeriesRecordings";
-
-        $.get(
-            aUrl
-        ).then(function (result) {
-            resolve(result.scheduledrecordings);
-        });
-    });
-
-    p2.then(function(scheduledRecordings) {
-
-        console.log("p2 resolved");
-
-        var epgStartDate = Date.now().toISOString();
-
-        $.each(scheduledRecordings, function (index, scheduledRecording) {
-
-            promises.push(new Promise(function(resolve, reject) {
-
-                // get matching programs from epg data
-                var atsc = scheduledRecording.Channel.split("-");
-                var getEpgMatchingProgramsData = {
-                    "startDate": epgStartDate,
-                    "title": scheduledRecording.Title,
-                    "atscMajor": atsc[0],
-                    "atscMinor": atsc[1]
-                };
-
-                var url = baseURL + "getEpgMatchingPrograms";
-                $.get(
-                    url,
-                    getEpgMatchingProgramsData
-                ).then(function(result) {
-                        consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpgMatchingPrograms success ************************************");
-
-                        // add each matching program to toDoList
-                        $.each(result, function (index, sdProgram) {
-
-                            // make a copy of scheduledRecording to get a unique object
-                            scheduledEpisode = {};
-                            scheduledEpisode.Channel = scheduledRecording.Channel;
-                            scheduledEpisode.DateTime = new Date(sdProgram.AirDateTime);
-                            scheduledEpisode.EndDateTime = new Date(sdProgram.EndDateTime);
-                            scheduledEpisode.Duration = sdProgram.Duration;
-                            scheduledEpisode.InputSource = scheduledRecording.InputSource;
-                            scheduledEpisode.RecordingBitRate = scheduledRecording.RecordingBitRate;
-                            scheduledEpisode.SegmentRecording = scheduledRecording.SegmentRecording;
-                            scheduledEpisode.ShowType = scheduledRecording.ShowType;
-                            scheduledEpisode.Title = scheduledRecording.Title;
-                            self.toDoList.push(scheduledEpisode);
-
-                            self.toDoList.sort(function (a, b) {
-                                var aStr = a.DateTime.toISOString();
-                                var bStr = b.DateTime.toISOString();
-                                if (aStr > bStr) {
-                                    return 1;
-                                }
-                                else if (aStr < bStr) {
-                                    return -1;
-                                }
-                                else {
-                                    return 0;
-                                }
-                            });
-                        });
-
-                        resolve();
-                    }, function () {
-                        reject();
-                    });
-            }));
-
-            promises[index].then(function() {
-                console.log("resolved");
-            }, function() {
-                console.log("error");
-            });
-        });
-
-        Promise.all(promises).then(function() {
-            console.log("all promises completed");
-
-            // send updated toDoList to server
-            var url = baseURL + "setToDoList";
-            var toDoListData = {
-                "toDoList": JSON.stringify(self.toDoList)
-            };
-            $.get(
-                url,
-                toDoListData
-            ).done(function(result) {
-                    consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX setToDoList success ************************************");
-                }, function () {
-                    //reject();
+                $.each(result.scheduledrecordings, function (index, scheduledRecording) {
+                    // convert from string object (as stored by db) back into Date object
+                    scheduledRecording.DateTime = new Date(scheduledRecording.DateTime);
+                    self.toDoList.push(scheduledRecording);
                 });
+                resolve();
+            }, function () {
+                reject();
+            });
+    });
 
-            if (nextFunction != null) {
-                nextFunction.call(self, idle);
+    getScheduledRecordingsPromise.then(function() {
+
+        console.log("scheduledRecordings retrieved from db");
+
+        // sort scheduled recordings by date
+        self.toDoList.sort(function (a, b) {
+            var aStr = a.DateTime.toISOString();
+            var bStr = b.DateTime.toISOString();
+            if (aStr > bStr) {
+                return 1;
+            }
+            else if (aStr < bStr) {
+                return -1;
+            }
+            else {
+                return 0;
             }
         });
 
+        // send updated toDoList to server
+        var url = baseURL + "setToDoList";
+        var toDoListData = {
+            "toDoList": JSON.stringify(self.toDoList)
+        };
+        $.get(
+            url,
+            toDoListData
+        ).done(function(result) {
+                consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX setToDoList success ************************************");
+            }, function () {
+                //reject();
+            });
+
+        if (nextFunction != null) {
+            nextFunction.call(self, idle);
+        }
+
     }, function() {
-        console.log("error");
+        console.log("getScheduledRecordingsPromise error");
     });
 }
 

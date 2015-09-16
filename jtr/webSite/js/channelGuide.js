@@ -57,8 +57,6 @@ ChannelGuide.prototype.reselectCurrentProgram = function() {
 
 ChannelGuide.prototype.selectChannelGuide = function() {
 
-    //initializeEpgData();
-
     // if returning from pop up modal, just re-select the last program and return
     if (!this.resetSelectedProgram) {
         this.selectProgram(null, this._currentSelectedProgramButton);

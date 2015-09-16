@@ -1,6 +1,6 @@
 ﻿var schedulesDirectToken;
 
-var numDaysEpgData = 1;
+var numDaysEpgData = 2;
 
 var stations = [];
 var scheduleValidityByStationDate = {};     // schedule information for each station/date 
