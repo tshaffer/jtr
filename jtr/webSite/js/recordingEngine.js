@@ -240,15 +240,9 @@ recordingEngineStateMachine.prototype.buildToDoList = function (nextFunction, id
 
     var self = this;
 
-    // build initial toDoList
-    // get scheduled recordings from db
-    // for each scheduled recording that is a series, query the epg db to find all programs that have the
-    //      same series name and channel
+    // build toDoList - in memory representation of scheduledRecordings table from db
 
     this.toDoList = [];
-
-    // save all promises so that their completion can be tracked
-    var promises = [];
 
     // get scheduled recordings from db
     var getScheduledRecordingsPromise = new Promise(function(resolve, reject) {
@@ -445,7 +439,9 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
     }
     else if (event["EventType"] == "SCHEDULED_RECORDINGS_UPDATED") {
         console.log("SCHEDULED_RECORDINGS_UPDATED received.");
-        debugger;
+        this.stateMachine.buildToDoList(this.stateMachine.checkForPendingRecord, true);
+        this.stateMachine.firstTime = false;
+        return "HANDLED";
     }
 
     stateData.nextState = this.superState;
@@ -459,7 +455,7 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
     var recordingData;
     var recordingEngineIdle = idle;
 
-    if (recordingType == "series") {
+    if (recordingType.toLowerCase() == "series") {
         aUrl = baseURL + "addScheduledSeriesRecording";
         recordingData = { "title": title, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "maxRecordings": 5, "recordReruns": 1, "recordingType": "series" };
     }
@@ -478,6 +474,51 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
             consoleLog("addScheduledRecording successfully sent");
             var scheduledRecordingId = Number(result);
             consoleLog("scheduledRecordingId=" + scheduledRecordingId);
+
+            if (recordingType == "series") {
+
+                // series recording has been added - add episodes in epg data to scheduledRecordings
+                // need the following: startDate$ As String, title$ As string, atscMajor$ As String, atscMinor$ As String
+                var epgStartDate = Date.now().toISOString();
+                var atsc = channel.split("-");
+                var getEpgMatchingProgramsData = {
+                    "startDate": epgStartDate,
+                    "title": title,
+                    "atscMajor": atsc[0],
+                    "atscMinor": atsc[1]
+                };
+
+                var url = baseURL + "getEpgMatchingPrograms";
+                $.get(url, getEpgMatchingProgramsData)
+                    .done(function (result) {
+
+                        consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpgMatchingPrograms success ************************************");
+
+                        // add each matching program to toDoList
+                        $.each(result, function (index, seriesEpisode) {
+
+                            // add scheduledEpisode to scheduledRecordings
+                            aUrl = baseURL + "addScheduledRecording";
+                            recordingData = {
+                                "dateTime": seriesEpisode.AirDateTime,
+                                "title": title,
+                                "duration": seriesEpisode.Duration,
+                                "inputSource": inputSource,
+                                "channel": channel,
+                                "recordingBitRate": recordingBitRate,
+                                "segmentRecording": segmentRecording,
+                                "showType": showType,
+                                "recordingType": "single"
+                            };
+                            $.get(aUrl, recordingData)
+                                .done(function (result) {
+                                    console.log("series episode added successfully")
+                                })
+
+                        });
+                });
+            }
+
 
             // add complete, move on to next step
             if (idle) {

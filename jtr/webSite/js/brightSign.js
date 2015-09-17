@@ -241,6 +241,7 @@ function initializeBrightSign() {
                 event["Channel"] = message.channel;
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
+                event["RecordingType"] = message.recordingType;
                 postMessage(event);
                 break;
             case "recordNow":

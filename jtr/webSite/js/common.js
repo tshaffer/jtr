@@ -637,7 +637,7 @@ function updateCGProgramDlgSelection() {
 }
 
 
-function cgRecordProgram(showType) {
+function cgRecordProgram(showType, recordingType) {
     // redundant in some cases (when selected from pop up); not when record button pressed
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -650,6 +650,7 @@ function cgRecordProgram(showType) {
     event["Duration"] = cgSelectedProgram.duration;
     event["ShowType"] = showType;
     event["InputSource"] = "tuner";
+    event["RecordingType"] = recordingType;
 
     var stationName = getStationFromId(cgSelectedStationId);
 
@@ -674,20 +675,20 @@ function cgRecordSelectedProgram() {
     cgSelectedStationId = programData.stationId;
 
     if (cgSelectedProgram.showType == "Series") {
-        return cgRecordProgram("");
+        return cgRecordProgram("", "single");
     }
     else {
-        return cgRecordProgram(cgSelectedProgram.showType);
+        return cgRecordProgram(cgSelectedProgram.showType, "single");
     }
 }
 
 
 function cgRecordSelectedSeries() {
-    return cgRecordProgram("Series");
+    return cgRecordProgram("Series", "series");
 }
 
 
-function cgRecordProgramFromClient(showType) {
+function cgRecordProgramFromClient(showType, recordingType) {
 
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -698,7 +699,8 @@ function cgRecordProgramFromClient(showType) {
 
     var aUrl = baseURL + "browserCommand";
     var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration, "showType": showType,
-        "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings };
+        "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
+        "recordingType": recordingType };
     console.log(commandData);
 
     $.get(aUrl, commandData)
@@ -723,17 +725,17 @@ function cgRecordSelectedProgramFromClient() {
     cgSelectedStationId = programData.stationId;
 
     if (cgSelectedProgram.showType == "Series") {
-        return cgRecordProgramFromClient("");
+        return cgRecordProgramFromClient("", "single");
     }
     else {
-        return cgRecordProgramFromClient(cgSelectedProgram.showType);
+        return cgRecordProgramFromClient(cgSelectedProgram.showType, "single");
     }
 }
 
 
 function cgRecordSelectedSeriesFromClient() {
 
-    return cgRecordProgramFromClient("Series");
+    return cgRecordProgramFromClient("Series", "series");
 }
 
 
