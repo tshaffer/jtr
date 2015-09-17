@@ -830,6 +830,7 @@ function updateScheduledRecordings() {
                                     var isoDateTime = scheduledEpisode.DateTime.toISOString();
                                     recordingData = {
                                         "dateTime": isoDateTime,
+                                        "endDateTime": scheduledEpisode.EndDateTime,
                                         "title": scheduledEpisode.Title,
                                         "duration": scheduledEpisode.Duration,
                                         "inputSource": scheduledEpisode.InputSource,

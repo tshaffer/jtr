@@ -250,6 +250,7 @@ Sub addScheduledRecording(userData As Object, e as Object)
 
 	scheduledRecording = {}
 	scheduledRecording.dateTime = requestParams.dateTime
+	scheduledRecording.endDateTime = requestParams.endDateTime
 	scheduledRecording.duration% = int(val(requestParams.duration))	' in minutes
 	scheduledRecording.title$ = requestParams.title
 	scheduledRecording.channel$ = requestParams.channel

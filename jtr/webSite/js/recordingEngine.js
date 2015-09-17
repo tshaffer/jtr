@@ -460,11 +460,17 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
         recordingData = { "title": title, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "maxRecordings": 5, "recordReruns": 1, "recordingType": "series" };
     }
     else {
+
+        aUrl = baseURL + "addScheduledRecording";
+
         var dtStartOfRecording = new Date(dateTime);
         var isoDateTime = dtStartOfRecording.toISOString();
 
-        aUrl = baseURL + "addScheduledRecording";
-        recordingData = { "dateTime": isoDateTime, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "recordingType": "single" };
+        var endDateTime = new Date(dtStartOfRecording);
+        endDateTime.setSeconds(endDateTime.getSeconds() + durationInMinutes * 60);
+        var isoEndDate = endDateTime.toISOString();
+
+        recordingData = { "dateTime": isoDateTime, "endDateTime": isoEndDate, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType, "recordingType": "single" };
     }
 
     var self = this;
@@ -499,8 +505,15 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
 
                             // add scheduledEpisode to scheduledRecordings
                             aUrl = baseURL + "addScheduledRecording";
+
+                            // JTRTODO - check units of Duration (expect it to be minutes here)
+                            var endDateTime = new Date(seriesEpisode.AirDateTime);
+                            endDateTime.setSeconds(endDateTime.getSeconds() + seriesEpisode.Duration * 60);
+                            var isoEndDate = endDateTime.toISOString();
+
                             recordingData = {
                                 "dateTime": seriesEpisode.AirDateTime,
+                                "endDateTime": isoEndDate,
                                 "title": title,
                                 "duration": seriesEpisode.Duration,
                                 "inputSource": inputSource,
@@ -518,7 +531,6 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
                         });
                 });
             }
-
 
             // add complete, move on to next step
             if (idle) {
