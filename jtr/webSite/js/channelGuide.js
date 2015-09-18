@@ -853,6 +853,21 @@ function getStationFromId(stationId) {
 }
 
 
+function getStationFromAtsc(stations, atscMajor, atscMinor) {
+
+    var foundStation = null;
+
+    $.each(stations, function (stationIndex, station) {
+        if (station.AtscMajor == atscMajor && station.AtscMinor == atscMinor) {
+            foundStation = station;
+            return;
+        }
+    });
+
+    return foundStation;
+}
+
+
 ChannelGuide.prototype.getStationIndexFromName = function(stationNumber) {
 
     var stationIndex = -1;

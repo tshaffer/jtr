@@ -65,6 +65,10 @@ Sub InitializeServer()
 	m.getProgramsAA =					{ HandleEvent: getPrograms, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getPrograms", user_data: m.getProgramsAA })
 
+	' retrieve stations in channel guide
+	m.getStationsAA =					{ HandleEvent: getStations, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/getStations", user_data: m.getStationsAA })
+
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/fileToTranscode", user_data: m.fileToTranscodeAA })
@@ -453,6 +457,28 @@ Sub getPrograms(userData as Object, e as Object)
 	for each program in programs
 		response.programs.push(program)
 	next
+
+	json = FormatJson(response, 0)
+
+    e.AddResponseHeader("Content-type", "text/json")
+    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
+    e.SetResponseBodyString(json)
+    e.SendResponse(200)
+
+End Sub
+
+
+Sub getStations(userData as Object, e as Object)
+
+	print "getStations endpoint invoked"
+
+	response = {}
+
+	response.stations = []
+
+    $.each(stations, function (index, station) {
+		response.stations.push(station)
+    });
 
 	json = FormatJson(response, 0)
 
