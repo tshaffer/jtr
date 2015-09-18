@@ -382,12 +382,51 @@ function getToDoList() {
 
     getStationsPromise.then(function(stations) {
 
-        var aUrl = baseURL + "getToDoList";
+        //var aUrl = baseURL + "getToDoList";
+        var aUrl = baseURL + "getScheduledRecordings";
+        var currentDateTimeIso = new Date().toISOString();
+        var currentDateTime = { "currentDateTime": currentDateTimeIso };
+
+        $.get(aUrl, currentDateTime)
+            .done(function (toDoList) {
+                console.log("getToDoList success");
+
+                // display scheduled recordings
+                var toAppend = "";
+
+                $("#toDoListTableBody").empty();
+
+                $.each(toDoList.scheduledrecordings, function (index, scheduledRecording) {
+                    toAppend += addScheduledRecordingShowLine(scheduledRecording, stations);
+                });
+
+                $("#toDoListTableBody").append(toAppend);
+
+                // add button handlers for each scheduled recording - note, the handlers need to be added after the html has been added!!
+                //$.each(toDoList, function (index, scheduledRecording) {
+                //    // TBD
+                //});
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                debugger;
+                console.log("browserCommand failure");
+            })
+            .always(function () {
+                //alert("recording transmission finished");
+            });
+        return;
+
+
+
+
+
 
         $.ajax({
             type: "GET",
             url: aUrl,
             dataType: "json",
+            currentDateTime: currentDateTimeIso,
+
             success: function (toDoList) {
 
                 // toDoList is the array of scheduled recordings
@@ -446,6 +485,9 @@ function addScheduledRecordingShowLine(scheduledRecording, stations) {
     if (numHours == 0) numHours = 12;
     if (numHours > 12) {
         numHours -= 12;
+        amPM = "pm";
+    }
+    else if (numHours == 12) {
         amPM = "pm";
     }
     var hoursLbl = numHours.toString();
@@ -957,8 +999,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.12:8080/";
+        baseURL = "http://10.10.212.44:8080/";
+        //baseURL = "http://192.168.2.12:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

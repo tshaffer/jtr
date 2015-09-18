@@ -66,8 +66,8 @@ Sub InitializeServer()
 	m.localServer.AddGetFromEvent({ url_path: "/getPrograms", user_data: m.getProgramsAA })
 
 	' retrieve stations in channel guide
-	m.getStationsAA =					{ HandleEvent: getStations, mVar: m }
-	m.localServer.AddGetFromEvent({ url_path: "/getStations", user_data: m.getStationsAA })
+	m.getStationsNewAA =					{ HandleEvent: getStationsNew, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/getStationsNew", user_data: m.getStationsNewAA })
 
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
@@ -382,6 +382,7 @@ Sub getScheduledRecordings(userData As Object, e as Object)
 	print "getScheduledRecordings endpoint invoked"
 
 	requestParams = e.GetRequestParams()
+
 	getScheduledRecordingsData(true, userData, e, requestParams.currentDateTime)
 
 End Sub
@@ -468,17 +469,21 @@ Sub getPrograms(userData as Object, e as Object)
 End Sub
 
 
-Sub getStations(userData as Object, e as Object)
+Sub getStationsNew(userData as Object, e as Object)
 
-	print "getStations endpoint invoked"
+	print "getStationsNew endpoint invoked"
 
 	response = {}
 
 	response.stations = []
 
-    $.each(stations, function (index, station) {
+'    $.each(stations, function (index, station) {
+'		response.stations.push(station)
+'    });
+
+	for each station in stations
 		response.stations.push(station)
-    });
+	next
 
 	json = FormatJson(response, 0)
 
