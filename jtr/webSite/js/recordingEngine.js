@@ -526,32 +526,32 @@ recordingEngineStateMachine.prototype.endRecording = function (title, dateTime, 
 
 
 // is this or will it ever be used?
-recordingEngineStateMachine.prototype.deleteScheduledRecording = function (scheduledRecordingId, showType) {
-
-    var aUrl;
-    
-    if (showType == "Series") {
-        aUrl = baseURL + "deleteScheduledSeriesRecording";
-    }
-    else {
-        aUrl = baseURL + "deleteScheduledRecording";
-    }
-
-    var recordingId = { "id": scheduledRecordingId };
-
-    $.get(aUrl, recordingId)
-        .done(function (result) {
-            consoleLog("deleteScheduledRecording successfully sent");
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            debugger;
-            consoleLog("deleteScheduledRecording failure");
-        })
-        .always(function () {
-            //alert("recording transmission finished");
-        });
-}
-
+//recordingEngineStateMachine.prototype.deleteScheduledRecording = function (scheduledRecordingId, showType) {
+//
+//    var aUrl;
+//
+//    if (showType == "Series") {
+//        aUrl = baseURL + "deleteScheduledSeriesRecording";
+//    }
+//    else {
+//        aUrl = baseURL + "deleteScheduledRecording";
+//    }
+//
+//    var recordingId = { "scheduledRecordingId": scheduledRecordingId };
+//
+//    $.get(aUrl, recordingId)
+//        .done(function (result) {
+//            consoleLog("deleteScheduledRecording successfully sent");
+//        })
+//        .fail(function (jqXHR, textStatus, errorThrown) {
+//            debugger;
+//            consoleLog("deleteScheduledRecording failure");
+//        })
+//        .always(function () {
+//            //alert("recording transmission finished");
+//        });
+//}
+//
 
 function printNow() {
     var currentdate = new Date();

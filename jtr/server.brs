@@ -294,11 +294,11 @@ Sub addScheduledSeriesRecording(userData As Object, e as Object)
 End Sub
 
 
-Sub deleteScheduledRecordingRow(fn As Object, userData As Object, e as Object)
+Sub deleteScheduledRecordingRow(mVar As Object, fn As Object, userData As Object, e as Object)
 
 	requestParams = e.GetRequestParams()
 
-	fn(requestParams.id)
+	fn(mVar, requestParams.scheduledRecordingId)
 
     e.AddResponseHeader("Content-type", "text/plain")
     e.AddResponseHeader("Access-Control-Allow-Origin", "*")
@@ -313,7 +313,7 @@ Sub deleteScheduledRecording(userData As Object, e as Object)
 	print "deleteScheduledRecording endpoint invoked"
 
     mVar = userData.mVar
-	mVar.deleteScheduledRecordingRow(mVar.DeleteDBScheduledRecording, userData, e)
+	mVar.deleteScheduledRecordingRow(mVar, mVar.DeleteDBScheduledRecording, userData, e)
 
 End Sub
 
@@ -323,7 +323,7 @@ Sub deleteScheduledSeriesRecording(userData As Object, e as Object)
 	print "deleteScheduledSeriesRecording endpoint invoked"
 
     mVar = userData.mVar
-	mVar.deleteScheduledRecordingRow(mVar.DeleteDBScheduledSeriesRecording, userData, e)
+	mVar.deleteScheduledRecordingRow(mVar, mVar.DeleteDBScheduledSeriesRecording, userData, e)
 
 End Sub
 

@@ -198,13 +198,12 @@ function deleteScheduledRecording(event) {
 
     var scheduledRecordingId = event.data.scheduledRecordingId;
 
-    var aUrl = baseURL + "browserCommand";
-    var commandData = { "command": "deleteScheduledRecording", "scheduledRecordingId": scheduledRecordingId };
+    var aUrl = baseURL + "deleteScheduledRecording";
+    var params = { "scheduledRecordingId": scheduledRecordingId };
 
-    $.get(aUrl, commandData)
+    $.get(aUrl, params)
         .done(function (result) {
-            console.log("browserCommand successfully sent");
-            getRecordedShows();
+            console.log("deleteScheduledRecording successfully sent");
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
