@@ -194,6 +194,10 @@ function deleteSelectedShow(event) {
         });
 }
 
+function deleteScheduledRecording(event) {
+    debugger;
+}
+
 function playSelectedShowFromBeginning(event) {
 }
 
