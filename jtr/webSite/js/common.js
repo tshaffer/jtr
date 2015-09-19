@@ -382,7 +382,6 @@ function getToDoList() {
 
     getStationsPromise.then(function(stations) {
 
-        //var aUrl = baseURL + "getToDoList";
         var aUrl = baseURL + "getScheduledRecordings";
         var currentDateTimeIso = new Date().toISOString();
         var currentDateTime = { "currentDateTime": currentDateTimeIso };
@@ -999,8 +998,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        baseURL = "http://10.10.212.44:8080/";
-        //baseURL = "http://192.168.2.12:8080/";
+        //baseURL = "http://10.10.212.44:8080/";
+        baseURL = "http://192.168.2.12:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

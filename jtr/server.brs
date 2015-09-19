@@ -37,14 +37,6 @@ Sub InitializeServer()
 	m.getScheduledSeriesRecordingsAA =		{ HandleEvent: getScheduledSeriesRecordings, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getScheduledSeriesRecordings", user_data: m.getScheduledSeriesRecordingsAA })
 
-	' set to do list
-	m.setToDoListAA =					{ HandleEvent: setToDoList, mVar: m }
-	m.localServer.AddGetFromEvent({ url_path: "/setToDoList", user_data: m.setToDoListAA })
-
-	' retrieve and return to do list
-	m.getToDoListAA =					{ HandleEvent: getToDoList, mVar: m }
-	m.localServer.AddGetFromEvent({ url_path: "/getToDoList", user_data: m.getToDoListAA })
-
 	' retrieve and return information about all recordings
 	m.getRecordingsAA =					{ HandleEvent: getRecordings, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getRecordings", user_data: m.getRecordingsAA })
@@ -64,10 +56,6 @@ Sub InitializeServer()
 	' retrieve and return all programs
 	m.getProgramsAA =					{ HandleEvent: getPrograms, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/getPrograms", user_data: m.getProgramsAA })
-
-	' retrieve stations in channel guide
-	m.getStationsNewAA =					{ HandleEvent: getStationsNew, mVar: m }
-	m.localServer.AddGetFromEvent({ url_path: "/getStationsNew", user_data: m.getStationsNewAA })
 
 	' part of file transcoding process
 	m.fileToTranscodeAA =				{ HandleEvent: fileToTranscode, mVar: m }
@@ -458,75 +446,6 @@ Sub getPrograms(userData as Object, e as Object)
 	for each program in programs
 		response.programs.push(program)
 	next
-
-	json = FormatJson(response, 0)
-
-    e.AddResponseHeader("Content-type", "text/json")
-    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
-    e.SetResponseBodyString(json)
-    e.SendResponse(200)
-
-End Sub
-
-
-Sub getStationsNew(userData as Object, e as Object)
-
-	print "getStationsNew endpoint invoked"
-
-	response = {}
-
-	response.stations = []
-
-'    $.each(stations, function (index, station) {
-'		response.stations.push(station)
-'    });
-
-	for each station in stations
-		response.stations.push(station)
-	next
-
-	json = FormatJson(response, 0)
-
-    e.AddResponseHeader("Content-type", "text/json")
-    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
-    e.SetResponseBodyString(json)
-    e.SendResponse(200)
-
-End Sub
-
-
-Sub setToDoList(userData as Object, e as Object)
-
-	print "setToDoList endpoint invoked"
-
-    mVar = userData.mVar
-
-	requestParams = e.GetRequestParams()
-
-	toDoList = parseJSON(requestParams["toDoList"])
-
-	globalAA = GetGlobalAA()
-	globalAA.toDoList = toDoList
-
-    e.AddResponseHeader("Content-type", "text/plain")
-    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
-    e.SetResponseBodyString("ok")
-    e.SendResponse(200)
-
-End Sub
-
-
-Sub getToDoList(userData as Object, e as Object)
-
-	print "getToDoList endpoint invoked"
-
-    mVar = userData.mVar
-
-	response = {}
-	globalAA = GetGlobalAA()
-	toDoList = globalAA.toDoList
-
-	response = toDoList
 
 	json = FormatJson(response, 0)
 
