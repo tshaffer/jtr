@@ -195,7 +195,24 @@ function deleteSelectedShow(event) {
 }
 
 function deleteScheduledRecording(event) {
-    debugger;
+
+    var scheduledRecordingId = event.data.scheduledRecordingId;
+
+    var aUrl = baseURL + "browserCommand";
+    var commandData = { "command": "deleteScheduledRecording", "scheduledRecordingId": scheduledRecordingId };
+
+    $.get(aUrl, commandData)
+        .done(function (result) {
+            console.log("browserCommand successfully sent");
+            getRecordedShows();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("browserCommand failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
 }
 
 function playSelectedShowFromBeginning(event) {

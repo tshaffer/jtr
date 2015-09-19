@@ -525,6 +525,7 @@ recordingEngineStateMachine.prototype.endRecording = function (title, dateTime, 
 }
 
 
+// is this or will it ever be used?
 recordingEngineStateMachine.prototype.deleteScheduledRecording = function (scheduledRecordingId, showType) {
 
     var aUrl;
