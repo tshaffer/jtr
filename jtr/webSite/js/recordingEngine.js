@@ -252,7 +252,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
         this.stateMachine.recordingSegment = event["SegmentRecording"];
         this.stateMachine.recordingShowType = event["ShowType"];
 
-        consoleLog("STIdleEventHandler: RECORD_NOW received. Title = " + this.stateMachine.recordingTitle + ", duration = " + this.stateMachine.recordingDuration + ", inputSource = " + this.stateMachine.recordingInputSource + ", channel = " + this.stateMachine.recordingChannel + ", recordingBitRate = " + this.stateMachine.recordingBitRate + ", segmentRecording = " + this.stateMachine.recordingSegment + ", showType = " + this.stateMachine.showType);
+        consoleLog("STIdleEventHandler: RECORD_NOW received. Title = " + this.stateMachine.recordingTitle + ", duration = " + this.stateMachine.recordingDuration + ", inputSource = " + this.stateMachine.recordingInputSource + ", channel = " + this.stateMachine.recordingChannel + ", recordingBitRate = " + this.stateMachine.recordingBitRate + ", segmentRecording = " + this.stateMachine.recordingSegment + ", showType = " + this.stateMachine.recordingShowType);
 
         stateData.nextState = this.stateMachine.stRecording;
         return "TRANSITION";
