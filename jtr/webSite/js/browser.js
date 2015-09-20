@@ -204,6 +204,7 @@ function deleteScheduledRecording(event) {
     $.get(aUrl, params)
         .done(function (result) {
             console.log("deleteScheduledRecording successfully sent");
+            getToDoList();
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
