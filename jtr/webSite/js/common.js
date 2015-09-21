@@ -409,6 +409,12 @@ function getToDoList() {
 
                     var scheduledRecordingId = scheduledRecording.Id;
 
+                    // only one of the next two handlers can be invoked - that is, either btnIdStop or btnIdDelete exists
+
+                    // stop an active recording
+                    var btnIdStop = "#stop" + scheduledRecordingId;
+                    $(btnIdStop).click({ scheduledRecordingId: scheduledRecordingId }, stopActiveRecording);
+
                     // delete a scheduled recording
                     var btnIdDelete = "#delete" + scheduledRecordingId;
                     $(btnIdDelete).click({ scheduledRecordingId: scheduledRecordingId }, deleteScheduledRecording);
@@ -449,7 +455,16 @@ function addScheduledRecordingShowLine(scheduledRecording, stations) {
     weekday[5] = "Fri";
     weekday[6] = "Sat";
 
+    var currentDateTime = new Date();
     var date = new Date(scheduledRecording.DateTime);
+    var endDateTime = new Date(scheduledRecording.EndDateTime);
+
+    var clickAction = "delete";
+    var icon = 'glyphicon-remove';
+    if (date <= currentDateTime && currentDateTime < endDateTime) {
+        clickAction = "stop";
+        icon = 'glyphicon-stop';
+    }
 
     var dayOfWeek = weekday[date.getDay()];
 
@@ -490,7 +505,7 @@ function addScheduledRecordingShowLine(scheduledRecording, stations) {
 
     var toAppend =
         "<tr>" +
-        "<td><button type='button' class='btn btn-default recorded-shows-icon' id='delete" + scheduledRecording.Id.toString() + "' aria-label='Left Align'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>" +
+        "<td><button type='button' class='btn btn-default recorded-shows-icon' id='" + clickAction + scheduledRecording.Id.toString() + "' aria-label='Left Align'><span class='glyphicon " + icon + "' aria-hidden='true'></span></button></td>" +
         "<td>" + dayOfWeek + "</td>" +
         "<td>" + monthDay + "</td>" +
         "<td>" + timeOfDay + "</td>" +
@@ -976,8 +991,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.12:8080/";
+        baseURL = "http://10.10.212.44:8080/";
+        //baseURL = "http://192.168.2.12:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

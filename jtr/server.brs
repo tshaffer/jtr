@@ -21,6 +21,10 @@ Sub InitializeServer()
 	m.addScheduledSeriesRecordingAA =			{ HandleEvent: addScheduledSeriesRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/addScheduledSeriesRecording", user_data: m.addScheduledSeriesRecordingAA })
 
+	' stop a recording
+	m.stopRecordingAA =			{ HandleEvent: stopRecording, mVar: m }
+	m.localServer.addGetFromEvent({ url_path: "/stopRecording", user_data: m.stopRecordingAA })
+
 	' delete a scheduled recording
 	m.deleteScheduledRecordingAA =			{ HandleEvent: deleteScheduledRecording, mVar: m }
 	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledRecording", user_data: m.deleteScheduledRecordingAA })
@@ -289,6 +293,35 @@ Sub addScheduledSeriesRecording(userData As Object, e as Object)
     e.AddResponseHeader("Content-type", "text/plain")
     e.AddResponseHeader("Access-Control-Allow-Origin", "*")
 	e.SetResponseBodyString(stri(id))
+	e.SendResponse(200)
+
+End Sub
+
+
+Sub stopRecording(userData As Object, e as Object)
+
+	print "stopRecording endpoint invoked"
+
+    mVar = userData.mVar
+
+	requestParams = e.GetRequestParams()
+	recordingId = requestParams.scheduledRecordingId
+
+'	stopRecordMessage = CreateObjec~t("roAssociativeArray")
+'	stopRecordMessage["EventType"] = "STOP_RECORDING"
+'	stopRecordMessage["RecordingId"] = recordingId
+'	mVar.msgPort.PostMessage(stopRecordMessage)
+
+	aa = {}
+	aa.AddReplace("command", "stopRecording")
+	aa.AddReplace("value", recordingId)
+
+	ok = mVar.htmlWidget.PostJSMessage(aa)
+	if not ok stop
+
+    e.AddResponseHeader("Content-type", "text/plain")
+    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
+	e.SetResponseBodyString("OK")
 	e.SendResponse(200)
 
 End Sub

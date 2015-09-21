@@ -198,6 +198,7 @@ recordingEngineStateMachine.prototype.STRecordingControllerEventHandler = functi
 
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
+        this.stateMachine.endOfRecordingTimer = null;
         return "HANDLED";
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
@@ -206,6 +207,11 @@ recordingEngineStateMachine.prototype.STRecordingControllerEventHandler = functi
     else if (event["EventType"] == "EPG_DB_UPDATES_COMPLETE") {
         console.log("EPG_DB_UPDATES_COMPLETE received.")
         updateScheduledRecordings();
+    }
+    else if (event["EventType"] == "STOP_RECORDING") {
+        var recordingId = event["EventData"];
+        console.log("STOP_RECORDING invoked for recordingId = " + recordingId);
+        this.stateMachine.stopRecording();
     }
 
     stateData.nextState = this.superState;
@@ -494,30 +500,47 @@ recordingEngineStateMachine.prototype.executeStartRecording = function (title, d
     durationInMilliseconds -= 4000;
 
     bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": durationInMilliseconds, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType });
-    this.addRecordingEndTimer(durationInMilliseconds, title, new Date(), durationInMilliseconds);
+    this.stateMachine.recordingStartTime = new Date();
+    this.addRecordingEndTimer(durationInMilliseconds, title, this.stateMachine.recordingStartTime);
     displayUserMessage("Recording started: " + title);
 }
 
 
 // TODO - save this in case user wants to stop a recording?
-var endOfRecordingTimer;
-recordingEngineStateMachine.prototype.addRecordingEndTimer = function (durationInMilliseconds, title, dateTime, duration) {
+recordingEngineStateMachine.prototype.addRecordingEndTimer = function (durationInMilliseconds, title, dateTime) {
     consoleLog("addRecordingEndTimer - start timer: durationInMilliseconds=" + durationInMilliseconds);
     var self = this;
-    endOfRecordingTimer = setTimeout(function () {
+    this.stateMachine.endOfRecordingTimer = setTimeout(function () {
         consoleLog("addRecordingEndTimer - endOfRecordingTimer triggered");
-        console.log("endOfRecordingTimer triggered at: ");
+        console.log(" triggered at: ");
         printNow();
 
-        self.endRecording(title, dateTime, duration);
+        self.endRecording(title, dateTime, durationInMilliseconds);
+        this.stateMachine.endOfRecordingTimer = null;
+
     }, durationInMilliseconds);
 }
 
 
+recordingEngineStateMachine.prototype.stopRecording = function () {
+
+    if (this.endOfRecordingTimer != null) {
+        clearTimeout(this.endOfRecordingTimer);
+        this.endOfRecordingTimer = null;
+    }
+
+    consoleLog("stopRecording at: ");
+    printNow();
+
+    var currentTime = new Date();
+    var durationInMilliseconds = currentTime - this.recordingStartTime;
+    this.endRecording(this.recordingTitle, this.recordingStartTime, durationInMilliseconds);
+}
+
 recordingEngineStateMachine.prototype.endRecording = function (title, dateTime, duration) {
     consoleLog("endRecording: title = " + title + ", dateTime = " + dateTime + ", duration = " + duration);
 
-    bsMessage.PostBSMessage({ command: "endRecording", startSegmentation: true });
+    bsMessage.PostBSMessage({ command: "endRecording", duration: duration, startSegmentation: true });
 
     var event = {};
     event["EventType"] = "TRANSITION_TO_IDLE";

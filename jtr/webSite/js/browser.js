@@ -194,6 +194,29 @@ function deleteSelectedShow(event) {
         });
 }
 
+function stopActiveRecording(event) {
+
+    var scheduledRecordingId = event.data.scheduledRecordingId;
+
+    var aUrl = baseURL + "stopRecording";
+    var params = { "scheduledRecordingId": scheduledRecordingId };
+
+    $.get(aUrl, params)
+        .done(function (result) {
+            console.log("stopRecording successful");
+            getToDoList();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("stopRecording failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
+
+}
+
+
 function deleteScheduledRecording(event) {
 
     var scheduledRecordingId = event.data.scheduledRecordingId;

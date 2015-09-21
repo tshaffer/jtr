@@ -234,6 +234,11 @@ function initializeBrightSign() {
                 event["EventData"] = message.recordingId;
                 postMessage(event);
                 break;
+            case "stopRecording":
+                event["EventType"] = "STOP_RECORDING";
+                event["EventData"] = message.value;
+                postMessage(event);
+                break;
             case "deleteRecordedShow":
                 event["EventType"] = "DELETE_RECORDED_SHOW";
                 event["EventData"] = msg.data[name];
