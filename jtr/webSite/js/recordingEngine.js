@@ -37,6 +37,7 @@
     this.stRecording.executeStartRecording = this.executeStartRecording;
     this.stRecording.handleAddRecord = this.handleAddRecord;
     this.stRecording.addToDB = this.addToDB;
+    this.stRecording.deleteScheduledRecording = this.deleteScheduledRecording;
 
     this.topState = this.stTop;
 }
@@ -167,6 +168,7 @@ recordingEngineStateMachine.prototype.checkForPendingRecord = function () {
                 // post internal message to cause transition to recording state
                 var event = {};
                 event["EventType"] = "TRANSITION_TO_RECORDING";
+                this.recordingId = scheduledRecording.Id;
                 this.recordingTitle = scheduledRecording.Title;
                 this.recordingDuration = durationInMilliseconds;
                 this.recordingInputSource = scheduledRecording.InputSource;
@@ -184,7 +186,7 @@ recordingEngineStateMachine.prototype.checkForPendingRecord = function () {
                     clearTimeout(this.timerVar);
                     this.timerVar = null;
                 }
-                this.startRecordingTimer(msUntilRecordingStarts, scheduledRecording.Title, scheduledRecording.Duration, scheduledRecording.InputSource, scheduledRecording.Channel, scheduledRecording.RecordingBitRate, scheduledRecording.SegmentRecording, scheduledRecording.ShowType);
+                this.startRecordingTimer(msUntilRecordingStarts, scheduledRecording.recordingId, scheduledRecording.Title, scheduledRecording.Duration, scheduledRecording.InputSource, scheduledRecording.Channel, scheduledRecording.RecordingBitRate, scheduledRecording.SegmentRecording, scheduledRecording.ShowType);
             }
             return;
         }
@@ -209,6 +211,7 @@ recordingEngineStateMachine.prototype.STRecordingControllerEventHandler = functi
         updateScheduledRecordings();
     }
     else if (event["EventType"] == "STOP_RECORDING") {
+        //JTRTODO - recordingId used here?
         var recordingId = event["EventData"];
         console.log("STOP_RECORDING invoked for recordingId = " + recordingId);
         this.stateMachine.stopRecording();
@@ -250,6 +253,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
         return "TRANSITION";
     }
     else if (event["EventType"] == "RECORD_NOW") {
+        this.stateMachine.recordingId = -1;         // not in db
         this.stateMachine.recordingTitle = event["Title"];
         this.stateMachine.recordingDuration = Number(event["Duration"]);
         this.stateMachine.recordingInputSource = event["InputSource"];
@@ -308,6 +312,9 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
         .done(function (result) {
             consoleLog("addScheduledRecording successfully sent");
             var scheduledRecordingId = Number(result);
+            if (recordingType != "series") {
+                this.recordingId = scheduledRecordingId;
+            }
             consoleLog("scheduledRecordingId=" + scheduledRecordingId);
 
             if (recordingType == "series") {
@@ -412,7 +419,7 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
 
     if (event["EventType"] == "ENTRY_SIGNAL") {
         consoleLog(this.id + ": entry signal");
-        this.startRecording(this.stateMachine.recordingTitle, this.stateMachine.recordingDuration, this.stateMachine.recordingInputSource, this.stateMachine.recordingChannel, this.stateMachine.recordingBitRate, this.stateMachine.recordingSegment);
+        this.startRecording(this.stateMachine.recordingId, this.stateMachine.recordingTitle, this.stateMachine.recordingDuration, this.stateMachine.recordingInputSource, this.stateMachine.recordingChannel, this.stateMachine.recordingBitRate, this.stateMachine.recordingSegment, this.stateMachine.showType);
         return "HANDLED";
     }
     else if (event["EventType"] == "EXIT_SIGNAL") {
@@ -440,7 +447,7 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
 // TODO - save this in case user wants to cancel a recording?
 
 // duration passed in as minutes here where msec are expected?
-recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecondsUntilRecording, title, duration, inputSource, channel, recordingBitRate, segmentRecording, showType) {
+recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecondsUntilRecording, recordingId, title, duration, inputSource, channel, recordingBitRate, segmentRecording, showType) {
     consoleLog("startRecordingTimer - start timer: millisecondsUntilRecording=" + millisecondsUntilRecording);
     var self = this;
     // when timeout occurs, setup variables and send message indicating a transition to recording state
@@ -459,6 +466,7 @@ recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecon
         console.log("startRecordingTimer timeout at: ");
         printNow();
 
+        self.recordingId = recordingId;
         self.recordingTitle = title;
         self.recordingDuration = durationInMilliseconds;
         self.recordingInputSource = inputSource;
@@ -474,7 +482,7 @@ recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecon
 }
 
 
-recordingEngineStateMachine.prototype.startRecording = function (title, durationInMilliseconds, inputSource, channel, recordingBitRate, segmentRecording, showType) {
+recordingEngineStateMachine.prototype.startRecording = function (recordingId, title, durationInMilliseconds, inputSource, channel, recordingBitRate, segmentRecording, showType) {
 
     consoleLog("startRecording: title=" + title + ", durationInMilliseconds=" + durationInMilliseconds + ", inputSource=" + inputSource + ",channel=" + channel + ",recordingBitRate=" + recordingBitRate + ",segmentRecording=" + segmentRecording + ",showType=" + showType);
 
@@ -482,41 +490,44 @@ recordingEngineStateMachine.prototype.startRecording = function (title, duration
 
     if (inputSource != "tuner") {
         consoleLog("Not tuner: Title = " + title + ", durationInMilliseconds = " + durationInMilliseconds + ", inputSource = " + inputSource + ", channel = " + channel);
-        this.executeStartRecording(title, durationInMilliseconds, recordingBitRate, segmentRecording, showType);
+        this.executeStartRecording(recordingId, title, durationInMilliseconds, recordingBitRate, segmentRecording, showType);
     }
     else {
         // try to relieve issues with IR out interference by waiting two seconds.
         var self = this;
         setTimeout(function () {
             tuneChannel(channel, false);
-            self.executeStartRecording(title, durationInMilliseconds, recordingBitRate, segmentRecording, showType);
+            self.executeStartRecording(recordingId, title, durationInMilliseconds, recordingBitRate, segmentRecording, showType);
         }, 2000);
     }
 }
 
-recordingEngineStateMachine.prototype.executeStartRecording = function (title, durationInMilliseconds, recordingBitRate, segmentRecording, showType) {
+recordingEngineStateMachine.prototype.executeStartRecording = function (recordingId, title, durationInMilliseconds, recordingBitRate, segmentRecording, showType) {
 
     // subtract 4 seconds from duration
     durationInMilliseconds -= 4000;
 
     bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": durationInMilliseconds, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType });
     this.stateMachine.recordingStartTime = new Date();
-    this.addRecordingEndTimer(durationInMilliseconds, title, this.stateMachine.recordingStartTime);
+    this.addRecordingEndTimer(recordingId, durationInMilliseconds, title, this.stateMachine.recordingStartTime);
     displayUserMessage("Recording started: " + title);
 }
 
 
 // TODO - save this in case user wants to stop a recording?
-recordingEngineStateMachine.prototype.addRecordingEndTimer = function (durationInMilliseconds, title, dateTime) {
+recordingEngineStateMachine.prototype.addRecordingEndTimer = function (recordingId, durationInMilliseconds, title, dateTime) {
     consoleLog("addRecordingEndTimer - start timer: durationInMilliseconds=" + durationInMilliseconds);
     var self = this;
     this.stateMachine.endOfRecordingTimer = setTimeout(function () {
+
+        self.stateMachine.endOfRecordingTimer = null;
+
         consoleLog("addRecordingEndTimer - endOfRecordingTimer triggered");
         console.log(" triggered at: ");
         printNow();
 
         self.endRecording(title, dateTime, durationInMilliseconds);
-        this.stateMachine.endOfRecordingTimer = null;
+        self.deleteScheduledRecording(recordingId, "");
 
     }, durationInMilliseconds);
 }
@@ -535,6 +546,7 @@ recordingEngineStateMachine.prototype.stopRecording = function () {
     var currentTime = new Date();
     var durationInMilliseconds = currentTime - this.recordingStartTime;
     this.endRecording(this.recordingTitle, this.recordingStartTime, durationInMilliseconds);
+    this.deleteScheduledRecording(this.recordingId, "Single");
 }
 
 recordingEngineStateMachine.prototype.endRecording = function (title, dateTime, duration) {
@@ -549,32 +561,32 @@ recordingEngineStateMachine.prototype.endRecording = function (title, dateTime, 
 
 
 // is this or will it ever be used?
-//recordingEngineStateMachine.prototype.deleteScheduledRecording = function (scheduledRecordingId, showType) {
-//
-//    var aUrl;
-//
-//    if (showType == "Series") {
-//        aUrl = baseURL + "deleteScheduledSeriesRecording";
-//    }
-//    else {
-//        aUrl = baseURL + "deleteScheduledRecording";
-//    }
-//
-//    var recordingId = { "scheduledRecordingId": scheduledRecordingId };
-//
-//    $.get(aUrl, recordingId)
-//        .done(function (result) {
-//            consoleLog("deleteScheduledRecording successfully sent");
-//        })
-//        .fail(function (jqXHR, textStatus, errorThrown) {
-//            debugger;
-//            consoleLog("deleteScheduledRecording failure");
-//        })
-//        .always(function () {
-//            //alert("recording transmission finished");
-//        });
-//}
-//
+recordingEngineStateMachine.prototype.deleteScheduledRecording = function (scheduledRecordingId, showType) {
+
+    var aUrl;
+
+    if (showType == "Series") {
+        aUrl = baseURL + "deleteScheduledSeriesRecording";
+    }
+    else {
+        aUrl = baseURL + "deleteScheduledRecording";
+    }
+
+    var recordingId = { "scheduledRecordingId": scheduledRecordingId };
+
+    $.get(aUrl, recordingId)
+        .done(function (result) {
+            consoleLog("deleteScheduledRecording successfully sent");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            consoleLog("deleteScheduledRecording failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
+}
+
 
 function printNow() {
     var currentdate = new Date();

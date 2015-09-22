@@ -271,6 +271,7 @@ function initializeBrightSign() {
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
                 event["ShowType"] = message.showType;
+                event["RecordingType"] = "Single";
                 postMessage(event);
                 break;
             case "manualRecord":
@@ -283,6 +284,7 @@ function initializeBrightSign() {
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
                 event["ShowType"] = message.showType;
+                event["RecordingType"] = "Single";
                 postMessage(event);
                 break;
             case "tuneLiveVideoChannel":
