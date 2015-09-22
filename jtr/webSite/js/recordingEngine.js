@@ -186,7 +186,7 @@ recordingEngineStateMachine.prototype.checkForPendingRecord = function () {
                     clearTimeout(this.timerVar);
                     this.timerVar = null;
                 }
-                this.startRecordingTimer(msUntilRecordingStarts, scheduledRecording.recordingId, scheduledRecording.Title, scheduledRecording.Duration, scheduledRecording.InputSource, scheduledRecording.Channel, scheduledRecording.RecordingBitRate, scheduledRecording.SegmentRecording, scheduledRecording.ShowType);
+                this.startRecordingTimer(msUntilRecordingStarts, scheduledRecording.Id, scheduledRecording.Title, scheduledRecording.Duration, scheduledRecording.InputSource, scheduledRecording.Channel, scheduledRecording.RecordingBitRate, scheduledRecording.SegmentRecording, scheduledRecording.ShowType);
             }
             return;
         }
@@ -509,6 +509,8 @@ recordingEngineStateMachine.prototype.executeStartRecording = function (recordin
 
     bsMessage.PostBSMessage({ command: "recordNow", "title": title, "duration": durationInMilliseconds, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "showType": showType });
     this.stateMachine.recordingStartTime = new Date();
+    consoleLog("------------------------------ executeStartRecording: recordingId=" + recordingId.toString());
+
     this.addRecordingEndTimer(recordingId, durationInMilliseconds, title, this.stateMachine.recordingStartTime);
     displayUserMessage("Recording started: " + title);
 }
@@ -522,8 +524,7 @@ recordingEngineStateMachine.prototype.addRecordingEndTimer = function (recording
 
         self.stateMachine.endOfRecordingTimer = null;
 
-        consoleLog("addRecordingEndTimer - endOfRecordingTimer triggered");
-        console.log(" triggered at: ");
+        consoleLog("addRecordingEndTimer - endOfRecordingTimer triggered at:");
         printNow();
 
         self.endRecording(title, dateTime, durationInMilliseconds);
