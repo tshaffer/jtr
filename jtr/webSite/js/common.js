@@ -396,7 +396,7 @@ function getToDoList() {
 
                 $("#scheduledRecordingsTableBody").empty();
 
-                $.each(scheduledRecordings.scheduledrecordings, function (index, scheduledRecording) {
+                $.each(scheduledRecordings, function (index, scheduledRecording) {
                     toAppend += addScheduledRecordingShowLine(scheduledRecording, stations);
                 });
 
@@ -405,7 +405,7 @@ function getToDoList() {
                 scheduledRecordingIds.length = 0;
 
                 // add button handlers for each recording - note, the handlers need to be added after the html has been added!!
-                $.each(scheduledRecordings.scheduledrecordings, function (index, scheduledRecording) {
+                $.each(scheduledRecordings, function (index, scheduledRecording) {
 
                     var scheduledRecordingId = scheduledRecording.Id;
 
@@ -991,8 +991,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        baseURL = "http://10.10.212.44:8080/";
-        //baseURL = "http://192.168.2.12:8080/";
+        //baseURL = "http://10.10.212.44:8080/";
+        baseURL = "http://192.168.2.12:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }
