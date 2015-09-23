@@ -100,8 +100,8 @@ recordingEngineStateMachine.prototype.buildToDoList = function () {
         $.get(
             aUrl,
             currentDateTime
-        ).then(function (result) {
-                $.each(result.scheduledrecordings, function (index, scheduledRecording) {
+        ).then(function (scheduledRecordings) {
+                $.each(scheduledRecordings, function (index, scheduledRecording) {
                     // convert from string object (as stored by db) back into Date object
                     scheduledRecording.DateTime = new Date(scheduledRecording.DateTime);
                     self.toDoList.push(scheduledRecording);

@@ -369,10 +369,8 @@ Sub PopulateScheduledRecordings(getRecordingsList As Boolean, mVar As Object, re
 		scheduledRecordings = mVar.GetDBScheduledSeriesRecordings()
 	endif
 
-	response.scheduledRecordings = []
-
 	for each scheduledRecording in scheduledRecordings
-		response.scheduledRecordings.push(scheduledRecording)
+		response.push(scheduledRecording)
 	next
 
 End Sub
@@ -384,7 +382,7 @@ Sub getScheduledRecordingsData(getRecordingsList As Boolean, userData As Object,
 
     mVar = userData.mVar
 
-	response = {}
+	response = []
 
 	PopulateScheduledRecordings(getRecordingsList, mVar, response, currentDateTime)
 
@@ -427,9 +425,9 @@ Sub getStations(userData as Object, e as Object)
 	response = {}
 	jtrStations = mVar.GetDBStations()
 
-	response.stations = []
+	response = []
 	for each station in jtrStations
-		response.stations.push(station)
+		response.push(station)
 	next
 
 	json = FormatJson(response, 0)
@@ -448,12 +446,11 @@ Sub getStationSchedulesForSingleDay(userData as Object, e as Object)
 
     mVar = userData.mVar
 
-	response = {}
+	response = []
 	jtrStationSchedulesForSingleDay = mVar.GetDBStationSchedulesForSingleDay()
 
-	response.stationSchedulesForSingleDay = []
 	for each stationScheduleForSingleDay in jtrStationSchedulesForSingleDay
-		response.stationSchedulesForSingleDay.push(stationScheduleForSingleDay)
+		response.push(stationScheduleForSingleDay)
 	next
 
 	json = FormatJson(response, 0)
@@ -472,12 +469,11 @@ Sub getPrograms(userData as Object, e as Object)
 
     mVar = userData.mVar
 
-	response = {}
 	programs = mVar.GetDBPrograms()
 
-	response.programs = []
+	response = []
 	for each program in programs
-		response.programs.push(program)
+		response.push(program)
 	next
 
 	json = FormatJson(response, 0)
