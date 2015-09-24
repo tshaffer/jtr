@@ -333,43 +333,54 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
                 $.get(url, getEpgMatchingProgramsData)
                     .done(function (result) {
 
+                        // save all promises so that their completion can be tracked
+                        var promises = [];
+
                         consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpgMatchingPrograms success ************************************");
 
                         // add each matching program to scheduledRecordings
                         $.each(result, function (index, seriesEpisode) {
 
-                            // add scheduledEpisode to scheduledRecordings
-                            aUrl = baseURL + "addScheduledRecording";
+                            promises.push(new Promise(function(resolve, reject) {
 
-                            // JTRTODO - check units of Duration (expect it to be minutes here)
-                            var endDateTime = new Date(seriesEpisode.AirDateTime);
-                            endDateTime.setSeconds(endDateTime.getSeconds() + seriesEpisode.Duration * 60);
-                            var isoEndDate = endDateTime.toISOString();
+                                // add scheduledEpisode to scheduledRecordings
+                                aUrl = baseURL + "addScheduledRecording";
 
-                            recordingData = {
-                                "dateTime": seriesEpisode.AirDateTime,
-                                "endDateTime": isoEndDate,
-                                "title": title,
-                                "duration": seriesEpisode.Duration,
-                                "inputSource": inputSource,
-                                "channel": channel,
-                                "recordingBitRate": recordingBitRate,
-                                "segmentRecording": segmentRecording,
-                                "showType": showType,
-                                "recordingType": "single"
-                            };
-                            $.get(aUrl, recordingData)
-                                .done(function (result) {
-                                    console.log("series episode added successfully")
-                                })
+                                // JTRTODO - check units of Duration (expect it to be minutes here)
+                                var endDateTime = new Date(seriesEpisode.AirDateTime);
+                                endDateTime.setSeconds(endDateTime.getSeconds() + seriesEpisode.Duration * 60);
+                                var isoEndDate = endDateTime.toISOString();
 
+                                recordingData = {
+                                    "dateTime": seriesEpisode.AirDateTime,
+                                    "endDateTime": isoEndDate,
+                                    "title": title,
+                                    "duration": seriesEpisode.Duration,
+                                    "inputSource": inputSource,
+                                    "channel": channel,
+                                    "recordingBitRate": recordingBitRate,
+                                    "segmentRecording": segmentRecording,
+                                    "showType": showType,
+                                    "recordingType": "single"
+                                };
+                                $.get(aUrl, recordingData)
+                                    .then(function (result) {
+                                        resolve();
+                                        console.log("series episode added successfully")
+                                    }, function() {
+                                        reject();
+                                    });
+                                }))
+                        });
+
+                        Promise.all(promises).then(function() {
+                            if (idle) {
+                                self.stateMachine.buildToDoList();
+                            }
                         });
                 });
             }
-
-            // JTRTODO - add isn't really complete due to ajax calls above
-            // add complete, move on to next step
-            if (idle) {
+            else if (idle) {
                 self.stateMachine.buildToDoList();
             }
         })
