@@ -255,7 +255,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
     else if (event["EventType"] == "RECORD_NOW") {
         this.stateMachine.recordingId = -1;         // not in db
         this.stateMachine.recordingTitle = event["Title"];
-        this.stateMachine.recordingDuration = Number(event["Duration"]);
+        this.stateMachine.recordingDuration = minutesToMsec(Number(event["Duration"]));
         this.stateMachine.recordingInputSource = event["InputSource"];
         this.stateMachine.recordingChannel = event["Channel"];
         this.stateMachine.recordingBitRate = event["RecordingBitRate"];
@@ -454,8 +454,6 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
     return "SUPER";
 }
 
-
-// TODO - save this in case user wants to cancel a recording?
 
 // duration passed in as minutes here where msec are expected?
 recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecondsUntilRecording, recordingId, title, duration, inputSource, channel, recordingBitRate, segmentRecording, showType) {
