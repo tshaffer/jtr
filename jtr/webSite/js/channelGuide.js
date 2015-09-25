@@ -398,7 +398,9 @@ ChannelGuide.prototype.renderChannelGuideAtDateTime = function() {
             // get stationIndex
             $.each(stations, function (stationIndex, station) {
                 if (station.StationId == programInfo.stationId) {
-                    self.selectProgramAtTimeOnStation(self.selectProgramTime, stationIndex, self._currentSelectedProgramButton);
+
+                    this._currentStationIndex = stationIndex;
+                    self.selectProgram(self._currentSelectedProgramButton, event.target);
 
                     displayCGPopUp();
 
