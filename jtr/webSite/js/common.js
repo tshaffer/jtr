@@ -794,9 +794,26 @@ function displayCGPopUp() {
 
     consoleLog("displayCGPopUp() invoked");
 
-    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    var channelGuide = ChannelGuideSingleton.getInstance();
+
+    var programData = channelGuide.getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
     cgSelectedStationId = programData.stationId;
+
+    // check the program that the user has clicked
+    // different pop ups for
+    //      show scheduled to record or not
+    //      episode vs. series
+    var cgSelectedProgramScheduledToRecord = false;
+    if (channelGuide.scheduledRecordings != null) {
+        $.each(channelGuide.scheduledRecordings, function (index, scheduledRecording) {
+            cgSelectedProgramScheduledToRecord = programsMatch(scheduledRecording, cgSelectedProgram, cgSelectedStationId);
+            if (cgSelectedProgramScheduledToRecord) {
+                return false;
+            }
+        });
+        console.log("cgSelectedProgramScheduledToRecord=" + cgSelectedProgramScheduledToRecord.toString());
+    }
 
     if (cgSelectedProgram.showType == "Series") {
         cgPopupId = '#cgSeriesDlg';
@@ -898,7 +915,20 @@ function displayCGPopUp() {
     //}
 }
 
+function programsMatch(scheduledRecording, cgProgram, cgStationId) {
 
+    // JTRTODO - what other criteria should be used?
+    var channelGuide = ChannelGuideSingleton.getInstance();
+    var channel = channelGuide.getChannelFromStationIndex(cgStationId);
+    if (channel != scheduledRecording.Channel) return false;
+
+    if (scheduledRecording.Title != cgSelectedProgram.title) return false;
+
+    //if (scheduledRecording.DateTime != cgSelectedProgram.date) return false;
+    if (new Date(scheduledRecording.DateTime).getTime() != cgSelectedProgram.date.getTime()) return false;
+
+    return true;
+}
 
 function cgModalClose() {
     // don't need to do anything other than close the dialog
@@ -991,8 +1021,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.12:8080/";
+        baseURL = "http://10.10.212.44:8080/";
+        //baseURL = "http://192.168.2.12:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

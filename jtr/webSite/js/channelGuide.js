@@ -65,6 +65,50 @@ ChannelGuide.prototype.selectChannelGuide = function() {
 
     var self = this;
 
+    // get the scheduled recordings - this is independent of other code here so can be done asynchronously and independently for now
+    self.scheduledRecordings = null;
+    var getScheduledRecordingsPromise = new Promise(function(resolve, reject) {
+
+        var aUrl = baseURL + "getScheduledRecordings";
+
+        var currentDateTimeIso = new Date().toISOString();
+        var currentDateTime = { "currentDateTime": currentDateTimeIso };
+
+        $.get(
+            aUrl,
+            currentDateTime
+        ).then(function (scheduledRecordings) {
+                self.scheduledRecordings = [];
+                $.each(scheduledRecordings, function (index, scheduledRecording) {
+                    self.scheduledRecordings.push(scheduledRecording);
+                });
+                resolve();
+            }, function () {
+                reject();
+            });
+    });
+
+    getScheduledRecordingsPromise.then(function() {
+        console.log("scheduledRecordings retrieved from db");
+
+        //// sort scheduled recordings by date
+        //self.toDoList.sort(function (a, b) {
+        //    var aStr = a.DateTime.toISOString();
+        //    var bStr = b.DateTime.toISOString();
+        //    if (aStr > bStr) {
+        //        return 1;
+        //    }
+        //    else if (aStr < bStr) {
+        //        return -1;
+        //    }
+        //    else {
+        //        return 0;
+        //    }
+        //});
+    }, function() {
+        console.log("getScheduledRecordingsPromise error");
+    });
+
     if (this.epgProgramSchedule == null) {
 
         // first time displaying channel guide; retrieve epg data from database
@@ -887,6 +931,20 @@ ChannelGuide.prototype.getStationIndexFromName = function(stationNumber) {
     //return stationIndex;
 }
 
+
+ChannelGuide.prototype.getChannelFromStationIndex = function(stationId) {
+
+    var channel = "";
+
+    $.each(stations, function (index, station) {
+        if (stationId == station.StationId) {
+            channel = station.AtscMajor + "-" + station.AtscMinor;
+            return false;
+        }
+    });
+
+    return channel;
+}
 
 function looper(stationNumber) {
 
