@@ -480,8 +480,11 @@ function addScheduledRecordingShowLine(scheduledRecording, stations) {
     var amPM = "am";
 
     var numHours = date.getHours();
-    if (numHours == 0) numHours = 12;
-    if (numHours > 12) {
+    if (numHours == 0)
+    {
+        numHours = 12;
+    }
+    else if (numHours > 12) {
         numHours -= 12;
         amPM = "pm";
     }
