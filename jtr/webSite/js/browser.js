@@ -217,17 +217,25 @@ function stopActiveRecording(event) {
 }
 
 
-function deleteScheduledRecording(event) {
-
+function deleteScheduledRecordingHandler(event) {
     var scheduledRecordingId = event.data.scheduledRecordingId;
+    deleteScheduledRecording(scheduledRecordingId, getToDoList);
+}
+
+
+function deleteScheduledRecording(scheduledRecordingId, nextFunction) {
 
     var aUrl = baseURL + "deleteScheduledRecording";
-    var params = { "scheduledRecordingId": scheduledRecordingId };
+    var commandData = { "scheduledRecordingId": scheduledRecordingId };
+    console.log(commandData);
 
-    $.get(aUrl, params)
+    $.get(aUrl, commandData)
         .done(function (result) {
-            console.log("deleteScheduledRecording successfully sent");
-            getToDoList();
+            console.log("deleteScheduledRecording success");
+            if (nextFunction != null) {
+                nextFunction();
+            }
+            //getToDoList();
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
@@ -236,6 +244,24 @@ function deleteScheduledRecording(event) {
         .always(function () {
             //alert("recording transmission finished");
         });
+
+    //var scheduledRecordingId = event.data.scheduledRecordingId;
+    //
+    //var aUrl = baseURL + "deleteScheduledRecording";
+    //var params = { "scheduledRecordingId": scheduledRecordingId };
+    //
+    //$.get(aUrl, params)
+    //    .done(function (result) {
+    //        console.log("deleteScheduledRecording successfully sent");
+    //        getToDoList();
+    //    })
+    //    .fail(function (jqXHR, textStatus, errorThrown) {
+    //        debugger;
+    //        console.log("browserCommand failure");
+    //    })
+    //    .always(function () {
+    //        //alert("recording transmission finished");
+    //    });
 }
 
 function playSelectedShowFromBeginning(event) {

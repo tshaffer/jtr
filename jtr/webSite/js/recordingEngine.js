@@ -276,6 +276,13 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
         this.stateMachine.firstTime = false;
         return "HANDLED";
     }
+    else if (event["EventType"] == "DELETE_SCHEDULED_RECORDING") {
+        console.log("DELETE_SCHEDULED_RECORDING received.");
+        this.stateMachine.buildToDoList();
+        this.stateMachine.firstTime = false;
+        return "HANDLED";
+    }
+
 
     stateData.nextState = this.superState;
     return "SUPER";

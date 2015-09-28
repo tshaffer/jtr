@@ -346,7 +346,15 @@ Sub deleteScheduledRecording(userData As Object, e as Object)
 	print "deleteScheduledRecording endpoint invoked"
 
     mVar = userData.mVar
+
+    ' delete the scheduled recording from the database
 	mVar.deleteScheduledRecordingRow(mVar, mVar.DeleteDBScheduledRecording, userData, e)
+
+	' send a message to get the scheduling record list rebuilt
+	aa = {}
+	aa.AddReplace("command", "deleteScheduledRecording")
+	ok = mVar.htmlWidget.PostJSMessage(aa)
+	if not ok stop
 
 End Sub
 

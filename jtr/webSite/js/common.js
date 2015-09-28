@@ -424,7 +424,7 @@ function getToDoList() {
 
                     // delete a scheduled recording
                     var btnIdDelete = "#delete" + scheduledRecordingId;
-                    $(btnIdDelete).click({ scheduledRecordingId: scheduledRecordingId }, deleteScheduledRecording);
+                    $(btnIdDelete).click({ scheduledRecordingId: scheduledRecordingId }, deleteScheduledRecordingHandler);
 
                     var scheduledRecordingRow = [];
                     scheduledRecordingRow.push(btnIdDelete);
@@ -800,16 +800,42 @@ function cgRecordSelectedSeries() {
 
 
 // new handlers
+function cgCancelScheduledRecording() {
+    console.log("cgCancelScheduledRecording invoked");
+}
+
+function cgCancelScheduledRecordingFromClient() {
+    console.log("cgCancelScheduledRecordingFromClient invoked");
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    var id = cgSelectedProgram.scheduledRecordingId;
+
+    //var aUrl = baseURL + "browserCommand";
+    //var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration, "showType": showType,
+    //    "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
+    //    "recordingType": recordingType };
+    //console.log(commandData);
+    //
+    //$.get(aUrl, commandData)
+    //    .done(function (result) {
+    //        console.log("browserCommand successfully sent");
+    //    })
+    //    .fail(function (jqXHR, textStatus, errorThrown) {
+    //        debugger;
+    //        console.log("browserCommand failure");
+    //    })
+    //    .always(function () {
+    //        //alert("recording transmission finished");
+    //    });
+
+}
+
 function cgRecordProgramSetOptions() {
     console.log("cgRecordProgramSetOptions invoked");
 }
 
 function cgRecordProgramViewUpcomingEpisodes() {
     console.log("cgRecordProgramViewUpcomingEpisodes invoked");
-}
-
-function cgCancelScheduledRecording() {
-    console.log("cgCancelScheduledRecording invoked");
 }
 
 function cgChangeScheduledRecordingOptions() {
@@ -929,6 +955,16 @@ function displayCGPopUp() {
         });
     }
 
+    if (cgCancelRecordingId) {
+        $(cgCancelRecordingId).off();
+        $(cgCancelRecordingId).click(function (event) {
+            console.log("CancelRecording invoked");
+            cgCancelScheduledRecordingFromClient();
+            cgProgramDlgCloseInvoked();
+            ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+        });
+    }
+
     if (cgCloseEpisodeId) {
         $(cgCloseEpisodeId).off();
         $(cgCloseEpisodeId).click(function (event) {
@@ -950,15 +986,6 @@ function displayCGPopUp() {
         $(cgRecordViewUpcomingEpisodesId).off();
         $(cgRecordViewUpcomingEpisodesId).click(function (event) {
             console.log("ViewUpcomingEpisodes invoked")
-            cgProgramDlgCloseInvoked();
-            ChannelGuideSingleton.getInstance().reselectCurrentProgram();
-        });
-    }
-
-    if (cgCancelRecordingId) {
-        $(cgCancelRecordingId).off();
-        $(cgCancelRecordingId).click(function (event) {
-            console.log("CancelRecording invoked")
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });
@@ -1120,7 +1147,7 @@ $(document).ready(function () {
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
         //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.12:8080/";
+        baseURL = "http://192.168.2.11:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

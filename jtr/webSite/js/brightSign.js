@@ -109,12 +109,12 @@ function executeDeleteSelectedShow(recordingId) {
 }
 
 
-function executeDeleteScheduledRecording(scheduledRecordingId) {
-
-    consoleLog("executeDeleteScheduledRecording " + scheduledRecordingId);
-
-    bsMessage.PostBSMessage({ command: "deleteScheduledRecording", "scheduledRecordingId": scheduledRecordingId });
-}
+//function executeDeleteScheduledRecording(scheduledRecordingId) {
+//
+//    consoleLog("executeDeleteScheduledRecording " + scheduledRecordingId);
+//
+//    bsMessage.PostBSMessage({ command: "deleteScheduledRecording", "scheduledRecordingId": scheduledRecordingId });
+//}
 
 
 function initializeBrightSign() {
@@ -246,7 +246,7 @@ function initializeBrightSign() {
                 break;
             case "deleteScheduledRecording":
                 event["EventType"] = "DELETE_SCHEDULED_RECORDING";
-                event["EventData"] = msg.data.scheduledRecordingId;
+                //event["EventData"] = message.scheduledRecordingId;
                 postMessage(event);
                 break;
             case "addRecord":
