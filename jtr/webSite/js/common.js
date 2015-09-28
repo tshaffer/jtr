@@ -808,26 +808,7 @@ function cgCancelScheduledRecordingFromClient() {
     console.log("cgCancelScheduledRecordingFromClient invoked");
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
-    var id = cgSelectedProgram.scheduledRecordingId;
-
-    //var aUrl = baseURL + "browserCommand";
-    //var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration, "showType": showType,
-    //    "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
-    //    "recordingType": recordingType };
-    //console.log(commandData);
-    //
-    //$.get(aUrl, commandData)
-    //    .done(function (result) {
-    //        console.log("browserCommand successfully sent");
-    //    })
-    //    .fail(function (jqXHR, textStatus, errorThrown) {
-    //        debugger;
-    //        console.log("browserCommand failure");
-    //    })
-    //    .always(function () {
-    //        //alert("recording transmission finished");
-    //    });
-
+    deleteScheduledRecording(cgSelectedProgram.scheduledRecordingId, null);
 }
 
 function cgRecordProgramSetOptions() {
@@ -1146,8 +1127,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.11:8080/";
+        baseURL = "http://10.10.212.44:8080/";
+        //baseURL = "http://192.168.2.11:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }
