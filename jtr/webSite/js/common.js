@@ -29,6 +29,7 @@ var cgCloseEpisodeId;
 var cgRecordSetOptionsId;
 var cgRecordViewUpcomingEpisodesId;
 var cgCancelRecordingId;
+var cgCancelSeriesId;
 
 var cgSelectedStationId;
 var cgSelectedProgram;
@@ -40,8 +41,11 @@ var cgPopupEpisodeHandlers = [cgRecordSelectedProgram, cgRecordProgramSetOptions
 var cgPopupScheduledProgramElement = ["#cgCancelScheduledRecording", "#cgScheduledRecordChangeOptions", "#cgScheduledRecordingViewUpcomingEpisodes", "#cgScheduledRecordingTune", "#cgScheduledRecordingClose"];
 var cgPopupScheduledProgramHandlers = [cgCancelScheduledRecording, cgChangeScheduledRecordingOptions, cgScheduledRecordingViewUpcomingEpisodes, cgScheduledRecordingTune, cgScheduledRecordingClose];
 
-var cgPopupSeriesElements = ["#cgEpisodeRecord", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"];
-var cgPopupSeriesHandlers = [cgRecordSelectedProgram, cgRecordSelectedSeries, cgTune, cgModalClose];
+var cgPopupSeriesElements = ["#cgEpisodeRecord", "cgSeriesRecordSetProgramOptions", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"];
+var cgPopupSeriesHandlers = [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordSelectedSeries, cgTune, cgModalClose];
+
+var cgPopupScheduledSeriesElements = ["cgSeriesCancelEpisode", "cgSeriesCancelSeries", "cgSeriesViewUpcoming", "cgSeriesRecordingTune", "cgSeriesRecordingClose"];
+var cgPopupSchedulesSeriesHandlers = [cgCancelScheduledRecording, cgCancelScheduledSeries, cgScheduledSeriesViewUpcoming, cgTune, cgModalClose];
 
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
@@ -804,6 +808,15 @@ function cgCancelScheduledRecording() {
     console.log("cgCancelScheduledRecording invoked");
 }
 
+function cgCancelScheduledSeries() {
+    console.log("cgCancelScheduledSeries invoked");
+}
+
+
+function cgScheduledSeriesViewUpcoming() {
+    console.log("cgScheduledSeriesViewUpcoming invoked");
+}
+
 function cgCancelScheduledRecordingFromClient() {
     console.log("cgCancelScheduledRecordingFromClient invoked");
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
@@ -863,50 +876,65 @@ function displayCGPopUp() {
         console.log("cgSelectedProgramScheduledToRecord=" + cgSelectedProgramScheduledToRecord.toString());
     }
 
+    cgRecordEpisodeId = null;
+    cgRecordSeriesId = null;
+    cgCancelRecordingId = null;
+    cgCancelSeriesId = null;
+    cgRecordSetOptionsId = null;
+    cgRecordViewUpcomingEpisodesId = null;
+    cgTuneEpisodeId = null;
+
     if (cgSelectedProgram.showType == "Series") {
-        cgPopupId = '#cgSeriesDlg';
-        cgPopupTitle = '#cgSeriesDlgShowTitle';
-        cgPopupElements = cgPopupSeriesElements;
-        cgPopupHandlers = cgPopupSeriesHandlers;
+        if (cgSelectedProgram.scheduledRecordingId == -1) {
+            cgPopupId = '#cgSeriesDlg';
+            cgPopupTitle = '#cgSeriesDlgShowTitle';
+            cgPopupElements = cgPopupSeriesElements;
+            cgPopupHandlers = cgPopupSeriesHandlers;
 
-        cgRecordSetOptionsId = null;
-        cgRecordViewUpcomingEpisodesId = null;
-        cgRecordEpisodeId = "#cgEpisodeRecord";
-        cgRecordSeriesId = "#cgSeriesRecord";
-        cgTuneEpisodeId = "#cgSeriesTune";
-        cgCloseEpisodeId = "#cgSeriesClose";
+            cgRecordEpisodeId = "#cgEpisodeRecord";
+            cgRecordSeriesId = "#cgSeriesRecord";
+            cgTuneEpisodeId = "#cgSeriesTune";
+            cgCloseEpisodeId = "#cgSeriesClose";
+        }
+        else {
+            cgPopupId = '#cgScheduledSeriesDlg';
+            cgPopupTitle = '#cgScheduledSeriesDlgTitle';
+            cgPopupElements = cgPopupScheduledSeriesElements;
+            cgPopupHandlers = cgPopupSchedulesSeriesHandlers;
 
-        cgCancelRecordingId = null;
+            cgCancelRecordingId = "cgSeriesCancelEpisode";
+            cgCancelSeriesId = "cgSeriesCancelSeries";
+            cgRecordViewUpcomingEpisodesId = "cgSeriesViewUpcoming";
+            cgTuneEpisodeId = "#cgSeriesRecordingTune";
+            cgCloseEpisodeId = "#cgSeriesRecordingClose";
+        }
     }
-    else if (cgSelectedProgram.scheduledRecordingId == -1) {
-        cgPopupId = '#cgProgramDlg';
-        cgPopupTitle = '#cgProgramDlgShowTitle';
-        cgPopupElements = cgPopupEpisodeElements;
-        cgPopupHandlers = cgPopupEpisodeHandlers;
+    else        // single program recordings (not series)
+    {
+        if (cgSelectedProgram.scheduledRecordingId == -1) {         // no recording set
+            cgPopupId = '#cgProgramDlg';
+            cgPopupTitle = '#cgProgramDlgShowTitle';
+            cgPopupElements = cgPopupEpisodeElements;
+            cgPopupHandlers = cgPopupEpisodeHandlers;
 
-        cgRecordEpisodeId = "#cgProgramRecord";
-        cgRecordSeriesId = null;
-        cgTuneEpisodeId = "#cgProgramTune";
-        cgCloseEpisodeId = "#cgProgramClose";
+            cgRecordEpisodeId = "#cgProgramRecord";
+            cgRecordSetOptionsId = "#cgProgramRecordSetOptions";
+            cgRecordViewUpcomingEpisodesId = "#cgProgramViewUpcomingEpisodes";
+            cgTuneEpisodeId = "#cgProgramTune";
+            cgCloseEpisodeId = "#cgProgramClose";
+        }
+    else {                                                          // recording already setup
+            cgPopupId = '#cgScheduledRecordingDlg';
+            cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
+            cgPopupElements = cgPopupScheduledProgramElement;
+            cgPopupHandlers = cgPopupScheduledProgramHandlers;
 
-        cgRecordSetOptionsId = "#cgProgramRecordSetOptions";
-        cgRecordViewUpcomingEpisodesId = "#cgProgramViewUpcomingEpisodes";
-        cgCancelRecordingId = null;
-    }
-    else {
-        cgPopupId = '#cgScheduledRecordingDlg';
-        cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
-        cgPopupElements = cgPopupScheduledProgramElement;
-        cgPopupHandlers = cgPopupScheduledProgramHandlers;
-
-        cgRecordEpisodeId = null;
-        cgRecordSeriesId = null;
-        cgTuneEpisodeId = "#cgScheduledRecordingTune";
-        cgCloseEpisodeId = "#cgScheduledRecordingClose";
-
-        cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
-        cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
-        cgCancelRecordingId = "#cgCancelScheduledRecording";
+            cgCancelRecordingId = "#cgCancelScheduledRecording";
+            cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
+            cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
+            cgTuneEpisodeId = "#cgScheduledRecordingTune";
+            cgCloseEpisodeId = "#cgScheduledRecordingClose";
+        }
     }
 
     // setup handlers for browser
@@ -946,14 +974,6 @@ function displayCGPopUp() {
         });
     }
 
-    if (cgCloseEpisodeId) {
-        $(cgCloseEpisodeId).off();
-        $(cgCloseEpisodeId).click(function (event) {
-            cgProgramDlgCloseInvoked();
-            ChannelGuideSingleton.getInstance().reselectCurrentProgram();
-        });
-    }
-
     if (cgRecordSetOptionsId) {
         $(cgRecordSetOptionsId).off();
         $(cgRecordSetOptionsId).click(function (event) {
@@ -971,6 +991,15 @@ function displayCGPopUp() {
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });
     }
+
+    if (cgCloseEpisodeId) {
+        $(cgCloseEpisodeId).off();
+        $(cgCloseEpisodeId).click(function (event) {
+            cgProgramDlgCloseInvoked();
+            ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+        });
+    }
+
 
     cgPopupSelectedIndex = 0;
 
