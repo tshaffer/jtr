@@ -253,8 +253,7 @@ Sub addScheduledRecording(userData As Object, e as Object)
 	scheduledRecording.inputSource$ = requestParams.inputSource
 	scheduledRecording.recordingBitRate% = int(val(requestParams.recordingBitRate))
 	scheduledRecording.segmentRecording% = int(val(requestParams.segmentRecording))
-	scheduledRecording.showType$ = requestParams.showType
-	scheduledRecording.recordingType$ = requestParams.recordingType
+	scheduledRecording.scheduledSeriesRecordingId% = requestParams.scheduledSeriesRecordingId
 
 	mVar.AddDBScheduledRecording(scheduledRecording)
 
@@ -282,7 +281,6 @@ Sub addScheduledSeriesRecording(userData As Object, e as Object)
 	scheduledRecording.inputSource$ = requestParams.inputSource
 	scheduledRecording.recordingBitRate% = int(val(requestParams.recordingBitRate))
 	scheduledRecording.segmentRecording% = int(val(requestParams.segmentRecording))
-	scheduledRecording.showType$ = requestParams.showType
 	scheduledRecording.maxRecordings% = int(val(requestParams.maxRecordings))
 	scheduledRecording.recordReruns% = int(val(requestParams.recordReruns))
 

@@ -254,12 +254,11 @@ function initializeBrightSign() {
                 event["DateTime"] = message.dateTime;
                 event["Title"] = message.title;
                 event["Duration"] = message.duration;
-                event["ShowType"] = message.showType;
                 event["InputSource"] = message.inputSource;
                 event["Channel"] = message.channel;
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
-                event["RecordingType"] = message.recordingType;
+                event["ScheduledSeriesRecordingId"] = message.scheduledSeriesRecordingId;
                 postMessage(event);
                 break;
             case "recordNow":
@@ -270,8 +269,7 @@ function initializeBrightSign() {
                 event["Channel"] = message.channel;
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
-                event["ShowType"] = message.showType;
-                event["RecordingType"] = "Single";
+                event["ScheduledSeriesRecordingId"] = -1;
                 postMessage(event);
                 break;
             case "manualRecord":
@@ -283,8 +281,7 @@ function initializeBrightSign() {
                 event["Channel"] = message.channel;
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
-                event["ShowType"] = message.showType;
-                event["RecordingType"] = "Single";
+                event["ScheduledSeriesRecordingId"] = -1;
                 postMessage(event);
                 break;
             case "tuneLiveVideoChannel":

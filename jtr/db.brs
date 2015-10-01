@@ -16,10 +16,10 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE SchemaVersion (Version TEXT);")
 		m.SetDBVersion(m.dbSchemaVersion$)
 
-		m.CreateDBTable("CREATE TABLE Recordings (RecordingId INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDateTime TEXT, Duration INT, ShowType TEXT, FileName TEXT, LastViewedPosition INT, TranscodeComplete INT, HLSSegmentationComplete INT, HLSUrl TEXT);")
+		m.CreateDBTable("CREATE TABLE Recordings (RecordingId INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDateTime TEXT, Duration INT, FileName TEXT, LastViewedPosition INT, TranscodeComplete INT, HLSSegmentationComplete INT, HLSUrl TEXT);")
 
-		m.CreateDBTable("CREATE TABLE ScheduledRecordings (Id INTEGER PRIMARY KEY AUTOINCREMENT, DateTime TEXT, EndDateTime TEXT, Title TEXT, Duration INT, InputSource TEXT, Channel TEXT, RecordingBitRate INT, SegmentRecording INT, ShowType TEXT, RecordingType TEXT);")
-		m.CreateDBTable("CREATE TABLE ScheduledSeriesRecordings (Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, InputSource TEXT, Channel TEXT, RecordingBitRate INT, SegmentRecording INT, ShowType TEXT, MaxRecordings INT, RecordReruns INT);")
+		m.CreateDBTable("CREATE TABLE ScheduledRecordings (Id INTEGER PRIMARY KEY AUTOINCREMENT, DateTime TEXT, EndDateTime TEXT, Title TEXT, Duration INT, InputSource TEXT, Channel TEXT, RecordingBitRate INT, SegmentRecording INT, ScheduledSeriesRecordingId INT);")
+		m.CreateDBTable("CREATE TABLE ScheduledSeriesRecordings (Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, InputSource TEXT, Channel TEXT, RecordingBitRate INT, SegmentRecording INT, MaxRecordings INT, RecordReruns INT);")
 
 		m.CreateDBTable("CREATE TABLE Settings (RecordingBitRate INT, SegmentRecordings INT);")
 		m.InitializeDBSettings()
@@ -206,9 +206,9 @@ End Function
 
 Sub AddDBScheduledRecording(scheduledRecording As Object)
 
-	insertSQL$ = "INSERT INTO ScheduledRecordings (DateTime, EndDateTime, Duration, Title, InputSource, Channel, RecordingBitRate, SegmentRecording, ShowType, RecordingType) VALUES(?,?,?,?,?,?,?,?,?,?);"
+	insertSQL$ = "INSERT INTO ScheduledRecordings (DateTime, EndDateTime, Duration, Title, InputSource, Channel, RecordingBitRate, SegmentRecording, ScheduledSeriesRecordId) VALUES(?,?,?,?,?,?,?,?,?);"
 
-	params = CreateObject("roArray", 10, false)
+	params = CreateObject("roArray", 9, false)
 	params[ 0 ] = scheduledRecording.dateTime
 	params[ 1 ] = scheduledRecording.endDateTime
 	params[ 2 ] = scheduledRecording.duration%
@@ -217,8 +217,7 @@ Sub AddDBScheduledRecording(scheduledRecording As Object)
 	params[ 5 ] = scheduledRecording.channel$
 	params[ 6 ] = scheduledRecording.recordingBitRate%
 	params[ 7 ] = scheduledRecording.segmentRecording%
-	params[ 8 ] = scheduledRecording.showType$
-	params[ 9 ] = scheduledRecording.recordingType$
+	params[ 8 ] = scheduledRecording.scheduledSeriesRecordingId%
 
 	m.ExecuteDBInsert(insertSQL$, params)
 
@@ -227,17 +226,16 @@ End Sub
 
 Sub AddDBScheduledSeriesRecording(scheduledRecording As Object)
 
-	insertSQL$ = "INSERT INTO ScheduledSeriesRecordings (Title, InputSource, Channel, RecordingBitRate, SegmentRecording, ShowType, MaxRecordings, RecordReruns) VALUES(?,?,?,?,?,?,?,?);"
+	insertSQL$ = "INSERT INTO ScheduledSeriesRecordings (Title, InputSource, Channel, RecordingBitRate, SegmentRecording, MaxRecordings, RecordReruns) VALUES(?,?,?,?,?,?,?);"
 
-	params = CreateObject("roArray", 8, false)
+	params = CreateObject("roArray", 7, false)
 	params[ 0 ] = scheduledRecording.title$
 	params[ 1 ] = scheduledRecording.inputSource$
 	params[ 2 ] = scheduledRecording.channel$
 	params[ 3 ] = scheduledRecording.recordingBitRate%
 	params[ 4 ] = scheduledRecording.segmentRecording%
-	params[ 5 ] = scheduledRecording.showType$
-	params[ 6 ] = scheduledRecording.maxRecordings%
-	params[ 7 ] = scheduledRecording.recordReruns%
+	params[ 5 ] = scheduledRecording.maxRecordings%
+	params[ 6 ] = scheduledRecording.recordReruns%
 
 	m.ExecuteDBInsert(insertSQL$, params)
 
@@ -294,7 +292,7 @@ Function GetDBScheduledRecordings(currentDateTime$ As String) As Object
 	selectData = {}
 	selectData.scheduledRecordings = []
 
-	select$ = "SELECT Id, DateTime, EndDateTime, Duration, Title, InputSource, Channel, RecordingBitRate, SegmentRecording, ShowType, RecordingType FROM ScheduledRecordings WHERE EndDateTime >= '" + currentDateTime$ + "' order by DateTime;"
+	select$ = "SELECT Id, DateTime, EndDateTime, Duration, Title, InputSource, Channel, RecordingBitRate, SegmentRecording, ScheduledSeriesRecordingId FROM ScheduledRecordings WHERE EndDateTime >= '" + currentDateTime$ + "' order by DateTime;"
 	m.ExecuteDBSelect(select$, GetDBScheduledRecordingsCallback, selectData, invalid)
 
 	return selectData.scheduledRecordings
@@ -307,7 +305,7 @@ Function GetDBScheduledSeriesRecordings() As Object
 	selectData = {}
 	selectData.scheduledRecordings = []
 
-	select$ = "SELECT Id, Title, InputSource, Channel, RecordingBitRate, SegmentRecording, ShowType, MaxRecordings, RecordReruns FROM ScheduledSeriesRecordings;"
+	select$ = "SELECT Id, Title, InputSource, Channel, RecordingBitRate, SegmentRecording, MaxRecordings, RecordReruns FROM ScheduledSeriesRecordings;"
 	m.ExecuteDBSelect(select$, GetDBScheduledRecordingsCallback, selectData, invalid)
 
 	return selectData.scheduledRecordings
@@ -321,18 +319,17 @@ Sub AddDBRecording(scheduledRecording As Object)
 	' convert duration from msec to minutes
 	duration% = (scheduledRecording.duration% + 30000) / 60000
 
-	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, ShowType, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl) VALUES(?,?,?,?,?,?,?,?,?);"
+	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl) VALUES(?,?,?,?,?,?,?,?,?);"
 
-	params = CreateObject("roArray", 9, false)
+	params = CreateObject("roArray", 8, false)
 	params[ 0 ] = scheduledRecording.title$
 	params[ 1 ] = scheduledRecording.dateTime.GetString()
 	params[ 2 ] = duration%
-	params[ 3 ] = scheduledRecording.showType$
-	params[ 4 ] = scheduledRecording.fileName$
+	params[ 3 ] = scheduledRecording.fileName$
+	params[ 4 ] = 0
 	params[ 5 ] = 0
 	params[ 6 ] = 0
-	params[ 7 ] = 0
-	params[ 8 ] = ""
+	params[ 7 ] = ""
 
 	m.ExecuteDBInsert(insertSQL$, params)
 
@@ -448,7 +445,7 @@ Function GetDBRecordings() As Object
 	selectData = {}
 	selectData.recordings = []
 
-	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, ShowType, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl FROM Recordings;"
+	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl FROM Recordings;"
 	m.ExecuteDBSelect(select$, GetDBRecordingsCallback, selectData, invalid)
 
 	return selectData.recordings
@@ -469,7 +466,7 @@ Function GetDBRecording(recordingId As String) As Object
 	selectData = {}
 	selectData.recording = invalid
 
-	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, ShowType, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl FROM Recordings WHERE RecordingId='" + recordingId + "';"
+	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl FROM Recordings WHERE RecordingId='" + recordingId + "';"
 	m.ExecuteDBSelect(select$, GetDBRecordingCallback, selectData, invalid)
 
 	return selectData.recording
@@ -482,7 +479,7 @@ Function GetDBRecordingByFileName(fileName$ As String) As Object
 	selectData = {}
 	selectData.recording = invalid
 
-	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, ShowType, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl FROM Recordings WHERE FileName='" + fileName$ + "';"
+	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl FROM Recordings WHERE FileName='" + fileName$ + "';"
 	m.ExecuteDBSelect(select$, GetDBRecordingCallback, selectData, invalid)
 
 	return selectData.recording
@@ -543,7 +540,7 @@ Function GetDBFileToTranscode() As Object
 	selectData = {}
 	selectData.recording = invalid
 
-	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, ShowType, FileName, LastViewedPosition, TranscodeComplete FROM Recordings WHERE TranscodeComplete=0;"
+	select$ = "SELECT RecordingId, Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete FROM Recordings WHERE TranscodeComplete=0;"
 	m.ExecuteDBSelect(select$, GetDBFileToTranscodeCallback, selectData, invalid)
 
 	return selectData.recording

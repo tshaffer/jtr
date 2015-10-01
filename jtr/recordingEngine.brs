@@ -78,7 +78,6 @@ Sub re_HandleHttpEvent(event As Object)
 					scheduledRecording.duration% = int(val(duration$))
 					scheduledRecording.channel$ = aa.channel
 					scheduledRecording.recordingBitRate% = int(val(aa.recordingBitRate))
-					scheduledRecording.showType$ = aa.showType
 
 					segmentRecording = int(val(aa.segmentRecording))
 					if segmentRecording = 0 then

@@ -702,7 +702,7 @@ function updateCGProgramDlgSelection() {
 }
 
 
-function cgRecordProgram(showType, recordingType) {
+function cgRecordProgram() {
     // redundant in some cases (when selected from pop up); not when record button pressed
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -713,9 +713,8 @@ function cgRecordProgram(showType, recordingType) {
     event["DateTime"] = cgSelectedProgram.date;
     event["Title"] = cgSelectedProgram.title;
     event["Duration"] = cgSelectedProgram.duration;
-    event["ShowType"] = showType;
     event["InputSource"] = "tuner";
-    event["RecordingType"] = recordingType;
+    event["ScheduledSeriesRecordingId"] = cgSelectedProgram.scheduledSeriesRecordingId;
 
     var stationName = getStationFromId(cgSelectedStationId);
 
@@ -734,20 +733,15 @@ function cgRecordProgram(showType, recordingType) {
 
 function cgRecordSelectedProgram() {
 
-    // redundant in some cases (when selected from pop up); not when record button pressed
+    // setting cgSelectedProgram and cgSelectedStationId is redundant in some cases (when selected from pop up); not when record button pressed
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
     cgSelectedStationId = programData.stationId;
 
-    if (cgSelectedProgram.showType == "Series") {
-        return cgRecordProgram("", "single");
-    }
-    else {
-        return cgRecordProgram(cgSelectedProgram.showType, "single");
-    }
+    cgRecordProgram();
 }
 
-function cgRecordProgramFromClient(showType, recordingType) {
+function cgRecordProgramFromClient() {
 
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -757,9 +751,9 @@ function cgRecordProgramFromClient(showType, recordingType) {
     stationName = stationName.replace(".", "-");
 
     var aUrl = baseURL + "browserCommand";
-    var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration, "showType": showType,
+    var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration,
         "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
-        "recordingType": recordingType };
+        "scheduledSeriesRecordingId": cgSelectedProgram.scheduledSeriesRecordingId };
     console.log(commandData);
 
     $.get(aUrl, commandData)
@@ -783,22 +777,17 @@ function cgRecordSelectedProgramFromClient() {
     cgSelectedProgram = programData.program;
     cgSelectedStationId = programData.stationId;
 
-    if (cgSelectedProgram.showType == "Series") {
-        return cgRecordProgramFromClient("", "single");
-    }
-    else {
-        return cgRecordProgramFromClient(cgSelectedProgram.showType, "single");
-    }
+    cgRecordProgramFromClient();
 }
 
 
 function cgRecordSelectedSeriesFromClient() {
 
-    return cgRecordProgramFromClient("Series", "series");
+    return cgRecordProgramFromClient();
 }
 
 function cgRecordSelectedSeries() {
-    return cgRecordProgram("Series", "series");
+    return cgRecordProgram();
 }
 
 
@@ -884,7 +873,7 @@ function displayCGPopUp() {
     cgRecordViewUpcomingEpisodesId = null;
     cgTuneEpisodeId = null;
 
-    if (cgSelectedProgram.showType == "Series") {
+    if (cgSelectedProgram.scheduledSeriesRecordingId > 0) {
         if (cgSelectedProgram.scheduledRecordingId == -1) {
             cgPopupId = '#cgSeriesDlg';
             cgPopupTitle = '#cgSeriesDlgShowTitle';
@@ -1156,8 +1145,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        baseURL = "http://10.10.212.44:8080/";
-        //baseURL = "http://192.168.2.11:8080/";
+        //baseURL = "http://10.10.212.44:8080/";
+        baseURL = "http://192.168.2.11:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

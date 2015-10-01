@@ -823,8 +823,8 @@ function updateScheduledRecordings() {
                                     scheduledEpisode.InputSource = scheduledSeriesRecording.InputSource;
                                     scheduledEpisode.RecordingBitRate = scheduledSeriesRecording.RecordingBitRate;
                                     scheduledEpisode.SegmentRecording = scheduledSeriesRecording.SegmentRecording;
-                                    scheduledEpisode.ShowType = scheduledSeriesRecording.ShowType;
                                     scheduledEpisode.Title = scheduledSeriesRecording.Title;
+                                    scheduledEpisode.ScheduledSeriesRecordingId = scheduledSeriesRecording.Id;
 
                                     // add scheduledEpisode to scheduledRecordings
                                     aUrl = baseURL + "addScheduledRecording";
@@ -840,8 +840,7 @@ function updateScheduledRecordings() {
                                         "channel": scheduledEpisode.Channel,
                                         "recordingBitRate": scheduledEpisode.RecordingBitRate,
                                         "segmentRecording": scheduledEpisode.SegmentRecording,
-                                        "showType": scheduledEpisode.ShowType,
-                                        "recordingType": "single"
+                                        "scheduledSeriesRecordingId": scheduledEpisode.ScheduledSeriesRecordingId
                                     };
 
                                     $.get(aUrl, recordingData)
