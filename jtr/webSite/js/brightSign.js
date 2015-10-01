@@ -261,6 +261,16 @@ function initializeBrightSign() {
                 event["ScheduledSeriesRecordingId"] = message.scheduledSeriesRecordingId;
                 postMessage(event);
                 break;
+            case "addSeries":
+                event["EventType"] = "ADD_SERIES";
+                event["Title"] = message.title;
+                event["InputSource"] = message.inputSource;
+                event["Channel"] = message.channel;
+                event["RecordingBitRate"] = message.recordingBitRate;
+                event["SegmentRecording"] = message.segmentRecording;
+                event["ScheduledSeriesRecordingId"] = message.scheduledSeriesRecordingId;
+                postMessage(event);
+                break;
             case "recordNow":
                 event["EventType"] = "RECORD_NOW";
                 event["Title"] = message.title;

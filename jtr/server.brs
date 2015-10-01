@@ -253,7 +253,7 @@ Sub addScheduledRecording(userData As Object, e as Object)
 	scheduledRecording.inputSource$ = requestParams.inputSource
 	scheduledRecording.recordingBitRate% = int(val(requestParams.recordingBitRate))
 	scheduledRecording.segmentRecording% = int(val(requestParams.segmentRecording))
-	scheduledRecording.scheduledSeriesRecordingId% = requestParams.scheduledSeriesRecordingId
+	scheduledRecording.scheduledSeriesRecordingId% = int(val(requestParams.scheduledSeriesRecordingId))
 
 	mVar.AddDBScheduledRecording(scheduledRecording)
 

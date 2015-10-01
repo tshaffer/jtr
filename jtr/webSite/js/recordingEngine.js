@@ -25,7 +25,9 @@
     this.stIdle.recordingObsolete = this.recordingObsolete;
     this.stIdle.deleteScheduledRecording = this.deleteScheduledRecording;
     this.stIdle.handleAddRecord = this.handleAddRecord;
-    this.stIdle.addToDB = this.addToDB;
+    this.stIdle.handleAddSeries = this.handleAddSeries;
+    this.stIdle.addProgramToDB = this.addProgramToDB;
+    this.stIdle.addSeriesToDB = this.addSeriesToDB;
 
     this.stRecording = new HState(this, "Recording");
     this.stRecording.HStateEventHandler = this.STRecordingEventHandler;
@@ -36,7 +38,9 @@
     this.stRecording.recordingObsolete = this.recordingObsolete;
     this.stRecording.executeStartRecording = this.executeStartRecording;
     this.stRecording.handleAddRecord = this.handleAddRecord;
-    this.stRecording.addToDB = this.addToDB;
+    this.stRecording.handleAddSeries = this.handleAddSeries;
+    this.stRecording.addProgramToDB = this.addProgramToDB;
+    this.stRecording.addSeriesToDB = this.addSeriesToDB;
     this.stRecording.deleteScheduledRecording = this.deleteScheduledRecording;
 
     this.topState = this.stTop;
@@ -268,6 +272,9 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
     else if (event["EventType"] == "ADD_RECORD") {
         return this.handleAddRecord(event, stateData, true);
     }
+    else if (event["EventType"] == "ADD_SERIES") {
+        return this.handleAddSeries(event, stateData, true);
+    }
     else if (event["EventType"] == "SCHEDULED_RECORDINGS_UPDATED") {
         console.log("SCHEDULED_RECORDINGS_UPDATED received.");
         this.stateMachine.buildToDoList();
@@ -287,29 +294,22 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
 }
 
 
-recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, idle) {
+recordingEngineStateMachine.prototype.addProgramToDB = function (dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, idle) {
 
     var aUrl;
     var recordingData;
     var recordingEngineIdle = idle;
 
-    if (recordingType.toLowerCase() == "series") {
-        aUrl = baseURL + "addScheduledSeriesRecording";
-        recordingData = { "title": title, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "maxRecordings": 5, "recordReruns": 1 };
-    }
-    else {
+    aUrl = baseURL + "addScheduledRecording";
 
-        aUrl = baseURL + "addScheduledRecording";
+    var dtStartOfRecording = new Date(dateTime);
+    var isoDateTime = dtStartOfRecording.toISOString();
 
-        var dtStartOfRecording = new Date(dateTime);
-        var isoDateTime = dtStartOfRecording.toISOString();
+    var endDateTime = new Date(dtStartOfRecording);
+    endDateTime.setSeconds(endDateTime.getSeconds() + durationInMinutes * 60);
+    var isoEndDate = endDateTime.toISOString();
 
-        var endDateTime = new Date(dtStartOfRecording);
-        endDateTime.setSeconds(endDateTime.getSeconds() + durationInMinutes * 60);
-        var isoEndDate = endDateTime.toISOString();
-
-        recordingData = { "dateTime": isoDateTime, "endDateTime": isoEndDate, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
-    }
+    recordingData = { "dateTime": isoDateTime, "endDateTime": isoEndDate, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
 
     var self = this;
 
@@ -317,74 +317,10 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
         .done(function (result) {
             consoleLog("addScheduledRecording successfully sent");
             var scheduledRecordingId = Number(result);
-            if (recordingType != "series") {
-                this.recordingId = scheduledRecordingId;
-            }
+            this.recordingId = scheduledRecordingId;
             consoleLog("scheduledRecordingId=" + scheduledRecordingId);
 
-            if (scheduledSeriesRecordingId > 0) {
-
-                // series recording has been added - add episodes in epg data to scheduledRecordings
-                var epgStartDate = Date.now().toISOString();
-                var atsc = channel.split("-");
-                var getEpgMatchingProgramsData = {
-                    "startDate": epgStartDate,
-                    "title": title,
-                    "atscMajor": atsc[0],
-                    "atscMinor": atsc[1]
-                };
-
-                var url = baseURL + "getEpgMatchingPrograms";
-                $.get(url, getEpgMatchingProgramsData)
-                    .done(function (result) {
-
-                        // save all promises so that their completion can be tracked
-                        var promises = [];
-
-                        consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpgMatchingPrograms success ************************************");
-
-                        // add each matching program to scheduledRecordings
-                        $.each(result, function (index, seriesEpisode) {
-
-                            promises.push(new Promise(function(resolve, reject) {
-
-                                // add scheduledEpisode to scheduledRecordings
-                                aUrl = baseURL + "addScheduledRecording";
-
-                                // JTRTODO - check units of Duration (expect it to be minutes here)
-                                var endDateTime = new Date(seriesEpisode.AirDateTime);
-                                endDateTime.setSeconds(endDateTime.getSeconds() + seriesEpisode.Duration * 60);
-                                var isoEndDate = endDateTime.toISOString();
-
-                                recordingData = {
-                                    "dateTime": seriesEpisode.AirDateTime,
-                                    "endDateTime": isoEndDate,
-                                    "title": title,
-                                    "duration": seriesEpisode.Duration,
-                                    "inputSource": inputSource,
-                                    "channel": channel,
-                                    "recordingBitRate": recordingBitRate,
-                                    "segmentRecording": segmentRecording,
-                                    "scheduledSeriesRecordingId": scheduledSeriesRecordingId
-                                };
-                                $.get(aUrl, recordingData)
-                                    .then(function (result) {
-                                        resolve();
-                                        console.log("series episode added successfully")
-                                    }, function() {
-                                        reject();
-                                    });
-                                }))
-                        });
-
-                        Promise.all(promises).then(function() {
-                            if (idle) {
-                                self.stateMachine.buildToDoList();
-                            }
-                        });
-                });
-            }
-            else if (idle) {
+            if (idle) {
                 self.stateMachine.buildToDoList();
             }
         })
@@ -395,7 +331,94 @@ recordingEngineStateMachine.prototype.addToDB = function (dateTime, title, durat
         })
         .always(function () {
             //alert("recording transmission finished");
-        });
+        }
+        );
+}
+
+
+recordingEngineStateMachine.prototype.addSeriesToDB = function (title, inputSource, channel, recordingBitRate, segmentRecording, idle) {
+
+    var recordingData;
+    var recordingEngineIdle = idle;
+
+    var aUrl = baseURL + "addScheduledSeriesRecording";
+    recordingData = { "title": title, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "maxRecordings": 5, "recordReruns": 1 };
+
+    var self = this;
+
+    $.get(aUrl, recordingData)
+        .done(function (result) {
+            consoleLog("addScheduledSeriesRecording successfully sent");
+            var scheduledSeriesRecordingId = Number(result);
+            consoleLog("scheduledSeriesRecordingId=" + scheduledSeriesRecordingId);
+
+            // series recording has been added - add episodes in epg data to scheduledRecordings
+            var epgStartDate = Date.now().toISOString();
+            var atsc = channel.split("-");
+            var getEpgMatchingProgramsData = {
+                "startDate": epgStartDate,
+                "title": title,
+                "atscMajor": atsc[0],
+                "atscMinor": atsc[1]
+            };
+
+            var url = baseURL + "getEpgMatchingPrograms";
+            $.get(url, getEpgMatchingProgramsData)
+                .done(function (result) {
+
+                    // save all promises so that their completion can be tracked
+                    var promises = [];
+
+                    consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpgMatchingPrograms success ************************************");
+
+                    // add each matching program to scheduledRecordings
+                    $.each(result, function (index, seriesEpisode) {
+
+                        promises.push(new Promise(function(resolve, reject) {
+
+                            // add scheduledEpisode to scheduledRecordings
+                            aUrl = baseURL + "addScheduledRecording";
+
+                            // JTRTODO - check units of Duration (expect it to be minutes here)
+                            var endDateTime = new Date(seriesEpisode.AirDateTime);
+                            endDateTime.setSeconds(endDateTime.getSeconds() + seriesEpisode.Duration * 60);
+                            var isoEndDate = endDateTime.toISOString();
+
+                            recordingData = {
+                                "dateTime": seriesEpisode.AirDateTime,
+                                "endDateTime": isoEndDate,
+                                "title": title,
+                                "duration": seriesEpisode.Duration,
+                                "inputSource": inputSource,
+                                "channel": channel,
+                                "recordingBitRate": recordingBitRate,
+                                "segmentRecording": segmentRecording,
+                                "scheduledSeriesRecordingId": scheduledSeriesRecordingId
+                            };
+                            $.get(aUrl, recordingData)
+                                .then(function (result) {
+                                    resolve();
+                                    console.log("series episode added successfully")
+                                }, function() {
+                                    reject();
+                                });
+                        }))
+                    });
+
+                    Promise.all(promises).then(function() {
+                        if (idle) {
+                            self.stateMachine.buildToDoList();
+                        }
+                    });
+            });
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            consoleLog("addScheduledRecording failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        })
 }
 
 
@@ -421,7 +444,21 @@ recordingEngineStateMachine.prototype.handleAddRecord = function (event, stateDa
     }
 
     // add the recording to the db
-    this.addToDB(dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, idle);
+    this.addProgramToDB(dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, idle);
+}
+
+
+recordingEngineStateMachine.prototype.handleAddSeries = function (event, stateData, idle) {
+
+    // get recording parameters
+    var title = event["Title"];
+    var inputSource = event["InputSource"];
+    var channel = event["Channel"];
+    var recordingBitRate = event["RecordingBitRate"];
+    var segmentRecording = event["SegmentRecording"];
+
+    // add the series to the db
+    this.addSeriesToDB(title, inputSource, channel, recordingBitRate, segmentRecording, idle);
 }
 
 
@@ -451,6 +488,9 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
     }
     else if (event["EventType"] == "ADD_RECORD") {
         return this.handleAddRecord(event, stateData, false);
+    }
+    else if (event["EventType"] == "ADD_SERIES") {
+        return this.handleAddSeries(event, stateData, false);
     }
 
     stateData.nextState = this.superState;
