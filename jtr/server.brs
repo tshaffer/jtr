@@ -30,8 +30,10 @@ Sub InitializeServer()
 	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledRecording", user_data: m.deleteScheduledRecordingAA })
 
 	' delete a scheduled series recording
-	m.deleteScheduledSeriesRecordingAA =			{ HandleEvent: deleteScheduledSeriesRecording, mVar: m }
-	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledSeriesRecording", user_data: m.deleteScheduledSeriesRecordingAA })
+'	m.deleteScheduledSeriesRecordingAA =			{ HandleEvent: deleteScheduledSeriesRecording, mVar: m }
+'	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledSeriesRecording", user_data: m.deleteScheduledSeriesRecordingAA })
+	m.deleteScheduledSeriesAA =			{ HandleEvent: deleteScheduledSeries, mVar: m }
+	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledSeries", user_data: m.deleteScheduledSeriesAA })
 
 	' get scheduled recordings
 	m.getScheduledRecordingsAA =		{ HandleEvent: getScheduledRecordings, mVar: m }
@@ -357,12 +359,29 @@ Sub deleteScheduledRecording(userData As Object, e as Object)
 End Sub
 
 
-Sub deleteScheduledSeriesRecording(userData As Object, e as Object)
+'Sub deleteScheduledSeriesRecording(userData As Object, e as Object)
 
-	print "deleteScheduledSeriesRecording endpoint invoked"
+'	print "deleteScheduledSeriesRecording endpoint invoked"
 
-    mVar = userData.mVar
-	mVar.deleteScheduledRecordingRow(mVar, mVar.DeleteDBScheduledSeriesRecording, userData, e)
+'    mVar = userData.mVar
+'	mVar.deleteScheduledRecordingRow(mVar, mVar.DeleteDBScheduledSeriesRecording, userData, e)
+
+'End Sub
+
+Sub deleteScheduledSeries(userData As Object, e as Object)
+
+	print "deleteScheduledSeries endpoint invoked"
+
+	mVar = userData.mVar
+	requestParams = e.GetRequestParams()
+
+	mVar.DeleteDBScheduledSeries(requestParams.scheduledSeriesRecordingId)
+	mVar.DeleteDBScheduledProgramsInSeries(requestParams.scheduledSeriesRecordingId)
+
+    e.AddResponseHeader("Content-type", "text/plain")
+    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
+	e.SetResponseBodyString("OK")
+	e.SendResponse(200)
 
 End Sub
 

@@ -837,6 +837,14 @@ function cgCancelScheduledRecordingFromClient() {
     deleteScheduledRecording(cgSelectedProgram.scheduledRecordingId, null);
 }
 
+
+function cgCancelScheduledSeriesFromClient() {
+    console.log("cgCancelScheduledSeriesFromClient invoked");
+    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
+    cgSelectedProgram = programData.program;
+    deleteScheduledSeries(cgSelectedProgram.scheduledSeriesRecordingId);
+}
+
 function cgRecordProgramSetOptions() {
     console.log("cgRecordProgramSetOptions invoked");
 }
@@ -883,6 +891,7 @@ function displayCGPopUp() {
             cgSelectedProgramScheduledToRecord = programsMatch(scheduledRecording, cgSelectedProgram, cgSelectedStationId);
             if (cgSelectedProgramScheduledToRecord) {
                 cgSelectedProgram.scheduledRecordingId = scheduledRecording.Id;
+                cgSelectedProgram.scheduledSeriesRecordingId = scheduledRecording.ScheduledSeriesRecordingId;
                 return false;
             }
         });
@@ -915,9 +924,9 @@ function displayCGPopUp() {
             cgPopupElements = cgPopupScheduledSeriesElements;
             cgPopupHandlers = cgPopupSchedulesSeriesHandlers;
 
-            cgCancelRecordingId = "cgSeriesCancelEpisode";
-            cgCancelSeriesId = "cgSeriesCancelSeries";
-            cgRecordViewUpcomingEpisodesId = "cgSeriesViewUpcoming";
+            cgCancelRecordingId = "#cgSeriesCancelEpisode";
+            cgCancelSeriesId = "#cgSeriesCancelSeries";
+            cgRecordViewUpcomingEpisodesId = "#cgSeriesViewUpcoming";
             cgTuneEpisodeId = "#cgSeriesRecordingTune";
             cgCloseEpisodeId = "#cgSeriesRecordingClose";
         }
@@ -982,6 +991,16 @@ function displayCGPopUp() {
         $(cgCancelRecordingId).click(function (event) {
             console.log("CancelRecording invoked");
             cgCancelScheduledRecordingFromClient();
+            cgProgramDlgCloseInvoked();
+            ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+        });
+    }
+
+    if (cgCancelSeriesId) {
+        $(cgCancelSeriesId).off();
+        $(cgCancelSeriesId).click(function (event) {
+            console.log("CancelSeriesRecording invoked");
+            cgCancelScheduledSeriesFromClient();
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });

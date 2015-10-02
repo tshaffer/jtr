@@ -264,6 +264,31 @@ function deleteScheduledRecording(scheduledRecordingId, nextFunction) {
     //    });
 }
 
+function deleteScheduledSeries(scheduledSeriesRecordingId) {
+
+    // items that need to be done - in the following order (does this need to be a synchronous call? - make it one whether required or not)
+    //      delete from scheduled series table
+    //      update to do list (even if not idle? - no, assuming clicking on the UI function calls it to be called)
+    //      delete individual episodes from scheduledRecordings table
+
+    var aUrl = baseURL + "deleteScheduledSeries";
+    var commandData = { "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
+    console.log(commandData);
+
+    $.get(aUrl, commandData)
+        .done(function (result) {
+            console.log("deleteScheduledSeries success");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            console.log("deleteScheduledSeries failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        });
+
+}
+
 function playSelectedShowFromBeginning(event) {
 }
 

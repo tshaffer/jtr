@@ -273,10 +273,42 @@ Sub DeleteDBScheduledRecording(mVar As Object, scheduledRecordingId$ As String)
 End Sub
 
 
-Sub DeleteDBScheduledSeriesRecording(mVar As Object, scheduledRecordingId$ As String)
+'Sub DeleteDBScheduledSeriesRecording(mVar As Object, scheduledRecordingId$ As String)
 
-	mVar.DeleteDBScheduledRecordingRow("ScheduledSeriesRecordings", scheduledRecordingId$)
+'	mVar.DeleteDBScheduledRecordingRow("ScheduledSeriesRecordings", scheduledRecordingId$)
 
+'End Sub
+
+
+Sub DeleteDBFromTable(tableName$ As String, id$ As String)
+
+	SQLITE_COMPLETE = 100
+
+	delete$ = "DELETE FROM " + tableName$ + " WHERE Id = " + id + ";"
+
+	deleteStatement = m.db.CreateStatement(delete$)
+
+	if type(deleteStatement) <> "roSqliteStatement" then
+        print "DeleteStatement failure - " + delete$
+		stop
+	endif
+
+	sqlResult = deleteStatement.Run()
+
+	if sqlResult <> SQLITE_COMPLETE
+        print "sqlResult <> SQLITE_COMPLETE"
+	endif
+
+	deleteStatement.Finalise()
+
+End Sub
+
+
+Sub DeleteDBScheduledSeries(scheduledSeriesRecordingId As Integer)
+End Sub
+
+
+Sub DeleteDBScheduledProgramsInSeries(scheduledSeriesRecordingId As Integer)
 End Sub
 
 
@@ -319,7 +351,7 @@ Sub AddDBRecording(scheduledRecording As Object)
 	' convert duration from msec to minutes
 	duration% = (scheduledRecording.duration% + 30000) / 60000
 
-	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl) VALUES(?,?,?,?,?,?,?,?,?);"
+	insertSQL$ = "INSERT INTO Recordings (Title, StartDateTime, Duration, FileName, LastViewedPosition, TranscodeComplete, HLSSegmentationComplete, HLSUrl) VALUES(?,?,?,?,?,?,?,?);"
 
 	params = CreateObject("roArray", 8, false)
 	params[ 0 ] = scheduledRecording.title$
