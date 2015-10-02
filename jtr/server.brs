@@ -375,8 +375,14 @@ Sub deleteScheduledSeries(userData As Object, e as Object)
 	mVar = userData.mVar
 	requestParams = e.GetRequestParams()
 
-	mVar.DeleteDBScheduledSeries(requestParams.scheduledSeriesRecordingId)
-	mVar.DeleteDBScheduledProgramsInSeries(requestParams.scheduledSeriesRecordingId)
+	mVar.DeleteDBScheduledSeries(int(val(requestParams.scheduledSeriesRecordingId)))
+	mVar.DeleteDBScheduledProgramsInSeries(int(val(requestParams.scheduledSeriesRecordingId)))
+
+	' send a message to get the scheduling record list rebuilt
+	aa = {}
+	aa.AddReplace("command", "deleteScheduledRecording")
+	ok = mVar.htmlWidget.PostJSMessage(aa)
+	if not ok stop
 
     e.AddResponseHeader("Content-type", "text/plain")
     e.AddResponseHeader("Access-Control-Allow-Origin", "*")

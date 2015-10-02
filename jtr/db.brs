@@ -242,33 +242,34 @@ Sub AddDBScheduledSeriesRecording(scheduledRecording As Object)
 End Sub
 
 
-Sub DeleteDBScheduledRecordingRow(tableName$ As String, scheduledRecordingId$ As String)
+'Sub DeleteDBScheduledRecordingRow(tableName$ As String, scheduledRecordingId$ As String)
 
-	SQLITE_COMPLETE = 100
+'	SQLITE_COMPLETE = 100
 
-	delete$ = "DELETE FROM " + tableName$ + " WHERE Id = " + scheduledRecordingId$ + ";"
+'	delete$ = "DELETE FROM " + tableName$ + " WHERE Id = " + scheduledRecordingId$ + ";"
 
-	deleteStatement = m.db.CreateStatement(delete$)
+'	deleteStatement = m.db.CreateStatement(delete$)
 
-	if type(deleteStatement) <> "roSqliteStatement" then
-        print "DeleteStatement failure - " + delete$
-		stop
-	endif
+'	if type(deleteStatement) <> "roSqliteStatement" then
+ '       print "DeleteStatement failure - " + delete$
+'		stop
+'	endif
 
-	sqlResult = deleteStatement.Run()
+'	sqlResult = deleteStatement.Run()
 
-	if sqlResult <> SQLITE_COMPLETE
-        print "sqlResult <> SQLITE_COMPLETE"
-	endif
+'	if sqlResult <> SQLITE_COMPLETE
+'        print "sqlResult <> SQLITE_COMPLETE"
+'	endif
 
-	deleteStatement.Finalise()
+'	deleteStatement.Finalise()
 
-End Sub
+'End Sub
 
 
 Sub DeleteDBScheduledRecording(mVar As Object, scheduledRecordingId$ As String)
 
-	mVar.DeleteDBScheduledRecordingRow("ScheduledRecordings", scheduledRecordingId$)
+'	mVar.DeleteDBScheduledRecordingRow("ScheduledRecordings", scheduledRecordingId$)
+	mVar.DeleteDBFromTable("ScheduledRecordings", "Id", scheduledRecordingId$)
 
 End Sub
 
@@ -280,11 +281,11 @@ End Sub
 'End Sub
 
 
-Sub DeleteDBFromTable(tableName$ As String, id$ As String)
+Sub DeleteDBFromTable(tableName$ As String, idColumnName$ As String, id$ As String)
 
 	SQLITE_COMPLETE = 100
 
-	delete$ = "DELETE FROM " + tableName$ + " WHERE Id = " + id + ";"
+	delete$ = "DELETE FROM " + tableName$ + " WHERE " + idColumnName$ + " = " + id$ + ";"
 
 	deleteStatement = m.db.CreateStatement(delete$)
 
@@ -305,10 +306,18 @@ End Sub
 
 
 Sub DeleteDBScheduledSeries(scheduledSeriesRecordingId As Integer)
+
+	id$ = stri(scheduledSeriesRecordingId)
+	m.DeleteDBFromTable("ScheduledSeriesRecordings", "Id", id$)
+
 End Sub
 
 
 Sub DeleteDBScheduledProgramsInSeries(scheduledSeriesRecordingId As Integer)
+
+	id$ = stri(scheduledSeriesRecordingId)
+	m.DeleteDBFromTable("ScheduledRecordings", "ScheduledSeriesRecordingId", id$)
+
 End Sub
 
 
