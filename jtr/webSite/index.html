@@ -81,6 +81,31 @@
         </div>
     </div>
 
+    <div class="modal fade" id="cgRecordingOptionsDlg" tabindex="-1" role="dialog" aria-labelledby="cgRecordingOptionsDlg" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h3 id="cgRecordingOptionsTitle">Recording Options</h3>
+
+                    <span class="modalButton">Stop Time:</span>
+                    <button type='button' class='btn btn-default modalLeftArrow' onclick="cgRecordOptionsNextEarlyStopTime()" aria-label='Left Align'><span class='glyphicon glyphicon-arrow-left' aria-hidden='true'></span></button>
+                    <span id="cgRecordOptionsStopTimeLabel" class="modalButton cgOptionsSpan">On Time</span>
+                    <button type='button' class='btn btn-default modalRightArrow' onclick="cgRecordOptionsNextLateStopTime()" aria-label='Left Align'><span class='glyphicon glyphicon-arrow-right' aria-hidden='true'></span></button>
+                    <br/>
+
+                    <span class="modalButton">Start Time:</span>
+                    <button type='button' class='btn btn-default modalLeftArrow' onclick="cgRecordOptionsNextEarlyStartTime()" aria-label='Left Align'><span class='glyphicon glyphicon-arrow-left' aria-hidden='true'></span></button>
+                    <span id="cgRecordOptionsStartTimeLabel" class="modalButton cgOptionsSpan">On Time</span>
+                    <button type='button' class='btn btn-default modalRightArrow' onclick="cgRecordOptionsNextLateStartTime()" aria-label='Left Align'><span class='glyphicon glyphicon-arrow-right' aria-hidden='true'></span></button>
+                    <br/>
+
+                    <button type="button" class="btn btn-default btn-secondary modalButton" id="cgRecordOptionsSave">Save changes</button> <br />
+                    <button type="button" class="btn btn-default btn-secondary modalButton" id="cgRecordOptionsCancel">Cancel</button> <br />
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="cgSeriesDlg" tabindex="-1" role="dialog" aria-labelledby="cgSeriesDlg" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

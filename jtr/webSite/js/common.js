@@ -47,6 +47,14 @@ var cgPopupSeriesHandlers = [cgRecordSelectedProgram, cgRecordProgramSetOptions,
 var cgPopupScheduledSeriesElements = ["cgSeriesCancelEpisode", "cgSeriesCancelSeries", "cgSeriesViewUpcoming", "cgSeriesRecordingTune", "cgSeriesRecordingClose"];
 var cgPopupSchedulesSeriesHandlers = [cgCancelScheduledRecording, cgCancelScheduledSeries, cgScheduledSeriesViewUpcoming, cgTune, cgModalClose];
 
+var stopTimeOptions = ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"];
+var stopTimeOnTimeIndex = 4;
+var stopTimeIndex;
+
+var startTimeOptions = ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"];
+var startTimeOnTimeIndex = 4;
+var startTimeIndex;
+
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
 }
@@ -847,6 +855,76 @@ function cgCancelScheduledSeriesFromClient() {
 
 function cgRecordProgramSetOptions() {
     console.log("cgRecordProgramSetOptions invoked");
+
+    // erase existing dialog, show new one
+    cgProgramDlgCloseInvoked();
+
+    stopTimeIndex = stopTimeOnTimeIndex;
+    startTimeIndex = startTimeOnTimeIndex;
+
+    // use common code in displayCGPopUp??
+    var options = {
+        "backdrop": "true"
+    }
+    $("#cgRecordingOptionsDlg").modal(options);
+    $("#cgRecordingOptionsTitle").html(cgSelectedProgram.title);
+
+    // highlight first button; unhighlight other buttons
+    $("#cgRecordOptionsStopTime").removeClass("btn-secondary");
+    $("#cgRecordOptionsStopTime").addClass("btn-primary");
+    $("#cgRecordOptionsStartTime").removeClass("btn-primary");
+    $("#cgRecordOptionsStartTime").addClass("btn-secondary");
+    $("#cgRecordOptionsSave").removeClass("btn-primary");
+    $("#cgRecordOptionsSave").addClass("btn-secondary");
+    $("#cgRecordOptionsCancel").removeClass("btn-primary");
+    $("#cgRecordOptionsCancel").addClass("btn-secondary");
+
+
+    $("#cgRecordOptionsSave").click(function (event) {
+        $("#cgRecordingOptionsDlg").modal('hide');
+        ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+    });
+
+    $("#cgRecordOptionsCancel").click(function (event) {
+        $("#cgRecordingOptionsDlg").modal('hide');
+        ChannelGuideSingleton.getInstance().reselectCurrentProgram();
+    });
+}
+
+function cgRecordOptionsNextEarlyStopTime() {
+    console.log("cgRecordOptionsNextEarlyStopTime invoked");
+
+    if (stopTimeIndex > 0) {
+        stopTimeIndex--;
+        $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
+    }
+}
+
+function cgRecordOptionsNextLateStopTime() {
+    console.log("cgRecordOptionsNextLateStopTime invoked");
+
+    if (stopTimeIndex < (stopTimeOptions.length-1)) {
+        stopTimeIndex++;
+        $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
+    }
+}
+
+function cgRecordOptionsNextEarlyStartTime() {
+    console.log("cgRecordOptionsNextEarlyStartTime invoked");
+
+    if (startTimeIndex > 0) {
+        startTimeIndex--;
+        $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
+    }
+}
+
+function cgRecordOptionsNextLateStartTime() {
+    console.log("cgRecordOptionsNextLateStartTime invoked");
+
+    if (startTimeIndex < (startTimeOptions.length-1)) {
+        startTimeIndex++;
+        $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
+    }
 }
 
 function cgRecordProgramViewUpcomingEpisodes() {
@@ -1009,7 +1087,8 @@ function displayCGPopUp() {
     if (cgRecordSetOptionsId) {
         $(cgRecordSetOptionsId).off();
         $(cgRecordSetOptionsId).click(function (event) {
-            console.log("recordSetOptions invoked")
+            console.log("recordSetOptions invoked");
+            cgRecordProgramSetOptions();
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });
