@@ -30,8 +30,6 @@ Sub InitializeServer()
 	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledRecording", user_data: m.deleteScheduledRecordingAA })
 
 	' delete a scheduled series recording
-'	m.deleteScheduledSeriesRecordingAA =			{ HandleEvent: deleteScheduledSeriesRecording, mVar: m }
-'	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledSeriesRecording", user_data: m.deleteScheduledSeriesRecordingAA })
 	m.deleteScheduledSeriesAA =			{ HandleEvent: deleteScheduledSeries, mVar: m }
 	m.localServer.addGetFromEvent({ url_path: "/deleteScheduledSeries", user_data: m.deleteScheduledSeriesAA })
 
@@ -307,11 +305,6 @@ Sub stopRecording(userData As Object, e as Object)
 	requestParams = e.GetRequestParams()
 	recordingId = requestParams.scheduledRecordingId
 
-'	stopRecordMessage = CreateObjec~t("roAssociativeArray")
-'	stopRecordMessage["EventType"] = "STOP_RECORDING"
-'	stopRecordMessage["RecordingId"] = recordingId
-'	mVar.msgPort.PostMessage(stopRecordMessage)
-
 	aa = {}
 	aa.AddReplace("command", "stopRecording")
 	aa.AddReplace("value", recordingId)
@@ -358,15 +351,6 @@ Sub deleteScheduledRecording(userData As Object, e as Object)
 
 End Sub
 
-
-'Sub deleteScheduledSeriesRecording(userData As Object, e as Object)
-
-'	print "deleteScheduledSeriesRecording endpoint invoked"
-
-'    mVar = userData.mVar
-'	mVar.deleteScheduledRecordingRow(mVar, mVar.DeleteDBScheduledSeriesRecording, userData, e)
-
-'End Sub
 
 Sub deleteScheduledSeries(userData As Object, e as Object)
 

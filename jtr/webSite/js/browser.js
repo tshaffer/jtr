@@ -245,31 +245,9 @@ function deleteScheduledRecording(scheduledRecordingId, nextFunction) {
             //alert("recording transmission finished");
         });
 
-    //var scheduledRecordingId = event.data.scheduledRecordingId;
-    //
-    //var aUrl = baseURL + "deleteScheduledRecording";
-    //var params = { "scheduledRecordingId": scheduledRecordingId };
-    //
-    //$.get(aUrl, params)
-    //    .done(function (result) {
-    //        console.log("deleteScheduledRecording successfully sent");
-    //        getToDoList();
-    //    })
-    //    .fail(function (jqXHR, textStatus, errorThrown) {
-    //        debugger;
-    //        console.log("browserCommand failure");
-    //    })
-    //    .always(function () {
-    //        //alert("recording transmission finished");
-    //    });
 }
 
 function deleteScheduledSeries(scheduledSeriesRecordingId) {
-
-    // items that need to be done - in the following order (does this need to be a synchronous call? - make it one whether required or not)
-    //      delete from scheduled series table
-    //      update to do list (even if not idle? - no, assuming clicking on the UI function calls it to be called)
-    //      delete individual episodes from scheduledRecordings table
 
     var aUrl = baseURL + "deleteScheduledSeries";
     var commandData = { "scheduledSeriesRecordingId": scheduledSeriesRecordingId };

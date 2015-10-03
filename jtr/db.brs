@@ -29,11 +29,9 @@ Sub OpenDatabase()
 		m.CreateDBTable("CREATE TABLE LastTunedChannel (Channel TEXT);")
 		m.InitializeDBLastTunedChannel()
 
-'		m.CreateDBTable("CREATE TABLE Stations (StationId PRIMARY KEY TEXT, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
 		m.CreateDBTable("CREATE TABLE Stations (StationId, AtscMajor INT, AtscMinor INT, CommonName TEXT, Name TEXT, CallSign TEXT);")
 		m.PopulateStationsTable()
 
-'		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT, PRIMARY KEY (StationId, ScheduleDate));")
 		m.CreateDBTable("CREATE TABLE StationSchedulesForSingleDay (StationId TEXT, ScheduleDate TEXT, ModifiedDate TEXT, MD5 TEXT);")
 
 		' JTR TODO - is it appropriate to store the MD5 in this table, or is it just used transiently when ProgramsForStations data is retrieved from the server?
@@ -242,43 +240,11 @@ Sub AddDBScheduledSeriesRecording(scheduledRecording As Object)
 End Sub
 
 
-'Sub DeleteDBScheduledRecordingRow(tableName$ As String, scheduledRecordingId$ As String)
-
-'	SQLITE_COMPLETE = 100
-
-'	delete$ = "DELETE FROM " + tableName$ + " WHERE Id = " + scheduledRecordingId$ + ";"
-
-'	deleteStatement = m.db.CreateStatement(delete$)
-
-'	if type(deleteStatement) <> "roSqliteStatement" then
- '       print "DeleteStatement failure - " + delete$
-'		stop
-'	endif
-
-'	sqlResult = deleteStatement.Run()
-
-'	if sqlResult <> SQLITE_COMPLETE
-'        print "sqlResult <> SQLITE_COMPLETE"
-'	endif
-
-'	deleteStatement.Finalise()
-
-'End Sub
-
-
 Sub DeleteDBScheduledRecording(mVar As Object, scheduledRecordingId$ As String)
 
-'	mVar.DeleteDBScheduledRecordingRow("ScheduledRecordings", scheduledRecordingId$)
 	mVar.DeleteDBFromTable("ScheduledRecordings", "Id", scheduledRecordingId$)
 
 End Sub
-
-
-'Sub DeleteDBScheduledSeriesRecording(mVar As Object, scheduledRecordingId$ As String)
-
-'	mVar.DeleteDBScheduledRecordingRow("ScheduledSeriesRecordings", scheduledRecordingId$)
-
-'End Sub
 
 
 Sub DeleteDBFromTable(tableName$ As String, idColumnName$ As String, id$ As String)
@@ -718,22 +684,6 @@ Function GetDBStations() As Object
 End Function
 
 
-' OBSOLETE?
-'Sub AddDBStationScheduleForSingleDay(stationId As String, scheduleDate As String, modifiedDate as String, md5 as String)
-'
-'	insertSQL$ = "INSERT INTO StationSchedulesForSingleDay (StationId, ScheduleDate, ModifiedDate, MD5) VALUES(?,?,?,?);"
-
-'	params = CreateObject("roArray", 4, false)
-'	params[ 0 ] = stationId
-'	params[ 1 ] = scheduleDate
-'	params[ 2 ] = modifiedDate
-'	params[ 3 ] = md5
-
-'	m.ExecuteDBInsert(insertSQL$, params)
-
-'End Sub
-
-
 Sub GetDBStationSchedulesForSingleDayCallback(resultsData As Object, selectData As Object)
 
 	selectData.stationSchedulesForSingleDay.push(resultsData)
@@ -1133,7 +1083,6 @@ Function GetDBEpgData(startDate$ As String)
 	selectData = {}
 	selectData.epgData = []
 
-'	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.EndDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.Description, Programs.ShowType, Programs.OriginalAirDate, Programs.GracenoteSeasonEpisode, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY ProgramsForStations.ProgramId order by ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
 	select$ = "SELECT Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.EndDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.ShortDescription, Programs.LongDescription, Programs.ShowType, Programs.OriginalAirDate, Programs.SeasonEpisode, Programs.MovieYear, Programs.MovieRating, Programs.MovieMinRating, Programs.MovieMaxRating, Programs.MovieRatingIncrement, group_concat(DISTINCT ProgramCast.Name) as CastMembers from ProgramsForStations, Programs, Stations, ProgramCast where ScheduleDate >= '" + startDate$ + "' and Programs.ProgramId=ProgramsForStations.ProgramId and ProgramsForStations.StationId=Stations.StationId and Programs.ProgramId=ProgramCast.ProgramId GROUP BY Stations.AtscMajor, Stations.AtscMinor, Programs.Title, ProgramsForStations.ScheduleDate, ProgramsForStations.StationId, ProgramsForStations.AirDateTime, ProgramsForStations.EndDateTime, ProgramsForStations.Duration, ProgramsForStations.NewShow, Programs.EpisodeTitle, Programs.ShortDescription, Programs.LongDescription, Programs.ShowType, Programs.OriginalAirDate, Programs.SeasonEpisode, ProgramsForStations.ProgramId order by ProgramsForStations.StationId, ScheduleDate asc, AirDateTime asc, Stations.AtscMajor asc, Stations.AtscMinor asc;"
 
 	m.ExecuteDBSelect(select$, GetDBEpgDataCallback, selectData, invalid)
