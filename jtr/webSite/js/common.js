@@ -998,6 +998,7 @@ function displayCGPopUp() {
             cgPopupHandlers = cgPopupSeriesHandlers;
 
             cgRecordEpisodeId = "#cgEpisodeRecord";
+            cgRecordSetOptionsId = "#cgSeriesRecordSetProgramOptions";
             cgRecordSeriesId = "#cgSeriesRecord";
             cgTuneEpisodeId = "#cgSeriesTune";
             cgCloseEpisodeId = "#cgSeriesClose";
