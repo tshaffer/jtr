@@ -864,8 +864,26 @@ function cgRecordProgramSetOptions() {
     $("#cgRecordingOptionsDlg").modal(options);
     $("#cgRecordingOptionsTitle").html(cgSelectedProgram.title);
 
-    // EXTENDOMATIC TODO
-    // highlight the selection based on the current settings for this program
+    // for a program that has not been setup to record, cgSelectedProgram.startTimeOffset = 0, etc.
+    stopTimeIndex = stopTimeOnTimeIndex;
+    startTimeIndex = startTimeOnTimeIndex;
+
+    $.each(startTimeOffsets, function (index, startTimeOffset) {
+        if (startTimeOffset == cgSelectedProgram.startTimeOffset) {
+            startTimeIndex = index;
+            return false;
+        }
+    });
+
+    $.each(stopTimeOffsets, function (index, stopTimeOffset) {
+        if (stopTimeOffset == cgSelectedProgram.stopTimeOffset) {
+            stopTimeIndex = index;
+            return false;
+        }
+    });
+
+    displayStartTimeSetting();
+    displayStopTimeSetting();
 
     // highlight first button; unhighlight other buttons
     $("#cgRecordOptionsStopTime").removeClass("btn-secondary");
@@ -895,8 +913,12 @@ function cgRecordOptionsNextEarlyStopTime() {
 
     if (stopTimeIndex > 0) {
         stopTimeIndex--;
-        $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
+        displayStopTimeSetting();
     }
+}
+
+function displayStopTimeSetting() {
+    $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
 }
 
 function cgRecordOptionsNextLateStopTime() {
@@ -904,7 +926,7 @@ function cgRecordOptionsNextLateStopTime() {
 
     if (stopTimeIndex < (stopTimeOptions.length-1)) {
         stopTimeIndex++;
-        $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
+        displayStopTimeSetting();
     }
 }
 
@@ -913,8 +935,12 @@ function cgRecordOptionsNextEarlyStartTime() {
 
     if (startTimeIndex > 0) {
         startTimeIndex--;
-        $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
+        displayStartTimeSetting();
     }
+}
+
+function displayStartTimeSetting() {
+    $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
 }
 
 function cgRecordOptionsNextLateStartTime() {
@@ -922,7 +948,7 @@ function cgRecordOptionsNextLateStartTime() {
 
     if (startTimeIndex < (startTimeOptions.length-1)) {
         startTimeIndex++;
-        $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
+        displayStartTimeSetting();
     }
 }
 
@@ -978,9 +1004,6 @@ function displayCGPopUp() {
         });
         console.log("cgSelectedProgramScheduledToRecord=" + cgSelectedProgramScheduledToRecord.toString());
     }
-
-    stopTimeIndex = stopTimeOnTimeIndex;
-    startTimeIndex = startTimeOnTimeIndex;
 
     cgRecordEpisodeId = null;
     cgRecordSeriesId = null;
