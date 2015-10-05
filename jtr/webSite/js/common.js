@@ -48,11 +48,14 @@ var cgPopupScheduledSeriesElements = ["cgSeriesCancelEpisode", "cgSeriesCancelSe
 var cgPopupSchedulesSeriesHandlers = [cgCancelScheduledRecording, cgCancelScheduledSeries, cgScheduledSeriesViewUpcoming, cgTune, cgModalClose];
 
 var stopTimeOptions = ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"];
+var stopTimeOffsets = [-30, -15, -10, -5, 0, 5, 10, 15, 30, 60, 90, 120, 180];
+
 var stopTimeOnTimeIndex = 4;
 var stopTimeIndex;
 
-var startTimeOptions = ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"];
-var startTimeOnTimeIndex = 4;
+var startTimeOptions = ["15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late"];
+var startTimeOnTimeIndex = 3;
+var startTimeOffsets = [-15, -10, -5, 0, 5, 10, 15];
 var startTimeIndex;
 
 function addMinutes(date, minutes) {
@@ -709,7 +712,7 @@ function updateCGProgramDlgSelection() {
     $(cgPopupElements[cgPopupSelectedIndex]).addClass("btn-primary");
 }
 
-
+// EXTENDOMATIC TODO - do the work associated with extendomatic here
 function cgRecordProgram() {
     // redundant in some cases (when selected from pop up); not when record button pressed
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
@@ -723,6 +726,8 @@ function cgRecordProgram() {
     event["Duration"] = cgSelectedProgram.duration;
     event["InputSource"] = "tuner";
     event["ScheduledSeriesRecordingId"] = cgSelectedProgram.scheduledSeriesRecordingId;
+    event["StartTimeOffset"] = 0;
+    event["StopTimeOffset"] = 0;
 
     var stationName = getStationFromId(cgSelectedStationId);
 
@@ -758,10 +763,14 @@ function cgRecordProgramFromClient() {
     var stationName = getStationFromId(cgSelectedStationId);
     stationName = stationName.replace(".", "-");
 
+    cgSelectedProgram.startTimeOffset = startTimeOffsets[startTimeIndex];
+    cgSelectedProgram.stopTimeOffset = stopTimeOffsets[stopTimeIndex];
+
     var aUrl = baseURL + "browserCommand";
     var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration,
         "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
-        "scheduledSeriesRecordingId": cgSelectedProgram.scheduledSeriesRecordingId };
+        "scheduledSeriesRecordingId": cgSelectedProgram.scheduledSeriesRecordingId,
+        "startTimeOffset": cgSelectedProgram.startTimeOffset, "stopTimeOffset": cgSelectedProgram.stopTimeOffset };
     console.log(commandData);
 
     $.get(aUrl, commandData)
@@ -775,17 +784,6 @@ function cgRecordProgramFromClient() {
         .always(function () {
             //alert("recording transmission finished");
         });
-}
-
-
-function cgRecordSelectedProgramFromClient() {
-
-    // redundant in some cases (when selected from pop up); not when record button pressed
-    var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-    cgSelectedProgram = programData.program;
-    cgSelectedStationId = programData.stationId;
-
-    cgRecordProgramFromClient();
 }
 
 
@@ -859,15 +857,15 @@ function cgRecordProgramSetOptions() {
     // erase existing dialog, show new one
     cgProgramDlgCloseInvoked();
 
-    stopTimeIndex = stopTimeOnTimeIndex;
-    startTimeIndex = startTimeOnTimeIndex;
-
     // use common code in displayCGPopUp??
     var options = {
         "backdrop": "true"
     }
     $("#cgRecordingOptionsDlg").modal(options);
     $("#cgRecordingOptionsTitle").html(cgSelectedProgram.title);
+
+    // EXTENDOMATIC TODO
+    // highlight the selection based on the current settings for this program
 
     // highlight first button; unhighlight other buttons
     $("#cgRecordOptionsStopTime").removeClass("btn-secondary");
@@ -882,6 +880,7 @@ function cgRecordProgramSetOptions() {
 
     $("#cgRecordOptionsSave").click(function (event) {
         $("#cgRecordingOptionsDlg").modal('hide');
+        cgRecordProgramFromClient();
         ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
 
@@ -964,17 +963,24 @@ function displayCGPopUp() {
     var cgSelectedProgramScheduledToRecord = false;
     cgSelectedProgram.scheduledRecordingId = -1;
     cgSelectedProgram.scheduledSeriesRecordingId = -1;
+    cgSelectedProgram.startTimeOffset = 0;
+    cgSelectedProgram.stopTimeOffset = 0;
     if (channelGuide.scheduledRecordings != null) {
         $.each(channelGuide.scheduledRecordings, function (index, scheduledRecording) {
             cgSelectedProgramScheduledToRecord = programsMatch(scheduledRecording, cgSelectedProgram, cgSelectedStationId);
             if (cgSelectedProgramScheduledToRecord) {
                 cgSelectedProgram.scheduledRecordingId = scheduledRecording.Id;
                 cgSelectedProgram.scheduledSeriesRecordingId = scheduledRecording.ScheduledSeriesRecordingId;
+                cgSelectedProgram.startTimeOffset = scheduledRecording.StartTimeOffset;
+                cgSelectedProgram.stopTimeOffset = scheduledRecording.StopTimeOffset;
                 return false;
             }
         });
         console.log("cgSelectedProgramScheduledToRecord=" + cgSelectedProgramScheduledToRecord.toString());
     }
+
+    stopTimeIndex = stopTimeOnTimeIndex;
+    startTimeIndex = startTimeOnTimeIndex;
 
     cgRecordEpisodeId = null;
     cgRecordSeriesId = null;
@@ -1041,7 +1047,7 @@ function displayCGPopUp() {
     if (cgRecordEpisodeId) {
         $(cgRecordEpisodeId).off();
         $(cgRecordEpisodeId).click(function (event) {
-            cgRecordSelectedProgramFromClient();
+            cgRecordProgramFromClient();
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
@@ -1267,8 +1273,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.11:8080/";
+        baseURL = "http://10.10.212.44:8080/";
+        //baseURL = "http://192.168.2.9:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

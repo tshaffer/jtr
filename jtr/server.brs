@@ -254,6 +254,8 @@ Sub addScheduledRecording(userData As Object, e as Object)
 	scheduledRecording.recordingBitRate% = int(val(requestParams.recordingBitRate))
 	scheduledRecording.segmentRecording% = int(val(requestParams.segmentRecording))
 	scheduledRecording.scheduledSeriesRecordingId% = int(val(requestParams.scheduledSeriesRecordingId))
+	scheduledRecording.startTimeOffset% = int(val(requestParams.startTimeOffset))
+	scheduledRecording.stopTimeOffset% = int(val(requestParams.stopTimeOffset))
 
 	mVar.AddDBScheduledRecording(scheduledRecording)
 

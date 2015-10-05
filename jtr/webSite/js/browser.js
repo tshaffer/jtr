@@ -131,7 +131,8 @@ function executeCreateManualRecording() {
 
     var title = getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
     var aUrl = baseURL + "browserCommand";
-    var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
+    var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
+        "startTimeOffset": 0, "stopTimeOffset": 0 };
     console.log(commandData);
 
     $.get(aUrl, commandData)

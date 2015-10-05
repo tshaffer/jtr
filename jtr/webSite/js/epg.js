@@ -840,7 +840,9 @@ function updateScheduledRecordings() {
                                         "channel": scheduledEpisode.Channel,
                                         "recordingBitRate": scheduledEpisode.RecordingBitRate,
                                         "segmentRecording": scheduledEpisode.SegmentRecording,
-                                        "scheduledSeriesRecordingId": scheduledEpisode.ScheduledSeriesRecordingId
+                                        "scheduledSeriesRecordingId": scheduledEpisode.ScheduledSeriesRecordingId,
+                                        "startTimeOffset": 0,
+                                        "stopTimeOffset": 0
                                     };
 
                                     $.get(aUrl, recordingData)

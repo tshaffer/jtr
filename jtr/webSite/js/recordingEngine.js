@@ -163,11 +163,20 @@ recordingEngineStateMachine.prototype.checkForPendingRecord = function () {
             this.toDoList.shift();
         }
         else {
+            // adjust start time, duration by startTimeOffset, stopTimeOffset
+            var actualStartDateTime = scheduledRecording.DateTime;
+            actualStartDateTime.setMinutes(scheduledRecording.DateTime.getMinutes() + scheduledRecording.StartTimeOffset);
+
+            var actualDuration = Number(scheduledRecording.Duration);
+            actualDuration = actualDuration - scheduledRecording.StartTimeOffset + scheduledRecording.StopTimeOffset;
+
+            var durationInMilliseconds = minutesToMsec(actualDuration);
+
             // see if recording should start immediately (program in progress)
-            var msUntilRecordingStarts = this.msUntilRecordingStarts(scheduledRecording.DateTime);
+            var msUntilRecordingStarts = this.msUntilRecordingStarts(actualStartDateTime);
             if (msUntilRecordingStarts <= 0) {
                 // reduce duration of recording by elapsed time since program began
-                var durationInMilliseconds = minutesToMsec(Number(scheduledRecording.Duration)) + msUntilRecordingStarts;
+                durationInMilliseconds += msUntilRecordingStarts;
 
                 // post internal message to cause transition to recording state
                 var event = {};
@@ -189,7 +198,7 @@ recordingEngineStateMachine.prototype.checkForPendingRecord = function () {
                     clearTimeout(this.timerVar);
                     this.timerVar = null;
                 }
-                this.startRecordingTimer(msUntilRecordingStarts, scheduledRecording.Id, scheduledRecording.Title, scheduledRecording.Duration, scheduledRecording.InputSource, scheduledRecording.Channel, scheduledRecording.RecordingBitRate, scheduledRecording.SegmentRecording);
+                this.startRecordingTimer(msUntilRecordingStarts, scheduledRecording.Id, scheduledRecording.Title, durationInMilliseconds, scheduledRecording.InputSource, scheduledRecording.Channel, scheduledRecording.RecordingBitRate, scheduledRecording.SegmentRecording);
             }
             return;
         }
@@ -294,7 +303,7 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
 }
 
 
-recordingEngineStateMachine.prototype.addProgramToDB = function (dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, idle) {
+recordingEngineStateMachine.prototype.addProgramToDB = function (dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, startTimeOffset, stopTimeOffset, idle) {
 
     var aUrl;
     var recordingData;
@@ -309,7 +318,8 @@ recordingEngineStateMachine.prototype.addProgramToDB = function (dateTime, title
     endDateTime.setSeconds(endDateTime.getSeconds() + durationInMinutes * 60);
     var isoEndDate = endDateTime.toISOString();
 
-    recordingData = { "dateTime": isoDateTime, "endDateTime": isoEndDate, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
+    recordingData = { "dateTime": isoDateTime, "endDateTime": isoEndDate, "title": title, "duration": durationInMinutes, "inputSource": inputSource, "channel": channel, "recordingBitRate": recordingBitRate, "segmentRecording": segmentRecording, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
+        "startTimeOffset": startTimeOffset, "stopTimeOffset": stopTimeOffset };
 
     var self = this;
 
@@ -393,7 +403,9 @@ recordingEngineStateMachine.prototype.addSeriesToDB = function (title, inputSour
                                 "channel": channel,
                                 "recordingBitRate": recordingBitRate,
                                 "segmentRecording": segmentRecording,
-                                "scheduledSeriesRecordingId": scheduledSeriesRecordingId
+                                "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
+                                "startTimeOffset": 0,
+                                "stopTimeOffset": 0
                             };
                             $.get(aUrl, recordingData)
                                 .then(function (result) {
@@ -433,8 +445,11 @@ recordingEngineStateMachine.prototype.handleAddRecord = function (event, stateDa
     var recordingBitRate = event["RecordingBitRate"];
     var segmentRecording = event["SegmentRecording"];
     var scheduledSeriesRecordingId = event["ScheduledSeriesRecordingId"];
+    var startTimeOffset = event["StartTimeOffset"];
+    var stopTimeOffset = event["StopTimeOffset"];
 
     // ignore manual recordings that are in the past
+    // EXTENDOMATIC - need to take into account startTimeOffset, stopTimeOffset
     var durationInMilliseconds = minutesToMsec(Number(durationInMinutes));
     console.log("handleAddRecord: durationInMinutes=" + durationInMinutes.toString());
     var recordingObsolete = this.recordingObsolete(dateTime, durationInMilliseconds);
@@ -444,7 +459,8 @@ recordingEngineStateMachine.prototype.handleAddRecord = function (event, stateDa
     }
 
     // add the recording to the db
-    this.addProgramToDB(dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId, idle);
+    this.addProgramToDB(dateTime, title, durationInMinutes, inputSource, channel, recordingBitRate, segmentRecording, scheduledSeriesRecordingId,
+        startTimeOffset, stopTimeOffset, idle);
 }
 
 
@@ -498,15 +514,13 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
 }
 
 
-recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecondsUntilRecording, recordingId, title, duration, inputSource, channel, recordingBitRate, segmentRecording) {// duration passed in as minutes here where msec are expected?recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecondsUntilRecording, recordingId, title, duration, inputSource, channel, recordingBitRate, segmentRecording) {
+recordingEngineStateMachine.prototype.startRecordingTimer = function (millisecondsUntilRecording, recordingId, title, durationInMilliseconds, inputSource, channel, recordingBitRate, segmentRecording) {// duration passed in as minutes here where msec are expected?
     consoleLog("startRecordingTimer - start timer: millisecondsUntilRecording=" + millisecondsUntilRecording);
     var self = this;
     // when timeout occurs, setup variables and send message indicating a transition to recording state
 
     console.log("startTimer at: ");
     printNow();
-
-    var durationInMilliseconds = minutesToMsec(duration);
 
     this.timerVar = setTimeout(function () {
 
@@ -561,6 +575,10 @@ recordingEngineStateMachine.prototype.executeStartRecording = function (recordin
     this.stateMachine.recordingStartTime = new Date();
     consoleLog("------------------------------ executeStartRecording: recordingId=" + recordingId.toString());
 
+    // extendomatic todo
+    // durationInMilliseconds should be actual duration here (adjusted by startTimeOffset, stopTimeOffset)
+    // however, recordingStartTime is not the actual startTime
+    // no, I think it is - notice how this.stateMachine.recordingStartTime is set a few lines above and is 'now'
     this.addRecordingEndTimer(recordingId, durationInMilliseconds, title, this.stateMachine.recordingStartTime);
     displayUserMessage("Recording started: " + title);
 }
@@ -595,6 +613,10 @@ recordingEngineStateMachine.prototype.stopRecording = function () {
     printNow();
 
     var currentTime = new Date();
+    // extendomatic todo - recordingStartTime may not be the actual start time; therefore, durationInMilliseconds might not be the actual duration
+    // what is this.recordingStartTime - where was it set?
+    // executeStartRecording?? - perhaps it is okay?
+
     var durationInMilliseconds = currentTime - this.recordingStartTime;
     this.endRecording(this.recordingTitle, this.recordingStartTime, durationInMilliseconds);
     this.deleteScheduledRecording(this.recordingId, "Single");

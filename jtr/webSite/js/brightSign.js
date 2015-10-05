@@ -259,6 +259,8 @@ function initializeBrightSign() {
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
                 event["ScheduledSeriesRecordingId"] = message.scheduledSeriesRecordingId;
+                event["StartTimeOffset"] = message.startTimeOffset;
+                event["StopTimeOffset"] = message.stopTimeOffset;
                 postMessage(event);
                 break;
             case "addSeries":
@@ -292,6 +294,8 @@ function initializeBrightSign() {
                 event["RecordingBitRate"] = message.recordingBitRate;
                 event["SegmentRecording"] = message.segmentRecording;
                 event["ScheduledSeriesRecordingId"] = -1;
+                event["StartTimeOffset"] = 0;
+                event["StopTimeOffset"] = 0;
                 postMessage(event);
                 break;
             case "tuneLiveVideoChannel":
