@@ -224,6 +224,15 @@ Sub AddDBScheduledRecording(scheduledRecording As Object)
 End Sub
 
 
+Sub UpdateDBScheduledRecording(id% As Integer, startTimeOffset% As Integer, stopTimeOffset% As Integer)
+
+	params = { id_param: id%, start_to_param: startTimeOffset%, stop_to_param: stopTimeOffset% }
+	m.db.RunBackground("UPDATE ScheduledRecordings SET StartTimeOffset=:start_to_param, StopTimeOffset=:stop_to_param WHERE Id=:id_param;", params)
+
+End Sub
+
+
+
 Sub AddDBScheduledSeriesRecording(scheduledRecording As Object)
 
 	insertSQL$ = "INSERT INTO ScheduledSeriesRecordings (Title, InputSource, Channel, RecordingBitRate, SegmentRecording, MaxRecordings, RecordReruns) VALUES(?,?,?,?,?,?,?);"

@@ -82,6 +82,7 @@ Function newJTR(msgPort As Object) As Object
 	JTR.ExecuteDBInsert					= ExecuteDBInsert
 	JTR.ExecuteDBSelect					= ExecuteDBSelect
 	JTR.AddDBScheduledRecording			= AddDBScheduledRecording
+	JTR.UpdateDBScheduledRecording		= UpdateDBScheduledRecording
 	JTR.AddDBScheduledSeriesRecording	= AddDBScheduledSeriesRecording
 	JTR.GetDBLastScheduledRecordingRowId= GetDBLastScheduledRecordingRowId
 	JTR.GetDBLastScheduledRecordingId	= GetDBLastScheduledRecordingId

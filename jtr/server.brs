@@ -17,6 +17,10 @@ Sub InitializeServer()
 	m.addScheduledRecordingAA =			{ HandleEvent: addScheduledRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/addScheduledRecording", user_data: m.addScheduledRecordingAA })
 
+	' update a scheduled recording
+	m.updateScheduledRecordingAA =			{ HandleEvent: updateScheduledRecording, mVar: m }
+	m.localServer.AddGetFromEvent({ url_path: "/updateScheduledRecording", user_data: m.updateScheduledRecordingAA })
+
 	' add a scheduled series recording
 	m.addScheduledSeriesRecordingAA =			{ HandleEvent: addScheduledSeriesRecording, mVar: m }
 	m.localServer.AddGetFromEvent({ url_path: "/addScheduledSeriesRecording", user_data: m.addScheduledSeriesRecordingAA })
@@ -264,6 +268,28 @@ Sub addScheduledRecording(userData As Object, e as Object)
     e.AddResponseHeader("Content-type", "text/plain")
     e.AddResponseHeader("Access-Control-Allow-Origin", "*")
 	e.SetResponseBodyString(stri(id))
+	e.SendResponse(200)
+
+End Sub
+
+
+Sub updateScheduledRecording(userData As Object, e as Object)
+
+	print "updateScheduledRecording endpoint invoked"
+
+    mVar = userData.mVar
+
+	requestParams = e.GetRequestParams()
+
+	id% = int(val(requestParams.id))
+	startTimeOffset% = int(val(requestParams.startTimeOffset))
+	stopTimeOffset% = int(val(requestParams.stopTimeOffset))
+
+	mVar.UpdateDBScheduledRecording(id%, startTimeOffset%, stopTimeOffset%)
+
+    e.AddResponseHeader("Content-type", "text/plain")
+    e.AddResponseHeader("Access-Control-Allow-Origin", "*")
+	e.SetResponseBodyString("OK")
 	e.SendResponse(200)
 
 End Sub

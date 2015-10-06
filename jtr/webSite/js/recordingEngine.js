@@ -25,6 +25,7 @@
     this.stIdle.recordingObsolete = this.recordingObsolete;
     this.stIdle.deleteScheduledRecording = this.deleteScheduledRecording;
     this.stIdle.handleAddRecord = this.handleAddRecord;
+    this.stIdle.handleUpdateRecord = this.handleUpdateRecord;
     this.stIdle.handleAddSeries = this.handleAddSeries;
     this.stIdle.addProgramToDB = this.addProgramToDB;
     this.stIdle.addSeriesToDB = this.addSeriesToDB;
@@ -38,6 +39,7 @@
     this.stRecording.recordingObsolete = this.recordingObsolete;
     this.stRecording.executeStartRecording = this.executeStartRecording;
     this.stRecording.handleAddRecord = this.handleAddRecord;
+    this.stRecording.handleUpdateRecord = this.handleUpdateRecord;
     this.stRecording.handleAddSeries = this.handleAddSeries;
     this.stRecording.addProgramToDB = this.addProgramToDB;
     this.stRecording.addSeriesToDB = this.addSeriesToDB;
@@ -281,6 +283,9 @@ recordingEngineStateMachine.prototype.STIdleEventHandler = function (event, stat
     else if (event["EventType"] == "ADD_RECORD") {
         return this.handleAddRecord(event, stateData, true);
     }
+    else if (event["EventType"] == "UPDATE_SCHEDULED_RECORDING") {
+        return this.handleUpdateRecord(event, stateData, true);
+    }
     else if (event["EventType"] == "ADD_SERIES") {
         return this.handleAddSeries(event, stateData, true);
     }
@@ -464,6 +469,39 @@ recordingEngineStateMachine.prototype.handleAddRecord = function (event, stateDa
 }
 
 
+recordingEngineStateMachine.prototype.handleUpdateRecord = function (event, stateData, idle) {
+
+    var id = event["Id"];
+    var startTimeOffset = event["StartTimeOffset"];
+    var stopTimeOffset = event["StopTimeOffset"];
+
+    // JTRTODO - changing the recording could mean that the recording should start now. not supported yet.
+
+    var aUrl = baseURL + "updateScheduledRecording";
+
+    var scheduledRecording = { "id": id, "startTimeOffset": startTimeOffset, "stopTimeOffset": stopTimeOffset };
+
+    var self = this;
+
+    $.get(aUrl, scheduledRecording)
+        .done(function (result) {
+            consoleLog("updateScheduledRecording successfully sent");
+
+            if (idle) {
+                self.stateMachine.buildToDoList();
+            }
+        })
+
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            consoleLog("updateScheduledRecording failure");
+        })
+        .always(function () {
+            //alert("recording transmission finished");
+        }
+    );
+}
+
 recordingEngineStateMachine.prototype.handleAddSeries = function (event, stateData, idle) {
 
     // get recording parameters
@@ -504,6 +542,9 @@ recordingEngineStateMachine.prototype.STRecordingEventHandler = function (event,
     }
     else if (event["EventType"] == "ADD_RECORD") {
         return this.handleAddRecord(event, stateData, false);
+    }
+    else if (event["EventType"] == "UPDATE_SCHEDULED_RECORDING") {
+        return this.handleUpdateRecord(event, stateData, false);
     }
     else if (event["EventType"] == "ADD_SERIES") {
         return this.handleAddSeries(event, stateData, false);

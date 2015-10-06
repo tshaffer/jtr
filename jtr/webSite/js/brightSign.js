@@ -249,6 +249,13 @@ function initializeBrightSign() {
                 //event["EventData"] = message.scheduledRecordingId;
                 postMessage(event);
                 break;
+            case "updateScheduledRecording":
+                event["EventType"] = "UPDATE_SCHEDULED_RECORDING";
+                event["Id"] = message.id;
+                event["StartTimeOffset"] = message.startTimeOffset;
+                event["StopTimeOffset"] = message.stopTimeOffset;
+                postMessage(event);
+                break;
             case "addRecord":
                 event["EventType"] = "ADD_RECORD";
                 event["DateTime"] = message.dateTime;

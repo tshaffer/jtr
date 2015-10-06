@@ -754,23 +754,31 @@ function cgRecordSelectedProgram() {
     cgRecordProgram();
 }
 
-function cgRecordProgramFromClient() {
+function cgRecordProgramFromClient(addRecording) {
 
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
     cgSelectedStationId = programData.stationId;
 
-    var stationName = getStationFromId(cgSelectedStationId);
-    stationName = stationName.replace(".", "-");
-
     cgSelectedProgram.startTimeOffset = startTimeOffsets[startTimeIndex];
     cgSelectedProgram.stopTimeOffset = stopTimeOffsets[stopTimeIndex];
 
     var aUrl = baseURL + "browserCommand";
-    var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration,
-        "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
-        "scheduledSeriesRecordingId": cgSelectedProgram.scheduledSeriesRecordingId,
-        "startTimeOffset": cgSelectedProgram.startTimeOffset, "stopTimeOffset": cgSelectedProgram.stopTimeOffset };
+
+    if (addRecording) {
+        var stationName = getStationFromId(cgSelectedStationId);
+        stationName = stationName.replace(".", "-");
+
+        var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration,
+            "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
+            "scheduledSeriesRecordingId": cgSelectedProgram.scheduledSeriesRecordingId,
+            "startTimeOffset": cgSelectedProgram.startTimeOffset, "stopTimeOffset": cgSelectedProgram.stopTimeOffset };
+    }
+    else {
+        var commandData = { "command": "updateScheduledRecording", "id": cgSelectedProgram.scheduledRecordingId,
+            "startTimeOffset": cgSelectedProgram.startTimeOffset, "stopTimeOffset": cgSelectedProgram.stopTimeOffset };
+    }
+
     console.log(commandData);
 
     $.get(aUrl, commandData)
@@ -896,9 +904,13 @@ function cgRecordProgramSetOptions() {
     $("#cgRecordOptionsCancel").addClass("btn-secondary");
 
 
+    var addRecordToDB = true;
+    if (cgSelectedProgram.scheduledRecordingId > 0) {
+        addRecordToDB = false;
+    }
     $("#cgRecordOptionsSave").click(function (event) {
         $("#cgRecordingOptionsDlg").modal('hide');
-        cgRecordProgramFromClient();
+        cgRecordProgramFromClient(addRecordToDB);
         ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
 
@@ -1071,7 +1083,7 @@ function displayCGPopUp() {
     if (cgRecordEpisodeId) {
         $(cgRecordEpisodeId).off();
         $(cgRecordEpisodeId).click(function (event) {
-            cgRecordProgramFromClient();
+            cgRecordProgramFromClient(true);
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
@@ -1297,8 +1309,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        baseURL = "http://10.10.212.44:8080/";
-        //baseURL = "http://192.168.2.9:8080/";
+        //baseURL = "http://10.10.212.44:8080/";
+        baseURL = "http://192.168.2.9:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }
