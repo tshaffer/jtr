@@ -994,6 +994,9 @@ function displayCGPopUp() {
     cgSelectedProgram = programData.program;
     cgSelectedStationId = programData.stationId;
 
+    stopTimeIndex = stopTimeOnTimeIndex;
+    startTimeIndex = startTimeOnTimeIndex;
+
     // check the program that the user has clicked
     // display different pop ups based on
     //      single vs. series
@@ -1027,6 +1030,7 @@ function displayCGPopUp() {
 
     if (cgSelectedProgram.showType == "Series") {
         if (cgSelectedProgram.scheduledRecordingId == -1) {
+            // not yet scheduled to record
             cgPopupId = '#cgSeriesDlg';
             cgPopupTitle = '#cgSeriesDlgShowTitle';
             cgPopupElements = cgPopupSeriesElements;
@@ -1039,16 +1043,31 @@ function displayCGPopUp() {
             cgCloseEpisodeId = "#cgSeriesClose";
         }
         else {
-            cgPopupId = '#cgScheduledSeriesDlg';
-            cgPopupTitle = '#cgScheduledSeriesDlgTitle';
-            cgPopupElements = cgPopupScheduledSeriesElements;
-            cgPopupHandlers = cgPopupSchedulesSeriesHandlers;
+            // previously scheduled to record
+            if (cgSelectedProgram.scheduledSeriesRecordingId > 0) {
+                cgPopupId = '#cgScheduledSeriesDlg';
+                cgPopupTitle = '#cgScheduledSeriesDlgTitle';
+                cgPopupElements = cgPopupScheduledSeriesElements;
+                cgPopupHandlers = cgPopupSchedulesSeriesHandlers;
 
-            cgCancelRecordingId = "#cgSeriesCancelEpisode";
-            cgCancelSeriesId = "#cgSeriesCancelSeries";
-            cgRecordViewUpcomingEpisodesId = "#cgSeriesViewUpcoming";
-            cgTuneEpisodeId = "#cgSeriesRecordingTune";
-            cgCloseEpisodeId = "#cgSeriesRecordingClose";
+                cgCancelRecordingId = "#cgSeriesCancelEpisode";
+                cgCancelSeriesId = "#cgSeriesCancelSeries";
+                cgRecordViewUpcomingEpisodesId = "#cgSeriesViewUpcoming";
+                cgTuneEpisodeId = "#cgSeriesRecordingTune";
+                cgCloseEpisodeId = "#cgSeriesRecordingClose";
+            }
+            else {
+                cgPopupId = '#cgScheduledRecordingDlg';
+                cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
+                cgPopupElements = cgPopupScheduledProgramElement;
+                cgPopupHandlers = cgPopupScheduledProgramHandlers;
+
+                cgCancelRecordingId = "#cgCancelScheduledRecording";
+                cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
+                cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
+                cgTuneEpisodeId = "#cgScheduledRecordingTune";
+                cgCloseEpisodeId = "#cgScheduledRecordingClose";
+            }
         }
     }
     else        // single program recordings (not series)
@@ -1309,8 +1328,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        //baseURL = "http://10.10.212.44:8080/";
-        baseURL = "http://192.168.2.9:8080/";
+        baseURL = "http://10.10.212.44:8080/";
+        //baseURL = "http://192.168.2.9:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }
