@@ -917,6 +917,7 @@ function cgRecordProgramSetOptions() {
         addRecordToDB = false;
     }
     $("#cgRecordOptionsSave").click(function (event) {
+        $("#cgRecordOptionsSave").unbind("click");
         $("#cgRecordingOptionsDlg").modal('hide');
         cgRecordProgramFromClient(addRecordToDB, ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
         ChannelGuideSingleton.getInstance().reselectCurrentProgram();
@@ -1111,6 +1112,7 @@ function displayCGPopUp() {
     if (cgRecordEpisodeId) {
         $(cgRecordEpisodeId).off();
         $(cgRecordEpisodeId).click(function (event) {
+            $(cgRecordEpisodeId).unbind("click");
             cgRecordProgramFromClient(true, ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
