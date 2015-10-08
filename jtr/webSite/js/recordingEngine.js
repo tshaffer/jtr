@@ -120,7 +120,7 @@ recordingEngineStateMachine.prototype.buildToDoList = function () {
 
     getScheduledRecordingsPromise.then(function() {
 
-        console.log("scheduledRecordings retrieved from db");
+        console.log("buildToDoList: scheduledRecordings retrieved from db");
 
         // sort scheduled recordings by date
         self.toDoList.sort(function (a, b) {

@@ -248,7 +248,7 @@ function deleteScheduledRecording(scheduledRecordingId, nextFunction) {
 
 }
 
-function deleteScheduledSeries(scheduledSeriesRecordingId) {
+function deleteScheduledSeries(scheduledSeriesRecordingId, nextFunction) {
 
     var aUrl = baseURL + "deleteScheduledSeries";
     var commandData = { "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
@@ -257,6 +257,9 @@ function deleteScheduledSeries(scheduledSeriesRecordingId) {
     $.get(aUrl, commandData)
         .done(function (result) {
             console.log("deleteScheduledSeries success");
+            if (nextFunction != null) {
+                nextFunction();
+            }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;

@@ -754,7 +754,9 @@ function cgRecordSelectedProgram() {
     cgRecordProgram();
 }
 
-function cgRecordProgramFromClient(addRecording) {
+function cgRecordProgramFromClient(addRecording, nextFunction) {
+
+    console.log("cgRecordProgramFromClient invoked");
 
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -783,7 +785,10 @@ function cgRecordProgramFromClient(addRecording) {
 
     $.get(aUrl, commandData)
         .done(function (result) {
-            console.log("browserCommand successfully sent");
+            console.log("cgRecordProgramFromClient: add or update record processing complete");
+            if (nextFunction != null) {
+                nextFunction();
+            }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
@@ -795,7 +800,7 @@ function cgRecordProgramFromClient(addRecording) {
 }
 
 
-function cgRecordSelectedSeriesFromClient() {
+function cgRecordSelectedSeriesFromClient(nextFunction) {
 
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -812,6 +817,9 @@ function cgRecordSelectedSeriesFromClient() {
     $.get(aUrl, commandData)
         .done(function (result) {
             console.log("browserCommand addSeries successfully sent");
+            if (nextFunction != null) {
+                nextFunction();
+            }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             debugger;
@@ -844,19 +852,19 @@ function cgScheduledSeriesViewUpcoming() {
     console.log("cgScheduledSeriesViewUpcoming invoked");
 }
 
-function cgCancelScheduledRecordingFromClient() {
+function cgCancelScheduledRecordingFromClient(nextFunction) {
     console.log("cgCancelScheduledRecordingFromClient invoked");
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
-    deleteScheduledRecording(cgSelectedProgram.scheduledRecordingId, null);
+    deleteScheduledRecording(cgSelectedProgram.scheduledRecordingId, nextFunction);
 }
 
 
-function cgCancelScheduledSeriesFromClient() {
+function cgCancelScheduledSeriesFromClient(nextFunction) {
     console.log("cgCancelScheduledSeriesFromClient invoked");
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
-    deleteScheduledSeries(cgSelectedProgram.scheduledSeriesRecordingId);
+    deleteScheduledSeries(cgSelectedProgram.scheduledSeriesRecordingId, nextFunction);
 }
 
 function cgRecordProgramSetOptions() {
@@ -910,7 +918,7 @@ function cgRecordProgramSetOptions() {
     }
     $("#cgRecordOptionsSave").click(function (event) {
         $("#cgRecordingOptionsDlg").modal('hide');
-        cgRecordProgramFromClient(addRecordToDB);
+        cgRecordProgramFromClient(addRecordToDB, ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
         ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
 
@@ -1028,6 +1036,7 @@ function displayCGPopUp() {
     cgRecordViewUpcomingEpisodesId = null;
     cgTuneEpisodeId = null;
 
+    // JTRTODO - optimize the logic here - I think I can make it simpler
     if (cgSelectedProgram.showType == "Series") {
         if (cgSelectedProgram.scheduledRecordingId == -1) {
             // not yet scheduled to record
@@ -1102,7 +1111,7 @@ function displayCGPopUp() {
     if (cgRecordEpisodeId) {
         $(cgRecordEpisodeId).off();
         $(cgRecordEpisodeId).click(function (event) {
-            cgRecordProgramFromClient(true);
+            cgRecordProgramFromClient(true, ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
@@ -1110,7 +1119,7 @@ function displayCGPopUp() {
     if (cgRecordSeriesId) {
         $(cgRecordSeriesId).off();
         $(cgRecordSeriesId).click(function (event) {
-            cgRecordSelectedSeriesFromClient();
+            cgRecordSelectedSeriesFromClient(ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });
@@ -1129,7 +1138,7 @@ function displayCGPopUp() {
         $(cgCancelRecordingId).off();
         $(cgCancelRecordingId).click(function (event) {
             console.log("CancelRecording invoked");
-            cgCancelScheduledRecordingFromClient();
+            cgCancelScheduledRecordingFromClient(ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });
@@ -1139,7 +1148,7 @@ function displayCGPopUp() {
         $(cgCancelSeriesId).off();
         $(cgCancelSeriesId).click(function (event) {
             console.log("CancelSeriesRecording invoked");
-            cgCancelScheduledSeriesFromClient();
+            cgCancelScheduledSeriesFromClient(ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
             cgProgramDlgCloseInvoked();
             ChannelGuideSingleton.getInstance().reselectCurrentProgram();
         });
@@ -1203,6 +1212,8 @@ function displayCGPopUp() {
         else if (keyIdentifier == "Enter") {
             var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
             cgProgramDlgCloseInvoked();
+            // ?? JTRTODO - update scheduled recordings
+
         }
     });
     // browser event handlers - browser.js - this approach didn't work - why?
@@ -1247,6 +1258,7 @@ function cgModalClose() {
 function cgSelectEventHandler() {
     var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
     cgProgramDlgCloseInvoked();
+    // ?? JTRTODO - update scheduled recordings
     return functionInvoked;
 }
 
@@ -1328,8 +1340,8 @@ $(document).ready(function () {
         baseURL = document.baseURI.replace("?", "");
         baseIP = document.baseURI.substr(0, document.baseURI.lastIndexOf(":"));
 
-        baseURL = "http://10.10.212.44:8080/";
-        //baseURL = "http://192.168.2.9:8080/";
+        //baseURL = "http://10.10.212.44:8080/";
+        baseURL = "http://192.168.2.9:8080/";
 
         console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
     }

@@ -55,17 +55,73 @@ ChannelGuide.prototype.reselectCurrentProgram = function() {
 }
 
 
+ChannelGuide.prototype.retrieveScheduledRecordings = function() {
+
+    var self = ChannelGuideSingleton.getInstance();
+
+    // get the scheduled recordings - this is independent of other code here so can be done asynchronously and independently for now
+
+    // JTRTODO - this is now more questionable - if the user returned from a pop up, we need to update the scheduledRecordings data
+    // before they select another item
+    self.scheduledRecordings = null;
+    var getScheduledRecordingsPromise = new Promise(function(resolve, reject) {
+
+        var aUrl = baseURL + "getScheduledRecordings";
+
+        var currentDateTimeIso = new Date().toISOString();
+        var currentDateTime = { "currentDateTime": currentDateTimeIso };
+
+        console.log("retrieveScheduledRecordings: getScheduledRecordings invoked");
+
+        $.get(
+            aUrl,
+            currentDateTime
+        ).then(function (scheduledRecordings) {
+                console.log("retrieveScheduledRecordings: getScheduledRecordings processing complete");
+                self.scheduledRecordings = [];
+                $.each(scheduledRecordings, function (index, scheduledRecording) {
+                    self.scheduledRecordings.push(scheduledRecording);
+                });
+                resolve();
+            }, function () {
+                reject();
+            });
+    });
+
+    getScheduledRecordingsPromise.then(function() {
+        console.log("retrieveScheduledRecordings: scheduledRecordings retrieved from db");
+
+        //// sort scheduled recordings by date
+        //self.toDoList.sort(function (a, b) {
+        //    var aStr = a.DateTime.toISOString();
+        //    var bStr = b.DateTime.toISOString();
+        //    if (aStr > bStr) {
+        //        return 1;
+        //    }
+        //    else if (aStr < bStr) {
+        //        return -1;
+        //    }
+        //    else {
+        //        return 0;
+        //    }
+        //});
+    }, function() {
+        console.log("getScheduledRecordingsPromise error");
+    });
+}
 ChannelGuide.prototype.selectChannelGuide = function() {
 
-    // if returning from pop up modal, just re-select the last program and return
+    // if returning from pop up modal, just re-select the last program and retrieve potentially modified scheduledRecordings
     if (!this.resetSelectedProgram) {
         this.selectProgram(null, this._currentSelectedProgramButton);
-        return;
     }
 
     var self = this;
 
     // get the scheduled recordings - this is independent of other code here so can be done asynchronously and independently for now
+
+    // JTRTODO - this is now more questionable - if the user returned from a pop up, we need to update the scheduledRecordings data
+    // before they select another item
     self.scheduledRecordings = null;
     var getScheduledRecordingsPromise = new Promise(function(resolve, reject) {
 
@@ -89,7 +145,7 @@ ChannelGuide.prototype.selectChannelGuide = function() {
     });
 
     getScheduledRecordingsPromise.then(function() {
-        console.log("scheduledRecordings retrieved from db");
+        console.log("selectChannelGuide: scheduledRecordings retrieved from db");
 
         //// sort scheduled recordings by date
         //self.toDoList.sort(function (a, b) {
@@ -108,6 +164,11 @@ ChannelGuide.prototype.selectChannelGuide = function() {
     }, function() {
         console.log("getScheduledRecordingsPromise error");
     });
+
+    // if returning from pop up modal return now (after launching code to update scheduledRecordings)
+    if (!this.resetSelectedProgram) {
+        return;
+    }
 
     if (this.epgProgramSchedule == null) {
 
