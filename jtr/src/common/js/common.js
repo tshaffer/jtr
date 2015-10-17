@@ -1,88 +1,93 @@
-﻿var clientType;
-var browserTypeIsSafari;
+﻿define(["placeholder"], function (placeholder) {
 
-var baseURL;
-var baseIP;
-
-var _settingsRetrieved = false;
-var _settings = {};
-_settings.recordingBitRate = 10;
-_settings.segmentRecordings = 0;
-
-var _currentRecordings = {};
-
-var currentActiveElementId = "#homePage";
-
-var recordedPageIds = [];
-var scheduledRecordingIds = [];
-
-var cgPopupId = "";
-var cgPopupTitle = "";
-var cgPopupElements;
-var cgPopupHandlers;
-
-var cgRecordEpisodeId;
-var cgRecordSeriesId;
-var cgTuneEpisodeId;
-var cgCloseEpisodeId;
-
-var cgRecordSetOptionsId;
-var cgRecordViewUpcomingEpisodesId;
-var cgCancelRecordingId;
-var cgCancelSeriesId;
-
-var cgSelectedStationId;
-var cgSelectedProgram;
-var cgPopupSelectedIndex;
-
-var cgPopupEpisodeElements = ["#cgProgramRecord", "#cgProgramRecordSetOptions", "#cgProgramViewUpcomingEpisodes", "#cgProgramTune", "#cgProgramClose"];
-var cgPopupEpisodeHandlers = [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordProgramViewUpcomingEpisodes, cgTune, cgModalClose];
-
-var cgPopupScheduledProgramElement = ["#cgCancelScheduledRecording", "#cgScheduledRecordChangeOptions", "#cgScheduledRecordingViewUpcomingEpisodes", "#cgScheduledRecordingTune", "#cgScheduledRecordingClose"];
-var cgPopupScheduledProgramHandlers = [cgCancelScheduledRecording, cgChangeScheduledRecordingOptions, cgScheduledRecordingViewUpcomingEpisodes, cgScheduledRecordingTune, cgScheduledRecordingClose];
-
-var cgPopupSeriesElements = ["#cgEpisodeRecord", "cgSeriesRecordSetProgramOptions", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"];
-var cgPopupSeriesHandlers = [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordSelectedSeries, cgTune, cgModalClose];
-
-var cgPopupScheduledSeriesElements = ["cgSeriesCancelEpisode", "cgSeriesCancelSeries", "cgSeriesViewUpcoming", "cgSeriesRecordingTune", "cgSeriesRecordingClose"];
-var cgPopupSchedulesSeriesHandlers = [cgCancelScheduledRecording, cgCancelScheduledSeries, cgScheduledSeriesViewUpcoming, cgTune, cgModalClose];
-
-var stopTimeOptions = ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"];
-var stopTimeOffsets = [-30, -15, -10, -5, 0, 5, 10, 15, 30, 60, 90, 120, 180];
-
-var stopTimeOnTimeIndex = 4;
-var stopTimeIndex;
-
-var startTimeOptions = ["15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late"];
-var startTimeOnTimeIndex = 3;
-var startTimeOffsets = [-15, -10, -5, 0, 5, 10, 15];
-var startTimeIndex;
+    return {
+        
+        clientType: "",
+        browserTypeIsSafari: false,
+        
+        baseURL: "",
+        baseIP: "",
+    
+        _settingsRetrieved: false,
+        _settings: {},
+        // REQUIRETODO
+        //_settings.recordingBitRate: 10,
+        //_settings.segmentRecordings: 0,
+        
+        _currentRecordings: {},
+        
+        currentActiveElementId: "#homePage",
+        
+        recordedPageIds: [],
+        scheduledRecordingIds: [],
+        
+        cgPopupId: "",
+        cgPopupTitle: "",
+        cgPopupElements: null,
+        cgPopupHandlers: null,
+        
+        cgRecordEpisodeId: null,
+        cgRecordSeriesId: null,
+        cgTuneEpisodeId: null,
+        cgCloseEpisodeId: null,
+        
+        cgRecordSetOptionsId: null,
+        cgRecordViewUpcomingEpisodesId: null,
+        cgCancelRecordingId: null,
+        cgCancelSeriesId: null,
+        
+        cgSelectedStationId: null,
+        cgSelectedProgram: null,
+        cgPopupSelectedIndex: null,
+    
+        cgPopupEpisodeElements: ["#cgProgramRecord", "#cgProgramRecordSetOptions", "#cgProgramViewUpcomingEpisodes", "#cgProgramTune", "#cgProgramClose"],
+        cgPopupEpisodeHandlers: [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordProgramViewUpcomingEpisodes, cgTune, cgModalClose],
+    
+        cgPopupScheduledProgramElement: ["#cgCancelScheduledRecording", "#cgScheduledRecordChangeOptions", "#cgScheduledRecordingViewUpcomingEpisodes", "#cgScheduledRecordingTune", "#cgScheduledRecordingClose"],
+        cgPopupScheduledProgramHandlers: [cgCancelScheduledRecording, cgChangeScheduledRecordingOptions, cgScheduledRecordingViewUpcomingEpisodes, cgScheduledRecordingTune, cgScheduledRecordingClose],
+        
+        cgPopupSeriesElements: ["#cgEpisodeRecord", "cgSeriesRecordSetProgramOptions", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"],
+        cgPopupSeriesHandlers: [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordSelectedSeries, cgTune, cgModalClose],
+        
+        cgPopupScheduledSeriesElements: ["cgSeriesCancelEpisode", "cgSeriesCancelSeries", "cgSeriesViewUpcoming", "cgSeriesRecordingTune", "cgSeriesRecordingClose"],
+        cgPopupSchedulesSeriesHandlers: [cgCancelScheduledRecording, cgCancelScheduledSeries, cgScheduledSeriesViewUpcoming, cgTune, cgModalClose],
+        
+        stopTimeOptions: ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"],
+        stopTimeOffsets: [-30, -15, -10, -5, 0, 5, 10, 15, 30, 60, 90, 120, 180],
+    
+        stopTimeOnTimeIndex: 4,
+        stopTimeIndex: null,
+    
+        startTimeOptions: ["15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late"],
+        startTimeOnTimeIndex: 3,
+        startTimeOffsets: [-15, -10, -5, 0, 5, 10, 15],
+        startTimeIndex: null,
 
 // home page
-var mainMenuIds = [
-    ['recordedShows', 'liveVideo'],
-    ['recordNow', 'channelGuide'],
-    ['manualRecord', 'toDoList'],
-    ['', 'settings']
-];
+        mainMenuIds: [
+            ['recordedShows', 'liveVideo'],
+            ['recordNow', 'channelGuide'],
+            ['manualRecord', 'toDoList'],
+            ['', 'settings']
+        ],
 
-function addMinutes(date, minutes) {
+ addMinutes: function(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);
-}
+},
 
-function addMilliseconds(date, milliseconds) {
+addMilliseconds: function(date, milliseconds) {
     return new Date(date.getTime() + milliseconds);
-}
+},
 
-function msecToMinutes(msec) {
+msecToMinutes: function (msec) {
     return msec / 60000;
-}
+},
 
-function minutesToMsec(minutes) {
+        minutesToMsec: function (minutes) {
     return minutes * 60000;
-}
+},
 
-function switchToPage(newPage) {
+        switchToPage: function (newPage) {
 
     var newPageId = "#" + newPage;
     $(currentActiveElementId).css("display", "none");
@@ -114,21 +119,21 @@ function switchToPage(newPage) {
         setFooterVisibility(true, true)
         $("#ipAddress").css("display", "none");
     }
-}
+},
 
 
-function selectHomePage() {
+        selectHomePage: function () {
     switchToPage("homePage");
-}
+},
 
 
-function selectRecordedShows() {
+        selectRecordedShows: function () {
     switchToPage("recordedShowsPage");
     getRecordedShows();
-}
+},
 
 
-function getRecordedShows() {
+        getRecordedShows: function () {
 
     console.log("getRecordedShows() invoked");
 
@@ -245,10 +250,10 @@ function getRecordedShows() {
                 });
         }
     });
-}
+},
 
 
-function addRecordedShowsLine(jtrRecording) {
+        addRecordedShowsLine: function (jtrRecording) {
 
     /*
         Play icon
@@ -301,10 +306,10 @@ function addRecordedShowsLine(jtrRecording) {
         "</tr>";
 
     return toAppend;
-}
+},
 
 
-function retrieveSettings(nextFunction) {
+        retrieveSettings: function (nextFunction) {
 
     // get settings from db
     var url = baseURL + "getSettings";
@@ -322,9 +327,9 @@ function retrieveSettings(nextFunction) {
     })
     .always(function () {
     });
-}
+},
 
-function selectSettings() {
+        selectSettings: function () {
 
     switchToPage("settingsPage");
 
@@ -342,10 +347,10 @@ function selectSettings() {
         _settings.segmentRecordings = segmentRecordings ? 1 : 0;
         updateSettings();
     });
-}
+},
 
 
-function initializeSettingsUIElements() {
+        initializeSettingsUIElements: function () {
 
     // initialize UI on settings page
     // TODO - don't hard code these values; read through html
@@ -369,9 +374,9 @@ function initializeSettingsUIElements() {
             $("#segmentRecordingsCheckBox").prop('checked', true);
             break;
     }
-}
+},
 
-function updateSettings() {
+        updateSettings: function () {
     var url = baseURL + "setSettings";
     var settingsData = { "recordingBitRate": _settings.recordingBitRate, "segmentRecordings": _settings.segmentRecordings };
     $.get(url, settingsData)
@@ -384,17 +389,17 @@ function updateSettings() {
     })
     .always(function () {
     });
-}
+},
 
 
 
-function selectToDoList() {
+        selectToDoList: function () {
     switchToPage("toDoListPage");
     getToDoList();
-}
+},
 
 
-function getToDoList() {
+        getToDoList: function () {
 
     console.log("getToDoList() invoked");
 
@@ -462,9 +467,9 @@ function getToDoList() {
                 //alert("recording transmission finished");
             });
     });
-}
+},
 
-function addScheduledRecordingShowLine(scheduledRecording, stations) {
+        addScheduledRecordingShowLine: function (scheduledRecording, stations) {
 
     /*
     Delete / Stop icon
@@ -548,26 +553,26 @@ function addScheduledRecordingShowLine(scheduledRecording, stations) {
         "</tr>";
 
     return toAppend;
-}
+},
 
 
 
-function selectLiveVideo() {
+        selectLiveVideo: function () {
 
-}
+},
 
 
-function setElementVisibility(divId, show) {
+        setElementVisibility: function (divId, show) {
     if (show) {
         $(divId).show();
     }
     else {
         $(divId).hide();
     }
-}
+},
 
 
-function selectRecordNow() {
+        selectRecordNow: function () {
     switchToPage("recordNowPage");
 
     $("#rbRecordNowTuner").change(function () {
@@ -584,10 +589,10 @@ function selectRecordNow() {
 
     setDefaultDateTimeFields();
     $("#recordNowTitle").focus();
-}
+},
 
 
-function selectManualRecord() {
+        selectManualRecord: function () {
 
     switchToPage("manualRecordPage");
 
@@ -605,19 +610,19 @@ function selectManualRecord() {
 
     setDefaultDateTimeFields();
     $("#manualRecordTitle").focus();
-}
+},
 
 
-function twoDigitFormat(val) {
+        twoDigitFormat: function (val) {
     val = '' + val;
     if (val.length === 1) {
         val = '0' + val.slice(-2);
     }
     return val;
-}
+},
 
 
-function setDefaultDateTimeFields() {
+        setDefaultDateTimeFields: function () {
 
     var date = new Date();
 
@@ -626,9 +631,9 @@ function setDefaultDateTimeFields() {
 
     var timeVal = twoDigitFormat(date.getHours()) + ":" + twoDigitFormat(date.getMinutes());
     $("#manualRecordTime").val(timeVal);
-}
+},
 
-function getRecordingTitle(titleId, dateObj, inputSource, channel) {
+        getRecordingTitle: function (titleId, dateObj, inputSource, channel) {
 
     var title = $(titleId).val();
     if (!title) {
@@ -643,9 +648,9 @@ function getRecordingTitle(titleId, dateObj, inputSource, channel) {
     }
 
     return title;
-}
+},
 
-function recordedShowDetails(showId) {
+        recordedShowDetails: function (showId) {
     // body...
     switchToPage("recordedShowDetailsPage");
     var showTitle = getShowTitle(showId);
@@ -657,18 +662,18 @@ function recordedShowDetails(showId) {
         + "<button>Delete</button>";
 
     $("#recordedShowDetailsPage").append(toAppend);
-}
+},
 
-function getShowTitle(showId) {
+        getShowTitle: function (showId) {
     // body...
-}
+},
 
-function getShowDescription(showId) {
+        getShowDescription: function (showId) {
     // body...
-}
+},
 
 
-function cgTune() {
+        cgTune: function () {
 
     // enter live video
     var event = {};
@@ -683,10 +688,10 @@ function cgTune() {
     postMessage(event);
 
     return "tune";
-}
+},
 
 
-function cgTuneFromClient() {
+        cgTuneFromClient: function () {
 
     var stationName = getStationFromId(cgSelectedStationId);
     stationName = stationName.replace(".", "-");
@@ -706,10 +711,10 @@ function cgTuneFromClient() {
         .always(function () {
             //alert("recording transmission finished");
         });
-}
+},
 
 
-function updateCGProgramDlgSelection() {
+        updateCGProgramDlgSelection: function () {
 
     for (i = 0; i < cgPopupElements.length; i++) {
         $(cgPopupElements[i]).removeClass("btn-primary");
@@ -718,10 +723,10 @@ function updateCGProgramDlgSelection() {
 
     $(cgPopupElements[cgPopupSelectedIndex]).removeClass("btn-secondary");
     $(cgPopupElements[cgPopupSelectedIndex]).addClass("btn-primary");
-}
+},
 
 // EXTENDOMATIC TODO - do the work associated with extendomatic here
-function cgRecordProgram() {
+        cgRecordProgram: function () {
     // redundant in some cases (when selected from pop up); not when record button pressed
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -749,10 +754,10 @@ function cgRecordProgram() {
     postMessage(event);
 
     return "record";
-}
+},
 
 
-function cgRecordSelectedProgram() {
+        cgRecordSelectedProgram: function () {
 
     // setting cgSelectedProgram and cgSelectedStationId is redundant in some cases (when selected from pop up); not when record button pressed
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
@@ -760,9 +765,9 @@ function cgRecordSelectedProgram() {
     cgSelectedStationId = programData.stationId;
 
     cgRecordProgram();
-}
+},
 
-function cgRecordProgramFromClient(addRecording, nextFunction) {
+        cgRecordProgramFromClient: function (addRecording, nextFunction) {
 
     console.log("cgRecordProgramFromClient invoked");
 
@@ -805,10 +810,10 @@ function cgRecordProgramFromClient(addRecording, nextFunction) {
         .always(function () {
             //alert("recording transmission finished");
         });
-}
+},
 
 
-function cgRecordSelectedSeriesFromClient(nextFunction) {
+        cgRecordSelectedSeriesFromClient: function (nextFunction) {
 
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
@@ -838,44 +843,44 @@ function cgRecordSelectedSeriesFromClient(nextFunction) {
         });
 
     //return cgRecordProgramFromClient();
-}
+},
 
-function cgRecordSelectedSeries() {
+        cgRecordSelectedSeries: function () {
     return cgRecordProgram();
-}
+},
 
 
 
 // new handlers
-function cgCancelScheduledRecording() {
+        cgCancelScheduledRecording: function () {
     console.log("cgCancelScheduledRecording invoked");
-}
+},
 
-function cgCancelScheduledSeries() {
+        cgCancelScheduledSeries: function () {
     console.log("cgCancelScheduledSeries invoked");
-}
+},
 
 
-function cgScheduledSeriesViewUpcoming() {
+        cgScheduledSeriesViewUpcoming: function () {
     console.log("cgScheduledSeriesViewUpcoming invoked");
-}
+},
 
-function cgCancelScheduledRecordingFromClient(nextFunction) {
+        cgCancelScheduledRecordingFromClient: function (nextFunction) {
     console.log("cgCancelScheduledRecordingFromClient invoked");
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
     deleteScheduledRecording(cgSelectedProgram.scheduledRecordingId, nextFunction);
-}
+},
 
 
-function cgCancelScheduledSeriesFromClient(nextFunction) {
+        cgCancelScheduledSeriesFromClient: function (nextFunction) {
     console.log("cgCancelScheduledSeriesFromClient invoked");
     var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
     cgSelectedProgram = programData.program;
     deleteScheduledSeries(cgSelectedProgram.scheduledSeriesRecordingId, nextFunction);
-}
+},
 
-function cgRecordProgramSetOptions() {
+        cgRecordProgramSetOptions: function () {
     console.log("cgRecordProgramSetOptions invoked");
 
     // erase existing dialog, show new one
@@ -935,73 +940,73 @@ function cgRecordProgramSetOptions() {
         $("#cgRecordingOptionsDlg").modal('hide');
         ChannelGuideSingleton.getInstance().reselectCurrentProgram();
     });
-}
+},
 
-function cgRecordOptionsNextEarlyStopTime() {
+        cgRecordOptionsNextEarlyStopTime: function () {
     console.log("cgRecordOptionsNextEarlyStopTime invoked");
 
     if (stopTimeIndex > 0) {
         stopTimeIndex--;
         displayStopTimeSetting();
     }
-}
+},
 
-function displayStopTimeSetting() {
+        displayStopTimeSetting: function () {
     $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
-}
+},
 
-function cgRecordOptionsNextLateStopTime() {
+        cgRecordOptionsNextLateStopTime: function () {
     console.log("cgRecordOptionsNextLateStopTime invoked");
 
     if (stopTimeIndex < (stopTimeOptions.length-1)) {
         stopTimeIndex++;
         displayStopTimeSetting();
     }
-}
+},
 
-function cgRecordOptionsNextEarlyStartTime() {
+        cgRecordOptionsNextEarlyStartTime: function () {
     console.log("cgRecordOptionsNextEarlyStartTime invoked");
 
     if (startTimeIndex > 0) {
         startTimeIndex--;
         displayStartTimeSetting();
     }
-}
+},
 
-function displayStartTimeSetting() {
+        displayStartTimeSetting: function () {
     $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
-}
+},
 
-function cgRecordOptionsNextLateStartTime() {
+        cgRecordOptionsNextLateStartTime: function () {
     console.log("cgRecordOptionsNextLateStartTime invoked");
 
     if (startTimeIndex < (startTimeOptions.length-1)) {
         startTimeIndex++;
         displayStartTimeSetting();
     }
-}
+},
 
-function cgRecordProgramViewUpcomingEpisodes() {
+        cgRecordProgramViewUpcomingEpisodes: function () {
     console.log("cgRecordProgramViewUpcomingEpisodes invoked");
-}
+},
 
-function cgChangeScheduledRecordingOptions() {
+        cgChangeScheduledRecordingOptions: function () {
     console.log("cgChangeScheduledRecordingOptions invoked");
-}
+},
 
-function cgScheduledRecordingViewUpcomingEpisodes() {
+        cgScheduledRecordingViewUpcomingEpisodes: function () {
     console.log("cgScheduledRecordingViewUpcomingEpisodes invoked");
-}
+},
 
-function cgScheduledRecordingTune() {
+        cgScheduledRecordingTune: function () {
     console.log("cgScheduledRecordingTune invoked");
-}
+},
 
-function cgScheduledRecordingClose() {
+        cgScheduledRecordingClose: function () {
     console.log("cgScheduledRecordingClose invoked");
-}
+},
 
-function displayCGPopUp() {
+        displayCGPopUp: function () {
 
     consoleLog("displayCGPopUp() invoked");
 
@@ -1242,9 +1247,9 @@ function displayCGPopUp() {
 
     //click(cgPopupEpisodeHandlers[i]);
     //}
-}
+},
 
-function programsMatch(scheduledRecording, cgProgram, cgStationId) {
+        programsMatch: function (scheduledRecording, cgProgram, cgStationId) {
 
     // JTRTODO - what other criteria should be used?
     var channelGuide = ChannelGuideSingleton.getInstance();
@@ -1256,54 +1261,54 @@ function programsMatch(scheduledRecording, cgProgram, cgStationId) {
     if (new Date(scheduledRecording.DateTime).getTime() != cgSelectedProgram.date.getTime()) return false;
 
     return true;
-}
+},
 
-function cgModalClose() {
+        cgModalClose: function () {
     // don't need to do anything other than close the dialog
     return "close";
-}
+},
 
 
 // brightsign.js only?
-function cgSelectEventHandler() {
+        cgSelectEventHandler: function () {
     var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
     cgProgramDlgCloseInvoked();
     // ?? JTRTODO - update scheduled recordings
     return functionInvoked;
-}
+},
 
 
-function cgProgramDlgUp() {
+        cgProgramDlgUp: function () {
 
     if (cgPopupSelectedIndex > 0) {
 
         cgPopupSelectedIndex--;
         updateCGProgramDlgSelection();
     }
-}
+},
 
 
-function cgProgramDlgDown() {
+        cgProgramDlgDown: function () {
     if (cgPopupSelectedIndex < cgPopupElements.length - 1) {
 
         cgPopupSelectedIndex++;
         updateCGProgramDlgSelection();
     }
-}
+},
 
 
-function cgProgramDlgCloseInvoked() {
+        cgProgramDlgCloseInvoked: function () {
     $(cgPopupId).modal('hide');
-}
+},
 
 
-function eraseUI() {
+        eraseUI: function () {
     $("#ipAddress").css("display", "none");
     $(currentActiveElementId).css("display", "none");
     $("#footerArea").css("display", "none");
-}
+},
 
-function setFooterVisibility(trickModeKeysVisibility, homeButtonVisibility) {
+        setFooterVisibility: function (trickModeKeysVisibility, homeButtonVisibility) {
 
     if (homeButtonVisibility) {
         $("#homeButton").html("<button class='btn btn-primary' onclick='selectHomePage()'>Home</button><br><br>");
@@ -1321,3 +1326,5 @@ function setFooterVisibility(trickModeKeysVisibility, homeButtonVisibility) {
         $("#trickModeKeys").addClass("clearDisplay");
     }
 }
+}
+});

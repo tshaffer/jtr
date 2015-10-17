@@ -1,4 +1,4 @@
-define(["shirt"], function (shirt) {
+define(["placeholder"], function (placeholder) {
 
     return {
 
