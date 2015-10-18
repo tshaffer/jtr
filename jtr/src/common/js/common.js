@@ -35,19 +35,15 @@
         cgSelectedStationId: null,
         cgSelectedProgram: null,
         cgPopupSelectedIndex: null,
-    
+
         cgPopupEpisodeElements: ["#cgProgramRecord", "#cgProgramRecordSetOptions", "#cgProgramViewUpcomingEpisodes", "#cgProgramTune", "#cgProgramClose"],
-        cgPopupEpisodeHandlers: [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordProgramViewUpcomingEpisodes, this.cgTune, this.cgModalClose],
-    
+
         cgPopupScheduledProgramElement: ["#cgCancelScheduledRecording", "#cgScheduledRecordChangeOptions", "#cgScheduledRecordingViewUpcomingEpisodes", "#cgScheduledRecordingTune", "#cgScheduledRecordingClose"],
-        cgPopupScheduledProgramHandlers: [this.cgCancelScheduledRecording, this.cgChangeScheduledRecordingOptions, this.cgScheduledRecordingViewUpcomingEpisodes, this.cgScheduledRecordingTune, this.cgScheduledRecordingClose],
-        
+
         cgPopupSeriesElements: ["#cgEpisodeRecord", "cgSeriesRecordSetProgramOptions", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"],
-        cgPopupSeriesHandlers: [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordSelectedSeries, this.cgTune, this.cgModalClose],
-        
+
         cgPopupScheduledSeriesElements: ["cgSeriesCancelEpisode", "cgSeriesCancelSeries", "cgSeriesViewUpcoming", "cgSeriesRecordingTune", "cgSeriesRecordingClose"],
-        cgPopupSchedulesSeriesHandlers: [this.cgCancelScheduledRecording, this.cgCancelScheduledSeries, this.cgScheduledSeriesViewUpcoming, this.cgTune, this.cgModalClose],
-        
+
         stopTimeOptions: ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"],
         stopTimeOffsets: [-30, -15, -10, -5, 0, 5, 10, 15, 30, 60, 90, 120, 180],
     
@@ -73,6 +69,11 @@
             this.browser = browser;
             this.channelGuide = channelGuide;
 
+            this.cgPopupEpisodeHandlers = [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordProgramViewUpcomingEpisodes, this.cgTune, this.cgModalClose];
+            this.cgPopupScheduledProgramHandlers = [this.cgCancelScheduledRecording, this.cgChangeScheduledRecordingOptions, this.cgScheduledRecordingViewUpcomingEpisodes, this.cgScheduledRecordingTune, this.cgScheduledRecordingClose];
+            this.cgPopupSeriesHandlers = [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordSelectedSeries, this.cgTune, this.cgModalClose];
+            this.cgPopupSchedulesSeriesHandlers = [this.cgCancelScheduledRecording, this.cgCancelScheduledSeries, this.cgScheduledSeriesViewUpcoming, this.cgTune, this.cgModalClose];
+
             var self = this;
 
             $("#recordedShows").click(function (event) {
@@ -97,6 +98,46 @@
 
             $("#manualRecord").click(function (event) {
                 self.selectManualRecord();
+            });
+
+            // REQUIREDTODO
+            $("#homeButton").click(function (event) {
+                self.selectHomePage();
+            });
+            $("#btnHome").click(function (event) {
+                self.selectHomePage();
+            });
+
+            $("#btnRemoteRecord").click(function (event) {
+                self.remoteRecord();
+            });
+
+            $("#btnRemoteStop").click(function (event) {
+                self.remoteStop();
+            });
+
+            $("#btnRemoteRewind").click(function (event) {
+                self.remoteRewind();
+            });
+
+            $("#btnRemoteInstantReplay").click(function (event) {
+                self.remoteInstantReplay();
+            });
+
+            $("#btnRemotePause").click(function (event) {
+                self.remotePause();
+            });
+
+            $("#btnRemotePlay").click(function (event) {
+                self.remotePlay();
+            });
+
+            $("#btnRemoteQuickSkip").click(function (event) {
+                self.remoteQuickSkip();
+            });
+
+            $("#btnRemoteFastForward").click(function (event) {
+                self.remoteFastForward();
             });
         },
 
@@ -605,18 +646,25 @@
 
 
         selectRecordNow: function () {
+
             this.switchToPage("recordNowPage");
 
+            var self = this;
+
+            $("#btnRecordNow").click(function (event) {
+                self.browser.recordNow();
+            });
+
             $("#rbRecordNowTuner").change(function () {
-                this.setElementVisibility("#recordNowChannelDiv", true);
+                self.setElementVisibility("#recordNowChannelDiv", true);
             });
 
             $("#rbRecordNowRoku").change(function () {
-                this.setElementVisibility("#recordNowChannelDiv", false);
+                self.setElementVisibility("#recordNowChannelDiv", false);
             });
 
             $("#rbRecordNowTivo").change(function () {
-                this.setElementVisibility("#recordNowChannelDiv", false);
+                self.setElementVisibility("#recordNowChannelDiv", false);
             });
 
             this.setDefaultDateTimeFields();
@@ -628,16 +676,22 @@
 
             this.switchToPage("manualRecordPage");
 
+            var self = this;
+
+            $("#btnSetManualRecord").click(function (event) {
+                self.browser.createManualRecording();
+            });
+
             $("#rbManualRecordTuner").change(function () {
-                this.setElementVisibility("#manualRecordChannelDiv", true);
+                self.setElementVisibility("#manualRecordChannelDiv", true);
             });
 
             $("#rbManualRecordRoku").change(function () {
-                this.setElementVisibility("#manualRecordChannelDiv", false);
+                self.setElementVisibility("#manualRecordChannelDiv", false);
             });
 
             $("#rbManualRecordTivo").change(function () {
-                this.setElementVisibility("#manualRecordChannelDiv", false);
+                self.setElementVisibility("#manualRecordChannelDiv", false);
             });
 
             this.setDefaultDateTimeFields();
@@ -1350,8 +1404,17 @@
 
         setFooterVisibility: function (trickModeKeysVisibility, homeButtonVisibility) {
 
+            // REQUIREDTODO - check to see if this works. if it doesn't, fix it; if it does, improve it.
+            var self = this;
             if (homeButtonVisibility) {
-                $("#homeButton").html("<button class='btn btn-primary' onclick='selectHomePage()'>Home</button><br><br>");
+                $("#homeButton").html("<button class='btn btn-primary'>Home</button><br><br>");
+
+                $("#btnHome").click(function (event) {
+                    self.selectHomePage();
+                });
+                $("#homeButton").click(function (event) {
+                    self.selectHomePage();
+                });
             }
             else {
                 $("#homeButton").text("");

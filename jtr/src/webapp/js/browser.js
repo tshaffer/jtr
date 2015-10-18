@@ -298,24 +298,6 @@
                 alert("Unable to stream this recording.");
             }
         },
-
-
-        // channel guide handlers
-        navigateBackwardOneScreen: function () {
-            this.channelGuide.navigateBackwardOneScreen();
-        },
-
-        navigateBackwardOneDay: function () {
-            this.channelGuide.navigateBackwardOneDay();
-        },
-
-        navigateForwardOneScreen: function () {
-            this.channelGuide.navigateForwardOneScreen();
-        },
-
-        navigateForwardOneDay: function () {
-            this.channelGuide.navigateForwardOneDay();
-        },
     }
 });
     

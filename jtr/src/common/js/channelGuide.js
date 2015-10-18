@@ -12,6 +12,23 @@ define(function () {
             $("#channelGuideId").click(function (event) {
                 self.selectChannelGuide();
             });
+
+            $("#btnNavigateBackwardOneDay").click(function (event) {
+                self.navigateBackwardOneDay();
+            });
+
+            $("#btnNavigateBackwardOneScreen").click(function (event) {
+                self.navigateBackwardOneScreen();
+            });
+
+            $("#btnNavigateForwardOneScreen").click(function (event) {
+                self.navigateForwardOneScreen();
+            });
+
+            $("#btnNavigateForwardOneDay").click(function (event) {
+                self.navigateForwardOneDay();
+            });
+
         },
 
         // REQUIREDTODO
@@ -337,7 +354,7 @@ define(function () {
                     return false;
                 }
                 else if (keyIdentifier == "Enter") {
-                    this.common.displayCGPopUp();
+                    self.common.displayCGPopUp();
                     return false;
                 }
             });
@@ -779,6 +796,7 @@ define(function () {
             this.selectProgramAtTimeOnStation(newScrollToTime, this._currentStationIndex, this._currentSelectedProgramButton);
         },
 
+
         navigateForwardOneDay: function () {
 
             newScrollToTime = new Date(this.channelGuideDisplayCurrentDateTime).addHours(24);
@@ -791,6 +809,7 @@ define(function () {
 
             this.selectProgramAtTimeOnStation(newScrollToTime, this._currentStationIndex, this._currentSelectedProgramButton);
         },
+
 
         getProgramFromUIElement: function (element) {
 

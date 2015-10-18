@@ -187,7 +187,7 @@
                     <div class="col-sm-offset-4 col-sm-4">
                       <!--<button type="submit" class="btn btn-default" onclick="recordNow();return false;">Record Now</button>-->
                         <!--returning false avoid a page refresh-->
-                      <button class="btn btn-default" onclick="recordNow();return false;">Record Now</button>
+                      <button id="btnRecordNow" class="btn btn-default" onclick="recordNow();return false;">Record Now</button>
                     </div>
                 </div>
             </form>
@@ -236,7 +236,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-4 col-sm-4">
-                      <button type="submit" class="btn btn-default" onclick="createManualRecording();return false;">Set Manual Record</button>
+                      <button id="btnSetManualRecord" type="submit" class="btn btn-default">Set Manual Record</button>
                     </div>
                 </div>
             </form>
@@ -314,8 +314,8 @@
             <div id="episodeInfo"></div>
 
             <div id="cgBackward">
-                <button type='button' class='btn btn-default' onclick="navigateBackwardOneDay()" aria-label='Left Align'><span class='glyphicon glyphicon-step-backward' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="navigateBackwardOneScreen()" aria-label='Left Align'><span class='glyphicon glyphicon-backward' aria-hidden='true'></span></button>
+                <button id="btnNavigateBackwardOneDay" type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-step-backward' aria-hidden='true'></span></button>
+                <button id="btnNavigateBackwardOneScreen" type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-backward' aria-hidden='true'></span></button>
             </div>
             
             <div id="stationLabelDiv">
@@ -347,8 +347,8 @@
             </div>
             
             <div id="cgForward">
-                <button type='button' class='btn btn-default' onclick="navigateForwardOneScreen()" aria-label='Left Align'><span class='glyphicon glyphicon-forward' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="navigateForwardOneDay()" aria-label='Left Align'><span class='glyphicon glyphicon-step-forward' aria-hidden='true'></span></button>
+                <button id="btnNavigateForwardOneScreen" type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-forward' aria-hidden='true'></span></button>
+                <button id="btnNavigateForwardOneDay" type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-step-forward' aria-hidden='true'></span></button>
             </div>
 
         </div>
@@ -360,18 +360,18 @@
 
     <div id="footerArea">
         <p id="homeButton" class="footerAlignLeft">
-                <button class="btn btn-primary" onclick="selectHomePage()">Home</button><br><br>
+                <button id="btnHome" class="btn btn-primary">Home</button><br><br>
         </p>
 
         <p id="trickModeKeys" class="footerAlignCenter">
-                <button type='button' class='btn btn-default' onclick="remoteRecord()" aria-label='Left Align'><span class='glyphicon glyphicon-record' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remoteStop()" aria-label='Left Align'><span class='glyphicon glyphicon-stop' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remoteRewind()" aria-label='Left Align'><span class='glyphicon glyphicon-backward' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remoteInstantReplay()" aria-label='Left Align'><span class='glyphicon glyphicon-step-backward' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remotePause()" aria-label='Left Align'><span class='glyphicon glyphicon-pause' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remotePlay()" aria-label='Left Align'><span class='glyphicon glyphicon-play' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remoteQuickSkip()" aria-label='Left Align'><span class='glyphicon glyphicon-step-forward' aria-hidden='true'></span></button>
-                <button type='button' class='btn btn-default' onclick="remoteFastForward()" aria-label='Left Align'><span class='glyphicon glyphicon-forward' aria-hidden='true'></span></button>
+                <button id='btnRemoteRecord' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-record' aria-hidden='true'></span></button>
+                <button id='btnRemoteStop' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-stop' aria-hidden='true'></span></button>
+                <button id='btnRemoteRewind' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-backward' aria-hidden='true'></span></button>
+                <button id='btnRemoteInstantReplay' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-step-backward' aria-hidden='true'></span></button>
+                <button id='btnRemotePause' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-pause' aria-hidden='true'></span></button>
+                <button id='btnRemotePlay' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-play' aria-hidden='true'></span></button>
+                <button id='btnRemoteQuickSkip' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-step-forward' aria-hidden='true'></span></button>
+                <button id='btnRemoteFastForward' type='button' class='btn btn-default' aria-label='Left Align'><span class='glyphicon glyphicon-forward' aria-hidden='true'></span></button>
         </p>
 
         <p class="footerAlignRight" />
