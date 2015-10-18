@@ -1,4 +1,4 @@
-define(["placeholder"], function (placeholder) {
+define(function () {
 
     return {
 
