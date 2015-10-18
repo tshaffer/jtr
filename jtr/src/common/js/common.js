@@ -1,7 +1,7 @@
 ﻿define(function () {
 
     return {
-        
+
         clientType: "",
         browserTypeIsSafari: false,
         
@@ -68,6 +68,18 @@
             ['', 'settings']
         ],
 
+        init: function(baseURL) {
+
+            this.baseURL = baseURL;
+
+            var self = this;
+
+            $("#recordedShows").click(function (event) {
+                self.selectRecordedShows();
+            });
+
+        },
+
         addMinutes: function(date, minutes) {
             return new Date(date.getTime() + minutes * 60000);
         },
@@ -126,7 +138,7 @@
 
         selectRecordedShows: function () {
             this.switchToPage("recordedShowsPage");
-            getRecordedShows();
+            this.getRecordedShows();
         },
 
 
@@ -135,6 +147,8 @@
             console.log("getRecordedShows() invoked");
 
             var aUrl = this.baseURL + "getRecordings";
+
+            var self = this;
 
             $.ajax({
                 type: "GET",
@@ -177,21 +191,21 @@
 
                     $("#recordedShowsTableBody").empty();
 
-                    this._currentRecordings = {};
+                    self._currentRecordings = {};
 
                     $.each(jtrRecordings, function (index, jtrRecording) {
-                        toAppend += addRecordedShowsLine(jtrRecording);
+                        toAppend += self.addRecordedShowsLine(jtrRecording);
                         recordingIds.push(jtrRecording.RecordingId);
-                        this._currentRecordings[jtrRecording.RecordingId] = jtrRecording;
+                        self._currentRecordings[jtrRecording.RecordingId] = jtrRecording;
                     });
 
                     // is there a reason to do this all at the end instead of once for each row?
                     $("#recordedShowsTableBody").append(toAppend);
 
-                    this.recordedPageIds.length = 0;
+                    self.recordedPageIds.length = 0;
 
                     // get last selected show from local storage - navigate to it. null if not defined
-                    var url = this.baseURL + "lastSelectedShow";
+                    var url = self.baseURL + "lastSelectedShow";
 
                     $.get(url, {})
                         .done(function (result) {
@@ -230,13 +244,13 @@
                                 var recordedPageRow = [];
                                 recordedPageRow.push(btnIdRecording);
                                 recordedPageRow.push(btnIdDelete);
-                                this.recordedPageIds.push(recordedPageRow);
+                                self.recordedPageIds.push(recordedPageRow);
 
                             });
 
                             if (!focusApplied) {
                                 // REQUIREDTODO
-                                $(this.recordedPageIds[0][0]).focus();
+                                $(self.recordedPageIds[0][0]).focus();
                             }
                         })
                         .fail(function (jqXHR, textStatus, errorThrown) {
