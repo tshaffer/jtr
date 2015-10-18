@@ -2,6 +2,21 @@ define(function () {
 
     return {
 
+        init: function(baseURL, browser, common) {
+
+            this.baseURL = baseURL;
+            this.browser = browser;
+            this.common = common;
+
+            var self = this;
+            $("#channelGuideId").click(function (event) {
+                self.selectChannelGuide();
+            });
+        },
+
+        // REQUIREDTODO
+        numDaysEpgData: 3,
+
         epgProgramSchedule: null,
         epgProgramScheduleStartDateTime: null,
 
@@ -38,7 +53,6 @@ define(function () {
 
         retrieveScheduledRecordings: function () {
 
-            // REQUIREDTODO
             var self = this;
 
             // get the scheduled recordings - this is independent of other code here so can be done asynchronously and independently for now
@@ -48,7 +62,7 @@ define(function () {
             self.scheduledRecordings = null;
             var getScheduledRecordingsPromise = new Promise(function (resolve, reject) {
 
-                var aUrl = baseURL + "getScheduledRecordings";
+                var aUrl = this.baseURL + "getScheduledRecordings";
 
                 var currentDateTimeIso = new Date().toISOString();
                 var currentDateTime = {"currentDateTime": currentDateTimeIso};
@@ -108,7 +122,7 @@ define(function () {
             self.scheduledRecordings = null;
             var getScheduledRecordingsPromise = new Promise(function (resolve, reject) {
 
-                var aUrl = baseURL + "getScheduledRecordings";
+                var aUrl = this.baseURL + "getScheduledRecordings";
 
                 var currentDateTimeIso = new Date().toISOString();
                 var currentDateTime = {"currentDateTime": currentDateTimeIso};
@@ -163,12 +177,12 @@ define(function () {
                 // retrieve data from db starting on today's date
                 var epgStartDate = Date.now().toString("yyyy-MM-dd");
 
-                var url = baseURL + "getEpg";
+                var url = this.baseURL + "getEpg";
                 var epgData = {"startDate": epgStartDate};
                 $.get(url, epgData)
                     .done(function (result) {
 
-                        consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
+                        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX getEpg success ************************************");
 
                         // for each station, generate an ordered list (by airDateTime) of all shows in the current epg data
                         $.each(result, function (index, sdProgram) {
@@ -257,7 +271,7 @@ define(function () {
                                 var lastProgram = null;
 
                                 // 48 slots per day as each slot is 1/2 hour
-                                for (var slotIndex = 0; slotIndex < 48 * numDaysEpgData; slotIndex++) {
+                                for (var slotIndex = 0; slotIndex < 48 * self.numDaysEpgData; slotIndex++) {
 
                                     var slotTimeOffsetSinceStartOfEpgData = slotIndex * 30;     // offset in minutes
 
@@ -271,7 +285,7 @@ define(function () {
 
                                         var program = programList[programIndex];
 
-                                        var programTimeOffsetSinceStartOfEPGData = msecToMinutes(program.date - self.epgProgramScheduleStartDateTime);
+                                        var programTimeOffsetSinceStartOfEPGData = self.common.msecToMinutes(program.date - self.epgProgramScheduleStartDateTime);
 
                                         if (programTimeOffsetSinceStartOfEPGData == slotTimeOffsetSinceStartOfEpgData) {
                                             // program starts at exactly this time slot
@@ -301,7 +315,7 @@ define(function () {
                             }
                         }
 
-                        switchToPage("channelGuidePage");
+                        self.common.switchToPage("channelGuidePage");
                         self.initiateRenderChannelGuide();
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
@@ -312,8 +326,7 @@ define(function () {
                     });
             }
             else {
-                // REQUIREDTODO
-                switchToPage("channelGuidePage");
+                this.common.switchToPage("channelGuidePage");
                 this.initiateRenderChannelGuide();
             }
 
@@ -324,8 +337,7 @@ define(function () {
                     return false;
                 }
                 else if (keyIdentifier == "Enter") {
-                    // REQUIREDTODO
-                    displayCGPopUp();
+                    this.common.displayCGPopUp();
                     return false;
                 }
             });
@@ -334,15 +346,36 @@ define(function () {
 
         initiateRenderChannelGuide: function () {
 
+            var self = this;
+
             // display channel guide one station at a time, from current time for the duration of the channel guide
-            // REQUIREDTODO
-            getStations(this.renderChannelGuide);
+            //getStations(this.renderChannelGuide);
+
+            // JTRTODO - duplicate code with epg.js (getStations)
+            var url = this.baseURL + "getStations";
+
+            var jqxhr = $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+            })
+                // JTRTODO - can I just put self.stations here?
+            .done(function (stationsFromServer) {
+                console.log("successful return from getStations");
+                self.stations = stationsFromServer;
+                self.renderChannelGuide();
+            })
+            .fail(function () {
+                alert("getStations failure");
+            })
+            .always(function () {
+                //alert("getStations complete");
+            });
         },
 
 
         renderChannelGuide: function () {
 
-            // REQUIREDTODO
             var self = this;
 
             // start date/time for channel guide display is current time, rounded down to nearest 30 minutes
@@ -365,7 +398,7 @@ define(function () {
             var channelGuideDataStructureStartDateTime = this.epgProgramScheduleStartDateTime;
 
             // time difference between start of channel guide display and start of channel guide data
-            var timeDiffInMinutes = msecToMinutes(this.channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime);
+            var timeDiffInMinutes = this.common.msecToMinutes(this.channelGuideDisplayStartDateTime - channelGuideDataStructureStartDateTime);
 
             // index into the data structure (time slots) that contains the first show to display in the channel guide based on the time offset into channel guide data
             var currentChannelGuideOffsetIndex = parseInt(timeDiffInMinutes / 30);
@@ -375,7 +408,7 @@ define(function () {
 
             var self = this;
 
-            $.each(stations, function (stationIndex, station) {
+            $.each(this.stations, function (stationIndex, station) {
 
                 // channel guide data for this station
                 var programStationData = self.epgProgramSchedule[station.StationId]
@@ -397,7 +430,7 @@ define(function () {
 
                 // calculate the time delta between the time of the channel guide display start and the start of the first show to display
                 // reduce the duration of the first show by this amount (time the show would have already been airing as of this time)
-                timeDiffInMinutes = msecToMinutes(self.channelGuideDisplayStartDateTime - new Date(showToDisplay.date));
+                timeDiffInMinutes = self.common.msecToMinutes(self.channelGuideDisplayStartDateTime - new Date(showToDisplay.date));
 
                 programStationData.programUIElementIndices = [];
 
@@ -466,11 +499,10 @@ define(function () {
             var minutesDisplayed = 0;
             while (minutesDisplayed < maxMinutesToDisplay) {
 
-                var timeLineTime = this.timeOfDay(timeLineCurrentValue);
+                var timeLineTime = self.timeOfDay(timeLineCurrentValue);
 
                 toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
-                // REQUIREDTODO
-                timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + minutesToMsec(30));
+                timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + self.common.minutesToMsec(30));
                 minutesDisplayed += 30;
             }
             this.channelGuideDisplayEndDateTime = timeLineCurrentValue;
@@ -495,8 +527,7 @@ define(function () {
                             this._currentStationIndex = stationIndex;
                             self.selectProgram(self._currentSelectedProgramButton, event.target);
 
-                            // REQUIREDTODO
-                            displayCGPopUp();
+                            self.common.displayCGPopUp();
 
                             return false;
                         }
@@ -504,22 +535,22 @@ define(function () {
                 }
             });
 
-            var url = baseURL + "lastTunedChannel";
+            var url = this.baseURL + "lastTunedChannel";
 
-            var thisObj = this;
+            var self = this;
             $.get(url)
                 .done(function (result) {
-                    consoleLog("lastTunedChannel successfully retrieved");
+                    console.log("lastTunedChannel successfully retrieved");
                     var stationNumber = result;
-                    var stationIndex = thisObj.getStationIndexFromName(stationNumber)
+                    var stationIndex = self.getStationIndexFromName(stationNumber)
                     var stationRow = $("#cgData").children()[stationIndex + 1];
-                    thisObj._currentSelectedProgramButton = $(stationRow).children()[0];
-                    thisObj.selectProgram(null, thisObj._currentSelectedProgramButton, 0);
-                    thisObj._currentStationIndex = stationIndex;
+                    self._currentSelectedProgramButton = $(stationRow).children()[0];
+                    self.selectProgram(null, self._currentSelectedProgramButton, 0);
+                    self._currentStationIndex = stationIndex;
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     debugger;
-                    consoleLog("lastTunedChannel failure");
+                    console.log("lastTunedChannel failure");
                 })
                 .always(function () {
                     //alert("recording transmission finished");
@@ -530,7 +561,7 @@ define(function () {
         getSlotIndex: function (dateTime) {
 
             // compute the time difference between the new time and where the channel guide data begins (and could be displayed)
-            var timeDiffInMinutes = msecToMinutes(dateTime.getTime() - this.channelGuideDisplayStartDateTime.getTime());
+            var timeDiffInMinutes = self.common.msecToMinutes(dateTime.getTime() - this.channelGuideDisplayStartDateTime.getTime());
 
             // compute number of 30 minute slots to scroll
             var slotIndex = parseInt(timeDiffInMinutes / 30);

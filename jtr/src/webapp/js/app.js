@@ -35,7 +35,9 @@ define(function() {
             console.log("baseURL from document.baseURI is: " + baseURL + ", baseIP is: " + baseIP);
             console.log("browser, common, channelGuide loaded");
 
-            common.init(baseURL);
+            browser.init(baseURL, common, channelGuide);
+            common.init(baseURL, browser, channelGuide );
+            channelGuide.init(baseURL, browser, common);
         });
     });
 });

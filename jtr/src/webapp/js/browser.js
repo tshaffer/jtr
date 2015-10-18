@@ -2,13 +2,16 @@
 
     return {
 
+        init: function(baseURL, common, channelGuide) {
 
-        consoleLog: function (msg) {
-            console.log(msg);
+            this.baseURL = baseURL;
+            this.common = common;
+            this.channelGuide = channelGuide;
+
+            var self = this;
         },
 
-
-        // send trick commands to device for boomerang back to JS to state machine
+// send trick commands to device for boomerang back to JS to state machine
         sendRemoteCommandToDevice: function (remoteCommand) {
 
             console.log("this.sendRemoteCommandToDevice: " + remoteCommand);
@@ -65,8 +68,7 @@
         recordNow: function () {
             // load settings from db if not previously loaded
             if (!_settingsRetrieved) {
-                // REQUIREDTODO
-                retrieveSettings(this.executeRecordNow);
+                this.common.retrieveSettings(this.executeRecordNow);
             }
             else {
                 this.executeRecordNow();
@@ -82,8 +84,7 @@
             var channel = $("#recordNowChannel").val();
             var scheduledSeriesRecordingId = -1;
 
-            // REQUIREDTODO
-            var title = getRecordingTitle("#recordNowTitle", currentDate, inputSource, channel);
+            var title = this.common.getRecordingTitle("#recordNowTitle", currentDate, inputSource, channel);
 
             var aUrl = baseURL + "browserCommand";
             var commandData = { "command": "recordNow", "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
@@ -106,8 +107,7 @@
 
             // load settings from db if not previously loaded
             if (!_settingsRetrieved) {
-                // REQUIREDTODO
-                retrieveSettings(this.executeCreateManualRecording);
+                this.common.retrieveSettings(this.executeCreateManualRecording);
             }
             else {
                 this.executeCreateManualRecording();
@@ -132,8 +132,7 @@
             var scheduledSeriesRecordingId = -1;
 
             // check to see if recording is in the past
-            // REQUIREDTODO
-            var dtEndOfRecording = addMinutes(dateObj, duration);
+            var dtEndOfRecording = this.common.addMinutes(dateObj, duration);
             var now = new Date();
 
             var millisecondsUntilEndOfRecording = dtEndOfRecording - now;
@@ -142,8 +141,7 @@
                 return;
             }
 
-            // REQUIREDTODO
-            var title = getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
+            var title = this.common.getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
             var aUrl = baseURL + "browserCommand";
             var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
                 "startTimeOffset": 0, "stopTimeOffset": 0 };
@@ -198,8 +196,7 @@
             $.get(aUrl, commandData)
                 .done( function (result) {
                     console.log("browserCommand successfully sent");
-                    // REQUIREDTODO
-                    getRecordedShows();
+                    this.common.getRecordedShows();
                 })
                 .fail( function (jqXHR, textStatus, errorThrown) {
                     debugger;
@@ -220,8 +217,7 @@
             $.get(aUrl, params)
                 .done( function (result) {
                     console.log("stopRecording successful");
-                    // REQUIREDTODO
-                    getToDoList();
+                    this.common.getToDoList();
                 })
                 .fail( function (jqXHR, textStatus, errorThrown) {
                     debugger;
@@ -236,8 +232,7 @@
 
         deleteScheduledRecordingHandler: function (event) {
             var scheduledRecordingId = event.data.scheduledRecordingId;
-            // REQUIREDTODO
-            this.deleteScheduledRecording(scheduledRecordingId, getToDoList);
+            this.deleteScheduledRecording(scheduledRecordingId, this.common.getToDoList);
         },
 
 
@@ -306,29 +301,20 @@
 
 
         // channel guide handlers
-        selectChannelGuide: function () {
-            // REQUIREDTODO
-            ChannelGuideSingleton.getInstance().selectChannelGuide();
-        },
-
         navigateBackwardOneScreen: function () {
-            // REQUIREDTODO
-            ChannelGuideSingleton.getInstance().navigateBackwardOneScreen();
+            this.channelGuide.navigateBackwardOneScreen();
         },
 
         navigateBackwardOneDay: function () {
-            // REQUIREDTODO
-            ChannelGuideSingleton.getInstance().navigateBackwardOneDay();
+            this.channelGuide.navigateBackwardOneDay();
         },
 
         navigateForwardOneScreen: function () {
-            // REQUIREDTODO
-            ChannelGuideSingleton.getInstance().navigateForwardOneScreen();
+            this.channelGuide.navigateForwardOneScreen();
         },
 
         navigateForwardOneDay: function () {
-            // REQUIREDTODO
-            ChannelGuideSingleton.getInstance().navigateForwardOneDay();
+            this.channelGuide.navigateForwardOneDay();
         },
     }
 });
