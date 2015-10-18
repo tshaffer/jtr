@@ -521,7 +521,7 @@ define(function () {
 
                     // JTRTODO - linear search
                     // get stationIndex
-                    $.each(stations, function (stationIndex, station) {
+                    $.each(self.stations, function (stationIndex, station) {
                         if (station.StationId == programInfo.stationId) {
 
                             this._currentStationIndex = stationIndex;
@@ -561,7 +561,7 @@ define(function () {
         getSlotIndex: function (dateTime) {
 
             // compute the time difference between the new time and where the channel guide data begins (and could be displayed)
-            var timeDiffInMinutes = self.common.msecToMinutes(dateTime.getTime() - this.channelGuideDisplayStartDateTime.getTime());
+            var timeDiffInMinutes = this.common.msecToMinutes(dateTime.getTime() - this.channelGuideDisplayStartDateTime.getTime());
 
             // compute number of 30 minute slots to scroll
             var slotIndex = parseInt(timeDiffInMinutes / 30);
@@ -587,7 +587,7 @@ define(function () {
 
             var slotIndex = this.getSlotIndex(selectProgramTime);
 
-            var station = stations[stationIndex];
+            var station = this.stations[stationIndex];
             var stationId = station.StationId;
             var programStationData = this.epgProgramSchedule[stationId]
 
@@ -904,7 +904,7 @@ define(function () {
                     }
                 }
                 else if (direction == "down" || direction == "up") {
-                    if ((this._currentStationIndex < stations.length - 1 && direction == "down") || (this._currentStationIndex > 0 && direction == "up")) {
+                    if ((this._currentStationIndex < this.stations.length - 1 && direction == "down") || (this._currentStationIndex > 0 && direction == "up")) {
 
                         var newRowIndex;
                         if (direction == "down") {
@@ -943,7 +943,7 @@ define(function () {
 
             var self = this;
 
-            $.each(stations, function (stationIndex, station) {
+            $.each(this.stations, function (stationIndex, station) {
                 var cgProgramLineName = "#cgStation" + stationIndex.toString() + "Data";
                 var cgProgramsOnStation = $(cgProgramLineName).children();
                 $.each(cgProgramsOnStation, function (buttonIndex, cgProgramButton) {
@@ -971,7 +971,7 @@ define(function () {
             var selectedStation = "";
 
             // get stationIndex
-            $.each(stations, function (stationIndex, station) {
+            $.each(this.stations, function (stationIndex, station) {
                 if (station.StationId == stationId) {
                     selectedStation = station.AtscMajor + "." + station.AtscMinor;
                     return false;
@@ -1000,8 +1000,9 @@ define(function () {
 
             var stationIndex = -1;
 
-            $.each(stations, function (index, station) {
-                if (stationNumbersEqual(stationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
+            var self = this;
+            $.each(this.stations, function (index, station) {
+                if (self.stationNumbersEqual(stationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
                     stationIndex = index;
                     return false;
                 }
@@ -1018,7 +1019,7 @@ define(function () {
 
             var channel = "";
 
-            $.each(stations, function (index, station) {
+            $.each(this.stations, function (index, station) {
                 if (stationId == station.StationId) {
                     channel = station.AtscMajor + "-" + station.AtscMinor;
                     return false;
