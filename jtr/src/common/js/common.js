@@ -38,16 +38,16 @@
         cgPopupSelectedIndex: null,
     
         cgPopupEpisodeElements: ["#cgProgramRecord", "#cgProgramRecordSetOptions", "#cgProgramViewUpcomingEpisodes", "#cgProgramTune", "#cgProgramClose"],
-        cgPopupEpisodeHandlers: [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordProgramViewUpcomingEpisodes, cgTune, cgModalClose],
+        cgPopupEpisodeHandlers: [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordProgramViewUpcomingEpisodes, this.cgTune, this.cgModalClose],
     
         cgPopupScheduledProgramElement: ["#cgCancelScheduledRecording", "#cgScheduledRecordChangeOptions", "#cgScheduledRecordingViewUpcomingEpisodes", "#cgScheduledRecordingTune", "#cgScheduledRecordingClose"],
-        cgPopupScheduledProgramHandlers: [cgCancelScheduledRecording, cgChangeScheduledRecordingOptions, cgScheduledRecordingViewUpcomingEpisodes, cgScheduledRecordingTune, cgScheduledRecordingClose],
+        cgPopupScheduledProgramHandlers: [this.cgCancelScheduledRecording, this.cgChangeScheduledRecordingOptions, this.cgScheduledRecordingViewUpcomingEpisodes, this.cgScheduledRecordingTune, this.cgScheduledRecordingClose],
         
         cgPopupSeriesElements: ["#cgEpisodeRecord", "cgSeriesRecordSetProgramOptions", "#cgSeriesRecord", "#cgSeriesTune", "#cgSeriesClose"],
-        cgPopupSeriesHandlers: [cgRecordSelectedProgram, cgRecordProgramSetOptions, cgRecordSelectedSeries, cgTune, cgModalClose],
+        cgPopupSeriesHandlers: [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordSelectedSeries, this.cgTune, this.cgModalClose],
         
         cgPopupScheduledSeriesElements: ["cgSeriesCancelEpisode", "cgSeriesCancelSeries", "cgSeriesViewUpcoming", "cgSeriesRecordingTune", "cgSeriesRecordingClose"],
-        cgPopupSchedulesSeriesHandlers: [cgCancelScheduledRecording, cgCancelScheduledSeries, cgScheduledSeriesViewUpcoming, cgTune, cgModalClose],
+        cgPopupSchedulesSeriesHandlers: [this.cgCancelScheduledRecording, this.cgCancelScheduledSeries, this.cgScheduledSeriesViewUpcoming, this.cgTune, this.cgModalClose],
         
         stopTimeOptions: ["30 minutes early", "15 minutes early", "10 minutes early", "5 minutes early", "On time", "5 minutes late", "10 minutes late", "15 minutes late", "30 minute late", "1 hour late", "1 1/2 hours late", "2 hours late", "3 hours late"],
         stopTimeOffsets: [-30, -15, -10, -5, 0, 5, 10, 15, 30, 60, 90, 120, 180],
@@ -87,10 +87,10 @@
         switchToPage: function (newPage) {
 
             var newPageId = "#" + newPage;
-            $(currentActiveElementId).css("display", "none");
-            currentActiveElementId = newPageId;
-            $(currentActiveElementId).removeAttr("style");
-            if (currentActiveElementId == "#homePage") {
+            $(this.currentActiveElementId).css("display", "none");
+            this.currentActiveElementId = newPageId;
+            $(this.currentActiveElementId).removeAttr("style");
+            if (this.currentActiveElementId == "#homePage") {
                 this.setFooterVisibility(true, false)
                 $("#trickModeKeys").css("display", "block");
 
@@ -134,7 +134,7 @@
 
             console.log("getRecordedShows() invoked");
 
-            var aUrl = baseURL + "getRecordings";
+            var aUrl = this.baseURL + "getRecordings";
 
             $.ajax({
                 type: "GET",
@@ -177,21 +177,21 @@
 
                     $("#recordedShowsTableBody").empty();
 
-                    _currentRecordings = {};
+                    this._currentRecordings = {};
 
                     $.each(jtrRecordings, function (index, jtrRecording) {
                         toAppend += addRecordedShowsLine(jtrRecording);
                         recordingIds.push(jtrRecording.RecordingId);
-                        _currentRecordings[jtrRecording.RecordingId] = jtrRecording;
+                        this._currentRecordings[jtrRecording.RecordingId] = jtrRecording;
                     });
 
                     // is there a reason to do this all at the end instead of once for each row?
                     $("#recordedShowsTableBody").append(toAppend);
 
-                    recordedPageIds.length = 0;
+                    this.recordedPageIds.length = 0;
 
                     // get last selected show from local storage - navigate to it. null if not defined
-                    var url = baseURL + "lastSelectedShow";
+                    var url = this.baseURL + "lastSelectedShow";
 
                     $.get(url, {})
                         .done(function (result) {
@@ -230,13 +230,13 @@
                                 var recordedPageRow = [];
                                 recordedPageRow.push(btnIdRecording);
                                 recordedPageRow.push(btnIdDelete);
-                                recordedPageIds.push(recordedPageRow);
+                                this.recordedPageIds.push(recordedPageRow);
 
                             });
 
                             if (!focusApplied) {
                                 // REQUIREDTODO
-                                $(recordedPageIds[0][0]).focus();
+                                $(this.recordedPageIds[0][0]).focus();
                             }
                         })
                         .fail(function (jqXHR, textStatus, errorThrown) {
@@ -310,13 +310,13 @@
         retrieveSettings: function (nextFunction) {
 
             // get settings from db
-            var url = baseURL + "getSettings";
+            var url = this.baseURL + "getSettings";
             $.get(url, {})
                 .done(function (result) {
                     consoleLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX retrieveSettings success ************************************");
-                    _settingsRetrieved = true;
-                    _settings.recordingBitRate = result.RecordingBitRate;
-                    _settings.segmentRecordings = result.SegmentRecordings;
+                    this._settingsRetrieved = true;
+                    this._settings.recordingBitRate = result.RecordingBitRate;
+                    this._settings.segmentRecordings = result.SegmentRecordings;
                     nextFunction();
                 })
             .fail(function (jqXHR, textStatus, errorThrown) {
@@ -353,7 +353,7 @@
 
             // initialize UI on settings page
             // TODO - don't hard code these values; read through html
-            switch (_settings.recordingBitRate) {
+            switch (this._settings.recordingBitRate) {
                 case 4:
                     $("#recordingQualityLow").prop('checked', true);
                     break;
@@ -365,7 +365,7 @@
                     break;
             }
 
-            switch (_settings.segmentRecordings) {
+            switch (this._settings.segmentRecordings) {
                 case 0:
                     $("#segmentRecordingsCheckBox").prop('checked', false);
                     break;
@@ -376,8 +376,8 @@
         },
 
         updateSettings: function () {
-            var url = baseURL + "setSettings";
-            var settingsData = { "recordingBitRate": _settings.recordingBitRate, "segmentRecordings": _settings.segmentRecordings };
+            var url = this.baseURL + "setSettings";
+            var settingsData = { "recordingBitRate": this._settings.recordingBitRate, "segmentRecordings": this._settings.segmentRecordings };
             $.get(url, settingsData)
                 .done(function (result) {
                     console.log("setSettings success");
@@ -403,7 +403,7 @@
 
             var getStationsPromise = new Promise(function (resolve, reject) {
 
-                var aUrl = baseURL + "getStations";
+                var aUrl = this.baseURL + "getStations";
 
                 $.get(
                     aUrl
@@ -416,7 +416,7 @@
 
             getStationsPromise.then(function(stations) {
 
-                var aUrl = baseURL + "getScheduledRecordings";
+                var aUrl = this.baseURL + "getScheduledRecordings";
                 var currentDateTimeIso = new Date().toISOString();
                 var currentDateTime = { "currentDateTime": currentDateTimeIso };
 
@@ -435,7 +435,7 @@
 
                         $("#scheduledRecordingsTableBody").append(toAppend);
 
-                        scheduledRecordingIds.length = 0;
+                        this.scheduledRecordingIds.length = 0;
 
                         // add button handlers for each recording - note, the handlers need to be added after the html has been added!!
                         $.each(scheduledRecordings, function (index, scheduledRecording) {
@@ -456,7 +456,7 @@
 
                             var scheduledRecordingRow = [];
                             scheduledRecordingRow.push(btnIdDelete);
-                            scheduledRecordingIds.push(scheduledRecordingRow);
+                            this.scheduledRecordingIds.push(scheduledRecordingRow);
                         });
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
@@ -682,7 +682,7 @@
 
             // tune to selected channel
             // REQUIREDTODO
-            var stationName = getStationFromId(cgSelectedStationId);
+            var stationName = getStationFromId(this.cgSelectedStationId);
             stationName = stationName.replace(".", "-");
             event["EventType"] = "TUNE_LIVE_VIDEO_CHANNEL";
             event["EnteredChannel"] = stationName;
@@ -696,10 +696,10 @@
         cgTuneFromClient: function () {
 
             // REQUIREDTODO
-            var stationName = getStationFromId(cgSelectedStationId);
+            var stationName = getStationFromId(this.cgSelectedStationId);
             stationName = stationName.replace(".", "-");
 
-            var aUrl = baseURL + "browserCommand";
+            var aUrl = this.baseURL + "browserCommand";
             var commandData = { "command": "tuneLiveVideoChannel", "enteredChannel": stationName };
             console.log(commandData);
 
@@ -719,13 +719,13 @@
 
         updateCGProgramDlgSelection: function () {
 
-            for (i = 0; i < cgPopupElements.length; i++) {
-                $(cgPopupElements[i]).removeClass("btn-primary");
-                $(cgPopupElements[i]).addClass("btn-secondary");
+            for (i = 0; i < this.cgPopupElements.length; i++) {
+                $(this.cgPopupElements[i]).removeClass("btn-primary");
+                $(this.cgPopupElements[i]).addClass("btn-secondary");
             }
 
-            $(cgPopupElements[cgPopupSelectedIndex]).removeClass("btn-secondary");
-            $(cgPopupElements[cgPopupSelectedIndex]).addClass("btn-primary");
+            $(this.cgPopupElements[this.cgPopupSelectedIndex]).removeClass("btn-secondary");
+            $(this.cgPopupElements[this.cgPopupSelectedIndex]).addClass("btn-primary");
         },
 
         // EXTENDOMATIC TODO - do the work associated with extendomatic here
@@ -733,28 +733,28 @@
             // redundant in some cases (when selected from pop up); not when record button pressed
             // REQUIREDTODO
             var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
-            cgSelectedStationId = programData.stationId;
+            this.cgSelectedProgram = programData.program;
+            this.cgSelectedStationId = programData.stationId;
 
             var event = {};
             event["EventType"] = "ADD_RECORD";
-            event["DateTime"] = cgSelectedProgram.date;
-            event["Title"] = cgSelectedProgram.title;
-            event["Duration"] = cgSelectedProgram.duration;
+            event["DateTime"] = this.cgSelectedProgram.date;
+            event["Title"] = this.cgSelectedProgram.title;
+            event["Duration"] = this.cgSelectedProgram.duration;
             event["InputSource"] = "tuner";
-            event["ScheduledSeriesRecordingId"] = cgSelectedProgram.scheduledSeriesRecordingId;
+            event["ScheduledSeriesRecordingId"] = this.cgSelectedProgram.scheduledSeriesRecordingId;
             event["StartTimeOffset"] = 0;
             event["StopTimeOffset"] = 0;
 
             // REQUIREDTODO
-            var stationName = getStationFromId(cgSelectedStationId);
+            var stationName = getStationFromId(this.cgSelectedStationId);
 
             stationName = stationName.replace(".", "-");
 
             event["Channel"] = stationName;
 
-            event["RecordingBitRate"] = _settings.recordingBitRate;
-            event["SegmentRecording"] = _settings.segmentRecordings;
+            event["RecordingBitRate"] = this._settings.recordingBitRate;
+            event["SegmentRecording"] = this._settings.segmentRecordings;
 
             // REQUIREDTODO
             postMessage(event);
@@ -765,11 +765,11 @@
 
         cgRecordSelectedProgram: function () {
 
-            // setting cgSelectedProgram and cgSelectedStationId is redundant in some cases (when selected from pop up); not when record button pressed
+            // setting this.cgSelectedProgram and this.cgSelectedStationId is redundant in some cases (when selected from pop up); not when record button pressed
             // REQUIREDTODO
             var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
-            cgSelectedStationId = programData.stationId;
+            this.cgSelectedProgram = programData.program;
+            this.cgSelectedStationId = programData.stationId;
 
             this.cgRecordProgram();
         },
@@ -780,27 +780,27 @@
 
             // REQUIREDTODO
             var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
-            cgSelectedStationId = programData.stationId;
+            this.cgSelectedProgram = programData.program;
+            this.cgSelectedStationId = programData.stationId;
 
-            cgSelectedProgram.startTimeOffset = startTimeOffsets[startTimeIndex];
-            cgSelectedProgram.stopTimeOffset = stopTimeOffsets[stopTimeIndex];
+            this.cgSelectedProgram.startTimeOffset = this.startTimeOffsets[this.startTimeIndex];
+            this.cgSelectedProgram.stopTimeOffset = this.stopTimeOffsets[this.stopTimeIndex];
 
-            var aUrl = baseURL + "browserCommand";
+            var aUrl = this.baseURL + "browserCommand";
 
             if (addRecording) {
                 // REQUIREDTODO
-                var stationName = getStationFromId(cgSelectedStationId);
+                var stationName = getStationFromId(this.cgSelectedStationId);
                 stationName = stationName.replace(".", "-");
 
-                var commandData = { "command": "addRecord", "dateTime": cgSelectedProgram.date, "title": cgSelectedProgram.title, "duration": cgSelectedProgram.duration,
-                    "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings,
-                    "scheduledSeriesRecordingId": cgSelectedProgram.scheduledSeriesRecordingId,
-                    "startTimeOffset": cgSelectedProgram.startTimeOffset, "stopTimeOffset": cgSelectedProgram.stopTimeOffset };
+                var commandData = { "command": "addRecord", "dateTime": this.cgSelectedProgram.date, "title": this.cgSelectedProgram.title, "duration": this.cgSelectedProgram.duration,
+                    "inputSource": "tuner", "channel": stationName, "recordingBitRate": this._settings.recordingBitRate, "segmentRecording": this._settings.segmentRecordings,
+                    "scheduledSeriesRecordingId": this.cgSelectedProgram.scheduledSeriesRecordingId,
+                    "startTimeOffset": this.cgSelectedProgram.startTimeOffset, "stopTimeOffset": this.cgSelectedProgram.stopTimeOffset };
             }
             else {
-                var commandData = { "command": "updateScheduledRecording", "id": cgSelectedProgram.scheduledRecordingId,
-                    "startTimeOffset": cgSelectedProgram.startTimeOffset, "stopTimeOffset": cgSelectedProgram.stopTimeOffset };
+                var commandData = { "command": "updateScheduledRecording", "id": this.cgSelectedProgram.scheduledRecordingId,
+                    "startTimeOffset": this.cgSelectedProgram.startTimeOffset, "stopTimeOffset": this.cgSelectedProgram.stopTimeOffset };
             }
 
             console.log(commandData);
@@ -826,16 +826,16 @@
 
             // REQUIREDTODO
             var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
-            cgSelectedStationId = programData.stationId;
+            this.cgSelectedProgram = programData.program;
+            this.cgSelectedStationId = programData.stationId;
 
             // REQUIREDTODO
-            var stationName = getStationFromId(cgSelectedStationId);
+            var stationName = getStationFromId(this.cgSelectedStationId);
             stationName = stationName.replace(".", "-");
 
-            var aUrl = baseURL + "browserCommand";
-            var commandData = { "command": "addSeries", "title": cgSelectedProgram.title,
-                "inputSource": "tuner", "channel": stationName, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings };
+            var aUrl = this.baseURL + "browserCommand";
+            var commandData = { "command": "addSeries", "title": this.cgSelectedProgram.title,
+                "inputSource": "tuner", "channel": stationName, "recordingBitRate": this._settings.recordingBitRate, "segmentRecording": this._settings.segmentRecordings };
             console.log(commandData);
 
             $.get(aUrl, commandData)
@@ -879,9 +879,9 @@
             console.log("cgCancelScheduledRecordingFromClient invoked");
             // REQUIREDTODO
             var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
+            this.cgSelectedProgram = programData.program;
             // REQUIREDTODO
-            deleteScheduledRecording(cgSelectedProgram.scheduledRecordingId, nextFunction);
+            deleteScheduledRecording(this.cgSelectedProgram.scheduledRecordingId, nextFunction);
         },
 
 
@@ -889,9 +889,9 @@
             console.log("cgCancelScheduledSeriesFromClient invoked");
             // REQUIREDTODO
             var programData = ChannelGuideSingleton.getInstance().getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
+            this.cgSelectedProgram = programData.program;
             // REQUIREDTODO
-            deleteScheduledSeries(cgSelectedProgram.scheduledSeriesRecordingId, nextFunction);
+            deleteScheduledSeries(this.cgSelectedProgram.scheduledSeriesRecordingId, nextFunction);
         },
 
         cgRecordProgramSetOptions: function () {
@@ -905,22 +905,22 @@
                 "backdrop": "true"
             }
             $("#cgRecordingOptionsDlg").modal(options);
-            $("#cgRecordingOptionsTitle").html(cgSelectedProgram.title);
+            $("#cgRecordingOptionsTitle").html(this.cgSelectedProgram.title);
 
-            // for a program that has not been setup to record, cgSelectedProgram.startTimeOffset = 0, etc.
-            stopTimeIndex = stopTimeOnTimeIndex;
-            startTimeIndex = startTimeOnTimeIndex;
+            // for a program that has not been setup to record, this.cgSelectedProgram.startTimeOffset = 0, etc.
+            this.stopTimeIndex = this.stopTimeOnTimeIndex;
+            this.startTimeIndex = this.startTimeOnTimeIndex;
 
-            $.each(startTimeOffsets, function (index, startTimeOffset) {
-                if (startTimeOffset == cgSelectedProgram.startTimeOffset) {
-                    startTimeIndex = index;
+            $.each(this.startTimeOffsets, function (index, startTimeOffset) {
+                if (startTimeOffset == this.cgSelectedProgram.startTimeOffset) {
+                    this.startTimeIndex = index;
                     return false;
                 }
             });
 
-            $.each(stopTimeOffsets, function (index, stopTimeOffset) {
-                if (stopTimeOffset == cgSelectedProgram.stopTimeOffset) {
-                    stopTimeIndex = index;
+            $.each(this.stopTimeOffsets, function (index, stopTimeOffset) {
+                if (stopTimeOffset == this.cgSelectedProgram.stopTimeOffset) {
+                    this.stopTimeIndex = index;
                     return false;
                 }
             });
@@ -940,7 +940,7 @@
 
 
             var addRecordToDB = true;
-            if (cgSelectedProgram.scheduledRecordingId > 0) {
+            if (this.cgSelectedProgram.scheduledRecordingId > 0) {
                 addRecordToDB = false;
             }
             $("#cgRecordOptionsSave").click(function (event) {
@@ -962,21 +962,21 @@
         cgRecordOptionsNextEarlyStopTime: function () {
             console.log("cgRecordOptionsNextEarlyStopTime invoked");
 
-            if (stopTimeIndex > 0) {
-                stopTimeIndex--;
+            if (this.stopTimeIndex > 0) {
+                this.stopTimeIndex--;
                 this.displayStopTimeSetting();
             }
         },
 
         displayStopTimeSetting: function () {
-            $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = stopTimeOptions[stopTimeIndex];
+            $("#cgRecordOptionsStopTimeLabel")[0].innerHTML = this.stopTimeOptions[this.stopTimeIndex];
         },
 
         cgRecordOptionsNextLateStopTime: function () {
             console.log("cgRecordOptionsNextLateStopTime invoked");
 
-            if (stopTimeIndex < (stopTimeOptions.length-1)) {
-                stopTimeIndex++;
+            if (this.stopTimeIndex < (this.stopTimeOptions.length-1)) {
+                this.stopTimeIndex++;
                 this.displayStopTimeSetting();
             }
         },
@@ -984,21 +984,21 @@
         cgRecordOptionsNextEarlyStartTime: function () {
             console.log("cgRecordOptionsNextEarlyStartTime invoked");
 
-            if (startTimeIndex > 0) {
-                startTimeIndex--;
+            if (this.startTimeIndex > 0) {
+                this.startTimeIndex--;
                 this.displayStartTimeSetting();
             }
         },
 
         displayStartTimeSetting: function () {
-            $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = startTimeOptions[startTimeIndex];
+            $("#cgRecordOptionsStartTimeLabel")[0].innerHTML = this.startTimeOptions[this.startTimeIndex];
         },
 
         cgRecordOptionsNextLateStartTime: function () {
             console.log("cgRecordOptionsNextLateStartTime invoked");
 
-            if (startTimeIndex < (startTimeOptions.length-1)) {
-                startTimeIndex++;
+            if (this.startTimeIndex < (this.startTimeOptions.length-1)) {
+                this.startTimeIndex++;
                 this.displayStartTimeSetting();
             }
         },
@@ -1031,119 +1031,119 @@
             var channelGuide = ChannelGuideSingleton.getInstance();
 
             var programData = channelGuide.getSelectedStationAndProgram();
-            cgSelectedProgram = programData.program;
-            cgSelectedStationId = programData.stationId;
+            this.cgSelectedProgram = programData.program;
+            this.cgSelectedStationId = programData.stationId;
 
-            stopTimeIndex = stopTimeOnTimeIndex;
-            startTimeIndex = startTimeOnTimeIndex;
+            this.stopTimeIndex = this.stopTimeOnTimeIndex;
+            this.startTimeIndex = this.startTimeOnTimeIndex;
 
             // check the program that the user has clicked
             // display different pop ups based on
             //      single vs. series
             //      already scheduled to record or not
             var cgSelectedProgramScheduledToRecord = false;
-            cgSelectedProgram.scheduledRecordingId = -1;
-            cgSelectedProgram.scheduledSeriesRecordingId = -1;
-            cgSelectedProgram.startTimeOffset = 0;
-            cgSelectedProgram.stopTimeOffset = 0;
+            this.cgSelectedProgram.scheduledRecordingId = -1;
+            this.cgSelectedProgram.scheduledSeriesRecordingId = -1;
+            this.cgSelectedProgram.startTimeOffset = 0;
+            this.cgSelectedProgram.stopTimeOffset = 0;
             if (channelGuide.scheduledRecordings != null) {
                 $.each(channelGuide.scheduledRecordings, function (index, scheduledRecording) {
-                    cgSelectedProgramScheduledToRecord = this.programsMatch(scheduledRecording, cgSelectedProgram, cgSelectedStationId);
+                    cgSelectedProgramScheduledToRecord = this.programsMatch(scheduledRecording, this.cgSelectedProgram, this.cgSelectedStationId);
                     if (cgSelectedProgramScheduledToRecord) {
-                        cgSelectedProgram.scheduledRecordingId = scheduledRecording.Id;
-                        cgSelectedProgram.scheduledSeriesRecordingId = scheduledRecording.ScheduledSeriesRecordingId;
-                        cgSelectedProgram.startTimeOffset = scheduledRecording.StartTimeOffset;
-                        cgSelectedProgram.stopTimeOffset = scheduledRecording.StopTimeOffset;
+                        this.cgSelectedProgram.scheduledRecordingId = scheduledRecording.Id;
+                        this.cgSelectedProgram.scheduledSeriesRecordingId = scheduledRecording.ScheduledSeriesRecordingId;
+                        this.cgSelectedProgram.startTimeOffset = scheduledRecording.StartTimeOffset;
+                        this.cgSelectedProgram.stopTimeOffset = scheduledRecording.StopTimeOffset;
                         return false;
                     }
                 });
                 console.log("cgSelectedProgramScheduledToRecord=" + cgSelectedProgramScheduledToRecord.toString());
             }
 
-            cgRecordEpisodeId = null;
-            cgRecordSeriesId = null;
-            cgCancelRecordingId = null;
-            cgCancelSeriesId = null;
-            cgRecordSetOptionsId = null;
-            cgRecordViewUpcomingEpisodesId = null;
-            cgTuneEpisodeId = null;
+            this.cgRecordEpisodeId = null;
+            this.cgRecordSeriesId = null;
+            this.cgCancelRecordingId = null;
+            this.cgCancelSeriesId = null;
+            this.cgRecordSetOptionsId = null;
+            this.cgRecordViewUpcomingEpisodesId = null;
+            this.cgTuneEpisodeId = null;
 
             // JTRTODO - optimize the logic here - I think I can make it simpler
-            if (cgSelectedProgram.showType == "Series") {
-                if (cgSelectedProgram.scheduledRecordingId == -1) {
+            if (this.cgSelectedProgram.showType == "Series") {
+                if (this.cgSelectedProgram.scheduledRecordingId == -1) {
                     // not yet scheduled to record
-                    cgPopupId = '#cgSeriesDlg';
-                    cgPopupTitle = '#cgSeriesDlgShowTitle';
-                    cgPopupElements = cgPopupSeriesElements;
-                    cgPopupHandlers = cgPopupSeriesHandlers;
+                    this.cgPopupId = '#cgSeriesDlg';
+                    this.cgPopupTitle = '#cgSeriesDlgShowTitle';
+                    this.cgPopupElements = this.cgPopupSeriesElements;
+                    this.cgPopupHandlers = this.cgPopupSeriesHandlers;
 
-                    cgRecordEpisodeId = "#cgEpisodeRecord";
-                    cgRecordSetOptionsId = "#cgSeriesRecordSetProgramOptions";
-                    cgRecordSeriesId = "#cgSeriesRecord";
-                    cgTuneEpisodeId = "#cgSeriesTune";
-                    cgCloseEpisodeId = "#cgSeriesClose";
+                    this.cgRecordEpisodeId = "#cgEpisodeRecord";
+                    this.cgRecordSetOptionsId = "#cgSeriesRecordSetProgramOptions";
+                    this.cgRecordSeriesId = "#cgSeriesRecord";
+                    this.cgTuneEpisodeId = "#cgSeriesTune";
+                    this.cgCloseEpisodeId = "#cgSeriesClose";
                 }
                 else {
                     // previously scheduled to record
-                    if (cgSelectedProgram.scheduledSeriesRecordingId > 0) {
-                        cgPopupId = '#cgScheduledSeriesDlg';
-                        cgPopupTitle = '#cgScheduledSeriesDlgTitle';
-                        cgPopupElements = cgPopupScheduledSeriesElements;
-                        cgPopupHandlers = cgPopupSchedulesSeriesHandlers;
+                    if (this.cgSelectedProgram.scheduledSeriesRecordingId > 0) {
+                        this.cgPopupId = '#cgScheduledSeriesDlg';
+                        this.cgPopupTitle = '#cgScheduledSeriesDlgTitle';
+                        this.cgPopupElements = this.cgPopupScheduledSeriesElements;
+                        this.cgPopupHandlers = this.cgPopupSchedulesSeriesHandlers;
 
-                        cgCancelRecordingId = "#cgSeriesCancelEpisode";
-                        cgCancelSeriesId = "#cgSeriesCancelSeries";
-                        cgRecordViewUpcomingEpisodesId = "#cgSeriesViewUpcoming";
-                        cgTuneEpisodeId = "#cgSeriesRecordingTune";
-                        cgCloseEpisodeId = "#cgSeriesRecordingClose";
+                        this.cgCancelRecordingId = "#cgSeriesCancelEpisode";
+                        this.cgCancelSeriesId = "#cgSeriesCancelSeries";
+                        this.cgRecordViewUpcomingEpisodesId = "#cgSeriesViewUpcoming";
+                        this.cgTuneEpisodeId = "#cgSeriesRecordingTune";
+                        this.cgCloseEpisodeId = "#cgSeriesRecordingClose";
                     }
                     else {
-                        cgPopupId = '#cgScheduledRecordingDlg';
-                        cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
-                        cgPopupElements = cgPopupScheduledProgramElement;
-                        cgPopupHandlers = cgPopupScheduledProgramHandlers;
+                        this.cgPopupId = '#cgScheduledRecordingDlg';
+                        this.cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
+                        this.cgPopupElements = this.cgPopupScheduledProgramElement;
+                        this.cgPopupHandlers = this.cgPopupScheduledProgramHandlers;
 
-                        cgCancelRecordingId = "#cgCancelScheduledRecording";
-                        cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
-                        cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
-                        cgTuneEpisodeId = "#cgScheduledRecordingTune";
-                        cgCloseEpisodeId = "#cgScheduledRecordingClose";
+                        this.cgCancelRecordingId = "#cgCancelScheduledRecording";
+                        this.cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
+                        this.cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
+                        this.cgTuneEpisodeId = "#cgScheduledRecordingTune";
+                        this.cgCloseEpisodeId = "#cgScheduledRecordingClose";
                     }
                 }
             }
             else        // single program recordings (not series)
             {
-                if (cgSelectedProgram.scheduledRecordingId == -1) {         // no recording set
-                    cgPopupId = '#cgProgramDlg';
-                    cgPopupTitle = '#cgProgramDlgShowTitle';
-                    cgPopupElements = cgPopupEpisodeElements;
-                    cgPopupHandlers = cgPopupEpisodeHandlers;
+                if (this.cgSelectedProgram.scheduledRecordingId == -1) {         // no recording set
+                    this.cgPopupId = '#cgProgramDlg';
+                    this.cgPopupTitle = '#cgProgramDlgShowTitle';
+                    this.cgPopupElements = this.cgPopupEpisodeElements;
+                    this.cgPopupHandlers = this.cgPopupEpisodeHandlers;
 
-                    cgRecordEpisodeId = "#cgProgramRecord";
-                    cgRecordSetOptionsId = "#cgProgramRecordSetOptions";
-                    cgRecordViewUpcomingEpisodesId = "#cgProgramViewUpcomingEpisodes";
-                    cgTuneEpisodeId = "#cgProgramTune";
-                    cgCloseEpisodeId = "#cgProgramClose";
+                    this.cgRecordEpisodeId = "#cgProgramRecord";
+                    this.cgRecordSetOptionsId = "#cgProgramRecordSetOptions";
+                    this.cgRecordViewUpcomingEpisodesId = "#cgProgramViewUpcomingEpisodes";
+                    this.cgTuneEpisodeId = "#cgProgramTune";
+                    this.cgCloseEpisodeId = "#cgProgramClose";
                 }
             else {                                                          // recording already setup
-                    cgPopupId = '#cgScheduledRecordingDlg';
-                    cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
-                    cgPopupElements = cgPopupScheduledProgramElement;
-                    cgPopupHandlers = cgPopupScheduledProgramHandlers;
+                    this.cgPopupId = '#cgScheduledRecordingDlg';
+                    this.cgPopupTitle = '#cgProgramScheduledDlgShowTitle';
+                    this.cgPopupElements = this.cgPopupScheduledProgramElement;
+                    this.cgPopupHandlers = this.cgPopupScheduledProgramHandlers;
 
-                    cgCancelRecordingId = "#cgCancelScheduledRecording";
-                    cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
-                    cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
-                    cgTuneEpisodeId = "#cgScheduledRecordingTune";
-                    cgCloseEpisodeId = "#cgScheduledRecordingClose";
+                    this.cgCancelRecordingId = "#cgCancelScheduledRecording";
+                    this.cgRecordSetOptionsId = "#cgScheduledRecordChangeOptions";
+                    this.cgRecordViewUpcomingEpisodesId = "#cgScheduledRecordingViewUpcomingEpisodes";
+                    this.cgTuneEpisodeId = "#cgScheduledRecordingTune";
+                    this.cgCloseEpisodeId = "#cgScheduledRecordingClose";
                 }
             }
 
             // setup handlers for browser
-            if (cgRecordEpisodeId) {
-                $(cgRecordEpisodeId).off();
-                $(cgRecordEpisodeId).click(function (event) {
-                    $(cgRecordEpisodeId).unbind("click");
+            if (this.cgRecordEpisodeId) {
+                $(this.cgRecordEpisodeId).off();
+                $(this.cgRecordEpisodeId).click(function (event) {
+                    $(this.cgRecordEpisodeId).unbind("click");
                     // REQUIREDTODO
                     cgRecordProgramFromClient(true, ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
                     this.cgProgramDlgCloseInvoked();
@@ -1151,9 +1151,9 @@
                     ChannelGuideSingleton.getInstance().reselectCurrentProgram();
             });
         }
-            if (cgRecordSeriesId) {
-                $(cgRecordSeriesId).off();
-                $(cgRecordSeriesId).click(function (event) {
+            if (this.cgRecordSeriesId) {
+                $(this.cgRecordSeriesId).off();
+                $(this.cgRecordSeriesId).click(function (event) {
                     // REQUIREDTODO
                     cgRecordSelectedSeriesFromClient(ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
                     this.cgProgramDlgCloseInvoked();
@@ -1162,9 +1162,9 @@
                 });
             }
 
-            if (cgTuneEpisodeId){
-                $(cgTuneEpisodeId).off();
-                $(cgTuneEpisodeId).click(function (event) {
+            if (this.cgTuneEpisodeId){
+                $(this.cgTuneEpisodeId).off();
+                $(this.cgTuneEpisodeId).click(function (event) {
                     this.cgTuneFromClient();
                     this.cgProgramDlgCloseInvoked();
                     // REQUIREDTODO
@@ -1172,9 +1172,9 @@
                 });
             }
 
-            if (cgCancelRecordingId) {
-                $(cgCancelRecordingId).off();
-                $(cgCancelRecordingId).click(function (event) {
+            if (this.cgCancelRecordingId) {
+                $(this.cgCancelRecordingId).off();
+                $(this.cgCancelRecordingId).click(function (event) {
                     console.log("CancelRecording invoked");
                     // REQUIREDTODO
                     cgCancelScheduledRecordingFromClient(ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
@@ -1184,9 +1184,9 @@
                 });
             }
 
-            if (cgCancelSeriesId) {
-                $(cgCancelSeriesId).off();
-                $(cgCancelSeriesId).click(function (event) {
+            if (this.cgCancelSeriesId) {
+                $(this.cgCancelSeriesId).off();
+                $(this.cgCancelSeriesId).click(function (event) {
                     console.log("CancelSeriesRecording invoked");
                     // REQUIREDTODO
                     cgCancelScheduledSeriesFromClient(ChannelGuideSingleton.getInstance().retrieveScheduledRecordings);
@@ -1196,9 +1196,9 @@
                 });
             }
 
-            if (cgRecordSetOptionsId) {
-                $(cgRecordSetOptionsId).off();
-                $(cgRecordSetOptionsId).click(function (event) {
+            if (this.cgRecordSetOptionsId) {
+                $(this.cgRecordSetOptionsId).off();
+                $(this.cgRecordSetOptionsId).click(function (event) {
                     console.log("recordSetOptions invoked");
                     cgRecordProgramSetOptions();
                     this.cgProgramDlgCloseInvoked();
@@ -1207,9 +1207,9 @@
                 });
             }
 
-            if (cgRecordViewUpcomingEpisodesId) {
-                $(cgRecordViewUpcomingEpisodesId).off();
-                $(cgRecordViewUpcomingEpisodesId).click(function (event) {
+            if (this.cgRecordViewUpcomingEpisodesId) {
+                $(this.cgRecordViewUpcomingEpisodesId).off();
+                $(this.cgRecordViewUpcomingEpisodesId).click(function (event) {
                     console.log("ViewUpcomingEpisodes invoked")
                     this.cgProgramDlgCloseInvoked();
                     // REQUIREDTODO
@@ -1217,9 +1217,9 @@
                 });
             }
 
-            if (cgCloseEpisodeId) {
-                $(cgCloseEpisodeId).off();
-                $(cgCloseEpisodeId).click(function (event) {
+            if (this.cgCloseEpisodeId) {
+                $(this.cgCloseEpisodeId).off();
+                $(this.cgCloseEpisodeId).click(function (event) {
                     this.cgProgramDlgCloseInvoked();
                     // REQUIREDTODO
                     ChannelGuideSingleton.getInstance().reselectCurrentProgram();
@@ -1227,25 +1227,25 @@
             }
 
 
-            cgPopupSelectedIndex = 0;
+            this.cgPopupSelectedIndex = 0;
 
             var options = {
                 "backdrop": "true"
             }
-            $(cgPopupId).modal(options);
-            $(cgPopupTitle).html(cgSelectedProgram.title);
+            $(this.cgPopupId).modal(options);
+            $(this.cgPopupTitle).html(this.cgSelectedProgram.title);
 
             // highlight first button; unhighlight other buttons
-            $(cgPopupElements[0]).removeClass("btn-secondary");
-            $(cgPopupElements[0]).addClass("btn-primary");
+            $(this.cgPopupElements[0]).removeClass("btn-secondary");
+            $(this.cgPopupElements[0]).addClass("btn-primary");
 
-            for (i = 1; i < cgPopupElements.length; i++) {
-                $(cgPopupElements[i]).removeClass("btn-primary");
-                $(cgPopupElements[i]).addClass("btn-secondary");
+            for (i = 1; i < this.cgPopupElements.length; i++) {
+                $(this.cgPopupElements[i]).removeClass("btn-primary");
+                $(this.cgPopupElements[i]).addClass("btn-secondary");
             }
 
-            $(cgPopupId).off("keydown");
-            $(cgPopupId).keydown(function (keyEvent) {
+            $(this.cgPopupId).off("keydown");
+            $(this.cgPopupId).keydown(function (keyEvent) {
                 var keyIdentifier = event.keyIdentifier;
                 console.log("Key " + keyIdentifier.toString() + "pressed")
                 if (keyIdentifier == "Up") {
@@ -1255,27 +1255,27 @@
                     this.cgProgramDlgDown();
                 }
                 else if (keyIdentifier == "Enter") {
-                    var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
+                    var functionInvoked = this.cgPopupHandlers[this.cgPopupSelectedIndex]();
                     this.cgProgramDlgCloseInvoked();
                     // ?? JTRTODO - update scheduled recordings
 
                 }
             });
             // browser event handlers - browser.js - this approach didn't work - why?
-            //for (i = 0; i < cgPopupEpisodeElements.length; i++) {
-            //    var foo = cgPopupEpisodeHandlers[i];
-            //    var foo2 = cgPopupEpisodeElements[i];
+            //for (i = 0; i < this.cgPopupEpisodeElements.length; i++) {
+            //    var foo = this.cgPopupEpisodeHandlers[i];
+            //    var foo2 = this.cgPopupEpisodeElements[i];
             //    $(foo2).click(function () {
             //        foo();
             //    });
 
-            //$(cgPopupEpisodeElements[i]).click(function () {
-            //    //cgPopupEpisodeHandlers[i]();
+            //$(this.cgPopupEpisodeElements[i]).click(function () {
+            //    //this.cgPopupEpisodeHandlers[i]();
             //    foo();
             //    cgProgramDlgCloseInvoked();
             //});
 
-            //click(cgPopupEpisodeHandlers[i]);
+            //click(this.cgPopupEpisodeHandlers[i]);
             //}
         },
 
@@ -1287,9 +1287,9 @@
             var channel = channelGuide.getChannelFromStationIndex(cgStationId);
             if (channel != scheduledRecording.Channel) return false;
 
-            if (scheduledRecording.Title != cgSelectedProgram.title) return false;
+            if (scheduledRecording.Title != this.cgSelectedProgram.title) return false;
 
-            if (new Date(scheduledRecording.DateTime).getTime() != cgSelectedProgram.date.getTime()) return false;
+            if (new Date(scheduledRecording.DateTime).getTime() != this.cgSelectedProgram.date.getTime()) return false;
 
             return true;
         },
@@ -1302,7 +1302,7 @@
 
         // brightsign.js only?
         cgSelectEventHandler: function () {
-            var functionInvoked = cgPopupHandlers[cgPopupSelectedIndex]();
+            var functionInvoked = this.cgPopupHandlers[this.cgPopupSelectedIndex]();
             this.cgProgramDlgCloseInvoked();
             // ?? JTRTODO - update scheduled recordings
             return functionInvoked;
@@ -1311,31 +1311,31 @@
 
         cgProgramDlgUp: function () {
 
-            if (cgPopupSelectedIndex > 0) {
+            if (this.cgPopupSelectedIndex > 0) {
 
-                cgPopupSelectedIndex--;
+                this.cgPopupSelectedIndex--;
                 this.updateCGProgramDlgSelection();
             }
         },
 
 
         cgProgramDlgDown: function () {
-            if (cgPopupSelectedIndex < cgPopupElements.length - 1) {
+            if (this.cgPopupSelectedIndex < this.cgPopupElements.length - 1) {
 
-                cgPopupSelectedIndex++;
+                this.cgPopupSelectedIndex++;
                 this.updateCGProgramDlgSelection();
             }
         },
 
 
         cgProgramDlgCloseInvoked: function () {
-            $(cgPopupId).modal('hide');
+            $(this.cgPopupId).modal('hide');
         },
 
 
         eraseUI: function () {
             $("#ipAddress").css("display", "none");
-            $(currentActiveElementId).css("display", "none");
+            $(this.currentActiveElementId).css("display", "none");
             $("#footerArea").css("display", "none");
         },
 
