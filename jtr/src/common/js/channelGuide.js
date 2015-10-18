@@ -38,7 +38,8 @@ define(["placeholder"], function (placeholder) {
 
         retrieveScheduledRecordings: function () {
 
-            var self = ChannelGuideSingleton.getInstance();
+            // REQUIREDTODO
+            var self = this;
 
             // get the scheduled recordings - this is independent of other code here so can be done asynchronously and independently for now
 
@@ -311,6 +312,7 @@ define(["placeholder"], function (placeholder) {
                     });
             }
             else {
+                // REQUIREDTODO
                 switchToPage("channelGuidePage");
                 this.initiateRenderChannelGuide();
             }
@@ -322,6 +324,7 @@ define(["placeholder"], function (placeholder) {
                     return false;
                 }
                 else if (keyIdentifier == "Enter") {
+                    // REQUIREDTODO
                     displayCGPopUp();
                     return false;
                 }
@@ -332,13 +335,15 @@ define(["placeholder"], function (placeholder) {
         initiateRenderChannelGuide: function () {
 
             // display channel guide one station at a time, from current time for the duration of the channel guide
+            // REQUIREDTODO
             getStations(this.renderChannelGuide);
         },
 
 
         renderChannelGuide: function () {
 
-            var self = ChannelGuideSingleton.getInstance();
+            // REQUIREDTODO
+            var self = this;
 
             // start date/time for channel guide display is current time, rounded down to nearest 30 minutes
             var currentDate = Date.now();
@@ -461,9 +466,10 @@ define(["placeholder"], function (placeholder) {
             var minutesDisplayed = 0;
             while (minutesDisplayed < maxMinutesToDisplay) {
 
-                var timeLineTime = timeOfDay(timeLineCurrentValue);
+                var timeLineTime = this.timeOfDay(timeLineCurrentValue);
 
                 toAppend += "<button class='thirtyMinuteTime'>" + timeLineTime + "</button>";
+                // REQUIREDTODO
                 timeLineCurrentValue = new Date(timeLineCurrentValue.getTime() + minutesToMsec(30));
                 minutesDisplayed += 30;
             }
@@ -489,6 +495,7 @@ define(["placeholder"], function (placeholder) {
                             this._currentStationIndex = stationIndex;
                             self.selectProgram(self._currentSelectedProgramButton, event.target);
 
+                            // REQUIREDTODO
                             displayCGPopUp();
 
                             return false;
@@ -621,16 +628,16 @@ define(["placeholder"], function (placeholder) {
             $("#cgProgramName").text(selectedProgram.title);
 
             // display day/date of selected program in upper left of channel guide
-            var programDayDate = dayDate(selectedProgram.date);
+            var programDayDate = this.dayDate(selectedProgram.date);
             $("#cgDayDate").text(programDayDate);
 
             $("#programInfo").empty();
 
             // day, date, and time
-            var startTime = timeOfDay(selectedProgram.date);
+            var startTime = this.timeOfDay(selectedProgram.date);
 
             var endDate = new Date(selectedProgram.date.getTime()).addMinutes(selectedProgram.duration);
-            var endTime = timeOfDay(endDate);
+            var endTime = this.timeOfDay(endDate);
 
             var dateTimeInfo = programDayDate + " " + startTime + " - " + endTime;
 
@@ -990,25 +997,12 @@ define(["placeholder"], function (placeholder) {
             return channel;
         },
 
-        looper: function (stationNumber) {
-            var stationIndex = -1;
-
-            $.each(stations, function (index, station) {
-                if (stationNumbersEqual(stationNumber, station.AtscMajor.toString() + '-' + station.AtscMinor.toString())) {
-                    stationIndex = index;
-                    return false;
-                }
-            });
-
-            return stationIndex;
-        },
-
         stationNumbersEqual: function (stationNumber1, stationNumber2) {
 
             if (stationNumber1 == stationNumber2) return true;
 
-            stationNumber1 = standardizeStationNumber(stationNumber1);
-            stationNumber2 = standardizeStationNumber(stationNumber2);
+            stationNumber1 = this.standardizeStationNumber(stationNumber1);
+            stationNumber2 = this.standardizeStationNumber(stationNumber2);
             return (stationNumber1 == stationNumber2);
         },
 
