@@ -169,9 +169,9 @@
 
                 // ensure that the first element is highlighted and has focus
                 // TODO - make this more general purpose?
-                for (i = 0; i < mainMenuIds.length; i++) {
-                    for (j = 0; j < mainMenuIds[i].length; j++) {
-                        var elementId = "#" + mainMenuIds[i][j];
+                for (i = 0; i < this.mainMenuIds.length; i++) {
+                    for (j = 0; j < this.mainMenuIds[i].length; j++) {
+                        var elementId = "#" + this.mainMenuIds[i][j];
 
                         if (i != 0 || j != 0) {
                             $(elementId).removeClass("btn-primary");
@@ -596,7 +596,7 @@
             var hoursLbl = numHours.toString();
             if (hoursLbl.length == 1) hoursLbl = "&nbsp" + hoursLbl;
 
-            var minutesLbl = twoDigitFormat(date.getMinutes().toString());
+            var minutesLbl = this.twoDigitFormat(date.getMinutes().toString());
 
             var timeOfDay = hoursLbl + ":" + minutesLbl + amPM;
 
@@ -712,10 +712,10 @@
 
             var date = new Date();
 
-            var dateVal = date.getFullYear() + "-" + twoDigitFormat((date.getMonth() + 1)) + "-" + twoDigitFormat(date.getDate());
+            var dateVal = date.getFullYear() + "-" + this.twoDigitFormat((date.getMonth() + 1)) + "-" + this.twoDigitFormat(date.getDate());
             $("#manualRecordDate").val(dateVal);
 
-            var timeVal = this.twoDigitFormat(date.getHours()) + ":" + twoDigitFormat(date.getMinutes());
+            var timeVal = this.twoDigitFormat(date.getHours()) + ":" + this.twoDigitFormat(date.getMinutes());
             $("#manualRecordTime").val(timeVal);
         },
 
