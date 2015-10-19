@@ -7,6 +7,7 @@ define(function () {
             this.baseURL = baseURL;
             this.browser = browser;
             this.common = common;
+            this.channelGuide = this;
 
             var self = this;
             $("#channelGuideId").click(function (event) {

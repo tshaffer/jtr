@@ -5,6 +5,7 @@
         init: function(baseURL, common, channelGuide) {
 
             this.baseURL = baseURL;
+            this.browser = this;
             this.common = common;
             this.channelGuide = channelGuide;
 
@@ -67,7 +68,7 @@
 
         recordNow: function () {
             // load settings from db if not previously loaded
-            if (!_settingsRetrieved) {
+            if (!this.common._settingsRetrieved) {
                 this.common.retrieveSettings(this.executeRecordNow);
             }
             else {
@@ -87,7 +88,7 @@
             var title = this.common.getRecordingTitle("#recordNowTitle", currentDate, inputSource, channel);
 
             var aUrl = baseURL + "browserCommand";
-            var commandData = { "command": "recordNow", "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
+            var commandData = { "command": "recordNow", "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": this.common._settings.recordingBitRate, "segmentRecording": this.common._settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
             console.log(commandData);
 
             $.get(aUrl, commandData)
@@ -106,7 +107,7 @@
         createManualRecording: function () {
 
             // load settings from db if not previously loaded
-            if (!_settingsRetrieved) {
+            if (!this.common._settingsRetrieved) {
                 this.common.retrieveSettings(this.executeCreateManualRecording);
             }
             else {
@@ -143,7 +144,7 @@
 
             var title = this.common.getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
             var aUrl = baseURL + "browserCommand";
-            var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": _settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
+            var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": this.common._settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
                 "startTimeOffset": 0, "stopTimeOffset": 0 };
             console.log(commandData);
 
@@ -193,10 +194,12 @@
             var commandData = { "command": "deleteRecordedShow", "recordingId": recordingId };
             console.log(commandData);
 
+            // REQUIREDTODO - this is wrong; this is not what I think it is at this point. another nextFunction shenanigans?
+            var self = this;
             $.get(aUrl, commandData)
                 .done( function (result) {
                     console.log("browserCommand successfully sent");
-                    this.common.getRecordedShows();
+                    self.common.getRecordedShows();
                 })
                 .fail( function (jqXHR, textStatus, errorThrown) {
                     debugger;
@@ -214,10 +217,11 @@
             var aUrl = baseURL + "stopRecording";
             var params = { "scheduledRecordingId": scheduledRecordingId };
 
+            var self = this;
             $.get(aUrl, params)
                 .done( function (result) {
                     console.log("stopRecording successful");
-                    this.common.getToDoList();
+                    self.common.getToDoList();
                 })
                 .fail( function (jqXHR, textStatus, errorThrown) {
                     debugger;
@@ -236,6 +240,7 @@
         },
 
 
+        // REQUIREDTODO - nextFunction - see common.js::retrieveSettings
         deleteScheduledRecording: function (scheduledRecordingId, nextFunction) {
 
             var aUrl = baseURL + "deleteScheduledRecording";

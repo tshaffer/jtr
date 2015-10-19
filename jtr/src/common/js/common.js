@@ -67,6 +67,7 @@
 
             this.baseURL = baseURL;
             this.browser = browser;
+            this.common = this;
             this.channelGuide = channelGuide;
 
             this.cgPopupEpisodeHandlers = [this.cgRecordSelectedProgram, this.cgRecordProgramSetOptions, this.cgRecordProgramViewUpcomingEpisodes, this.cgTune, this.cgModalClose];
@@ -384,15 +385,20 @@
 
         retrieveSettings: function (nextFunction) {
 
+            // REQUIREDTODO - doesn't seem right - what is this and how to get it to nextFunction?
+            var self = this;
+            self.retrieveSettingsNextFunction = nextFunction;
+
             // get settings from db
             var url = this.baseURL + "getSettings";
             $.get(url, {})
                 .done(function (result) {
                     console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX retrieveSettings success ************************************");
-                    this._settingsRetrieved = true;
-                    this._settings.recordingBitRate = result.RecordingBitRate;
-                    this._settings.segmentRecordings = result.SegmentRecordings;
-                    nextFunction();
+                    self._settingsRetrieved = true;
+                    self._settings.recordingBitRate = result.RecordingBitRate;
+                    self._settings.segmentRecordings = result.SegmentRecordings;
+                    //nextFunction();
+                    self.retrieveSettingsNextFunction();
                 })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 debugger;
