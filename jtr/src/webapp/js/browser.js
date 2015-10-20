@@ -73,12 +73,15 @@
             if (!this.common._settingsRetrieved) {
                 var promise = this.common.retrieveSettings();
                 promise.then(function() {
+                    console.log("invoke executeRecordNow")
                     self.executeRecordNow();
                 })
             }
             else {
                 this.executeRecordNow();
             }
+
+            return false;
         },
 
         executeRecordNow: function () {
@@ -107,6 +110,8 @@
                 .always( function () {
                     //alert("recording transmission finished");
                 });
+
+            return false;
         },
 
         createManualRecording: function () {
@@ -153,7 +158,7 @@
 
             var title = this.common.getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
             var aUrl = baseURL + "browserCommand";
-            var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": this.common._settings.recordingBitRate, "segmentRecording": _settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
+            var commandData = { "command": "manualRecord", "dateTime": compatibleDateTimeStr, "duration": duration, "title": title, "channel": channel, "inputSource": inputSource, "recordingBitRate": this.common._settings.recordingBitRate, "segmentRecording": this.common._settings.segmentRecordings, "scheduledSeriesRecordingId": scheduledSeriesRecordingId,
                 "startTimeOffset": 0, "stopTimeOffset": 0 };
             console.log(commandData);
 

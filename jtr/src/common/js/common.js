@@ -79,66 +79,82 @@
 
             $("#recordedShows").click(function (event) {
                 self.selectRecordedShows();
+                return false;
             });
 
             $("#settings").click(function (event) {
                 self.selectSettings();
+                return false;
             });
 
             $("#toDoList").click(function (event) {
                 self.selectToDoList();
+                return false;
             });
 
             $("#liveVideo").click(function (event) {
                 self.selectLiveVideo();
+                return false;
             });
 
             $("#recordNow").click(function (event) {
                 self.selectRecordNow();
+                return false;
             });
 
             $("#manualRecord").click(function (event) {
                 self.selectManualRecord();
+                return false;
             });
 
             // REQUIREDTODO
             $("#homeButton").click(function (event) {
                 self.selectHomePage();
+                return false;
             });
             $("#btnHome").click(function (event) {
-                self.selectHomePage();
+                self.browser.selectHomePage();
+                return false;
             });
 
             $("#btnRemoteRecord").click(function (event) {
-                self.remoteRecord();
+                self.browser.remoteRecord();
+                return false;
             });
 
             $("#btnRemoteStop").click(function (event) {
-                self.remoteStop();
+                self.browser.remoteStop();
+                return false;
             });
 
             $("#btnRemoteRewind").click(function (event) {
-                self.remoteRewind();
+                self.browser.remoteRewind();
+                return false;
             });
 
             $("#btnRemoteInstantReplay").click(function (event) {
-                self.remoteInstantReplay();
+                self.browser.remoteInstantReplay();
+                return false;
             });
 
             $("#btnRemotePause").click(function (event) {
-                self.remotePause();
+                self.browser.remotePause();
+                return false;
             });
 
             $("#btnRemotePlay").click(function (event) {
-                self.remotePlay();
+                self.browser.remotePlay();
+                return false;
             });
 
             $("#btnRemoteQuickSkip").click(function (event) {
-                self.remoteQuickSkip();
+                self.browser.remoteQuickSkip();
+                return false;
             });
 
             $("#btnRemoteFastForward").click(function (event) {
-                self.remoteFastForward();
+                self.browser.remoteFastForward();
+                return false;
             });
         },
 
@@ -383,29 +399,30 @@
         },
 
 
-        retrieveSettings: function (nextFunction) {
+        retrieveSettings: function () {
 
-            // REQUIREDTODO - doesn't seem right - what is this and how to get it to nextFunction?
             var self = this;
-            self.retrieveSettingsNextFunction = nextFunction;
 
-            // get settings from db
-            var url = this.baseURL + "getSettings";
-            $.get(url, {})
-                .done(function (result) {
-                    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX retrieveSettings success ************************************");
-                    self._settingsRetrieved = true;
-                    self._settings.recordingBitRate = result.RecordingBitRate;
-                    self._settings.segmentRecordings = result.SegmentRecordings;
-                    //nextFunction();
-                    self.retrieveSettingsNextFunction();
-                })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                debugger;
-                console.log("getSettings failure");
+            return new Promise(function(resolve, reject) {
+
+                // get settings from db
+                var url = this.baseURL + "getSettings";
+                $.get(url, {})
+                    .done(function (result) {
+                        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX retrieveSettings success ************************************");
+                        self._settingsRetrieved = true;
+                        self._settings.recordingBitRate = result.RecordingBitRate;
+                        self._settings.segmentRecordings = result.SegmentRecordings;
+                        resolve();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        reject();
+                        debugger;
+                        console.log("getSettings failure");
+                    })
+                    .always(function () {
+                    });
             })
-            .always(function () {
-            });
         },
 
         selectSettings: function () {
@@ -414,7 +431,11 @@
 
             console.log("selectSettings invoked");
 
-            this.retrieveSettings(initializeSettingsUIElements);
+            var self = this;
+            var promise = this.retrieveSettings();
+            promise.then(function() {
+                self.initializeSettingsUIElements();
+            })
 
             $(".recordingQuality").change(function () {
                 this._settings.recordingBitRate = $('input:radio[name=recordingQuality]:checked').val();
@@ -659,6 +680,7 @@
 
             $("#btnRecordNow").click(function (event) {
                 self.browser.recordNow();
+                return false;
             });
 
             $("#rbRecordNowTuner").change(function () {
@@ -686,6 +708,7 @@
 
             $("#btnSetManualRecord").click(function (event) {
                 self.browser.createManualRecording();
+                return false;
             });
 
             $("#rbManualRecordTuner").change(function () {
@@ -891,6 +914,8 @@
 
             console.log(commandData);
 
+            // REQUIREDTODO - nextFunction shenanigans?
+            debugger;
             $.get(aUrl, commandData)
                 .done(function (result) {
                     console.log("cgRecordProgramFromClient: add or update record processing complete");
@@ -922,6 +947,8 @@
                 "inputSource": "tuner", "channel": stationName, "recordingBitRate": this._settings.recordingBitRate, "segmentRecording": this._settings.segmentRecordings };
             console.log(commandData);
 
+            // REQUIREDTODO - nextFunction shenanigans?
+            debugger;
             $.get(aUrl, commandData)
                 .done(function (result) {
                     console.log("browserCommand addSeries successfully sent");
