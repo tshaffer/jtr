@@ -67,9 +67,14 @@
         },
 
         recordNow: function () {
+
+            var self = this;
             // load settings from db if not previously loaded
             if (!this.common._settingsRetrieved) {
-                this.common.retrieveSettings(this, this.executeRecordNow);
+                var promise = this.common.retrieveSettings();
+                promise.then(function() {
+                    self.executeRecordNow();
+                })
             }
             else {
                 this.executeRecordNow();
@@ -108,7 +113,11 @@
 
             // load settings from db if not previously loaded
             if (!this.common._settingsRetrieved) {
-                this.common.retrieveSettings(this.executeCreateManualRecording);
+                var self = this;
+                var promise = this.common.retrieveSettings();
+                promise.then(function() {
+                    self.executeCreateManualRecording();
+                })
             }
             else {
                 this.executeCreateManualRecording();
