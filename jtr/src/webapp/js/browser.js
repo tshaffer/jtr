@@ -69,7 +69,7 @@
         recordNow: function () {
             // load settings from db if not previously loaded
             if (!this.common._settingsRetrieved) {
-                this.common.retrieveSettings(this.executeRecordNow);
+                this.common.retrieveSettings(this, this.executeRecordNow);
             }
             else {
                 this.executeRecordNow();
@@ -194,7 +194,9 @@
             var commandData = { "command": "deleteRecordedShow", "recordingId": recordingId };
             console.log(commandData);
 
-            // REQUIREDTODO - this is wrong; this is not what I think it is at this point. another nextFunction shenanigans?
+            debugger;
+
+            // REQUIREDTODO - "this" is wrong; "this" is not what I think it is at this point. another nextFunction type shenanigans?
             var self = this;
             $.get(aUrl, commandData)
                 .done( function (result) {
@@ -265,6 +267,7 @@
 
         },
 
+        // REQUIREDTODO - nextFunction shenanigans
         deleteScheduledSeries: function (scheduledSeriesRecordingId, nextFunction) {
 
             var aUrl = baseURL + "deleteScheduledSeries";
