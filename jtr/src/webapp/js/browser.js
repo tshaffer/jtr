@@ -251,34 +251,40 @@
 
 
         deleteScheduledRecordingHandler: function (event) {
+
             var scheduledRecordingId = event.data.scheduledRecordingId;
-            this.deleteScheduledRecording(scheduledRecordingId, this.common.getToDoList);
+            //this.deleteScheduledRecording(scheduledRecordingId, this.common.getToDoList);
+
+            var self = this;
+            var promise = this.deleteScheduledRecording(scheduledRecordingId);
+            promise.then(function() {
+                self.common.getToDoList();
+            })
         },
 
 
-        // REQUIREDTODO - nextFunction - see common.js::retrieveSettings
-        deleteScheduledRecording: function (scheduledRecordingId, nextFunction) {
+        deleteScheduledRecording: function (scheduledRecordingId) {
 
-            var aUrl = baseURL + "deleteScheduledRecording";
-            var commandData = { "scheduledRecordingId": scheduledRecordingId };
-            console.log(commandData);
+            return new Promise(function(resolve, reject) {
 
-            $.get(aUrl, commandData)
-                .done( function (result) {
-                    console.log("deleteScheduledRecording success");
-                    if (nextFunction != null) {
-                        nextFunction();
-                    }
-                    //getToDoList();
+                var aUrl = baseURL + "deleteScheduledRecording";
+                var commandData = { "scheduledRecordingId": scheduledRecordingId };
+                console.log(commandData);
+
+                $.get(aUrl, commandData)
+                    .done( function (result) {
+                        console.log("deleteScheduledRecording success");
+                        resolve();
+                    })
+                    .fail( function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                        reject();
+                        console.log("browserCommand failure");
+                    })
+                    .always( function () {
+                        //alert("recording transmission finished");
+                    });
                 })
-                .fail( function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-                    console.log("browserCommand failure");
-                })
-                .always( function () {
-                    //alert("recording transmission finished");
-                });
-
         },
 
         // REQUIREDTODO - nextFunction shenanigans

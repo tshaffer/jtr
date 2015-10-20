@@ -32,7 +32,7 @@ define(function () {
 
         },
 
-        // REQUIREDTODO
+        // REQUIREDTODO - this is a duplicate of what's in epg.js
         numDaysEpgData: 3,
 
         epgProgramSchedule: null,

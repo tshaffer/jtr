@@ -885,7 +885,7 @@
             this.cgRecordProgram();
         },
 
-        cgRecordProgramFromClient: function (addRecording, nextFunction) {
+        cgRecordProgramFromClient: function (addRecording) {
 
             console.log("cgRecordProgramFromClient invoked");
 
@@ -914,22 +914,22 @@
 
             console.log(commandData);
 
-            // REQUIREDTODO - nextFunction shenanigans?
-            debugger;
-            $.get(aUrl, commandData)
-                .done(function (result) {
-                    console.log("cgRecordProgramFromClient: add or update record processing complete");
-                    if (nextFunction != null) {
-                        nextFunction();
-                    }
+            return new Promise(function(resolve, reject) {
+
+                $.get(aUrl, commandData)
+                    .done(function (result) {
+                        console.log("cgRecordProgramFromClient: add or update record processing complete");
+                        resolve();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                        reject();
+                        console.log("browserCommand failure");
+                    })
+                    .always(function () {
+                        //alert("recording transmission finished");
+                    });
                 })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-                    console.log("browserCommand failure");
-                })
-                .always(function () {
-                    //alert("recording transmission finished");
-                });
         },
 
 
@@ -986,11 +986,13 @@
             console.log("cgScheduledSeriesViewUpcoming invoked");
         },
 
-        cgCancelScheduledRecordingFromClient: function (nextFunction) {
+        cgCancelScheduledRecordingFromClient: function () {
             console.log("cgCancelScheduledRecordingFromClient invoked");
             var programData = this.channelGuide.getSelectedStationAndProgram();
             this.cgSelectedProgram = programData.program;
-            this.browser.deleteScheduledRecording(this.cgSelectedProgram.scheduledRecordingId, nextFunction);
+            //this.browser.deleteScheduledRecording(this.cgSelectedProgram.scheduledRecordingId, nextFunction);
+
+            return this.browser.deleteScheduledRecording(this.cgSelectedProgram.scheduledRecordingId);
         },
 
 
@@ -1056,7 +1058,13 @@
             $("#cgRecordOptionsSave").click(function (event) {
                 $("#cgRecordOptionsSave").unbind("click");
                 $("#cgRecordingOptionsDlg").modal('hide');
-                self.cgRecordProgramFromClient(addRecordToDB, this.channelGuide.retrieveScheduledRecordings);
+                //self.cgRecordProgramFromClient(addRecordToDB, self.channelGuide.retrieveScheduledRecordings);
+
+                var promise = this.cgRecordProgramFromClient(addRecordToDB);
+                promise.then(function() {
+                    self.channelGuide.retrieveScheduledRecordings();
+                })
+
                 self.channelGuide.reselectCurrentProgram();
             });
 
@@ -1156,12 +1164,12 @@
             this.cgSelectedProgram.stopTimeOffset = 0;
             if (channelGuide.scheduledRecordings != null) {
                 $.each(channelGuide.scheduledRecordings, function (index, scheduledRecording) {
-                    cgSelectedProgramScheduledToRecord = this.programsMatch(scheduledRecording, this.cgSelectedProgram, this.cgSelectedStationId);
+                    cgSelectedProgramScheduledToRecord = self.programsMatch(scheduledRecording, self.cgSelectedProgram, self.cgSelectedStationId);
                     if (cgSelectedProgramScheduledToRecord) {
-                        this.cgSelectedProgram.scheduledRecordingId = scheduledRecording.Id;
-                        this.cgSelectedProgram.scheduledSeriesRecordingId = scheduledRecording.ScheduledSeriesRecordingId;
-                        this.cgSelectedProgram.startTimeOffset = scheduledRecording.StartTimeOffset;
-                        this.cgSelectedProgram.stopTimeOffset = scheduledRecording.StopTimeOffset;
+                        self.cgSelectedProgram.scheduledRecordingId = scheduledRecording.Id;
+                        self.cgSelectedProgram.scheduledSeriesRecordingId = scheduledRecording.ScheduledSeriesRecordingId;
+                        self.cgSelectedProgram.startTimeOffset = scheduledRecording.StartTimeOffset;
+                        self.cgSelectedProgram.stopTimeOffset = scheduledRecording.StopTimeOffset;
                         return false;
                     }
                 });
@@ -1252,7 +1260,13 @@
                 $(this.cgRecordEpisodeId).off();
                 $(this.cgRecordEpisodeId).click(function (event) {
                     $(self.cgRecordEpisodeId).unbind("click");
-                    self.cgRecordProgramFromClient(true, self.channelGuide.retrieveScheduledRecordings);
+                    //self.cgRecordProgramFromClient(true, self.channelGuide.retrieveScheduledRecordings);
+
+                    var promise = self.cgRecordProgramFromClient(true);
+                    promise.then(function() {
+                        self.channelGuide.retrieveScheduledRecordings();
+                    })
+
                     self.cgProgramDlgCloseInvoked();
                     self.channelGuide.reselectCurrentProgram();
             });
@@ -1279,7 +1293,13 @@
                 $(this.cgCancelRecordingId).off();
                 $(this.cgCancelRecordingId).click(function (event) {
                     console.log("CancelRecording invoked");
-                    self.cgCancelScheduledRecordingFromClient(self.channelGuide.retrieveScheduledRecordings);
+                    //self.cgCancelScheduledRecordingFromClient(self.channelGuide.retrieveScheduledRecordings);
+
+                    var promise = self.cgCancelScheduledRecordingFromClient();
+                    promise.then(function() {
+                        self.channelGuide.retrieveScheduledRecordings();
+                    })
+
                     self.cgProgramDlgCloseInvoked();
                     self.channelGuide.reselectCurrentProgram();
                 });
