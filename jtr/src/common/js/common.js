@@ -299,22 +299,27 @@
 
                                 // play a recording
                                 var btnIdRecording = "#recording" + recordingId;
-                                $(btnIdRecording).click({ recordingId: recordingId }, self.browser.playSelectedShow);
+                                $(btnIdRecording).click({ recordingId: recordingId }, function (event) {
+                                    self.browser.playSelectedShow(event);
+                                });
 
                                 // delete a recording
                                 var btnIdDelete = "#delete" + recordingId;
-                                //$(btnIdDelete).click({ recordingId: recordingId }, self.browser.deleteSelectedShow);
                                 $(btnIdDelete).click({ recordingId: recordingId }, function (event) {
                                     self.browser.deleteSelectedShow(event);
                                 });
 
                                 // play from beginning
                                 var btnIdPlayFromBeginning = "#repeat" + recordingId;
-                                $(btnIdPlayFromBeginning).click({ recordingId: recordingId }, self.browser.playSelectedShowFromBeginning);
+                                $(btnIdPlayFromBeginning).click({ recordingId: recordingId }, function (event) {
+                                    self.browser.playSelectedShowFromBeginning(event);
+                                });
 
                                 // stream a recording
                                 var btnIdStream = "#stream" + recordingId;
-                                $(btnIdStream).click({ recordingId: recordingId, hlsUrl: recording.HLSUrl }, self.browser.streamSelectedShow);
+                                $(btnIdStream).click({ recordingId: recordingId, hlsUrl: recording.HLSUrl }, function (event) {
+                                    self.browser.streamSelectedShow(event);
+                                });
 
                                 // highlight the last selected show
                                 if (recordingId == lastSelectedShowId) {
@@ -552,11 +557,15 @@
 
                             // stop an active recording
                             var btnIdStop = "#stop" + scheduledRecordingId;
-                            $(btnIdStop).click({ scheduledRecordingId: scheduledRecordingId }, self.browser.stopActiveRecording);
+                            $(btnIdStop).click({ scheduledRecordingId: scheduledRecordingId }, function (event) {
+                                self.browser.stopActiveRecording(event);
+                            });
 
                             // delete a scheduled recording
                             var btnIdDelete = "#delete" + scheduledRecordingId;
-                            $(btnIdDelete).click({ scheduledRecordingId: scheduledRecordingId }, self.browser.deleteScheduledRecordingHandler);
+                            $(btnIdDelete).click({ scheduledRecordingId: scheduledRecordingId }, function (event) {
+                                self.browser.deleteScheduledRecordingHandler(event);
+                            });
 
                             var scheduledRecordingRow = [];
                             scheduledRecordingRow.push(btnIdDelete);
