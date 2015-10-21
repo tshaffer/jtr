@@ -208,8 +208,6 @@
             var commandData = { "command": "deleteRecordedShow", "recordingId": recordingId };
             console.log(commandData);
 
-            debugger;
-
             // REQUIREDTODO - "this" is wrong; "this" is not what I think it is at this point. another nextFunction type shenanigans?
             var self = this;
             $.get(aUrl, commandData)

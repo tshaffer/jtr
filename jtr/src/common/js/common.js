@@ -303,7 +303,10 @@
 
                                 // delete a recording
                                 var btnIdDelete = "#delete" + recordingId;
-                                $(btnIdDelete).click({ recordingId: recordingId }, self.browser.deleteSelectedShow);
+                                //$(btnIdDelete).click({ recordingId: recordingId }, self.browser.deleteSelectedShow);
+                                $(btnIdDelete).click({ recordingId: recordingId }, function (event) {
+                                    self.browser.deleteSelectedShow(event);
+                                });
 
                                 // play from beginning
                                 var btnIdPlayFromBeginning = "#repeat" + recordingId;
