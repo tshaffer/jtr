@@ -208,7 +208,6 @@
             var commandData = { "command": "deleteRecordedShow", "recordingId": recordingId };
             console.log(commandData);
 
-            // REQUIREDTODO - "this" is wrong; "this" is not what I think it is at this point. another nextFunction type shenanigans?
             var self = this;
             $.get(aUrl, commandData)
                 .done( function (result) {
@@ -285,28 +284,28 @@
                 })
         },
 
-        // REQUIREDTODO - nextFunction shenanigans
-        deleteScheduledSeries: function (scheduledSeriesRecordingId, nextFunction) {
+        deleteScheduledSeries: function (scheduledSeriesRecordingId) {
 
-            var aUrl = baseURL + "deleteScheduledSeries";
-            var commandData = { "scheduledSeriesRecordingId": scheduledSeriesRecordingId };
-            console.log(commandData);
+            return new Promise(function(resolve, reject) {
 
-            $.get(aUrl, commandData)
-                .done( function (result) {
-                    console.log("deleteScheduledSeries success");
-                    if (nextFunction != null) {
-                        nextFunction();
-                    }
-                })
-                .fail( function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-                    console.log("deleteScheduledSeries failure");
-                })
-                .always( function () {
-                    //alert("recording transmission finished");
-                });
+                var aUrl = baseURL + "deleteScheduledSeries";
+                var commandData = {"scheduledSeriesRecordingId": scheduledSeriesRecordingId};
+                console.log(commandData);
 
+                $.get(aUrl, commandData)
+                    .done(function (result) {
+                        console.log("deleteScheduledSeries success");
+                        resolve();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        reject();
+                        debugger;
+                        console.log("deleteScheduledSeries failure");
+                    })
+                    .always(function () {
+                        //alert("recording transmission finished");
+                    });
+            });
         },
 
         playSelectedShowFromBeginning: function (event) {

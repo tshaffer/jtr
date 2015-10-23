@@ -446,14 +446,14 @@
             })
 
             $(".recordingQuality").change(function () {
-                this._settings.recordingBitRate = $('input:radio[name=recordingQuality]:checked').val();
-                this.updateSettings();
+                self._settings.recordingBitRate = $('input:radio[name=recordingQuality]:checked').val();
+                self.updateSettings();
             });
 
             $("#segmentRecordingsCheckBox").change(function () {
                 var segmentRecordings = $("#segmentRecordingsCheckBox").is(':checked');
-                this._settings.segmentRecordings = segmentRecordings ? 1 : 0;
-                this.updateSettings();
+                self._settings.segmentRecordings = segmentRecordings ? 1 : 0;
+                self.updateSettings();
             });
         },
 
@@ -1014,11 +1014,11 @@
         },
 
 
-        cgCancelScheduledSeriesFromClient: function (nextFunction) {
+        cgCancelScheduledSeriesFromClient: function () {
             console.log("cgCancelScheduledSeriesFromClient invoked");
             var programData = this.channelGuide.getSelectedStationAndProgram();
             this.cgSelectedProgram = programData.program;
-            this.browser.deleteScheduledSeries(this.cgSelectedProgram.scheduledSeriesRecordingId, nextFunction);
+            return this.browser.deleteScheduledSeries(this.cgSelectedProgram.scheduledSeriesRecordingId);
         },
 
         cgRecordProgramSetOptions: function () {
@@ -1355,8 +1355,10 @@
                 $(this.cgCancelSeriesId).off();
                 $(this.cgCancelSeriesId).click(function (event) {
                     console.log("CancelSeriesRecording invoked");
-                    // REQUIREDTODO
-                    self.cgCancelScheduledSeriesFromClient(self.channelGuide.retrieveScheduledRecordings);
+                    var promise = self.cgCancelScheduledSeriesFromClient();
+                    promise.then(function() {
+                        self.channelGuide.retrieveScheduledRecordings();
+                    })
                     self.cgProgramDlgCloseInvoked();
                     self.channelGuide.reselectCurrentProgram();
                 });
@@ -1503,7 +1505,7 @@
 
         setFooterVisibility: function (trickModeKeysVisibility, homeButtonVisibility) {
 
-            // REQUIREDTODO - check to see if this works. if it doesn't, fix it; if it does, improve it.
+            // JTRTODO - check to see if this works. if it doesn't, fix it; if it does, improve it.
             var self = this;
             if (homeButtonVisibility) {
                 $("#homeButton").html("<button class='btn btn-primary'>Home</button><br><br>");
