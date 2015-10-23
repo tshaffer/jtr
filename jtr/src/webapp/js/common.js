@@ -541,7 +541,7 @@
                         $("#scheduledRecordingsTableBody").empty();
 
                         $.each(scheduledRecordings, function (index, scheduledRecording) {
-                            toAppend += addScheduledRecordingShowLine(scheduledRecording, stations);
+                            toAppend += self.addScheduledRecordingShowLine(scheduledRecording, stations);
                         });
 
                         $("#scheduledRecordingsTableBody").append(toAppend);
@@ -645,7 +645,7 @@
                 channel = channelParts[0];
             }
 
-            var station = getStationFromAtsc(stations, channelParts[0], channelParts[1]);
+            var station = this.channelGuide.getStationFromAtsc(stations, channelParts[0], channelParts[1]);
 
             var stationName = "TBD";
             if (station != null) {
@@ -945,38 +945,44 @@
         },
 
 
-        cgRecordSelectedSeriesFromClient: function (nextFunction) {
+        cgRecordSelectedSeriesFromClient: function () {
 
-            var programData = this.channelGuide.getSelectedStationAndProgram();
-            this.cgSelectedProgram = programData.program;
-            this.cgSelectedStationId = programData.stationId;
+            var self = this;
 
-            var stationName = this.channelGuide.getStationFromId(this.cgSelectedStationId);
-            stationName = stationName.replace(".", "-");
+            return new Promise(function(resolve, reject) {
 
-            var aUrl = this.baseURL + "browserCommand";
-            var commandData = { "command": "addSeries", "title": this.cgSelectedProgram.title,
-                "inputSource": "tuner", "channel": stationName, "recordingBitRate": this._settings.recordingBitRate, "segmentRecording": this._settings.segmentRecordings };
-            console.log(commandData);
+                var programData = self.channelGuide.getSelectedStationAndProgram();
+                self.cgSelectedProgram = programData.program;
+                self.cgSelectedStationId = programData.stationId;
 
-            // REQUIREDTODO - nextFunction shenanigans?
-            debugger;
-            $.get(aUrl, commandData)
-                .done(function (result) {
-                    console.log("browserCommand addSeries successfully sent");
-                    if (nextFunction != null) {
-                        nextFunction();
-                    }
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    debugger;
-                    console.log("browserCommand failure");
-                })
-                .always(function () {
-                    //alert("recording transmission finished");
-                });
+                var stationName = self.channelGuide.getStationFromId(self.cgSelectedStationId);
+                stationName = stationName.replace(".", "-");
 
-            //return cgRecordProgramFromClient();
+                var aUrl = self.baseURL + "browserCommand";
+                var commandData = {
+                    "command": "addSeries",
+                    "title": self.cgSelectedProgram.title,
+                    "inputSource": "tuner",
+                    "channel": stationName,
+                    "recordingBitRate": self._settings.recordingBitRate,
+                    "segmentRecording": self._settings.segmentRecordings
+                };
+                console.log(commandData);
+
+                $.get(aUrl, commandData)
+                    .done(function (result) {
+                        console.log("browserCommand addSeries successfully sent");
+                        resolve();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        debugger;
+                        reject();
+                        console.log("browserCommand failure");
+                    })
+                    .always(function () {
+                        //alert("recording transmission finished");
+                    });
+            });
         },
 
         cgRecordSelectedSeries: function () {
@@ -1031,19 +1037,44 @@
             $("#cgRecordingOptionsDlg").modal(options);
             $("#cgRecordingOptionsTitle").html(this.cgSelectedProgram.title);
 
+            // add handlers
+            $("#btnCGRecordOptionsNextEarlyStartTime").click(function (event) {
+                //$("#btnCGRecordOptionsNextEarlyStartTime").off();
+                self.cgRecordOptionsNextEarlyStartTime();
+                return false;
+            });
+
+            $("#btnCGRecordOptionsNextLateStartTime").click(function (event) {
+                //$("#btnCGRecordOptionsNextLateStartTime").off();
+                self.cgRecordOptionsNextLateStartTime();
+                return false;
+            });
+
+            $("#btnCGRecordOptionsNextEarlyStopTime").click(function (event) {
+                //$("#btnCGRecordOptionsNextEarlyStopTime").off();
+                self.cgRecordOptionsNextEarlyStopTime();
+                return false;
+            });
+
+            $("#btnCGRecordOptionsNextLateStopTime").click(function (event) {
+                //$("#btnCGRecordOptionsNextLateStopTime").off();
+                self.cgRecordOptionsNextLateStopTime();
+                return false;
+            });
+
             // for a program that has not been setup to record, this.cgSelectedProgram.startTimeOffset = 0, etc.
             this.stopTimeIndex = this.stopTimeOnTimeIndex;
             this.startTimeIndex = this.startTimeOnTimeIndex;
 
             $.each(this.startTimeOffsets, function (index, startTimeOffset) {
-                if (startTimeOffset == this.cgSelectedProgram.startTimeOffset) {
+                if (startTimeOffset == self.cgSelectedProgram.startTimeOffset) {
                     this.startTimeIndex = index;
                     return false;
                 }
             });
 
             $.each(this.stopTimeOffsets, function (index, stopTimeOffset) {
-                if (stopTimeOffset == this.cgSelectedProgram.stopTimeOffset) {
+                if (stopTimeOffset == self.cgSelectedProgram.stopTimeOffset) {
                     this.stopTimeIndex = index;
                     return false;
                 }
@@ -1072,7 +1103,7 @@
                 $("#cgRecordingOptionsDlg").modal('hide');
                 //self.cgRecordProgramFromClient(addRecordToDB, self.channelGuide.retrieveScheduledRecordings);
 
-                var promise = this.cgRecordProgramFromClient(addRecordToDB);
+                var promise = self.cgRecordProgramFromClient(addRecordToDB);
                 promise.then(function() {
                     self.channelGuide.retrieveScheduledRecordings();
                 })
@@ -1286,7 +1317,10 @@
             if (this.cgRecordSeriesId) {
                 $(this.cgRecordSeriesId).off();
                 $(this.cgRecordSeriesId).click(function (event) {
-                    self.cgRecordSelectedSeriesFromClient(self.channelGuide.retrieveScheduledRecordings);
+                    var promise = self.cgRecordSelectedSeriesFromClient();
+                    promise.then(function() {
+                        self.channelGuide.retrieveScheduledRecordings();
+                    })
                     self.cgProgramDlgCloseInvoked();
                     self.channelGuide.reselectCurrentProgram();
                 });
