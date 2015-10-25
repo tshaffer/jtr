@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>backboneTests</title>
+
+    <script src="./scripts/jquery-2.1.1.min.js"></script>
+    <script src="./scripts/underscore-min.js"></script>
+    <script src="./scripts/backbone-min.js"></script>
+    <script src="./scripts/app3.js"></script>
+</head>
+
+<body>
+<header class="container-fluid">
+    <div class="page-header">
+        <h1>Backbone.js Basics 3</h1>
+        <p class="lead">Part 3 - Views and Templates.</p>
+    </div>
+
+    <div class="container-fluid">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Manufacturer</th>
+                <th>Model</th>
+                <th>Stock</th>
+            </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+
+
+</header>
+</body>
+
+<script type="text/template" id="surfboard-template">
+    <td><%= manufacturer %></td>
+    <td><%= model %></td>
+    <td><%= stock %></td>
+</script>
+
+</html>
