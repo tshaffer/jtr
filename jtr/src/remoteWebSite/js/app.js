@@ -9,7 +9,7 @@ $(document).ready(function () {
 
         initialize: function () {
             console.log("ManualRecordView::initialize");
-            this.template = _.template($('#manualRecordPage').html());
+            this.template = _.template($('#manualRecordTemplate').html());
             this.render();
         },
 
