@@ -5,6 +5,22 @@
 $(document).ready(function () {
 
 
+    ManualRecordView = Backbone.View.extend({
+
+        initialize: function () {
+            console.log("ManualRecordView::initialize");
+            this.template = _.template($('#manualRecordPage').html());
+            this.render();
+        },
+
+        render: function () {
+            console.log("ManualRecordView::render");
+            this.$el.html(this.template()); // this.$el is a jQuery wrapped el var
+            $("#manualRecordPage").css("display", "block");
+            return this;
+        }
+    }),
+
     MainMenuView = Backbone.View.extend({
 
         initialize: function () {
@@ -15,7 +31,8 @@ $(document).ready(function () {
         },
 
         events: {
-            "click #recordedShows": "recordedShowsHandler"
+            "click #recordedShows": "recordedShowsHandler",
+            "click #manualRecord": "manualRecordHandler"
         },
 
         recordedShowsHandler: function( event ){
@@ -24,21 +41,62 @@ $(document).ready(function () {
             this.trigger("invokeRecordedShows");
         },
 
-        //invokeRecordedShowsHandler:function() {
-        //    console.log("invoke invokedRecordedShowsHandler");
-        //}
-
+        manualRecordHandler: function( event ) {
+            console.log("manualRecordHandler, trigger invokeManualRecord");
+            this.trigger("invokeManualRecord");
+        }
     });
+
 
     var mainMenuView = new MainMenuView({el: $("#homePage")});
 
-    var MainMenuController = {};
-    _.extend(MainMenuController, Backbone.Events);
-    //MainMenuController.on("invokeRecordedShows", function() {
-    //    console.log("MainMenuController:: invokedRecordedShowsHandler event received");
+    //var MainMenuController = {};
+    //_.extend(MainMenuController, Backbone.Events);
+    //MainMenuController.listenTo(mainMenuView, "invokeRecordedShows", function() {
+    //    console.log("MainMenuController:: invokeRecordedShowsHandler event received");
     //});
-    //MainMenuController.trigger("invokeRecordedShows");
-    MainMenuController.listenTo(mainMenuView, "invokeRecordedShows", function() {
-        console.log("MainMenuController:: invokeRecordedShowsHandler event received");
-    })
+    //MainMenuController.listenTo(mainMenuView, "invokeManualRecord", function() {
+    //    console.log("MainMenuController:: invokeManualRecord event received");
+    //    $(mainMenuView.el).hide();
+    //    var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
+    //
+    //});
+
+
+    //MainMenuController = ({
+    //
+    //    initialize: function() {
+    //            this.listenTo(mainMenuView, "invokeRecordedShows", function() {
+    //                console.log("MainMenuController:: invokeRecordedShowsHandler event received");
+    //            });
+    //            this.listenTo(mainMenuView, "invokeManualRecord", function() {
+    //                console.log("MainMenuController:: invokeManualRecord event received");
+    //                $(mainMenuView.el).hide();
+    //                var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
+    //            });
+    //        },
+    //    },
+    //
+    //    _.extend(this, Backbone.Events),
+    //    this.initialize()
+    //);
+
+    //var mainMenuController = new MainMenuController();
+    //mainMenuController.initialize();
+
+    var MainMenuController = {
+        initialize: function() {
+            this.listenTo(mainMenuView, "invokeRecordedShows", function() {
+                console.log("MainMenuController:: invokeRecordedShowsHandler event received");
+            });
+            this.listenTo(mainMenuView, "invokeManualRecord", function() {
+                console.log("MainMenuController:: invokeManualRecord event received");
+                $(mainMenuView.el).hide();
+                var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
+            });
+        }
+    };
+    _.extend(MainMenuController, Backbone.Events);
+    MainMenuController.initialize();
+
 });
