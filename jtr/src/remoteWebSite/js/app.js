@@ -18,13 +18,13 @@ $(document).ready(function () {
             "click #manualRecord": "manualRecordHandler"
         },
 
-        recordedShowsHandler: function( event ){
+        recordedShowsHandler: function (event) {
             // Button clicked, you can access the element that was clicked with event.currentTarget
             console.log("recordedShowsHandler, trigger invokeRecordedShows");
             this.trigger("invokeRecordedShows");
         },
 
-        manualRecordHandler: function( event ) {
+        manualRecordHandler: function (event) {
             console.log("manualRecordHandler, trigger invokeManualRecord");
             this.trigger("invokeManualRecord");
         }
@@ -59,14 +59,13 @@ $(document).ready(function () {
             "click #btnSetManualRecord": "executeManualRecordHandler"
         },
 
-        executeManualRecordHandler: function( event ) {
+        executeManualRecordHandler: function (event) {
             console.log("executeManualRecordHandler, trigger executeManualRecord");
             this.trigger("executeManualRecord");
             return false;
         }
 
     });
-
 
 
     var mainMenuView = new MainMenuView({el: $("#homePage")});
@@ -83,23 +82,45 @@ $(document).ready(function () {
     //
     //});
 
-    //MainMenuController = ({
+    //var MainMenuController = function() {
+    //    return (function () {
     //
-    //    initialize: function() {
-    //            this.listenTo(mainMenuView, "invokeRecordedShows", function() {
+    //        (function () {
+    //            _.extend(this, Backbone.Events);
+    //
+    //            this.listenTo(mainMenuView, "invokeRecordedShows", function () {
     //                console.log("MainMenuController:: invokeRecordedShowsHandler event received");
     //            });
-    //            this.listenTo(mainMenuView, "invokeManualRecord", function() {
+    //            this.listenTo(mainMenuView, "invokeManualRecord", function () {
     //                console.log("MainMenuController:: invokeManualRecord event received");
     //                $(mainMenuView.el).hide();
     //                var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
-    //            });
-    //        },
-    //    },
-    //
-    //    _.extend(this, Backbone.Events),
-    //    this.initialize()
-    //);
+    //            })
+    //        })();
+    //    })();
+    //};
+
+    var MainMenuController = function() {
+
+        return (function () {
+
+            _.extend(this, Backbone.Events);
+
+            this.listenTo(mainMenuView, "invokeRecordedShows", function () {
+                console.log("MainMenuController:: invokeRecordedShowsHandler event received");
+            });
+
+            this.listenTo(mainMenuView, "invokeManualRecord", function () {
+                console.log("MainMenuController:: invokeManualRecord event received");
+                $(mainMenuView.el).hide();
+                var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
+            });
+        })();
+    };
+
+    var mainMenuController = MainMenuController();
+
+    //var mainMenuController = new MainMenuController();
 
     //var mainMenuController = new MainMenuController();
     //mainMenuController.initialize();
@@ -108,26 +129,27 @@ $(document).ready(function () {
     var manualRecordView;
     var ManualRecordController;
 
-    var MainMenuController = {
-        initialize: function() {
-            this.listenTo(mainMenuView, "invokeRecordedShows", function() {
-                console.log("MainMenuController:: invokeRecordedShowsHandler event received");
-            });
-            this.listenTo(mainMenuView, "invokeManualRecord", function() {
-
-                console.log("MainMenuController:: invokeManualRecord event received");
-
-                $(mainMenuView.el).hide();
-
-                ManualRecordController.initialize();
-                //var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
-                manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
-                ManualRecordController.setHandlers();
-            });
-        }
-    };
-    _.extend(MainMenuController, Backbone.Events);
-    MainMenuController.initialize();
+    //var MainMenuController = {
+    //
+    //    initialize: function() {
+    //        this.listenTo(mainMenuView, "invokeRecordedShows", function() {
+    //            console.log("MainMenuController:: invokeRecordedShowsHandler event received");
+    //        });
+    //        this.listenTo(mainMenuView, "invokeManualRecord", function() {
+    //
+    //            console.log("MainMenuController:: invokeManualRecord event received");
+    //
+    //            $(mainMenuView.el).hide();
+    //
+    //            ManualRecordController.initialize();
+    //            //var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
+    //            manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
+    //            ManualRecordController.setHandlers();
+    //        });
+    //    }
+    //};
+    //_.extend(MainMenuController, Backbone.Events);
+    //MainMenuController.initialize();
 
     //var ManualRecordController = {
     ManualRecordController = {
