@@ -16,6 +16,8 @@ var MainMenuController = function() {
         this.listenTo(mainMenuView, "invokeManualRecord", function () {
             console.log("MainMenuController:: invokeManualRecord event received");
             $(mainMenuView.el).hide();
+
+            var manualRecordController = new ManualRecordController();
         });
     })();
 };

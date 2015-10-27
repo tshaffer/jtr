@@ -12,6 +12,9 @@ ManualRecordView = Backbone.View.extend({
     render: function () {
         console.log("ManualRecordView::render");
         this.$el.html(this.template()); // this.$el is a jQuery wrapped el var
+        var title = this.model.get('title');
+        $("#manualRecordTitle").val(title);
+
         $("#manualRecordPage").css("display", "block");
         return this;
     },

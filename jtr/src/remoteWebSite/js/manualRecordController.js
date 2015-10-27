@@ -10,13 +10,10 @@ var ManualRecordController = function() {
             duration: '69'
         });
 
-        var manualRecordModel = new ManualRecordModel({
-            title: 'Title',
-            duration: '69'
+        var manualRecordView = new ManualRecordView({
+            el: $("#manualRecordPage"),
+            model: manualRecordModel
         });
-
-
-        var manualRecordView = new ManualRecordView({el: $("#manualRecordPage")});
 
         _.extend(this, Backbone.Events);
 
