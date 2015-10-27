@@ -1,7 +1,7 @@
 /**
  * Created by tedshaffer on 10/27/15.
  */
-var ManualRecordController = function() {
+ManualRecordController = function() {
 
     return (function () {
 
