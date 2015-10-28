@@ -1,30 +1,29 @@
 /**
  * Created by tedshaffer on 10/27/15.
  */
-define(function () {
+define([], function () {
 
-    return {
+    var mainMenuController = {
+        p1: 69,
 
-        function()
-        {
+        init: function() {
+            var mainMenuView = new MainMenuView({el: $("#homePage")});
 
-            return (function () {
+            _.extend(this, Backbone.Events);
 
-                var mainMenuView = new MainMenuView({el: $("#homePage")});
+            this.listenTo(mainMenuView, "invokeRecordedShows", function () {
+                console.log("MainMenuController:: invokeRecordedShowsHandler event received");
+            });
 
-                _.extend(this, Backbone.Events);
+            this.listenTo(mainMenuView, "invokeManualRecord", function () {
+                console.log("MainMenuController:: invokeManualRecord event received");
+                $(mainMenuView.el).hide();
 
-                this.listenTo(mainMenuView, "invokeRecordedShows", function () {
-                    console.log("MainMenuController:: invokeRecordedShowsHandler event received");
-                });
-
-                this.listenTo(mainMenuView, "invokeManualRecord", function () {
-                    console.log("MainMenuController:: invokeManualRecord event received");
-                    $(mainMenuView.el).hide();
-
-                    var manualRecordController = new ManualRecordController();
-                });
-            })();
+                var manualRecordController = new ManualRecordController();
+            });
         }
-});
+    };
 
+    mainMenuController.init();
+    return mainMenuController;
+});

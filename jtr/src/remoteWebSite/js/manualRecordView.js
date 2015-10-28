@@ -1,32 +1,36 @@
 /**
  * Created by tedshaffer on 10/27/15.
  */
-ManualRecordView = Backbone.View.extend({
+define(function () {
 
-    initialize: function () {
-        console.log("ManualRecordView::initialize");
-        this.template = _.template($('#manualRecordTemplate').html());
-        this.render();
-    },
+    var manualRecordView = Backbone.View.extend({
 
-    render: function () {
-        console.log("ManualRecordView::render");
-        this.$el.html(this.template()); // this.$el is a jQuery wrapped el var
-        var title = this.model.get('title');
-        $("#manualRecordTitle").val(title);
+        initialize: function () {
+            console.log("ManualRecordView::initialize");
+            this.template = _.template($('#manualRecordTemplate').html());
+            this.render();
+        },
 
-        $("#manualRecordPage").css("display", "block");
-        return this;
-    },
+        render: function () {
+            console.log("ManualRecordView::render");
+            this.$el.html(this.template()); // this.$el is a jQuery wrapped el var
+            var title = this.model.get('title');
+            $("#manualRecordTitle").val(title);
 
-    events: {
-        "click #btnSetManualRecord": "executeManualRecordHandler"
-    },
+            $("#manualRecordPage").css("display", "block");
+            return this;
+        },
 
-    executeManualRecordHandler: function (event) {
-        console.log("executeManualRecordHandler, trigger executeManualRecord");
-        this.trigger("executeManualRecord");
-        return false;
-    }
+        events: {
+            "click #btnSetManualRecord": "executeManualRecordHandler"
+        },
 
+        executeManualRecordHandler: function (event) {
+            console.log("executeManualRecordHandler, trigger executeManualRecord");
+            this.trigger("executeManualRecord");
+            return false;
+        }
+    });
+
+    return manualRecordView;
 });

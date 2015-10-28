@@ -1,25 +1,31 @@
 /**
  * Created by tedshaffer on 10/27/15.
  */
-ManualRecordController = function() {
+define([], function () {
 
-    return (function () {
+    var manualRecordController = {
 
-        var manualRecordModel = new ManualRecordModel({
-            title: 'Title',
-            duration: '69'
-        });
+        init: function() {
 
-        var manualRecordView = new ManualRecordView({
-            el: $("#manualRecordPage"),
-            model: manualRecordModel
-        });
+            var manualRecordModel = new ManualRecordModel({
+                title: 'Title',
+                duration: '69'
+            });
 
-        _.extend(this, Backbone.Events);
+            var manualRecordView = new ManualRecordView({
+                el: $("#manualRecordPage"),
+                model: manualRecordModel
+            });
 
-        this.listenTo(manualRecordView, "executeManualRecord", function() {
-            console.log("ManualRecordController:: executeManualRecord event received");
-            return false;
-        });
-    })();
-};
+            _.extend(this, Backbone.Events);
+
+            this.listenTo(manualRecordView, "executeManualRecord", function() {
+                console.log("ManualRecordController:: executeManualRecord event received");
+                return false;
+            });
+        }
+    };
+
+    manualRecordController.init();
+    return manualRecordController;
+});
