@@ -6,11 +6,5 @@ define(function() {
         require(['mainMenuController'], function(MainMenuController) {
             console.log("mainMenuController loaded");
         });
-
-        // below works
-        //require(['manualRecordModel'], function(ManualRecordModel) {
-        //    console.log("");
-        //    var manualRecordModel = new ManualRecordModel();
-        //});
     });
 });

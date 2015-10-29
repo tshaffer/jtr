@@ -11,11 +11,6 @@ define(['mainMenuView','manualRecordController'], function (MainMenuView, Manual
 
             _.extend(this, Backbone.Events);
 
-            // following lines were a test that didn't necessarily pass.
-            // unclear at all what this and self are now and later
-            //this.mainMenuView = mainMenuView;
-            //var self = this;
-
             this.listenTo(mainMenuView, "invokeRecordedShows", function () {
                 console.log("MainMenuController:: invokeRecordedShowsHandler event received");
             });
@@ -24,10 +19,7 @@ define(['mainMenuView','manualRecordController'], function (MainMenuView, Manual
                 console.log("MainMenuController:: invokeManualRecord event received");
                 $(mainMenuView.el).hide();
 
-                // change code so that the manual record view is not displayed when the object is created
-                // add a method that the manualRecordController can invoke to show the manual record view
-
-                //var manualRecordController = new ManualRecordController();
+                // note - do not invoke new on ManualRecordController
                 var manualRecordController = ManualRecordController;
                 manualRecordController.show();
             });

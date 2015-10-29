@@ -8,16 +8,20 @@ define(function () {
         initialize: function () {
             console.log("ManualRecordView::initialize");
             this.template = _.template($('#manualRecordTemplate').html());
-            //this.render();
         },
 
         render: function () {
             console.log("ManualRecordView::render");
             this.$el.html(this.template()); // this.$el is a jQuery wrapped el var
+
             var title = this.model.get('title');
             $("#manualRecordTitle").val(title);
 
+            var duration = this.model.get('duration');
+            $("#manualRecordDuration").val(duration);
+
             $("#manualRecordPage").css("display", "block");
+
             return this;
         },
 

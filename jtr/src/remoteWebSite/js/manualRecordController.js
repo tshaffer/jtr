@@ -10,8 +10,6 @@ define(['manualRecordModel','manualRecordView'], function (ManualRecordModel, Ma
 
         init: function() {
 
-            //var foo = new ManualRecordModel();
-
             this.manualRecordModel = new ManualRecordModel({
                 title: 'Title',
                 duration: '69'

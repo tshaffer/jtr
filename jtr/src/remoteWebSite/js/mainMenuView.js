@@ -8,8 +8,7 @@ define(function () {
             initialize: function () {
                 console.log("mainMenuView::initialize");
 
-                //this.on('invokeRecordedShows', this.invokeRecordedShowsHandler, this);
-
+                // JTRTODO - load template here. add render function. possibly call it here or later.
             },
 
             events: {
@@ -20,6 +19,7 @@ define(function () {
             recordedShowsHandler: function (event) {
                 // Button clicked, you can access the element that was clicked with event.currentTarget
                 console.log("recordedShowsHandler, trigger invokeRecordedShows");
+                // broadcast event - only goes to those objects specifically listening to mainMenuView
                 this.trigger("invokeRecordedShows");
             },
 
@@ -33,8 +33,9 @@ define(function () {
 
 
     // at this point, mainMenuView.pizzaTest is undefined
-    var foo = new mainMenuView();
+    //var foo = new mainMenuView();
     // at this point, foo.pizzaTest is valid
+    // implication of this is that 'new' needs to be invoked on mainMenuView.
 
     return mainMenuView;
 });
