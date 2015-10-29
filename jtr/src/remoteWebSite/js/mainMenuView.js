@@ -26,8 +26,15 @@ define(function () {
             manualRecordHandler: function (event) {
                 console.log("manualRecordHandler, trigger invokeManualRecord");
                 this.trigger("invokeManualRecord");
-            }
+            },
+
+            pizzaTest: "pizza"
         });
+
+
+    // at this point, mainMenuView.pizzaTest is undefined
+    var foo = new mainMenuView();
+    // at this point, foo.pizzaTest is valid
 
     return mainMenuView;
 });

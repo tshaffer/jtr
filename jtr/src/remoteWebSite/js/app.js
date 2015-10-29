@@ -3,8 +3,14 @@
  */
 define(function() {
     $(document).ready(function () {
-        require(['mainMenuController', 'mainMenuView', 'manualRecordController', 'manualRecordView', 'manualRecordModel'], function(mainMenuController, mainMenuView, manualRecordController, manualRecordView, manualRecordModel) {
-
+        require(['mainMenuController'], function(MainMenuController) {
+            console.log("mainMenuController loaded");
         });
+
+        // below works
+        //require(['manualRecordModel'], function(ManualRecordModel) {
+        //    console.log("");
+        //    var manualRecordModel = new ManualRecordModel();
+        //});
     });
 });

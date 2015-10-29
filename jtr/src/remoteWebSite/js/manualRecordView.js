@@ -8,7 +8,7 @@ define(function () {
         initialize: function () {
             console.log("ManualRecordView::initialize");
             this.template = _.template($('#manualRecordTemplate').html());
-            this.render();
+            //this.render();
         },
 
         render: function () {
