@@ -8,6 +8,17 @@ define(function () {
         initialize: function () {
             console.log("ManualRecordView::initialize");
             this.template = _.template($('#manualRecordTemplate').html());
+
+            this.listenTo(this, "executeManualRecord", function() {
+                console.log("ManualRecordView:: executeManualRecord event received");
+                return false;
+            });
+
+            //this.on('click #btnSetManualRecord', function() {
+            //    console.log("ManualRecordView:: executeManualRecord event received");
+            //    return false;
+            //});
+
         },
 
         show: function() {

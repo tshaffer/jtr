@@ -21,10 +21,10 @@ define(['manualRecordModel','manualRecordView'], function (ManualRecordModel, Ma
 
             _.extend(this, Backbone.Events);
 
-            this.listenTo(this.manualRecordView, "executeManualRecord", function() {
-                console.log("ManualRecordController:: executeManualRecord event received");
-                return false;
-            });
+            //this.listenTo(this.manualRecordView, "executeManualRecord", function() {
+            //    console.log("ManualRecordController:: executeManualRecord event received");
+            //    return false;
+            //});
         },
 
         show: function() {
