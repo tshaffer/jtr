@@ -14,7 +14,9 @@ define(function () {
                 return false;
             });
 
-            //this.on('click #btnSetManualRecord', function() {
+            // doesn't work
+
+            //this.on('click: #btnSetManualRecord', function() {
             //    console.log("ManualRecordView:: executeManualRecord event received");
             //    return false;
             //});
@@ -92,6 +94,15 @@ define(function () {
             }
             return val;
         },
+
+        // either of the two approaches below work
+        //events: {
+        //    "click #btnSetManualRecord": function (event) {
+        //        console.log("executeManualRecordHandler, trigger executeManualRecord");
+        //        this.trigger("executeManualRecord");
+        //        return false;
+        //    }
+        //}
 
         events: {
             "click #btnSetManualRecord": "executeManualRecordHandler"
