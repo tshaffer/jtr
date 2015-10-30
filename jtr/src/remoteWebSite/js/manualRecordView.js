@@ -23,6 +23,7 @@ define(function () {
             console.log("ManualRecordView::render");
             this.$el.html(this.template()); // this.$el is a jQuery wrapped el var
 
+            // set visual elements based on values in model
             var title = this.model.get('title');
             $("#manualRecordTitle").val(title);
 
@@ -37,15 +38,40 @@ define(function () {
             var timeVal = this.twoDigitFormat(date.getHours()) + ":" + this.twoDigitFormat(date.getMinutes());
             $("#manualRecordTime").val(timeVal);
 
-            var inputSource = this.model.get('inputSource');
-            //$("#manualRecordDuration").val(duration);
-
             var channel = this.model.get('channel');
             $("#manualRecordChannel").val(channel);
+
+            var inputSource = this.model.get('inputSource');
+            this.setElementVisibility("#manualRecordChannelDiv", inputSource == 'tuner');
+
+            $("#manualRecordTitle").focus();
+
+            // handlers
+            var self = this;
+            $("#rbManualRecordTuner").change(function () {
+                self.setElementVisibility("#manualRecordChannelDiv", true);
+            });
+
+            $("#rbManualRecordRoku").change(function () {
+                self.setElementVisibility("#manualRecordChannelDiv", false);
+            });
+
+            $("#rbManualRecordTivo").change(function () {
+                self.setElementVisibility("#manualRecordChannelDiv", false);
+            });
 
             $("#manualRecordPage").css("display", "block");
 
             return this;
+        },
+
+        setElementVisibility: function (divId, show) {
+            if (show) {
+                $(divId).show();
+            }
+            else {
+                $(divId).hide();
+            }
         },
 
         twoDigitFormat: function (val) {
