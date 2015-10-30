@@ -11,8 +11,7 @@ define(['manualRecordModel','manualRecordView'], function (ManualRecordModel, Ma
         init: function() {
 
             this.manualRecordModel = new ManualRecordModel({
-                title: 'Title',
-                duration: '69'
+                channel: '5'
             });
 
             this.manualRecordView = new ManualRecordView({
@@ -30,7 +29,8 @@ define(['manualRecordModel','manualRecordView'], function (ManualRecordModel, Ma
 
         show: function() {
             console.log("manualRecordController:show() invoked");
-            this.manualRecordView.render();
+            //this.manualRecordView.render();
+            this.manualRecordView.show();
         },
 
         pizza: "pizza"

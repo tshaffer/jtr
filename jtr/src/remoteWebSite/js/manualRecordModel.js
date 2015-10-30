@@ -7,9 +7,13 @@ define(function () {
         defaults: {
             title: '',
             duration: '',
-            date: 0,
-            time: 0,
-            inputSource: 0
+            channel: '',
+            dateTime: '',
+            inputSource: 'tuner',
+            segmentRecordings: 0,
+            scheduledSeriesRecordingId: -1,
+            startTimeOffset: 0,
+            stopTimeOffset: 0
         }
     });
     return manualRecordModel;
