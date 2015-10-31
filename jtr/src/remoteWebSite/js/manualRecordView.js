@@ -9,10 +9,10 @@ define(function () {
             console.log("ManualRecordView::initialize");
             this.template = _.template($('#manualRecordTemplate').html());
 
-            this.listenTo(this, "executeManualRecord", function() {
-                console.log("ManualRecordView:: executeManualRecord event received");
-                return false;
-            });
+            //this.listenTo(this, "executeManualRecord", function() {
+            //    console.log("ManualRecordView:: executeManualRecord event received");
+            //    return false;
+            //});
 
             // doesn't work
 
@@ -117,6 +117,9 @@ define(function () {
 
         setManualRecordHandler: function(event) {
             var success = this.updateModelFromUI();
+            if (success) {
+                this.trigger("manualRecordModelUpdateComplete");
+            }
             return false;
         },
 
@@ -165,7 +168,7 @@ define(function () {
 
             var title = $(titleId).val();
             if (!title) {
-                title = 'MR ' + dateObj.getFullYear() + "-" + this.twoDigitFormat((dateObj.getMonth() + 1)) + "-" + this.twoDigitFormat(dateObj.getDate()) + " " + this.twoDigitFormat(dateObj.getHours()) + ":" + twoDigitFormat(dateObj.getMinutes());
+                title = 'MR ' + dateObj.getFullYear() + "-" + this.twoDigitFormat((dateObj.getMonth() + 1)) + "-" + this.twoDigitFormat(dateObj.getDate()) + " " + this.twoDigitFormat(dateObj.getHours()) + ":" + this.twoDigitFormat(dateObj.getMinutes());
                 if (inputSource == "tuner") {
                     title += " Channel " + channel;
                 } else if (inputSource == "tivo") {

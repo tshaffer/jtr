@@ -4,6 +4,9 @@
 define(function () {
 
     var manualRecordModel = Backbone.Model.extend({
+
+        urlRoot : '/manualRecording',
+
         defaults: {
             title: '',
             duration: '',
@@ -14,6 +17,12 @@ define(function () {
             scheduledSeriesRecordingId: -1,
             startTimeOffset: 0,
             stopTimeOffset: 0
+        },
+        //save: function(attributes, options) {
+        //    debugger;
+        //}
+        sync: function (method, model, options) {
+            debugger;
         }
     });
     return manualRecordModel;
