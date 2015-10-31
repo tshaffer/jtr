@@ -24,6 +24,19 @@ define(function () {
         sync: function (method, model, options) {
             debugger;
         }
+
+    //GET  /books/ .... collection.fetch();
+    //POST /books/ .... collection.create();
+    //GET  /books/1 ... model.fetch();
+    //PUT  /books/1 ... model.save();
+    //DEL  /books/1 ... model.destroy();
+
+    //create → POST   /collection
+    //read → GET   /collection[/id]
+    //update → PUT   /collection/id
+    //patch → PATCH   /collection/id
+    //delete → DELETE   /collection/id
+
     });
     return manualRecordModel;
 });
