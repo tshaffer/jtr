@@ -105,14 +105,80 @@ define(function () {
         //}
 
         events: {
-            "click #btnSetManualRecord": "executeManualRecordHandler"
+            //"click #btnSetManualRecord": "executeManualRecordHandler"
+            "click #btnSetManualRecord": "setManualRecordHandler"
         },
 
-        executeManualRecordHandler: function (event) {
-            console.log("executeManualRecordHandler, trigger executeManualRecord");
-            this.trigger("executeManualRecord");
+        //executeManualRecordHandler: function (event) {
+        //    console.log("executeManualRecordHandler, trigger executeManualRecord");
+        //    this.trigger("executeManualRecord");
+        //    return false;
+        //}
+
+        setManualRecordHandler: function(event) {
+            var success = this.updateModelFromUI();
             return false;
-        }
+        },
+
+        updateModelFromUI: function() {
+
+            // retrieve date/time from html elements and convert to a format that works on all devices
+            var date = $("#manualRecordDate").val();
+            var time = $("#manualRecordTime").val();
+            var dateTimeStr = date + " " + time;
+
+            // required for iOS devices - http://stackoverflow.com/questions/13363673/javascript-date-is-invalid-on-ios
+            var compatibleDateTimeStr = dateTimeStr.replace(/-/g, '/');
+
+            var dateObj = new Date(compatibleDateTimeStr);
+
+            var duration = $("#manualRecordDuration").val();
+
+            var inputSource = $("input:radio[name=manualRecordInputSource]:checked").val();
+
+            var channel = $("#manualRecordChannel").val();
+
+            var title = this.getRecordingTitle("#manualRecordTitle", dateObj, inputSource, channel);
+
+            // check to see if recording is in the past
+            //var dtEndOfRecording = addMinutes(dateObj, duration);
+            var dtEndOfRecording = dateObj.addMinutes(duration);
+            var now = new Date();
+
+            var millisecondsUntilEndOfRecording = dtEndOfRecording - now;
+            if (millisecondsUntilEndOfRecording < 0) {
+                alert("Recording time is in the past - change the date/time and try again.");
+                return false;
+            }
+
+            this.model.set('title', title);
+            this.model.set('dateTime', dateObj);
+            this.model.set('duration', duration);
+            this.model.set('inputSource', inputSource);
+            this.model.set('channel', channel);
+            this.model.set('scheduledSeriesRecordingId', -1);
+
+            return true;
+        },
+
+        getRecordingTitle: function (titleId, dateObj, inputSource, channel) {
+
+            var title = $(titleId).val();
+            if (!title) {
+                title = 'MR ' + dateObj.getFullYear() + "-" + this.twoDigitFormat((dateObj.getMonth() + 1)) + "-" + this.twoDigitFormat(dateObj.getDate()) + " " + this.twoDigitFormat(dateObj.getHours()) + ":" + twoDigitFormat(dateObj.getMinutes());
+                if (inputSource == "tuner") {
+                    title += " Channel " + channel;
+                } else if (inputSource == "tivo") {
+                    title += " Tivo";
+                } else {
+                    title += " Roku";
+                }
+            }
+
+            return title;
+        },
+
+
     });
 
     return manualRecordView;
